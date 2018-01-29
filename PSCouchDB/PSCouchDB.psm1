@@ -33,6 +33,7 @@ function Send-CouchDBRequest {
         "GET"       { $options.Add("Method","GET") }
         "PUT"       { $options.Add("Method","PUT") }
         "DELETE"    { $options.Add("Method","DELETE") }
+        "POST"    { $options.Add("Method","POST") }
         Default     { $options.Add("Method","GET") }
     }
     # Build the url
@@ -321,7 +322,9 @@ function New-CouchDBUser ($Server, $Port, $Database = "_users", $Userid = $(thro
     New-CouchDBUser -Userid test_user -Password Passw0rd -Authorization "admin:passw0rd"
     #>
     $Document = "org.couchdb.user:$Userid"
-    if ($Roles) {
+    if ($Roles.Count -eq 1) {
+        $Roles = "[$($Roles | ConvertTo-Json)]"
+    } elseif ($Roles) {
         $Roles = $Roles | ConvertTo-Json
     } else {
         $Roles = '[]'
@@ -385,6 +388,57 @@ function Remove-CouchDBUser ($Server, $Port, $Database = "_users", $Userid = $(t
     Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization
 }
 
+function Find-CouchDBDocuments () {
+    <#
+    .SYNOPSIS
+    Find document data in a database.
+    .DESCRIPTION
+    Find document data in a CouchDB database.
+    .EXAMPLE
+    Find-CouchDBDocuments -Database example -Selector "color" -Value "red" -Fields _id,color -Operator eq -Authorization "read_user:passw0rd"
+    #>
+    [cmdletbinding()]
+    param (
+        $Server, 
+        $Port, 
+        $Database = $(throw "Please specify the database name."), 
+        $Selector, 
+        $Value, 
+        [array]$Fields,
+        [ValidateSet('lt','lte','eq','ne','gte','gt','exists','in','nin')]
+        [string]$Operator,
+        $Authorization
+    )
+
+    $Document = '_find'
+    # Compose JSON data
+    $Data = '{"selector": {'
+    if ($Selector -and $Value) {
+        $Data += "`"$Selector`":{"
+    }
+    switch ($Operator) {
+        'lt'        { $Data += '"$lt":' }
+        'lte'       { $Data += '"$lte":' }
+        'eq'        { $Data += '"$eq":' }
+        'ne'        { $Data += '"$ne":' }
+        'gte'       { $Data += '"$gte":' }
+        'gt'        { $Data += '"$gt":' }
+        'exists'    { $Data += '"$exists":' }
+        'type'      { $Data += '"$type":' }
+        'in'        { $Data += '"$in":' }
+        'nin'       { $Data += '"$nin":' }
+    }
+    if ($Selector -and $Value) {
+        $Data += "`"$Value`"}}"
+    }
+    if ($Fields) {
+        $Fields = $Fields | ConvertTo-Json
+        $Data += ",`"fields`": $Fields"
+    }
+    $Data += '}'
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
+}
+
 
 # Export the functions
 Export-ModuleMember -Function Get-CouchDBDatabase
@@ -404,3 +458,4 @@ Export-ModuleMember -Function Remove-CouchDBDatabase
 Export-ModuleMember -Function Remove-CouchDBDocument
 Export-ModuleMember -Function Remove-CouchDBAttachment
 Export-ModuleMember -Function Remove-CouchDBUser
+Export-ModuleMember -Function Find-CouchDBDocuments
