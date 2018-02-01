@@ -75,6 +75,9 @@ The operators available, for now, are the following:
 - 'type'  	Check the document field’s type. Valid values are "null", "boolean", "number", "string", "array", and "object".
 - 'in'    	The document field must exist in the list provided.
 - 'nin'   	The document field not must exist in the list provided.
+- 'size'   	Special condition to match the length of an array field in a document. Non-array fields cannot match this condition.
+- 'regex'   A regular expression pattern to match against the document field. Only matches when the field is a string value and matches the supplied regular expression. The matching algorithms are based on the Perl Compatible Regular Expression (PCRE) library. For more information about what is implemented, see the see the [Erlang Regular Expression](http://erlang.org/doc/man/re.html "Perl-like regular expressions for Erlang")
+`Sort` indicates the field you want to sort ascending data. 
 
 
 ### Cmdlet example

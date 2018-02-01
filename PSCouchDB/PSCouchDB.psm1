@@ -202,28 +202,28 @@ function Grant-CouchDBDatabasePermission ($Server, $Port, $Database = $(throw "P
     }
     if ($AdminUser.Count -eq 1) {
         $AdminUser = "[$($AdminUser | ConvertTo-Json)]"
-    } elseif ($AdminUser) {
+    } elseif ($AdminUser.Count -gt 1) {
         $AdminUser = $AdminUser | ConvertTo-Json
     } else {
         $AdminUser = '[]'
     }
     if ($AdminRoles.Count -eq 1) {
         $AdminRoles = "[$($AdminRoles | ConvertTo-Json)]"
-    } elseif ($AdminRoles) {
+    } elseif ($AdminRoles.Count -gt 1) {
         $AdminRoles = $AdminRoles | ConvertTo-Json
     } else {
         $AdminRoles = '[]'
     }
     if ($ReaderUser.Count -eq 1) {
         $ReaderUser = "[$($ReaderUser | ConvertTo-Json)]"
-    } elseif ($ReaderUser) {
+    } elseif ($ReaderUser.Count -gt 1) {
         $ReaderUser = $ReaderUser | ConvertTo-Json
     } else {
         $ReaderUser = '[]'
     }
     if ($UserRoles.Count -eq 1) {
         $UserRoles = "[$($UserRoles | ConvertTo-Json)]"
-    } elseif ($UserRoles) {
+    } elseif ($UserRoles.Count -gt 1) {
         $UserRoles = $UserRoles | ConvertTo-Json
     } else {
         $UserRoles = '[]'
@@ -324,7 +324,7 @@ function New-CouchDBUser ($Server, $Port, $Database = "_users", $Userid = $(thro
     $Document = "org.couchdb.user:$Userid"
     if ($Roles.Count -eq 1) {
         $Roles = "[$($Roles | ConvertTo-Json)]"
-    } elseif ($Roles) {
+    } elseif ($Roles.Count -gt 1) {
         $Roles = $Roles | ConvertTo-Json
     } else {
         $Roles = '[]'
@@ -405,7 +405,8 @@ function Find-CouchDBDocuments () {
         $Selector, 
         $Value, 
         [array]$Fields,
-        [ValidateSet('lt','lte','eq','ne','gte','gt','exists','in','nin')]
+        $Sort,
+        [ValidateSet('lt','lte','eq','ne','gte','gt','exists','type','in','nin','size','regex')]
         [string]$Operator,
         $Authorization
     )
@@ -417,23 +418,29 @@ function Find-CouchDBDocuments () {
         $Data += "`"$Selector`":{"
     }
     switch ($Operator) {
-        'lt'        { $Data += '"$lt":' }
-        'lte'       { $Data += '"$lte":' }
-        'eq'        { $Data += '"$eq":' }
-        'ne'        { $Data += '"$ne":' }
-        'gte'       { $Data += '"$gte":' }
-        'gt'        { $Data += '"$gt":' }
-        'exists'    { $Data += '"$exists":' }
-        'type'      { $Data += '"$type":' }
-        'in'        { $Data += '"$in":' }
-        'nin'       { $Data += '"$nin":' }
-    }
-    if ($Selector -and $Value) {
-        $Data += "`"$Value`"}}"
+        'lt'        { $Data += '"$lt":' ;       if ($Selector -and $Value) { $Data += "`"$Value`"}}" } }
+        'lte'       { $Data += '"$lte":' ;      if ($Selector -and $Value) { $Data += "`"$Value`"}}" } }
+        'eq'        { $Data += '"$eq":' ;       if ($Selector -and $Value) { $Data += "`"$Value`"}}" } }
+        'ne'        { $Data += '"$ne":' ;       if ($Selector -and $Value) { $Data += "`"$Value`"}}" } }
+        'gte'       { $Data += '"$gte":' ;      if ($Selector -and $Value) { $Data += "`"$Value`"}}" } }
+        'gt'        { $Data += '"$gt":' ;       if ($Selector -and $Value) { $Data += "`"$Value`"}}" } }
+        'exists'    { $Data += '"$exists":' ;   if ($Selector -and $Value) { $Data += "$Value}}" } } 
+        'type'      { $Data += '"$type":' ;     if ($Selector -and $Value) { $Data += "`"$Value`"}}" } }
+        'in'        { $Data += '"$in":' ;       if ($Selector -and $Value) { $Data += "[`"$Value`"]}}" } }
+        'nin'       { $Data += '"$nin":' ;      if ($Selector -and $Value) { $Data += "[`"$Value`"]}}" } }
+        'size'      { $Data += '"$size":' ;     if ($Selector -and $Value) { $Data += "$Value}}" } }
+        'regex'     { $Data += '"$regex":' ;    if ($Selector -and $Value) { $Data += "`"$Value`"}}" } }
     }
     if ($Fields) {
-        $Fields = $Fields | ConvertTo-Json
+        if ($Fields.Count -gt 1) {
+            $Fields = $Fields | ConvertTo-Json
+        } else {
+            $Fields = "[`"$Fields`"]"
+        }
         $Data += ",`"fields`": $Fields"
+    }
+    if ($Sort) {
+        $Data += ",`"sort`": [{`"$($Sort)`": `"asc`"}]"
     }
     $Data += '}'
     Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
