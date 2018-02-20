@@ -245,7 +245,7 @@ function Grant-CouchDBDatabasePermission ($Server, $Port, $Database = $(throw "P
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
 }
 
-function Revoke-CouchDBDatabasePermission ($Server, $Port, $Database = $(throw "Please specify the database name."), $Authorization) {
+function Revoke-CouchDBDatabasePermission () {
     <#
     .SYNOPSIS
     Revoke permission on database.
@@ -254,25 +254,34 @@ function Revoke-CouchDBDatabasePermission ($Server, $Port, $Database = $(throw "
     .EXAMPLE
     Revoke-CouchDBDatabasePermission -Database example -Authorization "admin:passw0rd"
     #>
-    # Get a current security permission
-    if (-not(Get-CouchDBDocument -Database $Database -Document '_security' -Authorization $Authorization)) {
-        throw "No security object found in database $Database"
-    }
-    # Revoke data permission
-    $Data = "
-    {
-        `"admins`": {
-            `"names`": [], 
-            `"roles`": []
-        }, 
-        `"members`": {
-            `"names`": [],
-            `"roles`": []
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param(
+        $Server, 
+        $Port, 
+        $Database = $(throw "Please specify the database name."), 
+        $Authorization
+    )
+    if ($PSCmdlet.ShouldContinue("Do you wish revoke all permission on database $Database?","Revoke all permission on database $Databasee")) {
+        # Get a current security permission
+        if (-not(Get-CouchDBDocument -Database $Database -Document '_security' -Authorization $Authorization)) {
+            throw "No security object found in database $Database"
         }
+        # Revoke data permission
+        $Data = "
+        {
+            `"admins`": {
+                `"names`": [], 
+                `"roles`": []
+            }, 
+            `"members`": {
+                `"names`": [],
+                `"roles`": []
+            }
+        }
+        "
+        $Document = "_security"
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
     }
-    "
-    $Document = "_security"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
 }
 
 function New-CouchDBDatabase ($Server, $Port, $Database = $(throw "Please specify the database name."), $Authorization) {
