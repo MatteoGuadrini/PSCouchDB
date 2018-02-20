@@ -357,7 +357,7 @@ function Revoke-CouchDBDatabasePermission () {
         $Database = $(throw "Please specify the database name."), 
         $Authorization
     )
-    if ($PSCmdlet.ShouldContinue("Do you wish revoke all permission on database $Database?","Revoke all permission on database $Databasee")) {
+    if ($PSCmdlet.ShouldContinue("Do you wish revoke all permission on database $Database ?","Revoke all permission on database $Database")) {
         # Get a current security permission
         if (-not(Get-CouchDBDocument -Database $Database -Document '_security' -Authorization $Authorization)) {
             throw "No security object found in database $Database"
@@ -496,7 +496,7 @@ function Remove-CouchDBDatabase () {
         $Database = $(throw "Please specify the database name."), 
         $Authorization
     )
-    if ($PSCmdlet.ShouldContinue("Do you wish remove database $Database?","Remove database $Databasee")) {
+    if ($PSCmdlet.ShouldContinue("Do you wish remove database $Database ?","Remove database $Database")) {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Authorization $Authorization
     }
 }
@@ -519,7 +519,7 @@ function Remove-CouchDBDocument () {
         $Revision = $(throw "Please specify the revision id."), 
         $Authorization
     )
-    if ($PSCmdlet.ShouldContinue("Do you wish remove document $Document on database $Database?","Remove document $Document on database $Databasee")) {
+    if ($PSCmdlet.ShouldContinue("Do you wish remove document $Document on database $Database ?","Remove document $Document on database $Database")) {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization
     }
 }
@@ -543,7 +543,7 @@ function Remove-CouchDBAttachment () {
         $Revision = $(throw "Please specify the revision id."), 
         $Authorization
     )
-    if ($PSCmdlet.ShouldContinue("Do you wish remove attachment $Attachment in document $Document on database $Database?","Remove attachment $Attachment in document $Document on database $Databasee")) {
+    if ($PSCmdlet.ShouldContinue("Do you wish remove attachment $Attachment in document $Document on database $Database ?","Remove attachment $Attachment in document $Document on database $Database")) {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Attachment $Attachment -Revision $Revision -Authorization $Authorization
     }
 }
@@ -567,7 +567,7 @@ function Remove-CouchDBUser () {
         $Authorization
     )
     $Document = "org.couchdb.user:$Userid"
-    if ($PSCmdlet.ShouldContinue("Do you wish remove user $Userid?","Remove $Userid on database $Database")) {
+    if ($PSCmdlet.ShouldContinue("Do you wish remove user $Userid ?","Remove $Userid on database $Database")) {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization
     }
 }

@@ -63,7 +63,7 @@ To search for data in a specific database, use this cmdlet:
 ```powershell
 Find-CouchDBDocuments -Database test -Selector "color" -Value "red" -Fields _id,color -Operator eq
 ```
-`Selector` is the search field; `Value` is the value of the selector; `Fields` they are the fields that come back from the research and `Operator` it is the logical operator used to compare the selector.
+`Selector` is the search field; `Value` is the value of the selector; `Fields` they are the fields that return from the research and `Operator` it is the comparison operator used to compare the selector.
 The operators available, for now, are the following:
 - 'lt'  	The field is less than the argument.  
 - 'lte'   	The field is less than or equal to the argument.
@@ -79,6 +79,20 @@ The operators available, for now, are the following:
 - 'regex'   A regular expression pattern to match against the document field. Only matches when the field is a string value and matches the supplied regular expression. The matching algorithms are based on the Perl Compatible Regular Expression (PCRE) library. For more information about what is implemented, see the see the [Erlang Regular Expression](http://erlang.org/doc/man/re.html "Perl-like regular expressions for Erlang")
 `Sort` indicates the field you want to sort ascending data. 
 
+### Find data with other operator
+Search data with other comparison operator:
+```powershell
+Find-CouchDBDocuments -Database test -Selector "answer" -Value 42 -Fields _id,answer -Operator lt
+Find-CouchDBDocuments -Database test -Selector "answer" -Value 42 -Fields _id,answer -Operator gt
+Find-CouchDBDocuments -Database test -Selector "color" -Value "blue" -Fields _id,color -Operator ne
+Find-CouchDBDocuments -Database test -Selector "color" -Value true -Fields _id,color -Operator exists
+Find-CouchDBDocuments -Database test -Selector "color" -Value string -Fields _id,color -Operator type
+Find-CouchDBDocuments -Database test -Selector "answer" -Value number -Fields _id,answer -Operator type
+Find-CouchDBDocuments -Database test -Selector "array" -Value "value1" -Fields _id,array -Operator in
+Find-CouchDBDocuments -Database test -Selector "array" -Value "value 2" -Fields _id,array -Operator nin
+Find-CouchDBDocuments -Database test -Selector "array" -Value 1 -Fields _id,array -Operator size
+Find-CouchDBDocuments -Database test -Selector "color" -Value "^[rR].[dD]" -Fields _id,color -Operator regex
+```
 
 ### Cmdlet example
 To get examples of all the cmdlets of this module, use this command:
