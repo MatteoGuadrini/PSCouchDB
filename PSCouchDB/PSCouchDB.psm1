@@ -33,7 +33,7 @@ function Send-CouchDBRequest {
         "GET"       { $options.Add("Method","GET") }
         "PUT"       { $options.Add("Method","PUT") }
         "DELETE"    { $options.Add("Method","DELETE") }
-        "POST"    { $options.Add("Method","POST") }
+        "POST"      { $options.Add("Method","POST") }
         Default     { $options.Add("Method","GET") }
     }
     # Build the url
@@ -339,7 +339,7 @@ function New-CouchDBUser ($Server, $Port, $Database = "_users", $Userid = $(thro
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
 }
 
-function Remove-CouchDBDatabase ($Server, $Port, $Database = $(throw "Please specify the database name."), $Authorization) {
+function Remove-CouchDBDatabase () {
     <#
     .SYNOPSIS
     Remove a database.
@@ -348,10 +348,19 @@ function Remove-CouchDBDatabase ($Server, $Port, $Database = $(throw "Please spe
     .EXAMPLE
     Remove-CouchDBDatabase -Database example -Authorization "admin:passw0rd"
     #>
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Authorization $Authorization
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param(
+        $Server, 
+        $Port, 
+        $Database = $(throw "Please specify the database name."), 
+        $Authorization
+    )
+    if ($PSCmdlet.ShouldContinue("Do you wish remove database $Database?","Remove database $Databasee")) {
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Authorization $Authorization
+    }
 }
 
-function Remove-CouchDBDocument ($Server, $Port, $Database = $(throw "Please specify the database name."), $Document = $(throw "Please specify the document id."), $Revision = $(throw "Please specify the revision id."), $Authorization) {
+function Remove-CouchDBDocument () {
     <#
     .SYNOPSIS
     Remove a document.
@@ -360,10 +369,21 @@ function Remove-CouchDBDocument ($Server, $Port, $Database = $(throw "Please spe
     .EXAMPLE
     Remove-CouchDBDatabase -Database example -Document "001" -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:passw0rd"
     #>
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param(
+        $Server, 
+        $Port, 
+        $Database = $(throw "Please specify the database name."), 
+        $Document = $(throw "Please specify the document id."), 
+        $Revision = $(throw "Please specify the revision id."), 
+        $Authorization
+    )
+    if ($PSCmdlet.ShouldContinue("Do you wish remove document $Document on database $Database?","Remove document $Document on database $Databasee")) {
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization
+    }
 }
 
-function Remove-CouchDBAttachment ($Server, $Port, $Database = $(throw "Please specify the database name."), $Document = $(throw "Please specify the document id."), $Attachment = $(throw "Please specify the path of attachment."), $Revision = $(throw "Please specify the revision id."), $Authorization) {
+function Remove-CouchDBAttachment () {
     <#
     .SYNOPSIS
     Remove an attachment document.
@@ -372,10 +392,22 @@ function Remove-CouchDBAttachment ($Server, $Port, $Database = $(throw "Please s
     .EXAMPLE
     Remove-CouchDBDatabase -Database example -Document "001" -Attachment test.html -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:passw0rd"
     #>
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Attachment $Attachment -Revision $Revision -Authorization $Authorization
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param(
+        $Server, 
+        $Port, 
+        $Database = $(throw "Please specify the database name."), 
+        $Document = $(throw "Please specify the document id."), 
+        $Attachment = $(throw "Please specify the path of attachment."), 
+        $Revision = $(throw "Please specify the revision id."), 
+        $Authorization
+    )
+    if ($PSCmdlet.ShouldContinue("Do you wish remove attachment $Attachment in document $Document on database $Database?","Remove attachment $Attachment in document $Document on database $Databasee")) {
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Attachment $Attachment -Revision $Revision -Authorization $Authorization
+    }
 }
 
-function Remove-CouchDBUser ($Server, $Port, $Database = "_users", $Userid = $(throw "Please specify the username."), $Revision = $(throw "Please specify the revision id."), $Authorization) {
+function Remove-CouchDBUser () {
     <#
     .SYNOPSIS
     Remove an user.
@@ -384,8 +416,19 @@ function Remove-CouchDBUser ($Server, $Port, $Database = "_users", $Userid = $(t
     .EXAMPLE
     Remove-CouchDBUser -Userid test_user -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:passw0rd"
     #>
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param(
+        $Server, 
+        $Port, 
+        $Database = "_users", 
+        $Userid = $(throw "Please specify the username."), 
+        $Revision = $(throw "Please specify the revision id."), 
+        $Authorization
+    )
     $Document = "org.couchdb.user:$Userid"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization
+    if ($PSCmdlet.ShouldContinue("Do you wish remove user $Userid?","Remove $Userid on database $Database")) {
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization
+    }
 }
 
 function Find-CouchDBDocuments () {
@@ -445,24 +488,3 @@ function Find-CouchDBDocuments () {
     $Data += '}'
     Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
 }
-
-
-# Export the functions
-Export-ModuleMember -Function Get-CouchDBDatabase
-Export-ModuleMember -Function Get-CouchDBDocument
-Export-ModuleMember -Function Get-CouchDBAttachment
-Export-ModuleMember -Function Get-CouchDBUser
-Export-ModuleMember -Function Set-CouchDBDocument
-Export-ModuleMember -Function Set-CouchDBAttachment
-Export-ModuleMember -Function Set-CouchDBUser
-Export-ModuleMember -Function Grant-CouchDBDatabasePermission
-Export-ModuleMember -Function Revoke-CouchDBDatabasePermission
-Export-ModuleMember -Function New-CouchDBDatabase
-Export-ModuleMember -Function New-CouchDBDocument
-Export-ModuleMember -Function New-CouchDBAttachment
-Export-ModuleMember -Function New-CouchDBUser
-Export-ModuleMember -Function Remove-CouchDBDatabase
-Export-ModuleMember -Function Remove-CouchDBDocument
-Export-ModuleMember -Function Remove-CouchDBAttachment
-Export-ModuleMember -Function Remove-CouchDBUser
-Export-ModuleMember -Function Find-CouchDBDocuments
