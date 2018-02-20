@@ -7,6 +7,7 @@ function Send-CouchDBRequest {
     .EXAMPLE
     Send-CouchDBRequest -Method PUT -Database example -Authorization "admin:passw0rd"
     #>
+    [CmdletBinding()]
     param (
         [string] $Method,
         [string] $Server,
@@ -19,16 +20,22 @@ function Send-CouchDBRequest {
         [string] $Data
     )
     # Set default server
+    Write-Verbose -Message "Check if variable `$Server is null, else set variable to 'localhost'"
     if (-not($Server)) {
         $Server = 'localhost'
+        Write-Debug -Message "`$Server is $Server"
     }
     # Set default port
+    Write-Verbose -Message "Check if variable `$Port is null, else set variable to '5984'"
      if (-not($Port)) {
         $Port = 5984
+        Write-Debug -Message "`$Port is $Port"
     }
     # Initialize option of command
     $options = @{}
     # Analize method for web request
+    Write-Verbose -Message "Check http method, default is GET"
+    Write-Debug -Message "`$Method is $Method"
     switch ($Method) {
         "GET"       { $options.Add("Method","GET") }
         "PUT"       { $options.Add("Method","PUT") }
@@ -37,48 +44,65 @@ function Send-CouchDBRequest {
         Default     { $options.Add("Method","GET") }
     }
     # Build the url
+    Write-Verbose -Message "Build the url"
     $url = "http://${Server}:$Port"
     # Set database
+    Write-Verbose -Message "Add database to url, if exists"
     if ($Database) {
         $url += "/$Database"
+        Write-Debug -Message "`$Database is $Database"
     }
     # Set document
+    Write-Verbose -Message "Add document to url, if exists"
     if (($Document) -and ($Database)) {
         $url += "/$Document"
+        Write-Debug -Message "`$Document is $Document"
     }
     # Set attachment
+    Write-Verbose -Message "Add attachment to url, if exists"
     if (($Attachment) -and ($Document) -and ($Database)) {
+        Write-Debug -Message "`$Attachment is $Attachment"
         if (Test-Path $Attachment) {
             $AttachmentName = (Get-Item $Attachment).Name
             $options.Add("ContentType","multipart/form-data")
             $options.Add("InFile",$Attachment)
+            Write-Debug -Message "Tested attachment path $Attachment"
         } else {
             $AttachmentName = $Attachment
+            Write-Debug -Message "Tested name of attachment $AttachmentName"
         }
         $url += "/$AttachmentName"
     }
     # Check revision
+    Write-Verbose -Message "Add revision to url, if exists"
     if ($Revision) {
         $url += "?rev=$Revision"
+        Write-Debug -Message "`$Revision is $Revision"
     }
     # Add url
+    Write-Verbose -Message "Compose the url: $url"
     $options.Add("Uri",$url)
     # Check the credential for access on database
+    Write-Verbose -Message "Check authorization"
     if ($Authorization) {
         $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(($Authorization)))
         $options.Add("Headers",@{Authorization=("Basic {0}" -f $base64AuthInfo)})
+        Write-Debug -Message "`$Authorization is $Authorization"
     }
     # Build the json data
+    Write-Verbose -Message "Check json data"
     if (($Data) -and ($Document) -and ($Database)) {
         $options.Add("ContentType","application/json")
         $options.Add("Body",$Data)
+        Write-Debug -Message "`$Data is $Data"
     }
     # Invoke REST with method
+    Write-Verbose -Message "Finally, send request to CouchDB server $Server"
     $results = Invoke-RestMethod @options
     return $results
 }
 
-function Get-CouchDBDatabase ($Server, $Port, $Database = "_all_dbs", $Authorization) {
+function Get-CouchDBDatabase () {
     <#
     .SYNOPSIS
     Get a database.
@@ -87,10 +111,16 @@ function Get-CouchDBDatabase ($Server, $Port, $Database = "_all_dbs", $Authoriza
     .EXAMPLE
     New-CouchDBDatabase -Database example -Authorization "admin:passw0rd"
     #>
+    [CmdletBinding()]
+    param(
+        $Server, 
+        $Port, $Database = "_all_dbs", 
+        $Authorization
+    )
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization
 }
 
-function Get-CouchDBDocument ($Server, $Port, $Database = $(throw "Please specify the database name."), $Document = "_all_docs", $Data, $Authorization) {
+function Get-CouchDBDocument () {
     <#
     .SYNOPSIS
     Get a document.
@@ -100,11 +130,19 @@ function Get-CouchDBDocument ($Server, $Port, $Database = $(throw "Please specif
     $data = '{"album":"Kill em all", "band":"Metallica"}'
     New-CouchDBDatabase -Database example -Document "001" -Data $data -Authorization "admin:passw0rd"
     #>
+    [CmdletBinding()]
+    param(
+        $Server, 
+        $Port, $Database = $(throw "Please specify the database name."),
+        $Document = "_all_docs", 
+        $Data, 
+        $Authorization
+    )
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
 }
 
 # TODO: Add outfile parameter on ivoke-restmethod for download file attachment
-function Get-CouchDBAttachment ($Server, $Port, $Database = $(throw "Please specify the database name."), $Document = $(throw "Please specify the document id."), $Attachment, $Authorization) {
+function Get-CouchDBAttachment () {
     <#
     .SYNOPSIS
     Get attachment.
@@ -113,10 +151,19 @@ function Get-CouchDBAttachment ($Server, $Port, $Database = $(throw "Please spec
     .EXAMPLE
     New-CouchDBDatabase -Database example -Document "001" -Attachment test.html -Authorization "admin:passw0rd"
     #>
+    [CmdletBinding()]
+    param(
+        $Server, 
+        $Port, 
+        $Database = $(throw "Please specify the database name."), 
+        $Document = $(throw "Please specify the document id."), 
+        $Attachment, 
+        $Authorization
+    )
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Attachment $Attachment -Authorization $Authorization
 }
 
-function Get-CouchDBUser ($Server, $Port, $Database = "_users", $Userid = $(throw "Please specify the username."), $Authorization) {
+function Get-CouchDBUser () {
     <#
     .SYNOPSIS
     Get an user.
@@ -125,11 +172,19 @@ function Get-CouchDBUser ($Server, $Port, $Database = "_users", $Userid = $(thro
     .EXAMPLE
     Get-CouchDBUser -Userid test_user -Authorization "admin:passw0rd"
     #>
+    [CmdletBinding()]
+    param(
+        $Server, 
+        $Port, 
+        $Database = "_users", 
+        $Userid = $(throw "Please specify the username."), 
+        $Authorization
+    )
     $Document = "org.couchdb.user:$Userid"
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization
 }
 
-function Set-CouchDBDocument ($Server, $Port, $Database = $(throw "Please specify the database name."), $Document = $(throw "Please specify the document id."), $Revision = $(throw "Please specify the revision id."), $Data, $Authorization) {
+function Set-CouchDBDocument () {
     <#
     .SYNOPSIS
     Modify a document.
@@ -139,10 +194,20 @@ function Set-CouchDBDocument ($Server, $Port, $Database = $(throw "Please specif
     $data = '{"album":"...and justice for all", "band":"Metallica"}'
     Set-CouchDBDatabase -Database example -Document "001" -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Data $data -Authorization "admin:passw0rd"
     #>
+    [CmdletBinding()]
+    param(
+        $Server, 
+        $Port, 
+        $Database = $(throw "Please specify the database name."), 
+        $Document = $(throw "Please specify the document id."), 
+        $Revision = $(throw "Please specify the revision id."), 
+        $Data, 
+        $Authorization
+    )
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Revision $Revision -Data $Data -Authorization $Authorization
 }
 
-function Set-CouchDBAttachment ($Server, $Port, $Database = $(throw "Please specify the database name."), $Document = $(throw "Please specify the document id."), $Revision = $(throw "Please specify the revision id."), $Attachment, $Authorization) {
+function Set-CouchDBAttachment () {
     <#
     .SYNOPSIS
     Modify attachment.
@@ -151,10 +216,20 @@ function Set-CouchDBAttachment ($Server, $Port, $Database = $(throw "Please spec
     .EXAMPLE
     Set-CouchDBDatabase -Database example -Document "001" -Attachment test.html -Authorization "admin:passw0rd"
     #>
+    [CmdletBinding()]
+    param(
+        $Server, 
+        $Port, 
+        $Database = $(throw "Please specify the database name."), 
+        $Document = $(throw "Please specify the document id."), 
+        $Revision = $(throw "Please specify the revision id."), 
+        $Attachment, 
+        $Authorization
+    )
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Revision $Revision -Attachment $Attachment -Authorization $Authorization
 }
 
-function Set-CouchDBUser ($Server, $Port, $Database = "_users", $Userid = $(throw "Please specify the username."), $Password = $(throw "Please specify a password for username $Userid"), $Roles, $Revision = $(throw "Please specify the revision id."), $Authorization) {
+function Set-CouchDBUser () {
     <#
     .SYNOPSIS
     Set an user properties.
@@ -163,6 +238,16 @@ function Set-CouchDBUser ($Server, $Port, $Database = "_users", $Userid = $(thro
     .EXAMPLE
     Set-CouchDBUser -Userid test_user -Password Passw0rd -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:passw0rd"
     #>
+    [CmdletBinding()]
+    param(
+        $Server, 
+        $Port, $Database = "_users", 
+        $Userid = $(throw "Please specify the username."), 
+        $Password = $(throw "Please specify a password for username $Userid"), 
+        $Roles, 
+        $Revision = $(throw "Please specify the revision id."), 
+        $Authorization
+    )
     $Document = "org.couchdb.user:$Userid"
     if ($Roles) {
         $Roles = $Roles | ConvertTo-Json
@@ -179,7 +264,7 @@ function Set-CouchDBUser ($Server, $Port, $Database = "_users", $Userid = $(thro
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Revision $Revision -Authorization $Authorization
 }
 
-function Grant-CouchDBDatabasePermission ($Server, $Port, $Database = $(throw "Please specify the database name."), [array]$AdminUser, [array]$AdminRoles, [array]$ReaderUser, [array]$UserRoles, $Authorization) {
+function Grant-CouchDBDatabasePermission () {
     <#
     .SYNOPSIS
     Grant permission on database.
@@ -188,6 +273,17 @@ function Grant-CouchDBDatabasePermission ($Server, $Port, $Database = $(throw "P
     .EXAMPLE
     Grant-CouchDBDatabasePermission -Database example -AdminUser admin,technician -ReaderUser user1 -Authorization "admin:passw0rd"
     #>
+    [CmdletBinding()]
+    param(
+        $Server, 
+        $Port, 
+        $Database = $(throw "Please specify the database name."), 
+        [array]$AdminUser, 
+        [array]$AdminRoles, 
+        [array]$ReaderUser, 
+        [array]$UserRoles, 
+        $Authorization
+    )
     # Check if admin user exists
     foreach ($User in $AdminUser) {
         if (-not((Get-CouchDBUser -Database '_users' -Userid $User -Authorization $Authorization).name -eq $User)) {
@@ -284,7 +380,7 @@ function Revoke-CouchDBDatabasePermission () {
     }
 }
 
-function New-CouchDBDatabase ($Server, $Port, $Database = $(throw "Please specify the database name."), $Authorization) {
+function New-CouchDBDatabase () {
     <#
     .SYNOPSIS
     Create a new database.
@@ -293,10 +389,17 @@ function New-CouchDBDatabase ($Server, $Port, $Database = $(throw "Please specif
     .EXAMPLE
     New-CouchDBDatabase -Database example -Authorization "admin:passw0rd"
     #>
+    [CmdletBinding()]
+    param(
+        $Server, 
+        $Port, 
+        $Database = $(throw "Please specify the database name."), 
+        $Authorization
+    )
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Authorization $Authorization
 }
 
-function New-CouchDBDocument ($Server, $Port, $Database = $(throw "Please specify the database name."), $Document = $(throw "Please specify the document id."), $Data = $(throw "Please specify a valid json data."), $Authorization) {
+function New-CouchDBDocument () {
     <#
     .SYNOPSIS
     Create a new document.
@@ -306,10 +409,19 @@ function New-CouchDBDocument ($Server, $Port, $Database = $(throw "Please specif
     $data = '{"name":"Jhon", "surname":"Lennon"}'
     New-CouchDBDatabase -Database example -Document "001" -Data $data -Authorization "admin:passw0rd"
     #>
+    [CmdletBinding()]
+    param(
+        $Server, 
+        $Port, 
+        $Database = $(throw "Please specify the database name."), 
+        $Document = $(throw "Please specify the document id."), 
+        $Data = $(throw "Please specify a valid json data."), 
+        $Authorization
+    )
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
 }
 
-function New-CouchDBAttachment ($Server, $Port, $Database = $(throw "Please specify the database name."), $Document = $(throw "Please specify the document id."), $Attachment = $(throw "Please specify the path of attachment."), $Revision = $(throw "Please specify the revision id."), $Authorization) {
+function New-CouchDBAttachment () {
     <#
     .SYNOPSIS
     Create a new attachment document.
@@ -318,10 +430,20 @@ function New-CouchDBAttachment ($Server, $Port, $Database = $(throw "Please spec
     .EXAMPLE
     New-CouchDBDatabase -Database example -Document "001" -Attachment C:\test.html -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:passw0rd"
     #>
+    [CmdletBinding()]
+    param(
+        $Server, 
+        $Port, 
+        $Database = $(throw "Please specify the database name."), 
+        $Document = $(throw "Please specify the document id."), 
+        $Attachment = $(throw "Please specify the path of attachment."), 
+        $Revision = $(throw "Please specify the revision id."), 
+        $Authorization
+    )
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Attachment $Attachment -Revision $Revision -Authorization $Authorization
 }
 
-function New-CouchDBUser ($Server, $Port, $Database = "_users", $Userid = $(throw "Please specify the username."), $Password = $(throw "Please specify a password for username $Userid"), $Roles, $Authorization) {
+function New-CouchDBUser () {
     <#
     .SYNOPSIS
     Create a new user.
@@ -330,6 +452,16 @@ function New-CouchDBUser ($Server, $Port, $Database = "_users", $Userid = $(thro
     .EXAMPLE
     New-CouchDBUser -Userid test_user -Password Passw0rd -Authorization "admin:passw0rd"
     #>
+    [CmdletBinding()]
+    param(
+        $Server, 
+        $Port, 
+        $Database = "_users", 
+        $Userid = $(throw "Please specify the username."), 
+        $Password = $(throw "Please specify a password for username $Userid"), 
+        $Roles, 
+        $Authorization
+    )
     $Document = "org.couchdb.user:$Userid"
     if ($Roles.Count -eq 1) {
         $Roles = "[$($Roles | ConvertTo-Json)]"
@@ -449,7 +581,7 @@ function Find-CouchDBDocuments () {
     .EXAMPLE
     Find-CouchDBDocuments -Database example -Selector "color" -Value "red" -Fields _id,color -Operator eq -Authorization "read_user:passw0rd"
     #>
-    [cmdletbinding()]
+    [CmdletBinding()]
     param (
         $Server, 
         $Port, 
