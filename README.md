@@ -1,17 +1,26 @@
-# PSCouchDB
+# The complete and powerfull powershell module for CouchDB v2.0
 [Powershell](https://github.com/PowerShell/PowerShell "Powershell source") meet [CouchDB](http://couchdb.apache.org/ "CouchDB site")
 
 ## Installation and simple usage
-1. Download and install couchdb following the [docs](http://docs.couchdb.org/en/latest)
-2. Download and install the powershell module by copying it under `%Windir%\System32\WindowsPowerShell\v1.0\Modules` for all users or under `%UserProfile%\Documents\WindowsPowerShell\Modules` for the current user
-3. Now let's start by creating an admin user by connecting to [Fauxton](http://localhost:5984/_utils)
-4. Now, open powershell and create a first database: 
+1. Download and install CouchDB following the [docs](http://docs.couchdb.org/en/latest).
+2. Now let's start by creating an admin user by connecting to [Fauxton](http://localhost:5984/_utils) and going to session "Admin Party!" on left of the menu.
+> ATTENTION: Authentication for read and write no required by default, but required if you create custom user, like session "Grant permission" on this document.
+3. Download and install latest PSCouchDB module by copying it under `%Windir%\System32\WindowsPowerShell\v1.0\Modules` for all users or under `%UserProfile%\Documents\WindowsPowerShell\Modules` for the current user.
+> ATTENTION: This module is not signed. Before import or execute cmdlet on this module, see [about_signing](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_signing) session. To skip this part and continue, run ```Set-ExecutionPolicy -ExecutionPolicy Unrestricted```
+4. Now, configure database mode, in single node or cluster, clicking on "Setup" on left of the menu; follow the wizard and complete this procedure.
+Before configure database mode, create this system document whit this cmdlet:
+```powershell
+New-CouchDBDatabase -Database _users -Authorization "adminuser:password"
+New-CouchDBDatabase -Database _replicator -Authorization "adminuser:password"
+New-CouchDBDatabase -Database _global_changes -Authorization "adminuser:password"
+```
+5. Now, open powershell and create a first personal database: 
 ```powershell
 New-CouchDBDatabase -Database test -Authorization "adminuser:password"
 ``` 
 where adminuser is a newly created user and your password.
 
-5. Create a sample document for `test` database:
+6. Create a sample document for `test` database:
 ```powershell
 $Data = '{
 	"color": "red",
@@ -19,13 +28,13 @@ $Data = '{
 }'
 New-CouchDBDocument -Database test -Document "red" -Data $Data -Authorization "adminuser:password"
 ```
-6. Add attachment file in our docuemnt:
+7. Add attachment file in our docuemnt:
 ```powershell
 $rev = (Get-CouchDBDocument -Database test -Document "red")._rev
 "Blood is red" | Out-File C:\file.txt
 New-CouchDBAttachment -Database test -Document "red" -revision $rev -Attachment C:\file.txt -Authorization "adminuser:password"
 ```
-7. Finally, get a document:
+8. Finally, get a document:
 ```powershell
 Get-CouchDBAttachment -Database test -Document "red" -Attachment file.txt
 ```
@@ -92,6 +101,25 @@ Find-CouchDBDocuments -Database test -Selector "array" -Value "value1" -Fields _
 Find-CouchDBDocuments -Database test -Selector "array" -Value "value 2" -Fields _id,array -Operator nin
 Find-CouchDBDocuments -Database test -Selector "array" -Value 1 -Fields _id,array -Operator size
 Find-CouchDBDocuments -Database test -Selector "color" -Value "^[rR].[dD]" -Fields _id,color -Operator regex
+```
+
+## Logical Operators
+For now, I've used the native powershell logical operators.
+### AND
+```powershell
+((Find-CouchDBDocuments -Database test -Selector "color" -Value "red" -Fields _id,color -Operator eq).docs -and (Find-CouchDBDocuments -Database test -Selector "color" -Value "blue" -Fields _id,color -Operator eq).docs)
+```
+### OR
+```powershell
+((Find-CouchDBDocuments -Database test -Selector "color" -Value "red" -Fields _id,color -Operator eq).docs -or (Find-CouchDBDocuments -Database test -Selector "color" -Value "blue" -Fields _id,color -Operator eq).docs)
+```
+### NOT
+```powershell
+(-not(Find-CouchDBDocuments -Database test -Selector "color" -Value "red" -Fields _id,color -Operator eq).docs)
+```
+### NOR
+```powershell
+(-not((Find-CouchDBDocuments -Database test -Selector "color" -Value "red" -Fields _id,color -Operator eq).docs -or (Find-CouchDBDocuments -Database test -Selector "color" -Value "blue" -Fields _id,color -Operator eq).docs))
 ```
 
 ### Cmdlet example
