@@ -4,7 +4,7 @@
 ## Installation and simple usage
 1. Download and install CouchDB following the [docs](http://docs.couchdb.org/en/latest).
 2. Now let's start by creating an admin user by connecting to [Fauxton](http://localhost:5984/_utils) and going to session "Admin Party!" on left of the menu.
-> ATTENTION: Authentication for read and write no required by default, but required if you create custom user, like session "Grant permission" on this document.
+> ATTENTION: Authentication for read and write no required by default, but required if you create custom user, like session "Grant permission" on this document. For more information see permission on [wiki permission page](https://github.com/MatteoGuadrini/PSCouchDB/wiki/Permission)
 3. Download and install latest PSCouchDB module by copying it under `%Windir%\System32\WindowsPowerShell\v1.0\Modules` for all users or under `%UserProfile%\Documents\WindowsPowerShell\Modules` for the current user.
 > ATTENTION: This module is not signed. Before import or execute cmdlet on this module, see [about_signing](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_signing) session. To skip this part and continue, run ```Set-ExecutionPolicy -ExecutionPolicy Unrestricted```
 4. Now, configure database mode, in single node or cluster, clicking on "Setup" on left of the menu; follow the wizard and complete this procedure.
@@ -127,3 +127,4 @@ To get examples of all the cmdlets of this module, use this command:
 ```powershell
 Get-Command -Module *PSCouchDB* | foreach {Get-Help $_.Name -Example}
 ```
+or see [wiki page](https://github.com/MatteoGuadrini/PSCouchDB/wiki)

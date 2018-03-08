@@ -17,7 +17,8 @@ function Send-CouchDBRequest {
         [string] $Authorization,
         [string] $Revision,
         [string] $Attachment,
-        [string] $Data
+        [string] $Data,
+        [string] $OutFile
     )
     # Set default server
     Write-Verbose -Message "Check if variable `$Server is null, else set variable to 'localhost'"
@@ -70,6 +71,10 @@ function Send-CouchDBRequest {
         } else {
             $AttachmentName = $Attachment
             Write-Debug -Message "Tested name of attachment $AttachmentName"
+            if ($OutFile) {
+                $options.Add("OutFile",$OutFile)
+                Write-Debug -Message "Get attachment $AttachmentName to file $OutFile"
+            }
         }
         $url += "/$AttachmentName"
     }
@@ -93,7 +98,7 @@ function Send-CouchDBRequest {
     Write-Verbose -Message "Check json data"
     if (($Data) -and ($Document) -and ($Database)) {
         $options.Add("ContentType","application/json")
-        $options.Add("Body",$Data)
+        $options.Add("Body",([System.Text.Encoding]::UTF8.GetBytes($Data)))
         Write-Debug -Message "`$Data is $Data"
     }
     # Invoke REST with method
@@ -109,13 +114,14 @@ function Get-CouchDBDatabase () {
     .DESCRIPTION
     Get a CouchDB database informations. 
     .EXAMPLE
-    New-CouchDBDatabase -Database example -Authorization "admin:passw0rd"
+    Get-CouchDBDatabase -Database example -Authorization "admin:passw0rd"
     #>
     [CmdletBinding()]
     param(
-        $Server, 
-        $Port, $Database = "_all_dbs", 
-        $Authorization
+        [string] $Server, 
+        [int] $Port, 
+        [string] $Database = "_all_dbs", 
+        [string] $Authorization
     )
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization
 }
@@ -127,16 +133,16 @@ function Get-CouchDBDocument () {
     .DESCRIPTION
     Get a CouchDB document json data. 
     .EXAMPLE
-    $data = '{"album":"Kill em all", "band":"Metallica"}'
-    New-CouchDBDatabase -Database example -Document "001" -Data $data -Authorization "admin:passw0rd"
+    Get-CouchDBDocument -Database example -Document "001"
     #>
     [CmdletBinding()]
     param(
-        $Server, 
-        $Port, $Database = $(throw "Please specify the database name."),
-        $Document = "_all_docs", 
-        $Data, 
-        $Authorization
+        [string] $Server, 
+        [int] $Port, 
+        [string] $Database = $(throw "Please specify the database name."),
+        [string] $Document = "_all_docs", 
+        [string] $Data, 
+        [string] $Authorization
     )
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
 }
@@ -149,18 +155,21 @@ function Get-CouchDBAttachment () {
     .DESCRIPTION
     Get attachment from CouchDB document. 
     .EXAMPLE
-    New-CouchDBDatabase -Database example -Document "001" -Attachment test.html -Authorization "admin:passw0rd"
+    Get-CouchDBAttachment -Database example -Document "001" -Attachment test.html -Authorization "admin:passw0rd"
+    .EXAMPLE
+    Get-CouchDBAttachment -Database example -Document "001" -Attachment test.html -OutFile C:\out.html -Authorization "admin:passw0rd"
     #>
     [CmdletBinding()]
     param(
-        $Server, 
-        $Port, 
-        $Database = $(throw "Please specify the database name."), 
-        $Document = $(throw "Please specify the document id."), 
-        $Attachment, 
-        $Authorization
+        [string] $Server, 
+        [int] $Port, 
+        [string] $Database = $(throw "Please specify the database name."), 
+        [string] $Document = $(throw "Please specify the document id."), 
+        [string] $Attachment,
+        [string] $OutFile,
+        [string] $Authorization
     )
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Attachment $Attachment -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Attachment $Attachment -OutFile $OutFile -Authorization $Authorization
 }
 
 function Get-CouchDBUser () {
@@ -174,11 +183,11 @@ function Get-CouchDBUser () {
     #>
     [CmdletBinding()]
     param(
-        $Server, 
-        $Port, 
-        $Database = "_users", 
-        $Userid = $(throw "Please specify the username."), 
-        $Authorization
+        [string] $Server, 
+        [int] $Port, 
+        [string] $Database = "_users", 
+        [string] $Userid = $(throw "Please specify the username."), 
+        [string] $Authorization
     )
     $Document = "org.couchdb.user:$Userid"
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization
@@ -192,17 +201,17 @@ function Set-CouchDBDocument () {
     Modify a CouchDB document json data. 
     .EXAMPLE
     $data = '{"album":"...and justice for all", "band":"Metallica"}'
-    Set-CouchDBDatabase -Database example -Document "001" -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Data $data -Authorization "admin:passw0rd"
+    Set-CouchDBDocument -Database example -Document "001" -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Data $data -Authorization "admin:passw0rd"
     #>
     [CmdletBinding()]
     param(
-        $Server, 
-        $Port, 
-        $Database = $(throw "Please specify the database name."), 
-        $Document = $(throw "Please specify the document id."), 
-        $Revision = $(throw "Please specify the revision id."), 
-        $Data, 
-        $Authorization
+        [string] $Server, 
+        [int] $Port, 
+        [string] $Database = $(throw "Please specify the database name."), 
+        [string] $Document = $(throw "Please specify the document id."), 
+        [string] $Revision = $(throw "Please specify the revision id."), 
+        [string] $Data, 
+        [string] $Authorization
     )
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Revision $Revision -Data $Data -Authorization $Authorization
 }
@@ -214,17 +223,17 @@ function Set-CouchDBAttachment () {
     .DESCRIPTION
     Modify attachment from CouchDB document. 
     .EXAMPLE
-    Set-CouchDBDatabase -Database example -Document "001" -Attachment test.html -Authorization "admin:passw0rd"
+    Set-CouchDBAttachment -Database example -Document "001" -Attachment C:\test.html -Authorization "admin:passw0rd"
     #>
     [CmdletBinding()]
     param(
-        $Server, 
-        $Port, 
-        $Database = $(throw "Please specify the database name."), 
-        $Document = $(throw "Please specify the document id."), 
-        $Revision = $(throw "Please specify the revision id."), 
-        $Attachment, 
-        $Authorization
+        [string] $Server, 
+        [int] $Port, 
+        [string] $Database = $(throw "Please specify the database name."), 
+        [string] $Document = $(throw "Please specify the document id."), 
+        [string] $Revision = $(throw "Please specify the revision id."), 
+        [string] $Attachment, 
+        [string] $Authorization
     )
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Revision $Revision -Attachment $Attachment -Authorization $Authorization
 }
@@ -240,16 +249,19 @@ function Set-CouchDBUser () {
     #>
     [CmdletBinding()]
     param(
-        $Server, 
-        $Port, $Database = "_users", 
-        $Userid = $(throw "Please specify the username."), 
-        $Password = $(throw "Please specify a password for username $Userid"), 
-        $Roles, 
-        $Revision = $(throw "Please specify the revision id."), 
-        $Authorization
+        [string] $Server, 
+        [int] $Port, 
+        [string] $Database = "_users", 
+        [string] $Userid = $(throw "Please specify the username."), 
+        [string] $Password = $(throw "Please specify a password for username $Userid"), 
+        [array] $Roles, 
+        [string] $Revision = $(throw "Please specify the revision id."), 
+        [string] $Authorization
     )
     $Document = "org.couchdb.user:$Userid"
-    if ($Roles) {
+    if ($Roles.Count -eq 1) {
+        $Roles = "[$($Roles | ConvertTo-Json)]"
+    } elseif ($Roles.Count -gt 1) {
         $Roles = $Roles | ConvertTo-Json
     } else {
         $Roles = '[]'
@@ -271,18 +283,18 @@ function Grant-CouchDBDatabasePermission () {
     .DESCRIPTION
     Grant permission on database. Specify Admins and/or Readers. 
     .EXAMPLE
-    Grant-CouchDBDatabasePermission -Database example -AdminUser admin,technician -ReaderUser user1 -Authorization "admin:passw0rd"
+    Grant-CouchDBDatabasePermission -Database example -AdminUser admin -AdminRoles technician -ReaderUser user1 -Authorization "admin:passw0rd"
     #>
     [CmdletBinding()]
     param(
-        $Server, 
-        $Port, 
-        $Database = $(throw "Please specify the database name."), 
+        [string] $Server, 
+        [int] $Port, 
+        [string] $Database = $(throw "Please specify the database name."), 
         [array]$AdminUser, 
         [array]$AdminRoles, 
         [array]$ReaderUser, 
         [array]$UserRoles, 
-        $Authorization
+        [string] $Authorization
     )
     # Check if admin user exists
     foreach ($User in $AdminUser) {
@@ -352,12 +364,13 @@ function Revoke-CouchDBDatabasePermission () {
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
-        $Server, 
-        $Port, 
-        $Database = $(throw "Please specify the database name."), 
-        $Authorization
+        [string] $Server, 
+        [int] $Port, 
+        [string] $Database = $(throw "Please specify the database name."), 
+        [string] $Authorization,
+        [switch]$Force
     )
-    if ($PSCmdlet.ShouldContinue("Do you wish revoke all permission on database $Database ?","Revoke all permission on database $Database")) {
+    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish revoke all permission on database $Database ?","Revoke all permission on database $Database")) {
         # Get a current security permission
         if (-not(Get-CouchDBDocument -Database $Database -Document '_security' -Authorization $Authorization)) {
             throw "No security object found in database $Database"
@@ -391,10 +404,10 @@ function New-CouchDBDatabase () {
     #>
     [CmdletBinding()]
     param(
-        $Server, 
-        $Port, 
-        $Database = $(throw "Please specify the database name."), 
-        $Authorization
+        [string] $Server, 
+        [int] $Port, 
+        [string] $Database = $(throw "Please specify the database name."), 
+        [string] $Authorization
     )
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Authorization $Authorization
 }
@@ -407,16 +420,16 @@ function New-CouchDBDocument () {
     Create a new CouchDB document with json data. 
     .EXAMPLE
     $data = '{"name":"Jhon", "surname":"Lennon"}'
-    New-CouchDBDatabase -Database example -Document "001" -Data $data -Authorization "admin:passw0rd"
+    New-CouchDBDocument -Database example -Document "001" -Data $data -Authorization "admin:passw0rd"
     #>
     [CmdletBinding()]
     param(
-        $Server, 
-        $Port, 
-        $Database = $(throw "Please specify the database name."), 
-        $Document = $(throw "Please specify the document id."), 
-        $Data = $(throw "Please specify a valid json data."), 
-        $Authorization
+        [string] $Server, 
+        [int] $Port, 
+        [string] $Database = $(throw "Please specify the database name."), 
+        [string] $Document = $(throw "Please specify the document id."), 
+        [string] $Data = $(throw "Please specify a valid json data."), 
+        [string] $Authorization
     )
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
 }
@@ -428,17 +441,17 @@ function New-CouchDBAttachment () {
     .DESCRIPTION
     Create a new CouchDB attachment document. 
     .EXAMPLE
-    New-CouchDBDatabase -Database example -Document "001" -Attachment C:\test.html -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:passw0rd"
+    New-CouchDBAttachment -Database example -Document "001" -Attachment C:\test.html -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:passw0rd"
     #>
     [CmdletBinding()]
     param(
-        $Server, 
-        $Port, 
-        $Database = $(throw "Please specify the database name."), 
-        $Document = $(throw "Please specify the document id."), 
-        $Attachment = $(throw "Please specify the path of attachment."), 
-        $Revision = $(throw "Please specify the revision id."), 
-        $Authorization
+        [string] $Server, 
+        [int] $Port, 
+        [string] $Database = $(throw "Please specify the database name."), 
+        [string] $Document = $(throw "Please specify the document id."), 
+        [string] $Attachment = $(throw "Please specify the path of attachment."), 
+        [string] $Revision = $(throw "Please specify the revision id."), 
+        [string] $Authorization
     )
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Attachment $Attachment -Revision $Revision -Authorization $Authorization
 }
@@ -454,13 +467,13 @@ function New-CouchDBUser () {
     #>
     [CmdletBinding()]
     param(
-        $Server, 
-        $Port, 
-        $Database = "_users", 
-        $Userid = $(throw "Please specify the username."), 
-        $Password = $(throw "Please specify a password for username $Userid"), 
-        $Roles, 
-        $Authorization
+        [string] $Server, 
+        [int] $Port, 
+        [string] $Database = "_users", 
+        [string] $Userid = $(throw "Please specify the username."), 
+        [string] $Password = $(throw "Please specify a password for username $Userid"), 
+        [array] $Roles, 
+        [string] $Authorization
     )
     $Document = "org.couchdb.user:$Userid"
     if ($Roles.Count -eq 1) {
@@ -491,12 +504,13 @@ function Remove-CouchDBDatabase () {
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
-        $Server, 
-        $Port, 
-        $Database = $(throw "Please specify the database name."), 
-        $Authorization
+        [string] $Server, 
+        [int] $Port, 
+        [string] $Database = $(throw "Please specify the database name."), 
+        [string] $Authorization,
+        [switch]$Force
     )
-    if ($PSCmdlet.ShouldContinue("Do you wish remove database $Database ?","Remove database $Database")) {
+    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove database $Database ?","Remove database $Database")) {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Authorization $Authorization
     }
 }
@@ -508,18 +522,19 @@ function Remove-CouchDBDocument () {
     .DESCRIPTION
     Remove a CouchDB document with json data. 
     .EXAMPLE
-    Remove-CouchDBDatabase -Database example -Document "001" -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:passw0rd"
+    Remove-CouchDBDocument -Database example -Document "001" -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:passw0rd"
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
-        $Server, 
-        $Port, 
-        $Database = $(throw "Please specify the database name."), 
-        $Document = $(throw "Please specify the document id."), 
-        $Revision = $(throw "Please specify the revision id."), 
-        $Authorization
+        [string] $Server, 
+        [int] $Port, 
+        [string] $Database = $(throw "Please specify the database name."), 
+        [string] $Document = $(throw "Please specify the document id."), 
+        [string] $Revision = $(throw "Please specify the revision id."), 
+        [string] $Authorization,
+        [switch]$Force
     )
-    if ($PSCmdlet.ShouldContinue("Do you wish remove document $Document on database $Database ?","Remove document $Document on database $Database")) {
+    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove document $Document on database $Database ?","Remove document $Document on database $Database")) {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization
     }
 }
@@ -531,17 +546,17 @@ function Remove-CouchDBAttachment () {
     .DESCRIPTION
     Remove a CouchDB attachment document. 
     .EXAMPLE
-    Remove-CouchDBDatabase -Database example -Document "001" -Attachment test.html -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:passw0rd"
+    Remove-CouchDBAttachment -Database example -Document "001" -Attachment test.html -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:passw0rd"
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
-        $Server, 
-        $Port, 
-        $Database = $(throw "Please specify the database name."), 
-        $Document = $(throw "Please specify the document id."), 
-        $Attachment = $(throw "Please specify the path of attachment."), 
-        $Revision = $(throw "Please specify the revision id."), 
-        $Authorization
+        [string] $Server, 
+        [int] $Port, 
+        [string] $Database = $(throw "Please specify the database name."), 
+        [string] $Document = $(throw "Please specify the document id."), 
+        [string] $Attachment = $(throw "Please specify the path of attachment."), 
+        [string] $Revision = $(throw "Please specify the revision id."), 
+        [string] $Authorization
     )
     if ($PSCmdlet.ShouldContinue("Do you wish remove attachment $Attachment in document $Document on database $Database ?","Remove attachment $Attachment in document $Document on database $Database")) {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Attachment $Attachment -Revision $Revision -Authorization $Authorization
@@ -559,15 +574,16 @@ function Remove-CouchDBUser () {
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
-        $Server, 
-        $Port, 
-        $Database = "_users", 
-        $Userid = $(throw "Please specify the username."), 
-        $Revision = $(throw "Please specify the revision id."), 
-        $Authorization
+        [string] $Server, 
+        [int] $Port, 
+        [string] $Database = "_users", 
+        [string] $Userid = $(throw "Please specify the username."), 
+        [string] $Revision = $(throw "Please specify the revision id."), 
+        [string] $Authorization,
+        [switch]$Force
     )
     $Document = "org.couchdb.user:$Userid"
-    if ($PSCmdlet.ShouldContinue("Do you wish remove user $Userid ?","Remove $Userid on database $Database")) {
+    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove user $Userid ?","Remove $Userid on database $Database")) {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization
     }
 }
@@ -583,16 +599,16 @@ function Find-CouchDBDocuments () {
     #>
     [CmdletBinding()]
     param (
-        $Server, 
-        $Port, 
-        $Database = $(throw "Please specify the database name."), 
-        $Selector, 
-        $Value, 
+        [string] $Server, 
+        [int] $Port, 
+        [string] $Database = $(throw "Please specify the database name."), 
+        [string] $Selector, 
+        [string] $Value, 
         [array]$Fields,
-        $Sort,
+        [string] $Sort,
         [ValidateSet('lt','lte','eq','ne','gte','gt','exists','type','in','nin','size','regex')]
-        [string]$Operator,
-        $Authorization
+        [string] $Operator,
+        [string] $Authorization
     )
 
     $Document = '_find'
