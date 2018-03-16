@@ -193,6 +193,48 @@ function Get-CouchDBUser () {
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization
 }
 
+function Get-CouchDBAdmin () {
+    <#
+    .SYNOPSIS
+    Get an admin user.
+    .DESCRIPTION
+    Get a CouchDB admin user. 
+    .EXAMPLE
+    Get-CouchDBAdmin -Authorization "admin:passw0rd"
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server, 
+        [int] $Port, 
+        [string] $Database = "_node",
+        [string] $Node = "couchdb@localhost",
+        [string] $Authorization
+    )
+    $Document = "$Node/_config/admins"
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
+}
+
+function Get-CouchDBConfiguration () {
+    <#
+    .SYNOPSIS
+    Get configuration.
+    .DESCRIPTION
+    Get configuration of CouchDB. 
+    .EXAMPLE
+    Get-CouchDBConfiguration -Authorization "admin:passw0rd"
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server, 
+        [int] $Port, 
+        [string] $Database = "_node",
+        [string] $Node = "couchdb@localhost",
+        [string] $Authorization
+    )
+    $Document = "$Node/_config"
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
+}
+
 function Set-CouchDBDocument () {
     <#
     .SYNOPSIS
@@ -274,6 +316,60 @@ function Set-CouchDBUser () {
         `"password`": `"$Password`"
 }"
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Revision $Revision -Authorization $Authorization
+}
+
+function Set-CouchDBAdmin () {
+    <#
+    .SYNOPSIS
+    Reset password of admin user.
+    .DESCRIPTION
+    Reset password of CouchDB admin user. 
+    .EXAMPLE
+    Set-CouchDBAdmin -Userid test_user -Authorization "admin:passw0rd"
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server, 
+        [int] $Port, 
+        [string] $Database = "_node",
+        [string] $Node = "couchdb@localhost",
+        [string] $Userid = $(throw "Please specify the admin username."),
+        [string] $Password = $(throw "Please specify a password for username $Userid"),
+        [string] $Authorization
+    )
+    $Document = "$Node/_config/admins/$Userid"
+    $Data = "`"$Password`""
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
+}
+
+function Set-CouchDBConfiguration () {
+    <#
+    .SYNOPSIS
+    Set element configuration.
+    .DESCRIPTION
+    Set element configuration of CouchDB. 
+    .EXAMPLE
+    Set-CouchDBConfiguration -Element attachments -Key compression_level -Value 10 -Authorization "admin:passw0rd"
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server, 
+        [int] $Port, 
+        [string] $Database = "_node",
+        [string] $Node = "couchdb@localhost",
+        [string] $Element = $(throw "Please specify an element."),
+        [string] $Key = $(throw "Please specify a key of element $Element"),
+        [string] $Value = $(throw "Please specify a value of key $Key"),
+        [string] $Authorization
+    )
+    $Document = "$Node/_config"
+    if ((Get-CouchDBConfiguration -Authorization $Authorization).$Element) {
+        $Document += "/$Element/$Key"
+    } else {
+        throw "Element $Element not exist!"
+    }
+    $Data = "$Value" | ConvertTo-Json
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
 }
 
 function Grant-CouchDBDatabasePermission () {
@@ -493,6 +589,30 @@ function New-CouchDBUser () {
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
 }
 
+function New-CouchDBAdmin () {
+    <#
+    .SYNOPSIS
+    Create a new admin user.
+    .DESCRIPTION
+    Create a new CouchDB admin user. 
+    .EXAMPLE
+    New-CouchDBAdmin -Userid test_user -Password Passw0rd -Authorization "admin:passw0rd"
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server, 
+        [int] $Port, 
+        [string] $Database = "_node",
+        [string] $Node = "couchdb@localhost",
+        [string] $Userid = $(throw "Please specify the admin username."), 
+        [string] $Password = $(throw "Please specify a password for admin username $Userid"), 
+        [string] $Authorization
+    )
+    $Document = "$Node/_config/admins/$Userid"
+    $Data = "`"$Password`""
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
+}
+
 function Remove-CouchDBDatabase () {
     <#
     .SYNOPSIS
@@ -586,6 +706,28 @@ function Remove-CouchDBUser () {
     if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove user $Userid ?","Remove $Userid on database $Database")) {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization
     }
+}
+
+function Remove-CouchDBAdmin () {
+    <#
+    .SYNOPSIS
+    Remove an admin user.
+    .DESCRIPTION
+    Remove a CouchDB admin user. 
+    .EXAMPLE
+    Remove-CouchDBAdmin -Userid test_user -Authorization "admin:passw0rd"
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server, 
+        [int] $Port, 
+        [string] $Database = "_node",
+        [string] $Node = "couchdb@localhost",
+        [string] $Userid = $(throw "Please specify the admin username."),
+        [string] $Authorization
+    )
+    $Document = "$Node/_config/admins/$Userid"
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
 }
 
 function Find-CouchDBDocuments () {

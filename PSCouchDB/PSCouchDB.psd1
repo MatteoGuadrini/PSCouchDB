@@ -12,7 +12,7 @@
 RootModule = 'PSCouchDB.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.1.0'
+ModuleVersion = '1.2.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -73,20 +73,27 @@ FunctionsToExport = @("Get-CouchDBDatabase",
                     "Get-CouchDBDocument",
                     "Get-CouchDBAttachment",
                     "Get-CouchDBUser",
+                    "Get-CouchDBAdmin",
+                    "Get-CouchDBConfiguration",
                     "Set-CouchDBDocument",
                     "Set-CouchDBAttachment",
                     "Set-CouchDBUser",
+                    "Set-CouchDBAdmin",
+                    "Set-CouchDBConfiguration",
                     "Grant-CouchDBDatabasePermission",
                     "Revoke-CouchDBDatabasePermission",
                     "New-CouchDBDatabase",
                     "New-CouchDBDocument",
                     "New-CouchDBAttachment",
                     "New-CouchDBUser",
+                    "New-CouchDBAdmin",
                     "Remove-CouchDBDatabase",
                     "Remove-CouchDBDocument",
                     "Remove-CouchDBAttachment",
                     "Remove-CouchDBUser",
-                    "Find-CouchDBDocuments")
+                    "Remove-CouchDBAdmin",
+                    "Find-CouchDBDocuments"
+                    )
 
 # Cmdlet s to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = @()
