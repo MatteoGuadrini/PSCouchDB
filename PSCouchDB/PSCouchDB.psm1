@@ -140,11 +140,10 @@ function Get-CouchDBDocument () {
         [string] $Server, 
         [int] $Port, 
         [string] $Database = $(throw "Please specify the database name."),
-        [string] $Document = "_all_docs", 
-        [string] $Data, 
+        [string] $Document = "_all_docs",
         [string] $Authorization
     )
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization
 }
 
 # TODO: Add outfile parameter on ivoke-restmethod for download file attachment
@@ -233,6 +232,48 @@ function Get-CouchDBConfiguration () {
     )
     $Document = "$Node/_config"
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
+}
+
+function Get-CouchDBNode () {
+    <#
+    .SYNOPSIS
+    Get server nodes.
+    .DESCRIPTION
+    Get server nodes of CouchDB. 
+    .EXAMPLE
+    Get-CouchDBNode -Authorization "admin:passw0rd"
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server, 
+        [int] $Port,
+        [string] $Database = "_membership",
+        [string] $Authorization
+    )
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
+}
+
+function Add-CouchDBNode () {
+    <#
+    .SYNOPSIS
+    Add server nodes.
+    .DESCRIPTION
+    Add server nodes of CouchDB. 
+    .EXAMPLE
+    Add-CouchDBNode -Name test -Authorization "admin:passw0rd"
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server, 
+        [int] $Port = 5986,
+        [string] $Database = "_nodes",
+        [string] $Name = $(throw "Please specify name of node!"),
+        [string] $Hostname = 'localhost',
+        [string] $Authorization
+    )
+    $Document = "$Name@$Hostname"
+    $Data = '{}'
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
 }
 
 function Set-CouchDBDocument () {
@@ -717,17 +758,49 @@ function Remove-CouchDBAdmin () {
     .EXAMPLE
     Remove-CouchDBAdmin -Userid test_user -Authorization "admin:passw0rd"
     #>
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess = $true)]
     param(
         [string] $Server, 
         [int] $Port, 
         [string] $Database = "_node",
         [string] $Node = "couchdb@localhost",
         [string] $Userid = $(throw "Please specify the admin username."),
-        [string] $Authorization
+        [string] $Authorization,
+        [switch]$Force
     )
     $Document = "$Node/_config/admins/$Userid"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
+    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove admin user $Userid ?","Remove $Userid on node $Node")) {
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
+    }
+}
+
+function Remove-CouchDBNode () {
+    <#
+    .SYNOPSIS
+    Remove server nodes.
+    .DESCRIPTION
+    Remove server nodes of CouchDB. 
+    .EXAMPLE
+    Remove-CouchDBNode -Node test -Authorization "admin:passw0rd"
+    #>
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param(
+        [string] $Server, 
+        [int] $Port = 5986,
+        [string] $Database = "_nodes",
+        [string] $Node = $(throw "Please specify name of node!"), 
+        [string] $Authorization,
+        [switch]$Force
+    )
+    if (Get-CouchDBDocument -Port $Port -Database $Database -Document $Node -Authorization $Authorization -ErrorAction SilentlyContinue) {
+        $Revision = (Get-CouchDBDocument -Port $Port -Database $Database -Document $Node -Authorization $Authorization)._rev
+    } else {
+        throw "Node $Node not exist."
+    }
+    $Document = $Node
+    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove node $Node ?","Remove $Node")) {
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Data $Data -Authorization $Authorization
+    }
 }
 
 function Find-CouchDBDocuments () {

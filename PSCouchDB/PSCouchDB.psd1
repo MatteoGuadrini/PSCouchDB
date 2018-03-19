@@ -75,6 +75,8 @@ FunctionsToExport = @("Get-CouchDBDatabase",
                     "Get-CouchDBUser",
                     "Get-CouchDBAdmin",
                     "Get-CouchDBConfiguration",
+                    "Get-CouchDBNode",
+                    "Add-CouchDBNode",
                     "Set-CouchDBDocument",
                     "Set-CouchDBAttachment",
                     "Set-CouchDBUser",
@@ -92,6 +94,7 @@ FunctionsToExport = @("Get-CouchDBDatabase",
                     "Remove-CouchDBAttachment",
                     "Remove-CouchDBUser",
                     "Remove-CouchDBAdmin",
+                    "Remove-CouchDBNode",
                     "Find-CouchDBDocuments"
                     )
 
