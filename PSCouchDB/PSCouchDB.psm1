@@ -9,7 +9,7 @@ function Send-CouchDBRequest {
     #>
     [CmdletBinding()]
     param (
-        [string] $Method,
+        [ValidateSet("HEAD","GET","PUT","DELETE","POST")] [string] $Method,
         [string] $Server,
         [int] $Port,
         [string] $Database,
@@ -38,6 +38,7 @@ function Send-CouchDBRequest {
     Write-Verbose -Message "Check http method, default is GET"
     Write-Debug -Message "`$Method is $Method"
     switch ($Method) {
+        "HEAD"      { $options.Add("Method","HEAD") }
         "GET"       { $options.Add("Method","GET") }
         "PUT"       { $options.Add("Method","PUT") }
         "DELETE"    { $options.Add("Method","DELETE") }
@@ -96,7 +97,7 @@ function Send-CouchDBRequest {
     }
     # Build the json data
     Write-Verbose -Message "Check json data"
-    if (($Data) -and ($Document) -and ($Database)) {
+    if (($Data) -and ($Database)) {
         $options.Add("ContentType","application/json")
         $options.Add("Body",([System.Text.Encoding]::UTF8.GetBytes($Data)))
         Write-Debug -Message "`$Data is $Data"
@@ -124,6 +125,29 @@ function Get-CouchDBDatabase () {
         [string] $Authorization
     )
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization
+}
+
+function Get-CouchDBDatabaseChanges () {
+    <#
+    .SYNOPSIS
+    Get database changelogs.
+    .DESCRIPTION
+    Get database changelogs of CouchDB . 
+    .EXAMPLE
+    Get-CouchDBDatabaseChanges -Database test -Authorization "admin:passw0rd"
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server, 
+        [int] $Port,
+        [string] $Database = $(throw "Please specify the database name."),
+        [string] $Authorization
+    )
+    if (-not(Get-CouchDBDatabase -Database $Database)) {
+        throw "Database replicator $Database is not exists."
+    }
+    $Document = '_changes'
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization
 }
 
 function Get-CouchDBDocument () {
@@ -210,7 +234,7 @@ function Get-CouchDBAdmin () {
         [string] $Authorization
     )
     $Document = "$Node/_config/admins"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization
 }
 
 function Get-CouchDBConfiguration () {
@@ -231,7 +255,7 @@ function Get-CouchDBConfiguration () {
         [string] $Authorization
     )
     $Document = "$Node/_config"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization
 }
 
 function Get-CouchDBNode () {
@@ -250,7 +274,50 @@ function Get-CouchDBNode () {
         [string] $Database = "_membership",
         [string] $Authorization
     )
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization
+}
+
+function Get-CouchDBReplication () {
+    <#
+    .SYNOPSIS
+    Get database replication documents.
+    .DESCRIPTION
+    Get database replication documents of CouchDB . 
+    .EXAMPLE
+    Get-CouchDBReplication -Authorization "admin:passw0rd"
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server, 
+        [int] $Port,
+        [string] $Database = "_replicator",
+        [string] $Document = '_all_docs',
+        [string] $Authorization
+    )
+    if (-not(Get-CouchDBDatabase -Database $Database)) {
+        throw "Database replicator $Database is not exists."
+    }
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization
+}
+
+function Get-CouchDBReplicationScheduler () {
+    <#
+    .SYNOPSIS
+    Get database replication documents.
+    .DESCRIPTION
+    Get database replication documents of CouchDB . 
+    .EXAMPLE
+    Get-CouchDBReplicationScheduler -Authorization "admin:passw0rd"
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server, 
+        [int] $Port,
+        [string] $Authorization
+    )
+    $Database = "_scheduler"
+    $Document = 'jobs'
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization
 }
 
 function Add-CouchDBNode () {
@@ -411,6 +478,39 @@ function Set-CouchDBConfiguration () {
     }
     $Data = "$Value" | ConvertTo-Json
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
+}
+
+function Set-CouchDBReplication () {
+    <#
+    .SYNOPSIS
+    Set replication documents.
+    .DESCRIPTION
+    Set replication documents of CouchDB . 
+    .EXAMPLE
+    Set-CouchDBReplication -Document replica_id1 -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Continuous -Authorization "admin:passw0rd"
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server, 
+        [int] $Port,
+        [string] $Database = "_replicator",
+        [string] $Document = $(throw "Please specify the document id."),
+        [string] $Revision = $(throw "Please specify the revision id."),
+        [switch] $Continuous,
+        [string] $Authorization
+    )
+    if (-not(Get-CouchDBDatabase -Database $Database)) {
+        throw "Database replicator $Database is not exists."
+    }
+    if ($Continuous.IsPresent) {
+        $Continuous_value = $true
+    } else {
+        $Continuous_value = $false
+    }
+    $Data = Get-CouchDBReplication -Document $Document -Authorization $Authorization
+    $Data.continuous = $Continuous_value
+    $Data = $Data | ConvertTo-Json
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Revision $Revision -Data $Data -Authorization $Authorization
 }
 
 function Grant-CouchDBDatabasePermission () {
@@ -654,6 +754,55 @@ function New-CouchDBAdmin () {
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
 }
 
+function New-CouchDBReplication () {
+    <#
+    .SYNOPSIS
+    Create a new replication job.
+    .DESCRIPTION
+    Create a new replication job for a specidfic database. 
+    .EXAMPLE
+    New-CouchDBReplication -Name "Test replication" -SourceServer localhost -TargetServer server1 -SourceDatabase test -TargetDatabase test_replica -Continuous -Authorization "admin:passw0rd"
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $SourceServer = 'localhost',
+        [string] $TargetServer = 'localhost',
+        [int] $SourcePort = 5984,
+        [int] $TargetPort = 5984,
+        [string] $Database = "_replicator",
+        [string] $SourceDatabase,
+        [string] $TargetDatabase,
+        [switch] $Continuous,
+        [string] $Authorization
+    )
+    $Server = $SourceServer
+    $Port = $SourcePort
+    # Check if replicator database exists
+    if (-not(Get-CouchDBDatabase -Server $Server -Port $Port -Database $Database -Authorization $Authorization -ErrorAction SilentlyContinue)) {
+        New-CouchDBDatabase -Server $Server -Port $Port -Database $Database -Authorization $Authorization | Out-Null
+    }
+    # Check if target database exists
+    if (-not(Get-CouchDBDatabase -Server $Server -Port $Port -Database $TargetDatabase -Authorization $Authorization -ErrorAction SilentlyContinue)) {
+        New-CouchDBDatabase -Server $Server -Port $Port -Database $TargetDatabase -Authorization $Authorization | Out-Null
+    }
+    # Create Source and Target URL
+    $Source = "http://$SourceServer`:$SourcePort/$SourceDatabase"
+    $Target = "http://$TargetServer`:$TargetPort/$TargetDatabase"
+    if ($Continuous.IsPresent) {
+        $Continuous_value = "true"
+    } else {
+        $Continuous_value = "false"
+    }
+    # Create data
+    $Data = "{
+    `"_id`":`"$SourceServer`-$SourceDatabase`_$TargetServer`-$TargetDatabase`",
+    `"source`":`"$Source`",
+    `"target`":`"$Target`",
+    `"continuous`":$Continuous_value
+    }"
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
+}
+
 function Remove-CouchDBDatabase () {
     <#
     .SYNOPSIS
@@ -770,7 +919,7 @@ function Remove-CouchDBAdmin () {
     )
     $Document = "$Node/_config/admins/$Userid"
     if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove admin user $Userid ?","Remove $Userid on node $Node")) {
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Authorization $Authorization
     }
 }
 
@@ -799,7 +948,34 @@ function Remove-CouchDBNode () {
     }
     $Document = $Node
     if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove node $Node ?","Remove $Node")) {
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Data $Data -Authorization $Authorization
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization
+    }
+}
+
+function Remove-CouchDBReplication () {
+    <#
+    .SYNOPSIS
+    Remove replication documents.
+    .DESCRIPTION
+    Remove replication documents of CouchDB . 
+    .EXAMPLE
+    Remove-CouchDBReplication -Document replica_id1 -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:passw0rd"
+    #>
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param(
+        [string] $Server, 
+        [int] $Port,
+        [string] $Database = "_replicator",
+        [string] $Document = $(throw "Please specify the document id."),
+        [string] $Revision = $(throw "Please specify the revision id."),
+        [string] $Authorization,
+        [switch] $Force
+    )
+    if (-not(Get-CouchDBDatabase -Database $Database)) {
+        throw "Database replicator $Database is not exists."
+    }
+    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove replication $Document ?","Remove $Document")) {
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization
     }
 }
 
@@ -819,7 +995,7 @@ function Find-CouchDBDocuments () {
         [string] $Database = $(throw "Please specify the database name."), 
         [string] $Selector, 
         [string] $Value, 
-        [array]$Fields,
+        [array] $Fields,
         [string] $Sort,
         [ValidateSet('lt','lte','eq','ne','gte','gt','exists','type','in','nin','size','regex')]
         [string] $Operator,

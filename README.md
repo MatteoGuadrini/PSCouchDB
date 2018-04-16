@@ -8,7 +8,7 @@
 New-CouchDBAdmin -Userid adminuser -Password "password"
 ```
 > ATTENTION: Authentication for read and write no required by default, but required if you create custom user, like session "Grant permission" on this document. For more information see permission on [wiki permission page](https://github.com/MatteoGuadrini/PSCouchDB/wiki/Permission)
-3. Download and install latest PSCouchDB module by copying it under `%Windir%\System32\WindowsPowerShell\v1.0\Modules` for all users or under `%UserProfile%\Documents\WindowsPowerShell\Modules` for the current user.
+3. Download and install latest PSCouchDB module by copying it under `%Windir%\System32\WindowsPowerShell\v1.0\Modules` for all users or under `%UserProfile%\Documents\WindowsPowerShell\Modules` for the current user or install through [PowershellGallery](https://www.powershellgallery.com/packages/PSCouchDB).
 > ATTENTION: This module is not signed. Before import or execute cmdlet on this module, see [about_signing](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_signing) session. To skip this part and continue, run ```Set-ExecutionPolicy -ExecutionPolicy Unrestricted```
 4. Now, configure database mode, in single node or cluster, clicking on "Setup" on left of the menu; follow the wizard and complete this procedure.
 Before configure database mode, create this system document whit this cmdlet:
@@ -125,9 +125,15 @@ For now, I've used the native powershell logical operators.
 (-not((Find-CouchDBDocuments -Database test -Selector "color" -Value "red" -Fields _id,color -Operator eq).docs -or (Find-CouchDBDocuments -Database test -Selector "color" -Value "blue" -Fields _id,color -Operator eq).docs))
 ```
 
+### Other operation
+For other operation see the [wiki](https://github.com/MatteoGuadrini/PSCouchDB/wiki).
+
 ### Cmdlet example
 To get examples of all the cmdlets of this module, use this command:
 ```powershell
 Get-Command -Module *PSCouchDB* | foreach {Get-Help $_.Name -Example}
 ```
 or see [wiki page](https://github.com/MatteoGuadrini/PSCouchDB/wiki)
+
+
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=CYB2W93Z5JY8C)

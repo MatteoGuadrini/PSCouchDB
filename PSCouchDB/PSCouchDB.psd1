@@ -12,7 +12,7 @@
 RootModule = 'PSCouchDB.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.2.0'
+ModuleVersion = '1.3.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -30,7 +30,7 @@ Author = 'Matteo Guadrini <m.guadrini@gmail.com>'
 Copyright = '(c) Matteo Guadrini. All rights reserved.'
 
 # Description of the functionality provided by this module
-# Description = ''
+Description = 'Powershell module for CouchDB v2.0'
 
 # Minimum version of the PowerShell engine required by this module
 # PowerShellVersion = ''
@@ -70,18 +70,22 @@ Copyright = '(c) Matteo Guadrini. All rights reserved.'
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
 FunctionsToExport = @("Get-CouchDBDatabase",
+                    "Get-CouchDBDatabaseChanges",
                     "Get-CouchDBDocument",
                     "Get-CouchDBAttachment",
                     "Get-CouchDBUser",
                     "Get-CouchDBAdmin",
                     "Get-CouchDBConfiguration",
                     "Get-CouchDBNode",
+                    "Get-CouchDBReplication",
+                    "Get-CouchDBReplicationScheduler",
                     "Add-CouchDBNode",
                     "Set-CouchDBDocument",
                     "Set-CouchDBAttachment",
                     "Set-CouchDBUser",
                     "Set-CouchDBAdmin",
                     "Set-CouchDBConfiguration",
+                    "Set-CouchDBReplication",
                     "Grant-CouchDBDatabasePermission",
                     "Revoke-CouchDBDatabasePermission",
                     "New-CouchDBDatabase",
@@ -89,12 +93,14 @@ FunctionsToExport = @("Get-CouchDBDatabase",
                     "New-CouchDBAttachment",
                     "New-CouchDBUser",
                     "New-CouchDBAdmin",
+                    "New-CouchDBReplication",
                     "Remove-CouchDBDatabase",
                     "Remove-CouchDBDocument",
                     "Remove-CouchDBAttachment",
                     "Remove-CouchDBUser",
                     "Remove-CouchDBAdmin",
                     "Remove-CouchDBNode",
+                    "Remove-CouchDBReplication",
                     "Find-CouchDBDocuments"
                     )
 
@@ -122,13 +128,13 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        # Tags = @()
+        Tags = @("CouchDB","Apache","curl")
 
         # A URL to the license for this module.
         # LicenseUri = ''
 
         # A URL to the main website for this project.
-        # ProjectUri = ''
+        ProjectUri = 'https://matteoguadrini.github.io/PSCouchDB'
 
         # A URL to an icon representing this module.
         # IconUri = ''
