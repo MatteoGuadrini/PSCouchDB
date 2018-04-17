@@ -108,6 +108,12 @@ function Send-CouchDBRequest {
     return $results
 }
 
+function ConvertTo-CouchDBPassword ([SecureString] $SecurePassword) {
+    $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecurePassword)
+    $UnsecurePassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
+    return $UnsecurePassword
+}
+
 function Get-CouchDBDatabase () {
     <#
     .SYNOPSIS
@@ -165,8 +171,12 @@ function Get-CouchDBDocument () {
         [int] $Port, 
         [string] $Database = $(throw "Please specify the database name."),
         [string] $Document = "_all_docs",
+        [switch] $Local,
         [string] $Authorization
     )
+    if ($Local.IsPresent) {
+        $Document = "_local/$Document"
+    }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization
 }
 
@@ -303,9 +313,9 @@ function Get-CouchDBReplication () {
 function Get-CouchDBReplicationScheduler () {
     <#
     .SYNOPSIS
-    Get database replication documents.
+    Get more details of database replication documents.
     .DESCRIPTION
-    Get database replication documents of CouchDB . 
+    Get more details of database replication documents of CouchDB. 
     .EXAMPLE
     Get-CouchDBReplicationScheduler -Authorization "admin:passw0rd"
     #>
@@ -395,7 +405,8 @@ function Set-CouchDBUser () {
     .DESCRIPTION
     Set a CouchDB user properties with roles. Reset password user.
     .EXAMPLE
-    Set-CouchDBUser -Userid test_user -Password Passw0rd -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:passw0rd"
+    $password = "password" | ConvertTo-SecureString -AsPlainText -Force
+    Set-CouchDBUser -Userid test_user -Password $passw0rd -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:passw0rd"
     #>
     [CmdletBinding()]
     param(
@@ -403,7 +414,7 @@ function Set-CouchDBUser () {
         [int] $Port, 
         [string] $Database = "_users", 
         [string] $Userid = $(throw "Please specify the username."), 
-        [string] $Password = $(throw "Please specify a password for username $Userid"), 
+        [SecureString] $Password = $(throw "Please specify a password for username $Userid"), 
         [array] $Roles, 
         [string] $Revision = $(throw "Please specify the revision id."), 
         [string] $Authorization
@@ -416,12 +427,13 @@ function Set-CouchDBUser () {
     } else {
         $Roles = '[]'
     }
+    $ClearPassword = ConvertTo-CouchDBPassword -SecurePassword $Password
     $Data = "{
         `"_id`": `"org.couchdb.user:$Userid`",
         `"name`": `"$Userid`",
         `"roles`": $Roles,
         `"type`": `"user`",
-        `"password`": `"$Password`"
+        `"password`": `"$ClearPassword`"
 }"
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Revision $Revision -Authorization $Authorization
 }
@@ -433,7 +445,8 @@ function Set-CouchDBAdmin () {
     .DESCRIPTION
     Reset password of CouchDB admin user. 
     .EXAMPLE
-    Set-CouchDBAdmin -Userid test_user -Authorization "admin:passw0rd"
+    $password = "password" | ConvertTo-SecureString -AsPlainText -Force
+    Set-CouchDBAdmin -Userid test_user -Password $password -Authorization "admin:passw0rd"
     #>
     [CmdletBinding()]
     param(
@@ -442,11 +455,12 @@ function Set-CouchDBAdmin () {
         [string] $Database = "_node",
         [string] $Node = "couchdb@localhost",
         [string] $Userid = $(throw "Please specify the admin username."),
-        [string] $Password = $(throw "Please specify a password for username $Userid"),
+        [SecureString] $Password = $(throw "Please specify a password for username $Userid"),
         [string] $Authorization
     )
     $Document = "$Node/_config/admins/$Userid"
-    $Data = "`"$Password`""
+    $ClearPassword = ConvertTo-CouchDBPassword -SecurePassword $Password
+    $Data = "`"$ClearPassword`""
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
 }
 
@@ -700,7 +714,8 @@ function New-CouchDBUser () {
     .DESCRIPTION
     Create a new CouchDB user with roles. 
     .EXAMPLE
-    New-CouchDBUser -Userid test_user -Password Passw0rd -Authorization "admin:passw0rd"
+    $password = "password" | ConvertTo-SecureString -AsPlainText -Force
+    New-CouchDBUser -Userid test_user -Password $passw0rd -Authorization "admin:passw0rd"
     #>
     [CmdletBinding()]
     param(
@@ -708,7 +723,7 @@ function New-CouchDBUser () {
         [int] $Port, 
         [string] $Database = "_users", 
         [string] $Userid = $(throw "Please specify the username."), 
-        [string] $Password = $(throw "Please specify a password for username $Userid"), 
+        [SecureString] $Password = $(throw "Please specify a password for username $Userid"), 
         [array] $Roles, 
         [string] $Authorization
     )
@@ -720,12 +735,13 @@ function New-CouchDBUser () {
     } else {
         $Roles = '[]'
     }
+    $ClearPassword = ConvertTo-CouchDBPassword -SecurePassword $Password
     $Data = "{
         `"_id`": `"org.couchdb.user:$Userid`",
         `"name`": `"$Userid`",
         `"roles`": $Roles,
         `"type`": `"user`",
-        `"password`": `"$Password`"
+        `"password`": `"$ClearPassword`"
 }"
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
 }
@@ -737,7 +753,8 @@ function New-CouchDBAdmin () {
     .DESCRIPTION
     Create a new CouchDB admin user. 
     .EXAMPLE
-    New-CouchDBAdmin -Userid test_user -Password Passw0rd -Authorization "admin:passw0rd"
+    $password = "password" | ConvertTo-SecureString -AsPlainText -Force
+    New-CouchDBAdmin -Userid test_user -Password $passw0rd -Authorization "admin:passw0rd"
     #>
     [CmdletBinding()]
     param(
@@ -746,11 +763,12 @@ function New-CouchDBAdmin () {
         [string] $Database = "_node",
         [string] $Node = "couchdb@localhost",
         [string] $Userid = $(throw "Please specify the admin username."), 
-        [string] $Password = $(throw "Please specify a password for admin username $Userid"), 
+        [SecureString] $Password = $(throw "Please specify a password for admin username $Userid"), 
         [string] $Authorization
     )
     $Document = "$Node/_config/admins/$Userid"
-    $Data = "`"$Password`""
+    $ClearPassword = ConvertTo-CouchDBPassword -SecurePassword $Password
+    $Data = "`"$ClearPassword`""
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
 }
 

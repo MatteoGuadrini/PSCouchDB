@@ -2,21 +2,22 @@
 [Powershell](https://github.com/PowerShell/PowerShell "Powershell source") meet [CouchDB](http://couchdb.apache.org/ "CouchDB site")
 
 ## Installation and simple usage
-1. Download and install CouchDB following the [docs](http://docs.couchdb.org/en/latest).
-2. Now let's start by creating an admin user by connecting to [Fauxton](http://localhost:5984/_utils) and going to session "Admin Party!" on left of the menu or run this cmdlet:
+1. Download and install CouchDB following the [docs](http://docs.couchdb.org/en/latest/install/index.html).
+2. Download and install latest PSCouchDB module by copying it under `%Windir%\System32\WindowsPowerShell\v1.0\Modules` for all users or under `%UserProfile%\Documents\WindowsPowerShell\Modules` for the current user or install through [PowershellGallery](https://www.powershellgallery.com/packages/PSCouchDB).
+> ATTENTION: This module is not signed. Before import or execute cmdlet on this module, see [about_signing](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_signing) session. To skip this part and continue, run ```Set-ExecutionPolicy -ExecutionPolicy Unrestricted```
+3. Now let's start by creating an admin user by connecting to [Fauxton](http://localhost:5984/_utils) and going to session "Admin Party!" on left of the menu or run this cmdlet:
 ```powershell
-New-CouchDBAdmin -Userid adminuser -Password "password"
+$password = "password" | ConvertTo-SecureString -AsPlainText -Force
+New-CouchDBAdmin -Userid adminuser -Password $password
 ```
 > ATTENTION: Authentication for read and write no required by default, but required if you create custom user, like session "Grant permission" on this document. For more information see permission on [wiki permission page](https://github.com/MatteoGuadrini/PSCouchDB/wiki/Permission)
-3. Download and install latest PSCouchDB module by copying it under `%Windir%\System32\WindowsPowerShell\v1.0\Modules` for all users or under `%UserProfile%\Documents\WindowsPowerShell\Modules` for the current user or install through [PowershellGallery](https://www.powershellgallery.com/packages/PSCouchDB).
-> ATTENTION: This module is not signed. Before import or execute cmdlet on this module, see [about_signing](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_signing) session. To skip this part and continue, run ```Set-ExecutionPolicy -ExecutionPolicy Unrestricted```
-4. Now, configure database mode, in single node or cluster, clicking on "Setup" on left of the menu; follow the wizard and complete this procedure.
-Before configure database mode, create this system document whit this cmdlet:
+4. Before configure database mode, create this system document whit this cmdlet:
 ```powershell
 New-CouchDBDatabase -Database _users -Authorization "adminuser:password"
 New-CouchDBDatabase -Database _replicator -Authorization "adminuser:password"
 New-CouchDBDatabase -Database _global_changes -Authorization "adminuser:password"
 ```
+Now, configure database mode, in single node or cluster, clicking on "Setup" on left of the menu; follow the wizard and complete this procedure.
 5. Now, open powershell and create a first personal database: 
 ```powershell
 New-CouchDBDatabase -Database test -Authorization "adminuser:password"
