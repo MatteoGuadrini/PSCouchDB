@@ -12,7 +12,7 @@
 RootModule = 'PSCouchDB.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.3.0'
+ModuleVersion = '1.4.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -79,7 +79,11 @@ FunctionsToExport = @("Get-CouchDBDatabase",
                     "Get-CouchDBNode",
                     "Get-CouchDBReplication",
                     "Get-CouchDBReplicationScheduler",
+                    "Get-CouchDBActiveTask",
+                    "Enable-CouchDBCluster",
                     "Add-CouchDBNode",
+                    "Compress-CouchDBDatabase",
+                    "Clear-CouchDBView",
                     "Set-CouchDBDocument",
                     "Set-CouchDBAttachment",
                     "Set-CouchDBUser",

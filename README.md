@@ -17,7 +17,10 @@ New-CouchDBDatabase -Database _users -Authorization "adminuser:password"
 New-CouchDBDatabase -Database _replicator -Authorization "adminuser:password"
 New-CouchDBDatabase -Database _global_changes -Authorization "adminuser:password"
 ```
-Now, configure database mode, in single node or cluster, clicking on "Setup" on left of the menu; follow the wizard and complete this procedure.
+Now, configure database mode, in single node (cluster of one single node) or cluster, clicking on "Setup" on left of the menu; follow the wizard and complete this procedure or run this cmdlet:
+```powershell
+Enable-CouchDBCluster -Authorization "adminuser:password"
+```
 5. Now, open powershell and create a first personal database: 
 ```powershell
 New-CouchDBDatabase -Database test -Authorization "adminuser:password"

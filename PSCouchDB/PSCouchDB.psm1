@@ -5,7 +5,7 @@ function Send-CouchDBRequest {
     .DESCRIPTION
     Sends a REST request to a CouchDB database server.
     .EXAMPLE
-    Send-CouchDBRequest -Method PUT -Database example -Authorization "admin:passw0rd"
+    Send-CouchDBRequest -Method PUT -Database example -Authorization "admin:password"
     #>
     [CmdletBinding()]
     param (
@@ -117,11 +117,11 @@ function ConvertTo-CouchDBPassword ([SecureString] $SecurePassword) {
 function Get-CouchDBDatabase () {
     <#
     .SYNOPSIS
-    Get a database.
+    Get a database information.
     .DESCRIPTION
     Get a CouchDB database informations. 
     .EXAMPLE
-    Get-CouchDBDatabase -Database example -Authorization "admin:passw0rd"
+    Get-CouchDBDatabase -Database test -Authorization "admin:password"
     #>
     [CmdletBinding()]
     param(
@@ -138,9 +138,9 @@ function Get-CouchDBDatabaseChanges () {
     .SYNOPSIS
     Get database changelogs.
     .DESCRIPTION
-    Get database changelogs of CouchDB . 
+    Get database changelogs of CouchDB database. 
     .EXAMPLE
-    Get-CouchDBDatabaseChanges -Database test -Authorization "admin:passw0rd"
+    Get-CouchDBDatabaseChanges -Database test -Authorization "admin:password"
     #>
     [CmdletBinding()]
     param(
@@ -163,7 +163,7 @@ function Get-CouchDBDocument () {
     .DESCRIPTION
     Get a CouchDB document json data. 
     .EXAMPLE
-    Get-CouchDBDocument -Database example -Document "001"
+    Get-CouchDBDocument -Database test -Document "001"
     #>
     [CmdletBinding()]
     param(
@@ -175,22 +175,21 @@ function Get-CouchDBDocument () {
         [string] $Authorization
     )
     if ($Local.IsPresent) {
-        $Document = "_local/$Document"
+        $Document = "_local_docs"
     }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization
 }
 
-# TODO: Add outfile parameter on ivoke-restmethod for download file attachment
 function Get-CouchDBAttachment () {
     <#
     .SYNOPSIS
-    Get attachment.
+    Get or save attachment.
     .DESCRIPTION
-    Get attachment from CouchDB document. 
+    Get or save attachment from CouchDB document. 
     .EXAMPLE
-    Get-CouchDBAttachment -Database example -Document "001" -Attachment test.html -Authorization "admin:passw0rd"
+    Get-CouchDBAttachment -Database test -Document "001" -Attachment test.html -Authorization "admin:password"
     .EXAMPLE
-    Get-CouchDBAttachment -Database example -Document "001" -Attachment test.html -OutFile C:\out.html -Authorization "admin:passw0rd"
+    Get-CouchDBAttachment -Database test -Document "001" -Attachment test.html -OutFile C:\out.html -Authorization "admin:password"
     #>
     [CmdletBinding()]
     param(
@@ -212,7 +211,7 @@ function Get-CouchDBUser () {
     .DESCRIPTION
     Get a CouchDB user. 
     .EXAMPLE
-    Get-CouchDBUser -Userid test_user -Authorization "admin:passw0rd"
+    Get-CouchDBUser -Userid test_user -Authorization "admin:password"
     #>
     [CmdletBinding()]
     param(
@@ -233,7 +232,7 @@ function Get-CouchDBAdmin () {
     .DESCRIPTION
     Get a CouchDB admin user. 
     .EXAMPLE
-    Get-CouchDBAdmin -Authorization "admin:passw0rd"
+    Get-CouchDBAdmin -Authorization "admin:password"
     #>
     [CmdletBinding()]
     param(
@@ -254,7 +253,7 @@ function Get-CouchDBConfiguration () {
     .DESCRIPTION
     Get configuration of CouchDB. 
     .EXAMPLE
-    Get-CouchDBConfiguration -Authorization "admin:passw0rd"
+    Get-CouchDBConfiguration -Authorization "admin:password"
     #>
     [CmdletBinding()]
     param(
@@ -275,7 +274,7 @@ function Get-CouchDBNode () {
     .DESCRIPTION
     Get server nodes of CouchDB. 
     .EXAMPLE
-    Get-CouchDBNode -Authorization "admin:passw0rd"
+    Get-CouchDBNode -Authorization "admin:password"
     #>
     [CmdletBinding()]
     param(
@@ -290,11 +289,11 @@ function Get-CouchDBNode () {
 function Get-CouchDBReplication () {
     <#
     .SYNOPSIS
-    Get database replication documents.
+    Get database replication.
     .DESCRIPTION
-    Get database replication documents of CouchDB . 
+    Get database replication of CouchDB. 
     .EXAMPLE
-    Get-CouchDBReplication -Authorization "admin:passw0rd"
+    Get-CouchDBReplication -Authorization "admin:password"
     #>
     [CmdletBinding()]
     param(
@@ -313,11 +312,11 @@ function Get-CouchDBReplication () {
 function Get-CouchDBReplicationScheduler () {
     <#
     .SYNOPSIS
-    Get more details of database replication documents.
+    Get more details of database replication.
     .DESCRIPTION
-    Get more details of database replication documents of CouchDB. 
+    Get more details of database replication of CouchDB. 
     .EXAMPLE
-    Get-CouchDBReplicationScheduler -Authorization "admin:passw0rd"
+    Get-CouchDBReplicationScheduler -Authorization "admin:password"
     #>
     [CmdletBinding()]
     param(
@@ -330,6 +329,45 @@ function Get-CouchDBReplicationScheduler () {
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization
 }
 
+function Get-CouchDBActiveTask () {
+    <#
+    .SYNOPSIS
+    Get an active task.
+    .DESCRIPTION
+    Get a CouchDB active task. 
+    .EXAMPLE
+    Get-CouchDBActiveTask -Authorization "admin:password"
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server, 
+        [int] $Port,
+        [string] $Authorization
+    )
+    $Database = "_active_tasks"
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization
+}
+
+function Clear-CouchDBView () {
+    <#
+    .SYNOPSIS
+    Clean view indexes.
+    .DESCRIPTION
+    Clean up all outdated view indexes. 
+    .EXAMPLE
+    Clear-CouchDBView -Database test -Authorization "admin:password"
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server, 
+        [int] $Port,
+        [string] $Database = $(throw "Please specify the database name."),
+        [string] $Authorization
+    )
+    $Document = "_view_cleanup"
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Authorization $Authorization
+}
+
 function Add-CouchDBNode () {
     <#
     .SYNOPSIS
@@ -337,20 +375,48 @@ function Add-CouchDBNode () {
     .DESCRIPTION
     Add server nodes of CouchDB. 
     .EXAMPLE
-    Add-CouchDBNode -Name test -Authorization "admin:passw0rd"
+    Add-CouchDBNode -BindAddress server1 -Authorization "admin:password"
     #>
     [CmdletBinding()]
     param(
         [string] $Server, 
-        [int] $Port = 5986,
-        [string] $Database = "_nodes",
-        [string] $Name = $(throw "Please specify name of node!"),
-        [string] $Hostname = 'localhost',
+        [int] $Port = 5984, 
+        [string] $BindAddress = $(throw "Please specify the bind address name."),
         [string] $Authorization
     )
-    $Document = "$Name@$Hostname"
+    $Database = "_cluster_setup"
+    $Credential = $Authorization -split ":"
+    $Data = "
+    {
+        `"action`": `"add_node`", 
+        `"host`": `"$BindAddress`",
+        `"port`": `"$Port`",
+        `"username`": `"$($Credential[0])`", 
+        `"password`": `"$($Credential[1])`"
+    }
+    "
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization
+}
+
+function Compress-CouchDBDatabase () {
+    <#
+    .SYNOPSIS
+    Compress database.
+    .DESCRIPTION
+    Compress database of CouchDB. 
+    .EXAMPLE
+    Compress-CouchDBDatabase -Database test -Authorization "admin:password"
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server, 
+        [int] $Port = 5984, 
+        [string] $Database = $(throw "Please specify the database name."), 
+        [string] $Authorization
+    )
+    $Document = '_compact'
     $Data = '{}'
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
 }
 
 function Set-CouchDBDocument () {
@@ -361,7 +427,7 @@ function Set-CouchDBDocument () {
     Modify a CouchDB document json data. 
     .EXAMPLE
     $data = '{"album":"...and justice for all", "band":"Metallica"}'
-    Set-CouchDBDocument -Database example -Document "001" -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Data $data -Authorization "admin:passw0rd"
+    Set-CouchDBDocument -Database test -Document "001" -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Data $data -Authorization "admin:password"
     #>
     [CmdletBinding()]
     param(
@@ -383,7 +449,7 @@ function Set-CouchDBAttachment () {
     .DESCRIPTION
     Modify attachment from CouchDB document. 
     .EXAMPLE
-    Set-CouchDBAttachment -Database example -Document "001" -Attachment C:\test.html -Authorization "admin:passw0rd"
+    Set-CouchDBAttachment -Database test -Document "001" -Attachment C:\test.html -Authorization "admin:password"
     #>
     [CmdletBinding()]
     param(
@@ -406,7 +472,7 @@ function Set-CouchDBUser () {
     Set a CouchDB user properties with roles. Reset password user.
     .EXAMPLE
     $password = "password" | ConvertTo-SecureString -AsPlainText -Force
-    Set-CouchDBUser -Userid test_user -Password $passw0rd -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:passw0rd"
+    Set-CouchDBUser -Userid test_user -Password $password -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:password"
     #>
     [CmdletBinding()]
     param(
@@ -446,7 +512,7 @@ function Set-CouchDBAdmin () {
     Reset password of CouchDB admin user. 
     .EXAMPLE
     $password = "password" | ConvertTo-SecureString -AsPlainText -Force
-    Set-CouchDBAdmin -Userid test_user -Password $password -Authorization "admin:passw0rd"
+    Set-CouchDBAdmin -Userid test_user -Password $password -Authorization "admin:password"
     #>
     [CmdletBinding()]
     param(
@@ -471,7 +537,7 @@ function Set-CouchDBConfiguration () {
     .DESCRIPTION
     Set element configuration of CouchDB. 
     .EXAMPLE
-    Set-CouchDBConfiguration -Element attachments -Key compression_level -Value 10 -Authorization "admin:passw0rd"
+    Set-CouchDBConfiguration -Element attachments -Key compression_level -Value 10 -Authorization "admin:password"
     #>
     [CmdletBinding()]
     param(
@@ -497,11 +563,11 @@ function Set-CouchDBConfiguration () {
 function Set-CouchDBReplication () {
     <#
     .SYNOPSIS
-    Set replication documents.
+    Modify database replication.
     .DESCRIPTION
-    Set replication documents of CouchDB . 
+    Modify database of CouchDB . 
     .EXAMPLE
-    Set-CouchDBReplication -Document replica_id1 -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Continuous -Authorization "admin:passw0rd"
+    Set-CouchDBReplication -Document replica_id1 -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Continuous -Authorization "admin:password"
     #>
     [CmdletBinding()]
     param(
@@ -534,7 +600,7 @@ function Grant-CouchDBDatabasePermission () {
     .DESCRIPTION
     Grant permission on database. Specify Admins and/or Readers. 
     .EXAMPLE
-    Grant-CouchDBDatabasePermission -Database example -AdminUser admin -AdminRoles technician -ReaderUser user1 -Authorization "admin:passw0rd"
+    Grant-CouchDBDatabasePermission -Database example -AdminUser admin -AdminRoles technician -ReaderUser user1 -Authorization "admin:password"
     #>
     [CmdletBinding()]
     param(
@@ -611,7 +677,7 @@ function Revoke-CouchDBDatabasePermission () {
     .DESCRIPTION
     Revoke permission on database. Specify Admins and/or Readers. 
     .EXAMPLE
-    Revoke-CouchDBDatabasePermission -Database example -Authorization "admin:passw0rd"
+    Revoke-CouchDBDatabasePermission -Database example -Authorization "admin:password"
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
@@ -651,7 +717,7 @@ function New-CouchDBDatabase () {
     .DESCRIPTION
     Create a new CouchDB database. 
     .EXAMPLE
-    New-CouchDBDatabase -Database example -Authorization "admin:passw0rd"
+    New-CouchDBDatabase -Database test -Authorization "admin:password"
     #>
     [CmdletBinding()]
     param(
@@ -671,7 +737,7 @@ function New-CouchDBDocument () {
     Create a new CouchDB document with json data. 
     .EXAMPLE
     $data = '{"name":"Jhon", "surname":"Lennon"}'
-    New-CouchDBDocument -Database example -Document "001" -Data $data -Authorization "admin:passw0rd"
+    New-CouchDBDocument -Database test -Document "001" -Data $data -Authorization "admin:password"
     #>
     [CmdletBinding()]
     param(
@@ -692,7 +758,7 @@ function New-CouchDBAttachment () {
     .DESCRIPTION
     Create a new CouchDB attachment document. 
     .EXAMPLE
-    New-CouchDBAttachment -Database example -Document "001" -Attachment C:\test.html -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:passw0rd"
+    New-CouchDBAttachment -Database test -Document "001" -Attachment C:\test.html -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:password"
     #>
     [CmdletBinding()]
     param(
@@ -715,7 +781,7 @@ function New-CouchDBUser () {
     Create a new CouchDB user with roles. 
     .EXAMPLE
     $password = "password" | ConvertTo-SecureString -AsPlainText -Force
-    New-CouchDBUser -Userid test_user -Password $passw0rd -Authorization "admin:passw0rd"
+    New-CouchDBUser -Userid test_user -Password $password -Authorization "admin:password"
     #>
     [CmdletBinding()]
     param(
@@ -754,7 +820,7 @@ function New-CouchDBAdmin () {
     Create a new CouchDB admin user. 
     .EXAMPLE
     $password = "password" | ConvertTo-SecureString -AsPlainText -Force
-    New-CouchDBAdmin -Userid test_user -Password $passw0rd -Authorization "admin:passw0rd"
+    New-CouchDBAdmin -Userid test_user -Password $password -Authorization "admin:password"
     #>
     [CmdletBinding()]
     param(
@@ -779,7 +845,7 @@ function New-CouchDBReplication () {
     .DESCRIPTION
     Create a new replication job for a specidfic database. 
     .EXAMPLE
-    New-CouchDBReplication -Name "Test replication" -SourceServer localhost -TargetServer server1 -SourceDatabase test -TargetDatabase test_replica -Continuous -Authorization "admin:passw0rd"
+    New-CouchDBReplication -SourceServer localhost -TargetServer server1 -SourceDatabase test -TargetDatabase test_replica -Continuous -Authorization "admin:password"
     #>
     [CmdletBinding()]
     param(
@@ -821,6 +887,40 @@ function New-CouchDBReplication () {
     Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
 }
 
+function Enable-CouchDBCluster () {
+    <#
+    .SYNOPSIS
+    Create a new cluster.
+    .DESCRIPTION
+    Create a new cluster CouchDB server. 
+    .EXAMPLE
+    Enable-CouchDBCluster -Authorization "admin:password"
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server, 
+        [int] $Port = 5984, 
+        [int] $NodeCount = 3,
+        [string] $Authorization
+    )
+    $Database = "_cluster_setup"
+    $Credential = $Authorization -split ":"
+    $Data = "
+    {
+        `"action`": `"enable_cluster`", 
+        `"bind_address`": `"0.0.0.0`", 
+        `"username`": `"$($Credential[0])`", 
+        `"password`": `"$($Credential[1])`", 
+        `"node_count`": `"$NodeCount`"
+    }
+    "
+    Write-Host "Enabling cluster"
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization
+    $Data = '{"action": "finish_cluster"}'
+    Write-Host "Finishing cluster"
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization
+}
+
 function Remove-CouchDBDatabase () {
     <#
     .SYNOPSIS
@@ -828,7 +928,7 @@ function Remove-CouchDBDatabase () {
     .DESCRIPTION
     Remove a CouchDB database. 
     .EXAMPLE
-    Remove-CouchDBDatabase -Database example -Authorization "admin:passw0rd"
+    Remove-CouchDBDatabase -Database test -Authorization "admin:password"
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
@@ -850,7 +950,7 @@ function Remove-CouchDBDocument () {
     .DESCRIPTION
     Remove a CouchDB document with json data. 
     .EXAMPLE
-    Remove-CouchDBDocument -Database example -Document "001" -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:passw0rd"
+    Remove-CouchDBDocument -Database test -Document "001" -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:password"
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
@@ -874,7 +974,7 @@ function Remove-CouchDBAttachment () {
     .DESCRIPTION
     Remove a CouchDB attachment document. 
     .EXAMPLE
-    Remove-CouchDBAttachment -Database example -Document "001" -Attachment test.html -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:passw0rd"
+    Remove-CouchDBAttachment -Database test -Document "001" -Attachment test.html -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:password"
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
@@ -898,7 +998,7 @@ function Remove-CouchDBUser () {
     .DESCRIPTION
     Remove a CouchDB user with roles. 
     .EXAMPLE
-    Remove-CouchDBUser -Userid test_user -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:passw0rd"
+    Remove-CouchDBUser -Userid test_user -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:password"
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
@@ -923,7 +1023,7 @@ function Remove-CouchDBAdmin () {
     .DESCRIPTION
     Remove a CouchDB admin user. 
     .EXAMPLE
-    Remove-CouchDBAdmin -Userid test_user -Authorization "admin:passw0rd"
+    Remove-CouchDBAdmin -Userid test_user -Authorization "admin:password"
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
@@ -948,7 +1048,7 @@ function Remove-CouchDBNode () {
     .DESCRIPTION
     Remove server nodes of CouchDB. 
     .EXAMPLE
-    Remove-CouchDBNode -Node test -Authorization "admin:passw0rd"
+    Remove-CouchDBNode -Node test -Authorization "admin:password"
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
@@ -973,11 +1073,11 @@ function Remove-CouchDBNode () {
 function Remove-CouchDBReplication () {
     <#
     .SYNOPSIS
-    Remove replication documents.
+    Remove replication.
     .DESCRIPTION
-    Remove replication documents of CouchDB . 
+    Remove replication of CouchDB . 
     .EXAMPLE
-    Remove-CouchDBReplication -Document replica_id1 -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:passw0rd"
+    Remove-CouchDBReplication -Document replica_id1 -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:password"
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
@@ -1004,7 +1104,7 @@ function Find-CouchDBDocuments () {
     .DESCRIPTION
     Find document data in a CouchDB database.
     .EXAMPLE
-    Find-CouchDBDocuments -Database example -Selector "color" -Value "red" -Fields _id,color -Operator eq -Authorization "read_user:passw0rd"
+    Find-CouchDBDocuments -Database test -Selector "color" -Value "red" -Fields _id,color -Operator eq -Authorization "read_user:password"
     #>
     [CmdletBinding()]
     param (
