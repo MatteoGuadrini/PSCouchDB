@@ -348,6 +348,26 @@ function Get-CouchDBActiveTask () {
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization
 }
 
+function Measure-CouchDBStatistics () {
+    <#
+    .SYNOPSIS
+    Measure server statistics.
+    .DESCRIPTION
+    Measure CouchDB server statistics. 
+    .EXAMPLE
+    Measure-CouchDBStatistics -DatabaseReads -OpenDatabases -RequestTime -Authorization "admin:password"
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server = 'localhost', 
+        [int] $Port,
+        [string] $Authorization
+    )
+    $Database = "_node/couchdb@$Server/_stats"
+    $Document = "couchdb"
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization
+}
+
 function Clear-CouchDBView () {
     <#
     .SYNOPSIS
@@ -565,7 +585,7 @@ function Set-CouchDBReplication () {
     .SYNOPSIS
     Modify database replication.
     .DESCRIPTION
-    Modify database of CouchDB . 
+    Modify database of CouchDB. 
     .EXAMPLE
     Set-CouchDBReplication -Document replica_id1 -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Continuous -Authorization "admin:password"
     #>
@@ -887,6 +907,30 @@ function New-CouchDBReplication () {
     Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
 }
 
+function New-CouchDBUuids () {
+    <#
+    .SYNOPSIS
+    Create a new uuids.
+    .DESCRIPTION
+    Create a new CouchDB uuids. 
+    .EXAMPLE
+    New-CouchDBUuids -Count 3 -Authorization "admin:password"
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server,
+        [int] $Port,
+        [int] $Count,
+        [string] $Authorization
+    )
+    $Database = '_uuids'
+    # Check count
+    if ($Count) {
+        $Database += "?count=$Count"
+    }
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization
+}
+
 function Enable-CouchDBCluster () {
     <#
     .SYNOPSIS
@@ -1075,7 +1119,7 @@ function Remove-CouchDBReplication () {
     .SYNOPSIS
     Remove replication.
     .DESCRIPTION
-    Remove replication of CouchDB . 
+    Remove replication of CouchDB. 
     .EXAMPLE
     Remove-CouchDBReplication -Document replica_id1 -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:password"
     #>
@@ -1094,6 +1138,24 @@ function Remove-CouchDBReplication () {
     }
     if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove replication $Document ?","Remove $Document")) {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization
+    }
+}
+
+function Restart-CouchDBServer () {
+    <#
+    .SYNOPSIS
+    Restart server.
+    .DESCRIPTION
+    Restart CouchDB server. 
+    .EXAMPLE
+    Restart-CouchDBServer -Authorization "admin:password"
+    #>
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param(
+        [switch] $Force
+    )
+    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish to restart CouchDB server ?","Restart server")) {
+        Restart-Service -Name "Apache CouchDB" -Force
     }
 }
 

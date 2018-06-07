@@ -53,7 +53,8 @@ Get-CouchDBDatabase
 ```
 Create a new user in _users database:
 ```powershell
-New-CouchDBUser -Userid admin_test -Password "passw0rd" -Roles admin -Authorization "adminuser:password"
+$password = "password" | ConvertTo-SecureString -AsPlainText -Force
+New-CouchDBUser -Userid admin_test -Password $password -Roles admin -Authorization "adminuser:password"
 ```
 Apply the correct permissions to the database:
 ```powershell
@@ -71,7 +72,7 @@ New-CouchDBDocument -Database test -Document "blue" -Data $Data -Authorization "
 ## Revoke permission
 To revoke all permissions on a database, use this cmdlet:
 ```powershell
-Revoke-CouchDBDocument -Database test
+Revoke-CouchDBDocument -Database test -Authorization "admin_test:passw0rd"
 ```
 
 ## Find data on database
@@ -93,6 +94,7 @@ The operators available, for now, are the following:
 - 'nin'   	The document field not must exist in the list provided.
 - 'size'   	Special condition to match the length of an array field in a document. Non-array fields cannot match this condition.
 - 'regex'   A regular expression pattern to match against the document field. Only matches when the field is a string value and matches the supplied regular expression. The matching algorithms are based on the Perl Compatible Regular Expression (PCRE) library. For more information about what is implemented, see the see the [Erlang Regular Expression](http://erlang.org/doc/man/re.html "Perl-like regular expressions for Erlang")
+
 `Sort` indicates the field you want to sort ascending data. 
 
 ### Find data with other operator
