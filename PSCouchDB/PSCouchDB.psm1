@@ -348,6 +348,26 @@ function Get-CouchDBActiveTask () {
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization
 }
 
+function Get-CouchDBIndex () {
+    <#
+    .SYNOPSIS
+    Get indexes of database.
+    .DESCRIPTION
+    Get indexes of CouchDB database.
+    .EXAMPLE
+    Get-CouchDBIndex -Database test -Authorization "admin:password"
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server,
+        [int] $Port,
+        [string] $Database = $(throw "Please specify the database name."),
+        [string] $Authorization
+    )
+    $Document = '_index'
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization
+}
+
 function Measure-CouchDBStatistics () {
     <#
     .SYNOPSIS
@@ -907,6 +927,35 @@ function New-CouchDBReplication () {
     Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
 }
 
+function New-CouchDBIndex () {
+    <#
+    .SYNOPSIS
+    Create a new index of database.
+    .DESCRIPTION
+    Create a new index of CouchDB database. 
+    .EXAMPLE
+    New-CouchDBIndex -Database test -Name test-index -Fields name,surname -Authorization "admin:password"
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server,
+        [int] $Port,
+        [string] $Database = $(throw "Please specify the database name."),
+        [string] $Name = $(throw "Please specify the name of index document."),
+        [array] $Fields = $(throw "Please specify at least one fields."),
+        [string] $Authorization
+    )
+    $Document = '_index'
+    $index = @{ 'index' = @{}; 'type' = 'json' }
+    $index.name = "$Name"
+    $index.index.fields = @()
+    foreach ($Field in $Fields) {
+        $index.index.fields += $Field
+    }
+    $Data = $index | ConvertTo-Json -Depth 3 -Compress
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
+}
+
 function New-CouchDBUuids () {
     <#
     .SYNOPSIS
@@ -1138,6 +1187,32 @@ function Remove-CouchDBReplication () {
     }
     if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove replication $Document ?","Remove $Document")) {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization
+    }
+}
+
+function Remove-CouchDBIndex () {
+    <#
+    .SYNOPSIS
+    Remove a index of a database.
+    .DESCRIPTION
+    Remove a index of CouchDB database. 
+    .EXAMPLE
+    $ddoc = Get-CouchDBIndex -Database test -Authorization "admin:password" 
+    Remove-CouchDBIndex -Database test -DesignDoc $ddoc.indexes.ddoc[1] -Name $ddoc.indexes.name[1] -Authorization "admin:password"
+    #>
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param(
+        [string] $Server, 
+        [int] $Port, 
+        [string] $Database = $(throw "Please specify the database name."),
+        [string] $DesignDoc = $(throw "Please specify the designdoc id for index."), 
+        [string] $Name = $(throw "Please specify the name of index."), 
+        [string] $Authorization,
+        [switch]$Force
+    )
+    $Document = "_index/$DesignDoc/json/$Name"
+    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove index $DesignDoc ?","Remove index $DesignDoc on database $Database")) {
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Authorization $Authorization
     }
 }
 
