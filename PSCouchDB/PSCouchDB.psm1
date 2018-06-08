@@ -18,7 +18,8 @@ function Send-CouchDBRequest {
         [string] $Revision,
         [string] $Attachment,
         [string] $Data,
-        [string] $OutFile
+        [string] $OutFile,
+        [switch] $Ssl
     )
     # Set default server
     Write-Verbose -Message "Check if variable `$Server is null, else set variable to 'localhost'"
@@ -26,11 +27,28 @@ function Send-CouchDBRequest {
         $Server = 'localhost'
         Write-Debug -Message "`$Server is $Server"
     }
-    # Set default port
-    Write-Verbose -Message "Check if variable `$Port is null, else set variable to '5984'"
-     if (-not($Port)) {
-        $Port = 5984
-        Write-Debug -Message "`$Port is $Port"
+    # Set protocol
+    Write-Verbose -Message "Check if SSL is enable"
+    if ($Ssl.IsPresent) {
+        # Set default port
+        Write-Verbose -Message "Check if variable `$Port is null, else set variable to '6984'"
+        if (-not($Port)) {
+            $Port = 6984
+            Write-Debug -Message "`$Port is $Port"
+        }
+        # Set SSL protocol
+        $Protocol = 'https'
+        Write-Debug -Message "`$Protocol is $Protocol"
+    } else {
+        # Set default port
+        Write-Verbose -Message "Check if variable `$Port is null, else set variable to '5984'"
+        if (-not($Port)) {
+            $Port = 5984
+            Write-Debug -Message "`$Port is $Port"
+        }
+        # Set deafult protocol
+        $Protocol = 'http'
+        Write-Debug -Message "`$Protocol is $Protocol"
     }
     # Initialize option of command
     $options = @{}
@@ -47,7 +65,7 @@ function Send-CouchDBRequest {
     }
     # Build the url
     Write-Verbose -Message "Build the url"
-    $url = "http://${Server}:$Port"
+    $url = "${Protocol}://${Server}:$Port"
     # Set database
     Write-Verbose -Message "Add database to url, if exists"
     if ($Database) {
@@ -128,9 +146,10 @@ function Get-CouchDBDatabase () {
         [string] $Server, 
         [int] $Port, 
         [string] $Database = "_all_dbs", 
-        [string] $Authorization
+        [string] $Authorization,
+        [switch] $Ssl
     )
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Get-CouchDBDatabaseChanges () {
@@ -147,13 +166,14 @@ function Get-CouchDBDatabaseChanges () {
         [string] $Server, 
         [int] $Port,
         [string] $Database = $(throw "Please specify the database name."),
-        [string] $Authorization
+        [string] $Authorization,
+        [switch] $Ssl
     )
-    if (-not(Get-CouchDBDatabase -Database $Database)) {
+    if (-not(Get-CouchDBDatabase -Database $Database -Authorization $Authorization -Ssl:$Ssl)) {
         throw "Database replicator $Database is not exists."
     }
     $Document = '_changes'
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Get-CouchDBDocument () {
@@ -172,12 +192,13 @@ function Get-CouchDBDocument () {
         [string] $Database = $(throw "Please specify the database name."),
         [string] $Document = "_all_docs",
         [switch] $Local,
-        [string] $Authorization
+        [string] $Authorization,
+        [switch] $Ssl
     )
     if ($Local.IsPresent) {
         $Document = "_local_docs"
     }
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Get-CouchDBAttachment () {
@@ -199,9 +220,10 @@ function Get-CouchDBAttachment () {
         [string] $Document = $(throw "Please specify the document id."), 
         [string] $Attachment,
         [string] $OutFile,
-        [string] $Authorization
+        [string] $Authorization,
+        [switch] $Ssl
     )
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Attachment $Attachment -OutFile $OutFile -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Attachment $Attachment -OutFile $OutFile -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Get-CouchDBUser () {
@@ -219,10 +241,11 @@ function Get-CouchDBUser () {
         [int] $Port, 
         [string] $Database = "_users", 
         [string] $Userid = $(throw "Please specify the username."), 
-        [string] $Authorization
+        [string] $Authorization,
+        [switch] $Ssl
     )
     $Document = "org.couchdb.user:$Userid"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Get-CouchDBAdmin () {
@@ -240,10 +263,11 @@ function Get-CouchDBAdmin () {
         [int] $Port, 
         [string] $Database = "_node",
         [string] $Node = "couchdb@localhost",
-        [string] $Authorization
+        [string] $Authorization,
+        [switch] $Ssl
     )
     $Document = "$Node/_config/admins"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Get-CouchDBConfiguration () {
@@ -261,10 +285,11 @@ function Get-CouchDBConfiguration () {
         [int] $Port, 
         [string] $Database = "_node",
         [string] $Node = "couchdb@localhost",
-        [string] $Authorization
+        [string] $Authorization,
+        [switch] $Ssl
     )
     $Document = "$Node/_config"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Get-CouchDBNode () {
@@ -281,9 +306,10 @@ function Get-CouchDBNode () {
         [string] $Server, 
         [int] $Port,
         [string] $Database = "_membership",
-        [string] $Authorization
+        [string] $Authorization,
+        [switch] $Ssl
     )
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Get-CouchDBReplication () {
@@ -301,12 +327,13 @@ function Get-CouchDBReplication () {
         [int] $Port,
         [string] $Database = "_replicator",
         [string] $Document = '_all_docs',
-        [string] $Authorization
+        [string] $Authorization,
+        [switch] $Ssl
     )
-    if (-not(Get-CouchDBDatabase -Database $Database)) {
+    if (-not(Get-CouchDBDatabase -Database $Database -Authorization $Authorization -Ssl:$Ssl)) {
         throw "Database replicator $Database is not exists."
     }
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Get-CouchDBReplicationScheduler () {
@@ -322,11 +349,12 @@ function Get-CouchDBReplicationScheduler () {
     param(
         [string] $Server, 
         [int] $Port,
-        [string] $Authorization
+        [string] $Authorization,
+        [switch] $Ssl
     )
     $Database = "_scheduler"
     $Document = 'jobs'
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Get-CouchDBActiveTask () {
@@ -342,10 +370,11 @@ function Get-CouchDBActiveTask () {
     param(
         [string] $Server, 
         [int] $Port,
-        [string] $Authorization
+        [string] $Authorization,
+        [switch] $Ssl
     )
     $Database = "_active_tasks"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Get-CouchDBIndex () {
@@ -362,10 +391,11 @@ function Get-CouchDBIndex () {
         [string] $Server,
         [int] $Port,
         [string] $Database = $(throw "Please specify the database name."),
-        [string] $Authorization
+        [string] $Authorization,
+        [switch] $Ssl
     )
     $Document = '_index'
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Measure-CouchDBStatistics () {
@@ -381,11 +411,12 @@ function Measure-CouchDBStatistics () {
     param(
         [string] $Server = 'localhost', 
         [int] $Port,
-        [string] $Authorization
+        [string] $Authorization,
+        [switch] $Ssl
     )
     $Database = "_node/couchdb@$Server/_stats"
     $Document = "couchdb"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Clear-CouchDBView () {
@@ -402,10 +433,11 @@ function Clear-CouchDBView () {
         [string] $Server, 
         [int] $Port,
         [string] $Database = $(throw "Please specify the database name."),
-        [string] $Authorization
+        [string] $Authorization,
+        [switch] $Ssl
     )
     $Document = "_view_cleanup"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Add-CouchDBNode () {
@@ -420,9 +452,10 @@ function Add-CouchDBNode () {
     [CmdletBinding()]
     param(
         [string] $Server, 
-        [int] $Port = 5984, 
+        [int] $Port, 
         [string] $BindAddress = $(throw "Please specify the bind address name."),
-        [string] $Authorization
+        [string] $Authorization,
+        [switch] $Ssl
     )
     $Database = "_cluster_setup"
     $Credential = $Authorization -split ":"
@@ -435,7 +468,7 @@ function Add-CouchDBNode () {
         `"password`": `"$($Credential[1])`"
     }
     "
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Compress-CouchDBDatabase () {
@@ -450,13 +483,14 @@ function Compress-CouchDBDatabase () {
     [CmdletBinding()]
     param(
         [string] $Server, 
-        [int] $Port = 5984, 
+        [int] $Port, 
         [string] $Database = $(throw "Please specify the database name."), 
-        [string] $Authorization
+        [string] $Authorization,
+        [switch] $Ssl
     )
     $Document = '_compact'
     $Data = '{}'
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Set-CouchDBDocument () {
@@ -477,9 +511,10 @@ function Set-CouchDBDocument () {
         [string] $Document = $(throw "Please specify the document id."), 
         [string] $Revision = $(throw "Please specify the revision id."), 
         [string] $Data, 
-        [string] $Authorization
+        [string] $Authorization,
+        [switch] $Ssl
     )
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Revision $Revision -Data $Data -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Revision $Revision -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Set-CouchDBAttachment () {
@@ -499,9 +534,10 @@ function Set-CouchDBAttachment () {
         [string] $Document = $(throw "Please specify the document id."), 
         [string] $Revision = $(throw "Please specify the revision id."), 
         [string] $Attachment, 
-        [string] $Authorization
+        [string] $Authorization,
+        [switch] $Ssl
     )
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Revision $Revision -Attachment $Attachment -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Revision $Revision -Attachment $Attachment -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Set-CouchDBUser () {
@@ -523,7 +559,8 @@ function Set-CouchDBUser () {
         [SecureString] $Password = $(throw "Please specify a password for username $Userid"), 
         [array] $Roles, 
         [string] $Revision = $(throw "Please specify the revision id."), 
-        [string] $Authorization
+        [string] $Authorization,
+        [switch] $Ssl
     )
     $Document = "org.couchdb.user:$Userid"
     if ($Roles.Count -eq 1) {
@@ -541,7 +578,7 @@ function Set-CouchDBUser () {
         `"type`": `"user`",
         `"password`": `"$ClearPassword`"
 }"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Revision $Revision -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Revision $Revision -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Set-CouchDBAdmin () {
@@ -562,12 +599,13 @@ function Set-CouchDBAdmin () {
         [string] $Node = "couchdb@localhost",
         [string] $Userid = $(throw "Please specify the admin username."),
         [SecureString] $Password = $(throw "Please specify a password for username $Userid"),
-        [string] $Authorization
+        [string] $Authorization,
+        [switch] $Ssl
     )
     $Document = "$Node/_config/admins/$Userid"
     $ClearPassword = ConvertTo-CouchDBPassword -SecurePassword $Password
     $Data = "`"$ClearPassword`""
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Set-CouchDBConfiguration () {
@@ -588,16 +626,17 @@ function Set-CouchDBConfiguration () {
         [string] $Element = $(throw "Please specify an element."),
         [string] $Key = $(throw "Please specify a key of element $Element"),
         [string] $Value = $(throw "Please specify a value of key $Key"),
-        [string] $Authorization
+        [string] $Authorization,
+        [switch] $Ssl
     )
     $Document = "$Node/_config"
-    if ((Get-CouchDBConfiguration -Authorization $Authorization).$Element) {
+    if ((Get-CouchDBConfiguration -Authorization $Authorization -Ssl:$Ssl).$Element) {
         $Document += "/$Element/$Key"
     } else {
         throw "Element $Element not exist!"
     }
     $Data = "$Value" | ConvertTo-Json
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Set-CouchDBReplication () {
@@ -617,9 +656,10 @@ function Set-CouchDBReplication () {
         [string] $Document = $(throw "Please specify the document id."),
         [string] $Revision = $(throw "Please specify the revision id."),
         [switch] $Continuous,
-        [string] $Authorization
+        [string] $Authorization,
+        [switch] $Ssl
     )
-    if (-not(Get-CouchDBDatabase -Database $Database)) {
+    if (-not(Get-CouchDBDatabase -Database $Database -Authorization $Authorization -Ssl:$Ssl)) {
         throw "Database replicator $Database is not exists."
     }
     if ($Continuous.IsPresent) {
@@ -627,10 +667,10 @@ function Set-CouchDBReplication () {
     } else {
         $Continuous_value = $false
     }
-    $Data = Get-CouchDBReplication -Document $Document -Authorization $Authorization
+    $Data = Get-CouchDBReplication -Document $Document -Authorization $Authorization -Ssl:$Ssl
     $Data.continuous = $Continuous_value
     $Data = $Data | ConvertTo-Json
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Revision $Revision -Data $Data -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Revision $Revision -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Grant-CouchDBDatabasePermission () {
@@ -651,17 +691,18 @@ function Grant-CouchDBDatabasePermission () {
         [array]$AdminRoles, 
         [array]$ReaderUser, 
         [array]$UserRoles, 
-        [string] $Authorization
+        [string] $Authorization,
+        [switch] $Ssl
     )
     # Check if admin user exists
     foreach ($User in $AdminUser) {
-        if (-not((Get-CouchDBUser -Database '_users' -Userid $User -Authorization $Authorization).name -eq $User)) {
+        if (-not((Get-CouchDBUser -Database '_users' -Userid $User -Authorization $Authorization -Ssl:$Ssl).name -eq $User)) {
             throw "Admin user $User not exists!"
         }
     }
     # Check if reader user exists
     foreach ($User in $ReaderUser) {
-        if (-not((Get-CouchDBUser -Database '_users' -Userid $User -Authorization $Authorization).name -eq $User)) {
+        if (-not((Get-CouchDBUser -Database '_users' -Userid $User -Authorization $Authorization -Ssl:$Ssl).name -eq $User)) {
             throw "Reader user $User not exists!"
         }
     }
@@ -707,7 +748,7 @@ function Grant-CouchDBDatabasePermission () {
     }
     "
     $Document = "_security"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Revoke-CouchDBDatabasePermission () {
@@ -725,11 +766,12 @@ function Revoke-CouchDBDatabasePermission () {
         [int] $Port, 
         [string] $Database = $(throw "Please specify the database name."), 
         [string] $Authorization,
-        [switch]$Force
+        [switch]$Force,
+        [switch] $Ssl
     )
     if ($Force -or $PSCmdlet.ShouldContinue("Do you wish revoke all permission on database $Database ?","Revoke all permission on database $Database")) {
         # Get a current security permission
-        if (-not(Get-CouchDBDocument -Database $Database -Document '_security' -Authorization $Authorization)) {
+        if (-not(Get-CouchDBDocument -Database $Database -Document '_security' -Authorization $Authorization -Ssl:$Ssl)) {
             throw "No security object found in database $Database"
         }
         # Revoke data permission
@@ -746,7 +788,7 @@ function Revoke-CouchDBDatabasePermission () {
         }
         "
         $Document = "_security"
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
     }
 }
 
@@ -764,9 +806,10 @@ function New-CouchDBDatabase () {
         [string] $Server, 
         [int] $Port, 
         [string] $Database = $(throw "Please specify the database name."), 
-        [string] $Authorization
+        [string] $Authorization,
+        [switch] $Ssl
     )
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Authorization $Authorization -Ssl:$Ssl
 }
 
 function New-CouchDBDocument () {
@@ -786,9 +829,10 @@ function New-CouchDBDocument () {
         [string] $Database = $(throw "Please specify the database name."), 
         [string] $Document = $(throw "Please specify the document id."), 
         [string] $Data = $(throw "Please specify a valid json data."), 
-        [string] $Authorization
+        [string] $Authorization,
+        [switch] $Ssl
     )
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }
 
 function New-CouchDBAttachment () {
@@ -808,9 +852,10 @@ function New-CouchDBAttachment () {
         [string] $Document = $(throw "Please specify the document id."), 
         [string] $Attachment = $(throw "Please specify the path of attachment."), 
         [string] $Revision = $(throw "Please specify the revision id."), 
-        [string] $Authorization
+        [string] $Authorization,
+        [switch] $Ssl
     )
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Attachment $Attachment -Revision $Revision -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Attachment $Attachment -Revision $Revision -Authorization $Authorization -Ssl:$Ssl
 }
 
 function New-CouchDBUser () {
@@ -831,7 +876,8 @@ function New-CouchDBUser () {
         [string] $Userid = $(throw "Please specify the username."), 
         [SecureString] $Password = $(throw "Please specify a password for username $Userid"), 
         [array] $Roles, 
-        [string] $Authorization
+        [string] $Authorization,
+        [switch] $Ssl
     )
     $Document = "org.couchdb.user:$Userid"
     if ($Roles.Count -eq 1) {
@@ -849,7 +895,7 @@ function New-CouchDBUser () {
         `"type`": `"user`",
         `"password`": `"$ClearPassword`"
 }"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }
 
 function New-CouchDBAdmin () {
@@ -870,12 +916,13 @@ function New-CouchDBAdmin () {
         [string] $Node = "couchdb@localhost",
         [string] $Userid = $(throw "Please specify the admin username."), 
         [SecureString] $Password = $(throw "Please specify a password for admin username $Userid"), 
-        [string] $Authorization
+        [string] $Authorization,
+        [switch] $Ssl
     )
     $Document = "$Node/_config/admins/$Userid"
     $ClearPassword = ConvertTo-CouchDBPassword -SecurePassword $Password
     $Data = "`"$ClearPassword`""
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }
 
 function New-CouchDBReplication () {
@@ -891,27 +938,48 @@ function New-CouchDBReplication () {
     param(
         [string] $SourceServer = 'localhost',
         [string] $TargetServer = 'localhost',
-        [int] $SourcePort = 5984,
-        [int] $TargetPort = 5984,
+        [int] $SourcePort,
+        [int] $TargetPort,
         [string] $Database = "_replicator",
         [string] $SourceDatabase,
         [string] $TargetDatabase,
         [switch] $Continuous,
-        [string] $Authorization
+        [string] $Authorization,
+        [switch] $Ssl
     )
     $Server = $SourceServer
     $Port = $SourcePort
     # Check if replicator database exists
-    if (-not(Get-CouchDBDatabase -Server $Server -Port $Port -Database $Database -Authorization $Authorization -ErrorAction SilentlyContinue)) {
-        New-CouchDBDatabase -Server $Server -Port $Port -Database $Database -Authorization $Authorization | Out-Null
+    if (-not(Get-CouchDBDatabase -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
+        New-CouchDBDatabase -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl | Out-Null
     }
     # Check if target database exists
-    if (-not(Get-CouchDBDatabase -Server $Server -Port $Port -Database $TargetDatabase -Authorization $Authorization -ErrorAction SilentlyContinue)) {
-        New-CouchDBDatabase -Server $Server -Port $Port -Database $TargetDatabase -Authorization $Authorization | Out-Null
+    if (-not(Get-CouchDBDatabase -Server $Server -Port $Port -Database $TargetDatabase -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
+        New-CouchDBDatabase -Server $Server -Port $Port -Database $TargetDatabase -Authorization $Authorization -Ssl:$Ssl | Out-Null
+    }
+    # Set protocol
+    if ($Ssl.IsPresent) {
+        if (-not($SourcePort)) {
+            $SourcePort = 6984
+        }
+        if (-not($TargetPort)) {
+            $TargetPort = 6984
+        }
+        # Set SSL protocol
+        $Protocol = 'https'
+    } else {
+        if (-not($SourcePort)) {
+            $SourcePort = 5984
+        }
+        if (-not($TargetPort)) {
+            $TargetPort = 5984
+        }
+        # Set deafult protocol
+        $Protocol = 'http'
     }
     # Create Source and Target URL
-    $Source = "http://$SourceServer`:$SourcePort/$SourceDatabase"
-    $Target = "http://$TargetServer`:$TargetPort/$TargetDatabase"
+    $Source = "${Protocol}://$SourceServer`:$SourcePort/$SourceDatabase"
+    $Target = "${Protocol}://$TargetServer`:$TargetPort/$TargetDatabase"
     if ($Continuous.IsPresent) {
         $Continuous_value = "true"
     } else {
@@ -924,7 +992,7 @@ function New-CouchDBReplication () {
     `"target`":`"$Target`",
     `"continuous`":$Continuous_value
     }"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }
 
 function New-CouchDBIndex () {
@@ -943,7 +1011,8 @@ function New-CouchDBIndex () {
         [string] $Database = $(throw "Please specify the database name."),
         [string] $Name = $(throw "Please specify the name of index document."),
         [array] $Fields = $(throw "Please specify at least one fields."),
-        [string] $Authorization
+        [string] $Authorization,
+        [switch] $Ssl
     )
     $Document = '_index'
     $index = @{ 'index' = @{}; 'type' = 'json' }
@@ -953,7 +1022,7 @@ function New-CouchDBIndex () {
         $index.index.fields += $Field
     }
     $Data = $index | ConvertTo-Json -Depth 3 -Compress
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }
 
 function New-CouchDBUuids () {
@@ -970,14 +1039,15 @@ function New-CouchDBUuids () {
         [string] $Server,
         [int] $Port,
         [int] $Count,
-        [string] $Authorization
+        [string] $Authorization,
+        [switch] $Ssl
     )
     $Database = '_uuids'
     # Check count
     if ($Count) {
         $Database += "?count=$Count"
     }
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Enable-CouchDBCluster () {
@@ -992,9 +1062,10 @@ function Enable-CouchDBCluster () {
     [CmdletBinding()]
     param(
         [string] $Server, 
-        [int] $Port = 5984, 
+        [int] $Port, 
         [int] $NodeCount = 3,
-        [string] $Authorization
+        [string] $Authorization,
+        [switch] $Ssl
     )
     $Database = "_cluster_setup"
     $Credential = $Authorization -split ":"
@@ -1008,10 +1079,10 @@ function Enable-CouchDBCluster () {
     }
     "
     Write-Host "Enabling cluster"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
     $Data = '{"action": "finish_cluster"}'
     Write-Host "Finishing cluster"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Remove-CouchDBDatabase () {
@@ -1029,10 +1100,11 @@ function Remove-CouchDBDatabase () {
         [int] $Port, 
         [string] $Database = $(throw "Please specify the database name."), 
         [string] $Authorization,
-        [switch]$Force
+        [switch]$Force,
+        [switch] $Ssl
     )
     if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove database $Database ?","Remove database $Database")) {
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Authorization $Authorization
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Authorization $Authorization -Ssl:$Ssl
     }
 }
 
@@ -1053,10 +1125,11 @@ function Remove-CouchDBDocument () {
         [string] $Document = $(throw "Please specify the document id."), 
         [string] $Revision = $(throw "Please specify the revision id."), 
         [string] $Authorization,
-        [switch]$Force
+        [switch]$Force,
+        [switch] $Ssl
     )
     if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove document $Document on database $Database ?","Remove document $Document on database $Database")) {
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization -Ssl:$Ssl
     }
 }
 
@@ -1077,10 +1150,11 @@ function Remove-CouchDBAttachment () {
         [string] $Document = $(throw "Please specify the document id."), 
         [string] $Attachment = $(throw "Please specify the path of attachment."), 
         [string] $Revision = $(throw "Please specify the revision id."), 
-        [string] $Authorization
+        [string] $Authorization,
+        [switch] $Ssl
     )
     if ($PSCmdlet.ShouldContinue("Do you wish remove attachment $Attachment in document $Document on database $Database ?","Remove attachment $Attachment in document $Document on database $Database")) {
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Attachment $Attachment -Revision $Revision -Authorization $Authorization
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Attachment $Attachment -Revision $Revision -Authorization $Authorization -Ssl:$Ssl
     }
 }
 
@@ -1101,11 +1175,12 @@ function Remove-CouchDBUser () {
         [string] $Userid = $(throw "Please specify the username."), 
         [string] $Revision = $(throw "Please specify the revision id."), 
         [string] $Authorization,
-        [switch]$Force
+        [switch]$Force,
+        [switch] $Ssl
     )
     $Document = "org.couchdb.user:$Userid"
     if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove user $Userid ?","Remove $Userid on database $Database")) {
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization -Ssl:$Ssl
     }
 }
 
@@ -1126,11 +1201,12 @@ function Remove-CouchDBAdmin () {
         [string] $Node = "couchdb@localhost",
         [string] $Userid = $(throw "Please specify the admin username."),
         [string] $Authorization,
-        [switch]$Force
+        [switch]$Force,
+        [switch] $Ssl
     )
     $Document = "$Node/_config/admins/$Userid"
     if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove admin user $Userid ?","Remove $Userid on node $Node")) {
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Authorization $Authorization
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
     }
 }
 
@@ -1146,20 +1222,31 @@ function Remove-CouchDBNode () {
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
         [string] $Server, 
-        [int] $Port = 5986,
+        [int] $Port,
         [string] $Database = "_nodes",
         [string] $Node = $(throw "Please specify name of node!"), 
         [string] $Authorization,
-        [switch]$Force
+        [switch]$Force,
+        [switch] $Ssl
     )
-    if (Get-CouchDBDocument -Port $Port -Database $Database -Document $Node -Authorization $Authorization -ErrorAction SilentlyContinue) {
-        $Revision = (Get-CouchDBDocument -Port $Port -Database $Database -Document $Node -Authorization $Authorization)._rev
+    # Set protocol
+    if ($Ssl.IsPresent) {
+        if (-not($Port)) {
+            $Port = 6986
+        }
+    } else {
+        if (-not($Port)) {
+            $Port = 5986
+        }
+    }
+    if (Get-CouchDBDocument -Port $Port -Database $Database -Document $Node -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue) {
+        $Revision = (Get-CouchDBDocument -Port $Port -Database $Database -Document $Node -Authorization $Authorization -Ssl:$Ssl)._rev
     } else {
         throw "Node $Node not exist."
     }
     $Document = $Node
     if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove node $Node ?","Remove $Node")) {
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization -Ssl:$Ssl
     }
 }
 
@@ -1180,13 +1267,14 @@ function Remove-CouchDBReplication () {
         [string] $Document = $(throw "Please specify the document id."),
         [string] $Revision = $(throw "Please specify the revision id."),
         [string] $Authorization,
-        [switch] $Force
+        [switch] $Force,
+        [switch] $Ssl
     )
-    if (-not(Get-CouchDBDatabase -Database $Database)) {
+    if (-not(Get-CouchDBDatabase -Database $Database -Authorization $Authorization -Ssl:$Ssl)) {
         throw "Database replicator $Database is not exists."
     }
     if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove replication $Document ?","Remove $Document")) {
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization -Ssl:$Ssl
     }
 }
 
@@ -1208,11 +1296,12 @@ function Remove-CouchDBIndex () {
         [string] $DesignDoc = $(throw "Please specify the designdoc id for index."), 
         [string] $Name = $(throw "Please specify the name of index."), 
         [string] $Authorization,
-        [switch]$Force
+        [switch]$Force,
+        [switch] $Ssl
     )
     $Document = "_index/$DesignDoc/json/$Name"
     if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove index $DesignDoc ?","Remove index $DesignDoc on database $Database")) {
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Authorization $Authorization
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
     }
 }
 
@@ -1254,7 +1343,8 @@ function Find-CouchDBDocuments () {
         [string] $Sort,
         [ValidateSet('lt','lte','eq','ne','gte','gt','exists','type','in','nin','size','regex')]
         [string] $Operator,
-        [string] $Authorization
+        [string] $Authorization,
+        [switch] $Ssl
     )
 
     $Document = '_find'
@@ -1289,5 +1379,5 @@ function Find-CouchDBDocuments () {
         $Data += ",`"sort`": [{`"$($Sort)`": `"asc`"}]"
     }
     $Data += '}'
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }
