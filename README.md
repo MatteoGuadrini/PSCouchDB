@@ -21,10 +21,10 @@ Now, configure database mode, in single node (cluster of one single node) or clu
 ```powershell
 Enable-CouchDBCluster -Authorization "adminuser:password"
 ```
-5. Now, open powershell and create a first personal database: 
+5. Now, open powershell and create a first personal database:
 ```powershell
 New-CouchDBDatabase -Database test -Authorization "adminuser:password"
-``` 
+```
 where adminuser is a newly created user and your password.
 
 6. Create a sample document for `test` database:
@@ -51,7 +51,7 @@ First, check all the available databases:
 ```powershell
 Get-CouchDBDatabase
 ```
-Create a new user in _users database:
+Create a new user in \_users database:
 ```powershell
 $password = "password" | ConvertTo-SecureString -AsPlainText -Force
 New-CouchDBUser -Userid admin_test -Password $password -Roles admin -Authorization "adminuser:password"
@@ -93,9 +93,10 @@ The operators available, for now, are the following:
 - 'in'    	The document field must exist in the list provided.
 - 'nin'   	The document field not must exist in the list provided.
 - 'size'   	Special condition to match the length of an array field in a document. Non-array fields cannot match this condition.
-- 'regex'   A regular expression pattern to match against the document field. Only matches when the field is a string value and matches the supplied regular expression. The matching algorithms are based on the Perl Compatible Regular Expression (PCRE) library. For more information about what is implemented, see the see the [Erlang Regular Expression](http://erlang.org/doc/man/re.html "Perl-like regular expressions for Erlang")
+- 'mod'         Divisor and Remainder are both positive or negative integers. Non-integer values result in a 404. Matches documents where ```field % Divisor == Remainder``` is true, and only when the document field is an integer.
+- 'regex'       A regular expression pattern to match against the document field. Only matches when the field is a string value and matches the supplied regular expression. The matching algorithms are based on the Perl Compatible Regular Expression (PCRE) library. For more information about what is implemented, see the see the [Erlang Regular Expression](http://erlang.org/doc/man/re.html "Perl-like regular expressions for Erlang")
 
-`Sort` indicates the field you want to sort ascending data. 
+`Sort` indicates the field you want to sort ascending data.
 
 ### Find data with other operator
 Search data with other comparison operator:
@@ -109,6 +110,7 @@ Find-CouchDBDocuments -Database test -Selector "answer" -Value number -Fields _i
 Find-CouchDBDocuments -Database test -Selector "array" -Value "value1" -Fields _id,array -Operator in
 Find-CouchDBDocuments -Database test -Selector "array" -Value "value 2" -Fields _id,array -Operator nin
 Find-CouchDBDocuments -Database test -Selector "array" -Value 1 -Fields _id,array -Operator size
+Find-CouchDBDocuments -Database test -Selector "answer" -Value 1 -Fields _id,answer -Operator mod
 Find-CouchDBDocuments -Database test -Selector "color" -Value "^[rR].[dD]" -Fields _id,color -Operator regex
 ```
 
@@ -133,6 +135,9 @@ For now, I've used the native powershell logical operators.
 
 ### Other operation
 For other operation see the [wiki](https://github.com/MatteoGuadrini/PSCouchDB/wiki).
+
+### Kanban board
+If you are curious, if you want to contribute or simply see the features, look at the project's kanban board here: [KANBAN](https://tree.taiga.io/project/matteoguadrini-pscouchdb/kanban)
 
 ### Cmdlet example
 To get examples of all the cmdlets of this module, use this command:
