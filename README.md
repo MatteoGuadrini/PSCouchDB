@@ -93,10 +93,10 @@ The operators available, for now, are the following:
 - 'in'    	The document field must exist in the list provided.
 - 'nin'   	The document field not must exist in the list provided.
 - 'size'   	Special condition to match the length of an array field in a document. Non-array fields cannot match this condition.
-- 'mod'         Divisor and Remainder are both positive or negative integers. Non-integer values result in a 404. Matches documents where ```field % Divisor == Remainder``` is true, and only when the document field is an integer.
+- 'mod'     Divisor and Remainder are both positive or negative integers. Non-integer values result in a 404. Matches documents where ```field % Divisor == Remainder``` is true, and only when the document field is an integer.
 - 'regex'       A regular expression pattern to match against the document field. Only matches when the field is a string value and matches the supplied regular expression. The matching algorithms are based on the Perl Compatible Regular Expression (PCRE) library. For more information about what is implemented, see the see the [Erlang Regular Expression](http://erlang.org/doc/man/re.html "Perl-like regular expressions for Erlang")
 
-`Sort` indicates the field you want to sort ascending data.
+See the help for complete usage.
 
 ### Find data with other operator
 Search data with other comparison operator:
@@ -115,22 +115,36 @@ Find-CouchDBDocuments -Database test -Selector "color" -Value "^[rR].[dD]" -Fiel
 ```
 
 ## Logical Operators
-For now, I've used the native powershell logical operators.
-### AND
+For logical operators, use native class **PSCouchDBQuery**. So, run this:
 ```powershell
-((Find-CouchDBDocuments -Database test -Selector "color" -Value "red" -Fields _id,color -Operator eq).docs -and (Find-CouchDBDocuments -Database test -Selector "color" -Value "blue" -Fields _id,color -Operator eq).docs)
+using module PSCouchDB
+$myquery = New-Object PSCouchDBQuery
+$myquery.AddSelector("answer", 42)
+$myquery.AddSelector("name", 'Arthur')
+```
+### AND
+Find if "answer" is 42 **and** "name" is Arthur
+```powershell
+$myquery.AddLogicalOperator('$and')
+Find-CouchDBDocuments -Database test -Find $myquery.GetNativeQuery()
 ```
 ### OR
+Find if "answer" is 42 **or** "name" is Arthur
 ```powershell
-((Find-CouchDBDocuments -Database test -Selector "color" -Value "red" -Fields _id,color -Operator eq).docs -or (Find-CouchDBDocuments -Database test -Selector "color" -Value "blue" -Fields _id,color -Operator eq).docs)
+$myquery.AddLogicalOperator('$or')
+Find-CouchDBDocuments -Database test -Find $myquery.GetNativeQuery()
 ```
 ### NOT
+Find if "answer" is **not** 42 and "name" is **not** Arthur
 ```powershell
-(-not(Find-CouchDBDocuments -Database test -Selector "color" -Value "red" -Fields _id,color -Operator eq).docs)
+$myquery.AddLogicalOperator('$not')
+Find-CouchDBDocuments -Database test -Find $myquery.GetNativeQuery()
 ```
 ### NOR
+Find if "answer" is **not** 42 or "name" is **not** Arthur
 ```powershell
-(-not((Find-CouchDBDocuments -Database test -Selector "color" -Value "red" -Fields _id,color -Operator eq).docs -or (Find-CouchDBDocuments -Database test -Selector "color" -Value "blue" -Fields _id,color -Operator eq).docs))
+$myquery.AddLogicalOperator('$nor')
+Find-CouchDBDocuments -Database test -Find $myquery.GetNativeQuery()
 ```
 
 ### Other operation
