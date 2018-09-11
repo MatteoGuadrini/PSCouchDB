@@ -1,4 +1,4 @@
-# The complete and powerfull powershell module for CouchDB v2.0
+# The complete and powerfull powershell module for CouchDB v2.X
 [Powershell](https://github.com/PowerShell/PowerShell "Powershell source") meet [CouchDB](http://couchdb.apache.org/ "CouchDB site")
 
 ## Installation and simple usage

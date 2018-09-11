@@ -30,7 +30,7 @@
     Copyright = '(c) Matteo Guadrini. All rights reserved.'
 
     # Description of the functionality provided by this module
-    Description = 'Powershell module for CouchDB v2.0'
+    Description = 'Powershell module for CouchDB v2.X'
 
     # Minimum version of the PowerShell engine required by this module
     PowerShellVersion = '5.0'
@@ -72,6 +72,7 @@
     FunctionsToExport = @("Get-CouchDBDatabase",
                         "Get-CouchDBDatabaseChanges",
                         "Get-CouchDBDocument",
+                        "Get-CouchDBDesignDocument",
                         "Get-CouchDBAttachment",
                         "Get-CouchDBUser",
                         "Get-CouchDBAdmin",
@@ -87,6 +88,7 @@
                         "Compress-CouchDBDatabase",
                         "Clear-CouchDBView",
                         "Set-CouchDBDocument",
+                        "Set-CouchDBDesignDocument",
                         "Set-CouchDBAttachment",
                         "Set-CouchDBUser",
                         "Set-CouchDBAdmin",
@@ -96,6 +98,7 @@
                         "Revoke-CouchDBDatabasePermission",
                         "New-CouchDBDatabase",
                         "New-CouchDBDocument",
+                        "New-CouchDBDesignDocument",
                         "New-CouchDBAttachment",
                         "New-CouchDBUser",
                         "New-CouchDBAdmin",
@@ -104,6 +107,7 @@
                         "New-CouchDBIndex",
                         "Remove-CouchDBDatabase",
                         "Remove-CouchDBDocument",
+                        "Remove-CouchDBDesignDocument",
                         "Remove-CouchDBAttachment",
                         "Remove-CouchDBUser",
                         "Remove-CouchDBAdmin",
@@ -124,6 +128,7 @@
     AliasesToExport = @("gcdb",
                         "gcdbc",
                         "gcdoc",
+                        "gcddoc",
                         "gcatt",
                         "gcusr",
                         "gcadm",
@@ -139,6 +144,7 @@
                         "ccdb",
                         "ccview",
                         "scdoc",
+                        "scddoc",
                         "scatt",
                         "scusr",
                         "scadm",
@@ -148,6 +154,7 @@
                         "rcdbp",
                         "ncdb",
                         "ncdoc",
+                        "ncddoc",
                         "ncatt",
                         "ncusr",
                         "ncadm",
@@ -156,6 +163,7 @@
                         "ncidx",
                         "rcdb",
                         "rcdoc",
+                        "rcddoc",
                         "rcatt",
                         "rcusr",
                         "rcadm",
@@ -191,7 +199,7 @@
             ProjectUri = 'https://matteoguadrini.github.io/PSCouchDB'
 
             # A URL to an icon representing this module.
-            # IconUri = ''
+            IconUri = 'https://image.ibb.co/mU6TNz/pscouchdb_logo.png'
 
             # ReleaseNotes of this module
             # ReleaseNotes = ''
