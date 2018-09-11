@@ -760,7 +760,8 @@ function Get-CouchDBDatabaseChanges () {
     param(
         [string] $Server,
         [int] $Port,
-        [string] $Database = $(throw "Please specify the database name."),
+        [Parameter(mandatory=$true)]
+        [string] $Database,
         [string] $Authorization,
         [switch] $Ssl
     )
@@ -784,7 +785,8 @@ function Get-CouchDBDocument () {
     param(
         [string] $Server,
         [int] $Port,
-        [string] $Database = $(throw "Please specify the database name."),
+        [Parameter(mandatory=$true)]
+        [string] $Database,
         [string] $Document = "_all_docs",
         [switch] $Local,
         [string] $Authorization,
@@ -835,8 +837,10 @@ function Get-CouchDBAttachment () {
     param(
         [string] $Server,
         [int] $Port,
-        [string] $Database = $(throw "Please specify the database name."),
-        [string] $Document = $(throw "Please specify the document id."),
+        [Parameter(mandatory=$true)]
+        [string] $Database,
+        [Parameter(mandatory=$true)]
+        [string] $Document,
         [string] $Attachment,
         [string] $OutFile,
         [string] $Authorization,
@@ -859,7 +863,8 @@ function Get-CouchDBUser () {
         [string] $Server,
         [int] $Port,
         [string] $Database = "_users",
-        [string] $Userid = $(throw "Please specify the username."),
+        [Parameter(mandatory=$true)]
+        [string] $Userid,
         [string] $Authorization,
         [switch] $Ssl
     )
@@ -1009,7 +1014,8 @@ function Get-CouchDBIndex () {
     param(
         [string] $Server,
         [int] $Port,
-        [string] $Database = $(throw "Please specify the database name."),
+        [Parameter(mandatory=$true)]
+        [string] $Database,
         [string] $Authorization,
         [switch] $Ssl
     )
@@ -1051,7 +1057,8 @@ function Clear-CouchDBView () {
     param(
         [string] $Server,
         [int] $Port,
-        [string] $Database = $(throw "Please specify the database name."),
+        [Parameter(mandatory=$true)]
+        [string] $Database,
         [string] $Authorization,
         [switch] $Ssl
     )
@@ -1072,7 +1079,8 @@ function Add-CouchDBNode () {
     param(
         [string] $Server,
         [int] $Port,
-        [string] $BindAddress = $(throw "Please specify the bind address name."),
+        [Parameter(mandatory=$true)]
+        [string] $BindAddress,
         [string] $Authorization,
         [switch] $Ssl
     )
@@ -1103,7 +1111,8 @@ function Compress-CouchDBDatabase () {
     param(
         [string] $Server,
         [int] $Port,
-        [string] $Database = $(throw "Please specify the database name."),
+        [Parameter(mandatory=$true)]
+        [string] $Database,
         [string] $Authorization,
         [switch] $Ssl
     )
@@ -1129,17 +1138,34 @@ function Set-CouchDBDocument () {
     param(
         [string] $Server,
         [int] $Port,
-        [string] $Database = $(throw "Please specify the database name."),
-        [string] $Document = $(throw "Please specify the document id."),
-        [string] $Revision = $(throw "Please specify the revision id."),
+        [Parameter(mandatory=$true)]
+        [string] $Database,
+        [Parameter(mandatory=$true)]
+        [string] $Document,
+        [Parameter(mandatory=$true)]
+        [string] $Revision,
         $Data,
+        [switch] $Replace,
         [string] $Authorization,
         [switch] $Ssl
     )
-    if (($Data -as [hashtable]) -ne $null) {
-        # Json Data
-        $Data = $Data | ConvertTo-Json -Depth 99
+    if (($Data -as [hashtable]) -eq $null) {
+        # Hashtable Data
+        $Json = $Data | ConvertFrom-Json
+        $Data = @{}
+        $Json.psobject.properties | ForEach-Object {
+            $Data.Add($_.Name, $_.Value)
+        }
     }
+    if (-not($Replace.IsPresent)) {
+        $OldDoc = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+        $OldDoc.psobject.properties | ForEach-Object {
+            if (-not($Data.$($_.Name))) {
+                $Data.Add($_.Name, $_.Value)
+            }
+        }
+    }
+    $Data = $Data | ConvertTo-Json -Depth 99
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Revision $Revision -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }
 
@@ -1292,11 +1318,9 @@ function Set-CouchDBDesignDocument () {
             $Json = $Data | ConvertFrom-Json
             $Data = @{}
             if (-not($Json.language.psobject.properties)) {
-                # Add-Member -InputObject $Json -MemberType NoteProperty -Name 'language' -Value 'javascript'
                 $Data.language = "javascript"
             }
             if (-not($Json.views.psobject.properties)) {
-                # Add-Member -InputObject $Json -MemberType NoteProperty -Name 'views' -Value @{}
                 $Data.views = @{}
             } else {
                 $Data.views = @{}
@@ -1305,7 +1329,6 @@ function Set-CouchDBDesignDocument () {
                 }
             }
             if (-not($Json.shows.psobject.properties)) {
-                # Add-Member -InputObject $Json -MemberType NoteProperty -Name 'shows' -Value @{}
                 $Data.shows = @{}
             } else {
                 $Data.shows = @{}
@@ -1314,7 +1337,6 @@ function Set-CouchDBDesignDocument () {
                 }
             }
             if (-not($Json.lists.psobject.properties)) {
-                # Add-Member -InputObject $Json -MemberType NoteProperty -Name 'lists' -Value @{}
                 $Data.lists = @{}
             } else {
                 $Data.lists = @{}
@@ -1323,7 +1345,6 @@ function Set-CouchDBDesignDocument () {
                 }
             }
             if (-not($Json.validate_doc_update.psobject.properties)) {
-                # Add-Member -InputObject $Json -MemberType NoteProperty -Name 'validate_doc_update' -Value ''
                 $Data.validate_doc_update = ''
             } else {
                 $Data.validate_doc_update = $Json.validate_doc_update
@@ -1371,6 +1392,8 @@ function Set-CouchDBDesignDocument () {
         }
         if (($OldDesignDoc.validate_doc_update -ne $null) -and ($DesignDoc.validate_doc_update -eq $null)) {
             $DesignDoc.validate_doc_update = $OldDesignDoc.validate_doc_update
+        } else {
+            $DesignDoc.Remove('validate_doc_update')
         }
     }
     if ($OldDesignDoc._rev) {
@@ -1399,9 +1422,12 @@ function Set-CouchDBAttachment () {
     param(
         [string] $Server,
         [int] $Port,
-        [string] $Database = $(throw "Please specify the database name."),
-        [string] $Document = $(throw "Please specify the document id."),
-        [string] $Revision = $(throw "Please specify the revision id."),
+        [Parameter(mandatory=$true)]
+        [string] $Database,
+        [Parameter(mandatory=$true)]
+        [string] $Document,
+        [Parameter(mandatory=$true)]
+        [string] $Revision,
         [string] $Attachment,
         [string] $Authorization,
         [switch] $Ssl
@@ -1424,10 +1450,13 @@ function Set-CouchDBUser () {
         [string] $Server,
         [int] $Port,
         [string] $Database = "_users",
-        [string] $Userid = $(throw "Please specify the username."),
-        [SecureString] $Password = $(throw "Please specify a password for username $Userid"),
+        [Parameter(mandatory=$true)]
+        [string] $Userid,
+        [Parameter(mandatory=$true)]
+        [SecureString] $Password,
         [array] $Roles,
-        [string] $Revision = $(throw "Please specify the revision id."),
+        [Parameter(mandatory=$true)]
+        [string] $Revision,
         [string] $Authorization,
         [switch] $Ssl
     )
@@ -1466,8 +1495,10 @@ function Set-CouchDBAdmin () {
         [int] $Port,
         [string] $Database = "_node",
         [string] $Node = "couchdb@localhost",
-        [string] $Userid = $(throw "Please specify the admin username."),
-        [SecureString] $Password = $(throw "Please specify a password for username $Userid"),
+        [Parameter(mandatory=$true)]
+        [string] $Userid,
+        [Parameter(mandatory=$true)]
+        [SecureString] $Password,
         [string] $Authorization,
         [switch] $Ssl
     )
@@ -1492,9 +1523,12 @@ function Set-CouchDBConfiguration () {
         [int] $Port,
         [string] $Database = "_node",
         [string] $Node = "couchdb@localhost",
-        [string] $Element = $(throw "Please specify an element."),
-        [string] $Key = $(throw "Please specify a key of element $Element"),
-        [string] $Value = $(throw "Please specify a value of key $Key"),
+        [Parameter(mandatory=$true)]
+        [string] $Element,
+        [Parameter(mandatory=$true)]
+        [string] $Key,
+        [Parameter(mandatory=$true)]
+        [string] $Value,
         [string] $Authorization,
         [switch] $Ssl
     )
@@ -1522,8 +1556,10 @@ function Set-CouchDBReplication () {
         [string] $Server,
         [int] $Port,
         [string] $Database = "_replicator",
-        [string] $Document = $(throw "Please specify the document id."),
-        [string] $Revision = $(throw "Please specify the revision id."),
+        [Parameter(mandatory=$true)]
+        [string] $Document,
+        [Parameter(mandatory=$true)]
+        [string] $Revision,
         [switch] $Continuous,
         [string] $Authorization,
         [switch] $Ssl
@@ -1555,7 +1591,8 @@ function Grant-CouchDBDatabasePermission () {
     param(
         [string] $Server,
         [int] $Port,
-        [string] $Database = $(throw "Please specify the database name."),
+        [Parameter(mandatory=$true)]
+        [string] $Database,
         [array]$AdminUser,
         [array]$AdminRoles,
         [array]$ReaderUser,
@@ -1633,7 +1670,8 @@ function Revoke-CouchDBDatabasePermission () {
     param(
         [string] $Server,
         [int] $Port,
-        [string] $Database = $(throw "Please specify the database name."),
+        [Parameter(mandatory=$true)]
+        [string] $Database,
         [string] $Authorization,
         [switch]$Force,
         [switch] $Ssl
@@ -1674,7 +1712,8 @@ function New-CouchDBDatabase () {
     param(
         [string] $Server,
         [int] $Port,
-        [string] $Database = $(throw "Please specify the database name."),
+        [Parameter(mandatory=$true)]
+        [string] $Database,
         [string] $Authorization,
         [switch] $Ssl
     )
@@ -1698,9 +1737,12 @@ function New-CouchDBDocument () {
     param(
         [string] $Server,
         [int] $Port,
-        [string] $Database = $(throw "Please specify the database name."),
-        [string] $Document = $(throw "Please specify the document id."),
-        $Data = $(throw "Please specify a valid json data."),
+        [Parameter(mandatory=$true)]
+        [string] $Database,
+        [Parameter(mandatory=$true)]
+        [string] $Document,
+        [Parameter(mandatory=$true)]
+        $Data,
         [string] $Authorization,
         [switch] $Ssl
     )
@@ -1867,10 +1909,14 @@ function New-CouchDBAttachment () {
     param(
         [string] $Server,
         [int] $Port,
-        [string] $Database = $(throw "Please specify the database name."),
-        [string] $Document = $(throw "Please specify the document id."),
-        [string] $Attachment = $(throw "Please specify the path of attachment."),
-        [string] $Revision = $(throw "Please specify the revision id."),
+        [Parameter(mandatory=$true)]
+        [string] $Database,
+        [Parameter(mandatory=$true)]
+        [string] $Document,
+        [Parameter(mandatory=$true)]
+        [string] $Attachment,
+        [Parameter(mandatory=$true)]
+        [string] $Revision,
         [string] $Authorization,
         [switch] $Ssl
     )
@@ -1892,8 +1938,10 @@ function New-CouchDBUser () {
         [string] $Server,
         [int] $Port,
         [string] $Database = "_users",
-        [string] $Userid = $(throw "Please specify the username."),
-        [SecureString] $Password = $(throw "Please specify a password for username $Userid"),
+        [Parameter(mandatory=$true)]
+        [string] $Userid,
+        [Parameter(mandatory=$true)]
+        [SecureString] $Password,
         [array] $Roles,
         [string] $Authorization,
         [switch] $Ssl
@@ -1933,8 +1981,10 @@ function New-CouchDBAdmin () {
         [int] $Port,
         [string] $Database = "_node",
         [string] $Node = "couchdb@localhost",
-        [string] $Userid = $(throw "Please specify the admin username."),
-        [SecureString] $Password = $(throw "Please specify a password for admin username $Userid"),
+        [Parameter(mandatory=$true)]
+        [string] $Userid,
+        [Parameter(mandatory=$true)]
+        [SecureString] $Password,
         [string] $Authorization,
         [switch] $Ssl
     )
@@ -2027,9 +2077,12 @@ function New-CouchDBIndex () {
     param(
         [string] $Server,
         [int] $Port,
-        [string] $Database = $(throw "Please specify the database name."),
-        [string] $Name = $(throw "Please specify the name of index document."),
-        [array] $Fields = $(throw "Please specify at least one fields."),
+        [Parameter(mandatory=$true)]
+        [string] $Database,
+        [Parameter(mandatory=$true)]
+        [string] $Name,
+        [Parameter(mandatory=$true)]
+        [array] $Fields,
         [string] $Authorization,
         [switch] $Ssl
     )
@@ -2118,7 +2171,7 @@ function Remove-CouchDBDatabase () {
         [string] $Server,
         [int] $Port,
         [Parameter(mandatory=$true)]
-        [string] $Database = $(throw "Please specify the database name."),
+        [string] $Database,
         [string] $Authorization,
         [switch]$Force,
         [switch] $Ssl
@@ -2141,9 +2194,12 @@ function Remove-CouchDBDocument () {
     param(
         [string] $Server,
         [int] $Port,
-        [string] $Database = $(throw "Please specify the database name."),
-        [string] $Document = $(throw "Please specify the document id."),
-        [string] $Revision = $(throw "Please specify the revision id."),
+        [Parameter(mandatory=$true)]
+        [string] $Database,
+        [Parameter(mandatory=$true)]
+        [string] $Document,
+        [Parameter(mandatory=$true)]
+        [string] $Revision,
         [string] $Authorization,
         [switch]$Force,
         [switch] $Ssl
@@ -2195,10 +2251,14 @@ function Remove-CouchDBAttachment () {
     param(
         [string] $Server,
         [int] $Port,
-        [string] $Database = $(throw "Please specify the database name."),
-        [string] $Document = $(throw "Please specify the document id."),
-        [string] $Attachment = $(throw "Please specify the path of attachment."),
-        [string] $Revision = $(throw "Please specify the revision id."),
+        [Parameter(mandatory=$true)]
+        [string] $Database,
+        [Parameter(mandatory=$true)]
+        [string] $Document,
+        [Parameter(mandatory=$true)]
+        [string] $Attachment,
+        [Parameter(mandatory=$true)]
+        [string] $Revision,
         [string] $Authorization,
         [switch] $Ssl
     )
@@ -2221,8 +2281,10 @@ function Remove-CouchDBUser () {
         [string] $Server,
         [int] $Port,
         [string] $Database = "_users",
-        [string] $Userid = $(throw "Please specify the username."),
-        [string] $Revision = $(throw "Please specify the revision id."),
+        [Parameter(mandatory=$true)]
+        [string] $Userid,
+        [Parameter(mandatory=$true)]
+        [string] $Revision,
         [string] $Authorization,
         [switch]$Force,
         [switch] $Ssl
@@ -2248,7 +2310,8 @@ function Remove-CouchDBAdmin () {
         [int] $Port,
         [string] $Database = "_node",
         [string] $Node = "couchdb@localhost",
-        [string] $Userid = $(throw "Please specify the admin username."),
+        [Parameter(mandatory=$true)]
+        [string] $Userid,
         [string] $Authorization,
         [switch]$Force,
         [switch] $Ssl
@@ -2273,7 +2336,8 @@ function Remove-CouchDBNode () {
         [string] $Server,
         [int] $Port,
         [string] $Database = "_nodes",
-        [string] $Node = $(throw "Please specify name of node!"),
+        [Parameter(mandatory=$true)]
+        [string] $Node,
         [string] $Authorization,
         [switch]$Force,
         [switch] $Ssl
@@ -2313,8 +2377,10 @@ function Remove-CouchDBReplication () {
         [string] $Server,
         [int] $Port,
         [string] $Database = "_replicator",
-        [string] $Document = $(throw "Please specify the document id."),
-        [string] $Revision = $(throw "Please specify the revision id."),
+        [Parameter(mandatory=$true)]
+        [string] $Document,
+        [Parameter(mandatory=$true)]
+        [string] $Revision,
         [string] $Authorization,
         [switch] $Force,
         [switch] $Ssl
@@ -2341,9 +2407,12 @@ function Remove-CouchDBIndex () {
     param(
         [string] $Server,
         [int] $Port,
-        [string] $Database = $(throw "Please specify the database name."),
-        [string] $DesignDoc = $(throw "Please specify the designdoc id for index."),
-        [string] $Name = $(throw "Please specify the name of index."),
+        [Parameter(mandatory=$true)]
+        [string] $Database,
+        [Parameter(mandatory=$true)]
+        [string] $DesignDoc,
+        [Parameter(mandatory=$true)]
+        [string] $Name,
         [string] $Authorization,
         [switch]$Force,
         [switch] $Ssl
@@ -2401,7 +2470,8 @@ function Find-CouchDBDocuments () {
         [int] $Port,
         [Parameter(ParameterSetName = "PSCouchDB")]
         [Parameter(ParameterSetName = "Native")]
-        [string] $Database = $(throw "Please specify the database name."),
+        [Parameter(mandatory=$true)]
+        [string] $Database,
         [Parameter(ParameterSetName = "PSCouchDB")]
         [string] $Selector,
         [Parameter(ParameterSetName = "PSCouchDB")]
