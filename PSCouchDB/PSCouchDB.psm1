@@ -2603,6 +2603,8 @@ function Find-CouchDBDocuments () {
         [Parameter(mandatory=$true)]
         [string] $Database,
         [Parameter(ParameterSetName = "PSCouchDB")]
+        [switch] $Explain,
+        [Parameter(ParameterSetName = "PSCouchDB")]
         [string] $Selector,
         [Parameter(ParameterSetName = "PSCouchDB")]
         [string] $Value,
@@ -2642,7 +2644,11 @@ function Find-CouchDBDocuments () {
         [switch] $Ssl
     )
 
-    $Document = '_find'
+    if ($Explain.IsPresent) {
+        $Document = '_explain'
+    } else {
+        $Document = '_find'
+    }
     if ($Find) {
         if (($Find -as [hashtable]) -ne $null) {
             # Json Data
