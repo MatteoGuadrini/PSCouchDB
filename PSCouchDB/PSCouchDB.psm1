@@ -841,6 +841,7 @@ function Get-CouchDBAttachment () {
         [string] $Database,
         [Parameter(mandatory=$true)]
         [string] $Document,
+        [Parameter(mandatory=$true)]
         [string] $Attachment,
         [string] $OutFile,
         [string] $Authorization,
@@ -891,6 +892,28 @@ function Get-CouchDBAdmin () {
         [switch] $Ssl
     )
     $Document = "$Node/_config/admins"
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+}
+
+function Get-CouchDBDatabaseSecurity () {
+    <#
+    .SYNOPSIS
+    Get the current security object from the specified database.
+    .DESCRIPTION
+    Get the current security object from the specified CouchDB database.
+    .EXAMPLE
+    Get-CouchDBDatabaseSecurity -Database test -Authorization "admin:password"
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server,
+        [int] $Port,
+        [Parameter(mandatory=$true)]
+        [string] $Database,
+        [string] $Authorization,
+        [switch] $Ssl
+    )
+    $Document = "_security"
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
 }
 
@@ -954,7 +977,7 @@ function Get-CouchDBReplication () {
         [string] $Authorization,
         [switch] $Ssl
     )
-    if (-not(Get-CouchDBDatabase -Database $Database -Authorization $Authorization -Ssl:$Ssl)) {
+    if (-not(Get-CouchDBDatabase -Database $Database -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
         throw "Database replicator $Database is not exists."
     }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
@@ -1064,6 +1087,32 @@ function Clear-CouchDBView () {
     )
     $Document = "_view_cleanup"
     Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+}
+
+function Clear-CouchDBDocuments () {
+    <#
+    .SYNOPSIS
+    A database purge permanently document.
+    .DESCRIPTION
+    A CouchDB database purge permanently document.
+    .EXAMPLE
+    Clear-CouchDBDatabase -Database test -Document test -Authorization "admin:password"
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server,
+        [int] $Port,
+        [Parameter(mandatory=$true)]
+        [string] $Database,
+        [Parameter(mandatory=$true)]
+        [string] $Document,
+        [string] $Authorization,
+        [switch] $Ssl
+    )
+    $Data = @{$Document = @((Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl)._rev)}
+    $Data = $Data | ConvertTo-Json
+    $Database = $Database + '/_purge'
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Add-CouchDBNode () {
@@ -1591,6 +1640,85 @@ function Grant-CouchDBDatabasePermission () {
     param(
         [string] $Server,
         [int] $Port,
+        [array]$AdminUser,
+        [array]$AdminRoles,
+        [array]$ReaderUser,
+        [array]$UserRoles,
+        [string] $Authorization,
+        [switch] $Ssl
+    )
+    [string] $Database = '_users'
+    # Check if admin user exists
+    foreach ($User in $AdminUser) {
+        if (-not((Get-CouchDBUser -Database $Database -Userid $User -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue).name -eq $User)) {
+            throw "Admin user $User not exists!"
+        }
+    }
+    # Check if reader user exists
+    foreach ($User in $ReaderUser) {
+        if (-not((Get-CouchDBUser -Database $Database -Userid $User -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue).name -eq $User)) {
+            throw "Reader user $User not exists!"
+        }
+    }
+    # TODO migrate to hashtable and convert to json
+    if ($AdminUser.Count -eq 1) {
+        $AdminUser = "[$($AdminUser | ConvertTo-Json)]"
+    } elseif ($AdminUser.Count -gt 1) {
+        $AdminUser = $AdminUser | ConvertTo-Json
+    } else {
+        $AdminUser = '[]'
+    }
+    if ($AdminRoles.Count -eq 1) {
+        $AdminRoles = "[$($AdminRoles | ConvertTo-Json)]"
+    } elseif ($AdminRoles.Count -gt 1) {
+        $AdminRoles = $AdminRoles | ConvertTo-Json
+    } else {
+        $AdminRoles = '[]'
+    }
+    if ($ReaderUser.Count -eq 1) {
+        $ReaderUser = "[$($ReaderUser | ConvertTo-Json)]"
+    } elseif ($ReaderUser.Count -gt 1) {
+        $ReaderUser = $ReaderUser | ConvertTo-Json
+    } else {
+        $ReaderUser = '[]'
+    }
+    if ($UserRoles.Count -eq 1) {
+        $UserRoles = "[$($UserRoles | ConvertTo-Json)]"
+    } elseif ($UserRoles.Count -gt 1) {
+        $UserRoles = $UserRoles | ConvertTo-Json
+    } else {
+        $UserRoles = '[]'
+    }
+    # Create data permission
+    $Data = "
+    {
+        `"admins`": {
+            `"names`": $AdminUser,
+            `"roles`": $AdminRoles
+        },
+        `"members`": {
+            `"names`": $ReaderUser,
+            `"roles`": $UserRoles
+        }
+    }
+    "
+    $Document = "_security"
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+}
+
+function Grant-CouchDBDatabaseSecurity () {
+    <#
+    .SYNOPSIS
+    Grant the security object for the given database.
+    .DESCRIPTION
+    Grant the security object for the given CouchDB database. Specify Admins and/or Readers.
+    .EXAMPLE
+    Grant-CouchDBDatabaseSecurity -Database example -AdminUser admin -AdminRoles technician -ReaderUser user1 -Authorization "admin:password"
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server,
+        [int] $Port,
         [Parameter(mandatory=$true)]
         [string] $Database,
         [array]$AdminUser,
@@ -1600,18 +1728,20 @@ function Grant-CouchDBDatabasePermission () {
         [string] $Authorization,
         [switch] $Ssl
     )
+    [string] $Document = '_security'
     # Check if admin user exists
     foreach ($User in $AdminUser) {
-        if (-not((Get-CouchDBUser -Database '_users' -Userid $User -Authorization $Authorization -Ssl:$Ssl).name -eq $User)) {
+        if (-not((Get-CouchDBUser -Database '_users' -Userid $User -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue).name -eq $User)) {
             throw "Admin user $User not exists!"
         }
     }
     # Check if reader user exists
     foreach ($User in $ReaderUser) {
-        if (-not((Get-CouchDBUser -Database '_users' -Userid $User -Authorization $Authorization -Ssl:$Ssl).name -eq $User)) {
+        if (-not((Get-CouchDBUser -Database '_users' -Userid $User -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue).name -eq $User)) {
             throw "Reader user $User not exists!"
         }
     }
+    # TODO migrate to hashtable and convert to json
     if ($AdminUser.Count -eq 1) {
         $AdminUser = "[$($AdminUser | ConvertTo-Json)]"
     } elseif ($AdminUser.Count -gt 1) {
