@@ -2,12 +2,14 @@
 New-Alias -Name "gcdb" -Value Get-CouchDBDatabase -Option ReadOnly
 New-Alias -Name "gcdbc" -Value Get-CouchDBDatabaseChanges -Option ReadOnly
 New-Alias -Name "gcdoc" -Value Get-CouchDBDocument -Option ReadOnly
+New-Alias -Name "gcbdoc" -Value Get-CouchDBBulkDocument -Option ReadOnly
 New-Alias -Name "gcddoc" -Value Get-CouchDBDesignDocument -Option ReadOnly
 New-Alias -Name "gcatt" -Value Get-CouchDBAttachment -Option ReadOnly
 New-Alias -Name "gcusr" -Value Get-CouchDBUser -Option ReadOnly
 New-Alias -Name "gcadm" -Value Get-CouchDBAdmin -Option ReadOnly
 New-Alias -Name "gcconf" -Value Get-CouchDBConfiguration -Option ReadOnly
 New-Alias -Name "gcnode" -Value Get-CouchDBNode -Option ReadOnly
+New-Alias -Name "gcdbs" -Value Get-CouchDBDatabaseSecurity -Option ReadOnly
 New-Alias -Name "gcrpl" -Value Get-CouchDBReplication -Option ReadOnly
 New-Alias -Name "gcrpls" -Value Get-CouchDBReplicationScheduler -Option ReadOnly
 New-Alias -Name "gctsk" -Value Get-CouchDBActiveTask -Option ReadOnly
@@ -17,6 +19,7 @@ New-Alias -Name "eccl" -Value Enable-CouchDBCluster -Option ReadOnly
 New-Alias -Name "acnode" -Value Add-CouchDBNode -Option ReadOnly
 New-Alias -Name "ccdb" -Value Compress-CouchDBDatabase -Option ReadOnly
 New-Alias -Name "ccview" -Value Clear-CouchDBView -Option ReadOnly
+New-Alias -Name "ccdoc" -Value Clear-CouchDBDocuments -Option ReadOnly
 New-Alias -Name "scdoc" -Value Set-CouchDBDocument -Option ReadOnly
 New-Alias -Name "scddoc" -Value Set-CouchDBDesignDocument -Option ReadOnly
 New-Alias -Name "scatt" -Value Set-CouchDBAttachment -Option ReadOnly
@@ -25,6 +28,7 @@ New-Alias -Name "scadm" -Value Set-CouchDBAdmin -Option ReadOnly
 New-Alias -Name "scconf" -Value Set-CouchDBConfiguration -Option ReadOnly
 New-Alias -Name "scrpl" -Value Set-CouchDBReplication -Option ReadOnly
 New-Alias -Name "gcdbp" -Value Grant-CouchDBDatabasePermission -Option ReadOnly
+New-Alias -Name "gcdbsec" -Value Grant-CouchDBDatabaseSecurity -Option ReadOnly
 New-Alias -Name "rcdbp" -Value Revoke-CouchDBDatabasePermission -Option ReadOnly
 New-Alias -Name "ncdb" -Value New-CouchDBDatabase -Option ReadOnly
 New-Alias -Name "ncdoc" -Value New-CouchDBDocument -Option ReadOnly
@@ -47,6 +51,7 @@ New-Alias -Name "rcidx" -Value Remove-CouchDBIndex -Option ReadOnly
 New-Alias -Name "rcsrv" -Value Restart-CouchDBServer -Option ReadOnly
 New-Alias -Name "fcdoc" -Value Find-CouchDBDocuments -Option ReadOnly
 New-Alias -Name "finddoc" -Value Find-CouchDBDocuments -Option ReadOnly
+New-Alias -Name "wcfc" -Value Write-CouchDBFullCommit -Option ReadOnly
 
 # Native Powershell CouchDB class
 class PSCouchDBQuery {
@@ -798,6 +803,38 @@ function Get-CouchDBDocument () {
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
 }
 
+function Get-CouchDBBulkDocument () {
+    <#
+    .SYNOPSIS
+    Get a bulk document.
+    .DESCRIPTION
+    This method can be called to query several documents in bulk.
+    .EXAMPLE
+    Get-CouchDBBulkDocument -Database test -Document "001","002","003"
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server,
+        [int] $Port,
+        [Parameter(mandatory=$true)]
+        [string] $Database,
+        [Parameter(mandatory=$true)]
+        [array] $Document,
+        [string] $Authorization,
+        [switch] $Ssl
+    )
+    $Data = '{"docs": ['
+    for ($counter = 0; $counter -lt $Document.Count; $counter++) {
+        $Data += "{`"id`": `"$($Document[$counter])`"}"
+        if ($counter -lt ($Document.Count - 1)) {
+            $Data += ','
+        }
+    }
+    $Data += ']}'
+    [string] $Document = "_bulk_get"
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+}
+
 function Get-CouchDBDesignDocument () {
     <#
     .SYNOPSIS
@@ -819,6 +856,28 @@ function Get-CouchDBDesignDocument () {
         [switch] $Ssl
     )
     $Document = "_design/$Document"
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+}
+
+function Get-CouchDBDatabaseDesignDocument () {
+    <#
+    .SYNOPSIS
+    Get all design document on a database.
+    .DESCRIPTION
+    Get all design document on a CouchDB database.
+    .EXAMPLE
+    Get-CouchDBDatabaseDesignDocument -Database test
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server,
+        [int] $Port,
+        [Parameter(mandatory=$true)]
+        [string] $Database,
+        [string] $Authorization,
+        [switch] $Ssl
+    )
+    $Document = "_design_docs"
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
 }
 
@@ -1046,6 +1105,33 @@ function Get-CouchDBIndex () {
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
 }
 
+function Get-CouchDBMissingRevision () {
+    <#
+    .SYNOPSIS
+    Returns the missing revisions.
+    .DESCRIPTION
+    With given a list of document revisions, returns the document revisions that do not exist in the database.
+    .EXAMPLE
+    Get-CouchDBMissingRevision -Database test -Document test -Revision 2-7051cbe5c8faecd085a3fa619e6e6337,3-825cb35de44c433bfb2df415563a19de -Authorization "admin:password"
+    #>
+    param(
+        [string] $Server,
+        [int] $Port,
+        [Parameter(mandatory=$true)]
+        [string] $Database,
+        [Parameter(mandatory=$true)]
+        [string] $Document,
+        [Parameter(mandatory=$true)]
+        [array] $Revision,
+        [string] $Authorization,
+        [switch] $Ssl
+    )
+    $Data = @{$Document = $Revision}
+    $Data = $Data | ConvertTo-Json
+    $Database = $Database + '/_missing_revs'
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
+}
+
 function Measure-CouchDBStatistics () {
     <#
     .SYNOPSIS
@@ -1098,7 +1184,7 @@ function Clear-CouchDBDocuments () {
     .EXAMPLE
     Clear-CouchDBDatabase -Database test -Document test -Authorization "admin:password"
     #>
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess = $true)]
     param(
         [string] $Server,
         [int] $Port,
@@ -1107,12 +1193,15 @@ function Clear-CouchDBDocuments () {
         [Parameter(mandatory=$true)]
         [string] $Document,
         [string] $Authorization,
+        [switch] $Force,
         [switch] $Ssl
     )
     $Data = @{$Document = @((Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl)._rev)}
     $Data = $Data | ConvertTo-Json
     $Database = $Database + '/_purge'
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish to purge permanently document ?","Purge permanently document")) {
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    }
 }
 
 function Add-CouchDBNode () {
@@ -1170,6 +1259,31 @@ function Compress-CouchDBDatabase () {
     Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }
 
+function Compress-CouchDBDesignDocument () {
+    <#
+    .SYNOPSIS
+    Compress design document.
+    .DESCRIPTION
+    Compress a selected design document.
+    .EXAMPLE
+    Compress-CouchDBDesignDocument -Database test -DesignDoc ddoc -Authorization "admin:password"
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server,
+        [int] $Port,
+        [Parameter(mandatory=$true)]
+        [string] $Database,
+        [Parameter(mandatory=$true)]
+        [string] $DesignDoc,
+        [string] $Authorization,
+        [switch] $Ssl
+    )
+    $Document = "_compact/$DesignDoc"
+    $Data = '{}'
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+}
+
 function Set-CouchDBDocument () {
     <#
     .SYNOPSIS
@@ -1216,6 +1330,49 @@ function Set-CouchDBDocument () {
     }
     $Data = $Data | ConvertTo-Json -Depth 99
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Revision $Revision -Data $Data -Authorization $Authorization -Ssl:$Ssl
+}
+
+function Set-CouchDBBulkDocument () {
+    <#
+    .SYNOPSIS
+    Set a bulk document.
+    .DESCRIPTION
+    This method can be called to allows you to create and update multiple documents at the same time (only id and revision).
+    .EXAMPLE
+    Set-CouchDBBulkDocument -Database test -Document "001","002","003"
+    .EXAMPLE
+    Set-CouchDBBulkDocument -Database test -Document "001","004","003" -Revision 2-7051cbe5c8faecd085a3fa619e6e6337,$null,2-7051cbe5c8faecd085a3fa619e6e6337
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server,
+        [int] $Port,
+        [Parameter(mandatory=$true)]
+        [string] $Database,
+        [Parameter(mandatory=$true)]
+        [array] $Document,
+        [array] $Revision,
+        [switch] $IsDeleted,
+        [string] $Authorization,
+        [switch] $Ssl
+    )
+    $Data = '{"docs": ['
+    for ($counter = 0; $counter -lt $Document.Count; $counter++) {
+        $Data += "{`"_id`": `"$($Document[$counter])`""
+        if ( $Revision.Count -ne 0 -and $Revision[$counter]) {
+            $Data += ",`"_rev`": `"$($Revision[$counter])`""
+        }
+        if ($IsDeleted.IsPresent) {
+            $Data += ",`"_deleted`": `"true`""
+        }
+        $Data += "}"
+        if ($counter -lt ($Document.Count - 1)) {
+            $Data += ','
+        }
+    }
+    $Data += ']}'
+    [string] $Document = "_bulk_docs"
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Set-CouchDBDesignDocument () {
@@ -2698,4 +2855,30 @@ function Find-CouchDBDocuments () {
         Write-Verbose -Message "The JSON data is: $Data"
     }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+}
+
+function Write-CouchDBFullCommit () {
+    <#
+    .SYNOPSIS
+    Commits any recent changes.
+    .DESCRIPTION
+    Commits any recent changes to the specified database to disk
+    .EXAMPLE
+    Write-CouchDBFullCommit -Database test -Authorization "admin:password"
+    #>
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param(
+        [string] $Server,
+        [int] $Port,
+        [Parameter(mandatory=$true)]
+        [string] $Database,
+        [string] $Authorization,
+        [switch]$Force,
+        [switch] $Ssl
+    )
+    $Document = '_ensure_full_commit'
+    $Data = '{}'
+    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish to commits any recent changes to the specified database $Database to disk ?","Commit changes")) {
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    }
 }

@@ -72,7 +72,9 @@
     FunctionsToExport = @("Get-CouchDBDatabase",
                         "Get-CouchDBDatabaseChanges",
                         "Get-CouchDBDocument",
+                        "Get-CouchDBBulkDocument",
                         "Get-CouchDBDesignDocument",
+                        "Get-CouchDBDatabaseDesignDocument",
                         "Get-CouchDBAttachment",
                         "Get-CouchDBUser",
                         "Get-CouchDBAdmin",
@@ -83,13 +85,16 @@
                         "Get-CouchDBReplicationScheduler",
                         "Get-CouchDBActiveTask",
                         "Get-CouchDBIndex",
+                        "Get-CouchDBMissingRevision",
                         "Measure-CouchDBStatistics",
                         "Enable-CouchDBCluster",
                         "Add-CouchDBNode",
                         "Compress-CouchDBDatabase",
+                        "Compress-CouchDBDesignDocument",
                         "Clear-CouchDBView",
                         "Clear-CouchDBDocuments",
                         "Set-CouchDBDocument",
+                        "Set-CouchDBBulkDocument",
                         "Set-CouchDBDesignDocument",
                         "Set-CouchDBAttachment",
                         "Set-CouchDBUser",
@@ -118,7 +123,8 @@
                         "Remove-CouchDBReplication",
                         "Remove-CouchDBIndex",
                         "Restart-CouchDBServer",
-                        "Find-CouchDBDocuments"
+                        "Find-CouchDBDocuments",
+                        "Write-CouchDBFullCommit"
                         )
 
     # Cmdlet s to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
@@ -130,7 +136,9 @@
     # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
     AliasesToExport = @("gcdb",
                         "gcdbc",
+                        "gcdbs",
                         "gcdoc",
+                        "gcbdoc",
                         "gcddoc",
                         "gcatt",
                         "gcusr",
@@ -146,6 +154,7 @@
                         "acnode",
                         "ccdb",
                         "ccview",
+                        "ccdoc",
                         "scdoc",
                         "scddoc",
                         "scatt",
@@ -154,6 +163,7 @@
                         "scconf",
                         "scrpl",
                         "gcdbp",
+                        "gcdbsec",
                         "rcdbp",
                         "ncdb",
                         "ncdoc",
@@ -175,7 +185,8 @@
                         "rcidx",
                         "rcsrv",
                         "fcdoc",
-                        "finddoc"
+                        "finddoc",
+                        "wcfc"
                         )
 
     # DSC resources to export from this module
