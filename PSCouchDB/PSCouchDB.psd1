@@ -12,7 +12,7 @@
     RootModule = 'PSCouchDB.psm1'
 
     # Version number of this module.
-    ModuleVersion = '1.7.0'
+    ModuleVersion = '1.8.0'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -70,7 +70,10 @@
 
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
     FunctionsToExport = @("Get-CouchDBDatabase",
+                        "Get-CouchDBServer",
+                        "Get-CouchDBDatabaseInfo",
                         "Get-CouchDBDatabaseChanges",
+                        "Get-CouchDBDatabaseUpdates",
                         "Get-CouchDBDocument",
                         "Get-CouchDBBulkDocument",
                         "Get-CouchDBDesignDocument",
@@ -83,11 +86,16 @@
                         "Get-CouchDBDatabaseSecurity",
                         "Get-CouchDBReplication",
                         "Get-CouchDBReplicationScheduler",
+                        "Get-CouchDBReplicationDocument",
                         "Get-CouchDBActiveTask",
                         "Get-CouchDBIndex",
                         "Get-CouchDBMissingRevision",
+                        "Get-CouchDBRevisionDifference",
+                        "Get-CouchDBRevisionLimit",
+                        "Copy-CouchDBDocument",
                         "Measure-CouchDBStatistics",
                         "Enable-CouchDBCluster",
+                        "Search-CouchDBHelp",
                         "Add-CouchDBNode",
                         "Compress-CouchDBDatabase",
                         "Compress-CouchDBDesignDocument",
@@ -101,9 +109,11 @@
                         "Set-CouchDBAdmin",
                         "Set-CouchDBConfiguration",
                         "Set-CouchDBReplication",
+                        "Set-CouchDBRevisionLimit",
                         "Grant-CouchDBDatabasePermission",
                         "Grant-CouchDBDatabaseSecurity",
                         "Revoke-CouchDBDatabasePermission",
+                        "Request-CouchDBReplication",
                         "New-CouchDBDatabase",
                         "New-CouchDBDocument",
                         "New-CouchDBDesignDocument",
@@ -135,7 +145,9 @@
 
     # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
     AliasesToExport = @("gcdb",
+                        "gcsi",
                         "gcdbc",
+                        "gcdbu",
                         "gcdbs",
                         "gcdoc",
                         "gcbdoc",
@@ -147,12 +159,21 @@
                         "gcnode",
                         "gcrpl",
                         "gcrpls",
+                        "gcrd",
+                        "gcrpdoc",
                         "gctsk",
                         "gcidx",
+                        "gcddd",
+                        "gcrl",
+                        "gcmr",
+                        "cpdoc",
                         "mcsts",
                         "eccl",
+                        "src",
+                        "helpc",
                         "acnode",
                         "ccdb",
+                        "ccdd",
                         "ccview",
                         "ccdoc",
                         "scdoc",
@@ -161,10 +182,13 @@
                         "scusr",
                         "scadm",
                         "scconf",
+                        "scbd",
                         "scrpl",
+                        "scrl",
                         "gcdbp",
                         "gcdbsec",
                         "rcdbp",
+                        "rcdbr",
                         "ncdb",
                         "ncdoc",
                         "ncddoc",

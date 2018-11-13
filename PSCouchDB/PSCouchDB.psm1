@@ -1,6 +1,8 @@
 # Alias for all export cmdlets
 New-Alias -Name "gcdb" -Value Get-CouchDBDatabase -Option ReadOnly
+New-Alias -Name "gcsi" -Value Get-CouchDBServer -Option ReadOnly
 New-Alias -Name "gcdbc" -Value Get-CouchDBDatabaseChanges -Option ReadOnly
+New-Alias -Name "gcdbu" -Value Get-CouchDBDatabaseUpdates -Option ReadOnly
 New-Alias -Name "gcdoc" -Value Get-CouchDBDocument -Option ReadOnly
 New-Alias -Name "gcbdoc" -Value Get-CouchDBBulkDocument -Option ReadOnly
 New-Alias -Name "gcddoc" -Value Get-CouchDBDesignDocument -Option ReadOnly
@@ -13,11 +15,20 @@ New-Alias -Name "gcdbs" -Value Get-CouchDBDatabaseSecurity -Option ReadOnly
 New-Alias -Name "gcrpl" -Value Get-CouchDBReplication -Option ReadOnly
 New-Alias -Name "gcrpls" -Value Get-CouchDBReplicationScheduler -Option ReadOnly
 New-Alias -Name "gctsk" -Value Get-CouchDBActiveTask -Option ReadOnly
+New-Alias -Name "gcrpdoc" -Value Get-CouchDBReplicationDocument -Option ReadOnly
 New-Alias -Name "gcidx" -Value Get-CouchDBIndex -Option ReadOnly
+New-Alias -Name "gcddd" -Value Get-CouchDBDatabaseDesignDocument -Option ReadOnly
+New-Alias -Name "gcmr" -Value Get-CouchDBMissingRevision -Option ReadOnly
+New-Alias -Name "gcrd" -Value Get-CouchDBRevisionDifference -Option ReadOnly
+New-Alias -Name "gcrl" -Value Get-CouchDBRevisionLimit -Option ReadOnly
+New-Alias -Name "cpdoc" -Value Copy-CouchDBDocument -Option ReadOnly
 New-Alias -Name "mcsts" -Value Measure-CouchDBStatistics -Option ReadOnly
 New-Alias -Name "eccl" -Value Enable-CouchDBCluster -Option ReadOnly
+New-Alias -Name "src" -Value Search-CouchDBHelp -Option ReadOnly
+New-Alias -Name "helpc" -Value Search-CouchDBHelp -Option ReadOnly
 New-Alias -Name "acnode" -Value Add-CouchDBNode -Option ReadOnly
 New-Alias -Name "ccdb" -Value Compress-CouchDBDatabase -Option ReadOnly
+New-Alias -Name "ccdd" -Value Compress-CouchDBDesignDocument -Option ReadOnly
 New-Alias -Name "ccview" -Value Clear-CouchDBView -Option ReadOnly
 New-Alias -Name "ccdoc" -Value Clear-CouchDBDocuments -Option ReadOnly
 New-Alias -Name "scdoc" -Value Set-CouchDBDocument -Option ReadOnly
@@ -27,9 +38,12 @@ New-Alias -Name "scusr" -Value Set-CouchDBUser -Option ReadOnly
 New-Alias -Name "scadm" -Value Set-CouchDBAdmin -Option ReadOnly
 New-Alias -Name "scconf" -Value Set-CouchDBConfiguration -Option ReadOnly
 New-Alias -Name "scrpl" -Value Set-CouchDBReplication -Option ReadOnly
+New-Alias -Name "scbd" -Value Set-CouchDBBulkDocument -Option ReadOnly
+New-Alias -Name "scrl" -Value Set-CouchDBRevisionLimit -Option ReadOnly
 New-Alias -Name "gcdbp" -Value Grant-CouchDBDatabasePermission -Option ReadOnly
 New-Alias -Name "gcdbsec" -Value Grant-CouchDBDatabaseSecurity -Option ReadOnly
 New-Alias -Name "rcdbp" -Value Revoke-CouchDBDatabasePermission -Option ReadOnly
+New-Alias -Name "rcdbr" -Value Request-CouchDBReplication -Option ReadOnly
 New-Alias -Name "ncdb" -Value New-CouchDBDatabase -Option ReadOnly
 New-Alias -Name "ncdoc" -Value New-CouchDBDocument -Option ReadOnly
 New-Alias -Name "ncddoc" -Value New-CouchDBDesignDocument -Option ReadOnly
@@ -719,6 +733,7 @@ function Send-CouchDBRequest {
         $options.Add("ContentType","application/json")
         $options.Add("Body",([System.Text.Encoding]::UTF8.GetBytes($Data)))
         Write-Debug -Message "`$Data is $Data"
+        Write-Verbose -Message "`$Data is $Data"
     }
     # Invoke REST with method
     Write-Verbose -Message "Finally, send request to CouchDB server $Server"
@@ -732,12 +747,31 @@ function ConvertTo-CouchDBPassword ([SecureString] $SecurePassword) {
     return $UnsecurePassword
 }
 
+function Get-CouchDBServer () {
+    <#
+    .SYNOPSIS
+    Get server information.
+    .DESCRIPTION
+    Accessing the root of a CouchDB instance returns meta information about the instance.
+    .EXAMPLE
+    Get-CouchDBDatabase -Database test -Authorization "admin:password"
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server,
+        [int] $Port,
+        [string] $Authorization,
+        [switch] $Ssl
+    )
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Authorization $Authorization -Ssl:$Ssl
+}
+
 function Get-CouchDBDatabase () {
     <#
     .SYNOPSIS
     Get a database information.
     .DESCRIPTION
-    Get a CouchDB database informations.
+    Gets information about the specified database.
     .EXAMPLE
     Get-CouchDBDatabase -Database test -Authorization "admin:password"
     #>
@@ -752,12 +786,41 @@ function Get-CouchDBDatabase () {
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl
 }
 
+function Get-CouchDBDatabaseInfo () {
+    <#
+    .SYNOPSIS
+    Get a databases information.
+    .DESCRIPTION
+    Returns information of a list of the specified databases in the CouchDB instance. 
+    .EXAMPLE
+    Get-CouchDBDatabase -Database test -Authorization "admin:password"
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server,
+        [int] $Port,
+        [array] $Keys,
+        [string] $Authorization,
+        [switch] $Ssl
+    )
+    $Database = '_dbs_info'
+    $Data = '{ "keys": [ '
+    for ($count = 0; $count -lt $Keys.Count; $count++) {
+        $Data += "`"$($Keys[$count])`""
+        if ($count -ne ($Keys.Count - 1)) {
+            $Data += ','
+        }
+    }
+    $Data += '] }'
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
+}
+
 function Get-CouchDBDatabaseChanges () {
     <#
     .SYNOPSIS
     Get database changelogs.
     .DESCRIPTION
-    Get database changelogs of CouchDB database.
+    Returns a sorted list of changes made to documents in the database, in time order of application, can be obtained from the database’s _changes resource.
     .EXAMPLE
     Get-CouchDBDatabaseChanges -Database test -Authorization "admin:password"
     #>
@@ -777,12 +840,33 @@ function Get-CouchDBDatabaseChanges () {
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
 }
 
+function Get-CouchDBDatabaseUpdates () {
+    <#
+    .SYNOPSIS
+    Get database events.
+    .DESCRIPTION
+    Returns a list of all database events in the CouchDB instance.
+    .EXAMPLE
+    Get-CouchDBDatabaseChanges -Authorization "admin:password"
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server,
+        [int] $Port,
+        [string] $Authorization,
+        [switch] $Ssl
+    )
+    $Database = '_db_updates'
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl
+}
+
 function Get-CouchDBDocument () {
     <#
     .SYNOPSIS
     Get a document.
     .DESCRIPTION
     Get a CouchDB document json data.
+    Executes the built-in _all_docs view, returning all of the documents in the database.
     .EXAMPLE
     Get-CouchDBDocument -Database test -Document "001"
     #>
@@ -793,14 +877,21 @@ function Get-CouchDBDocument () {
         [Parameter(mandatory=$true)]
         [string] $Database,
         [string] $Document = "_all_docs",
+        [string] $Revision,
         [switch] $Local,
+        [switch] $Revisions,
+        [switch] $History,
         [string] $Authorization,
         [switch] $Ssl
     )
     if ($Local.IsPresent) {
         $Document = "_local_docs"
+    } elseif ($Revisions.IsPresent) {
+        $Document = $Document + "?revs=true"
+    } elseif ($History.IsPresent) {
+        $Document = $Document + "?revs_info=true"
     }
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Get-CouchDBBulkDocument () {
@@ -840,7 +931,10 @@ function Get-CouchDBDesignDocument () {
     .SYNOPSIS
     Get a design document.
     .DESCRIPTION
-    Get a CouchDB design document json data.
+    Returns a hashtable structure of all of the design documents in a given database. 
+    The information is returned as a hashtable structure containing meta information about the return structure, 
+    including a list of all design documents and basic contents, consisting the ID, revision and key. 
+    The key is the from the design document’s _id.
     .EXAMPLE
     Get-CouchDBDesignDocument -Database test -Document "mydesigndoc"
     #>
@@ -864,7 +958,7 @@ function Get-CouchDBDatabaseDesignDocument () {
     .SYNOPSIS
     Get all design document on a database.
     .DESCRIPTION
-    Get all design document on a CouchDB database.
+    Returns a JSON structure of all of the design documents in a given database. 
     .EXAMPLE
     Get-CouchDBDatabaseDesignDocument -Database test
     #>
@@ -886,7 +980,7 @@ function Get-CouchDBAttachment () {
     .SYNOPSIS
     Get or save attachment.
     .DESCRIPTION
-    Get or save attachment from CouchDB document.
+    It’s possible to retrieve document with all attached files content.
     .EXAMPLE
     Get-CouchDBAttachment -Database test -Document "001" -Attachment test.html -Authorization "admin:password"
     .EXAMPLE
@@ -945,11 +1039,11 @@ function Get-CouchDBAdmin () {
     param(
         [string] $Server,
         [int] $Port,
-        [string] $Database = "_node",
         [string] $Node = "couchdb@localhost",
         [string] $Authorization,
         [switch] $Ssl
     )
+    $Database = "_node"
     $Document = "$Node/_config/admins"
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
 }
@@ -959,7 +1053,7 @@ function Get-CouchDBDatabaseSecurity () {
     .SYNOPSIS
     Get the current security object from the specified database.
     .DESCRIPTION
-    Get the current security object from the specified CouchDB database.
+    Returns the current security object from the specified database.
     .EXAMPLE
     Get-CouchDBDatabaseSecurity -Database test -Authorization "admin:password"
     #>
@@ -981,7 +1075,7 @@ function Get-CouchDBConfiguration () {
     .SYNOPSIS
     Get configuration.
     .DESCRIPTION
-    Get configuration of CouchDB.
+    Get configuration of CouchDB server.
     .EXAMPLE
     Get-CouchDBConfiguration -Authorization "admin:password"
     #>
@@ -1003,7 +1097,7 @@ function Get-CouchDBNode () {
     .SYNOPSIS
     Get server nodes.
     .DESCRIPTION
-    Get server nodes of CouchDB.
+    Displays the nodes that are part of the cluster as cluster_nodes.
     .EXAMPLE
     Get-CouchDBNode -Authorization "admin:password"
     #>
@@ -1023,7 +1117,7 @@ function Get-CouchDBReplication () {
     .SYNOPSIS
     Get database replication.
     .DESCRIPTION
-    Get database replication of CouchDB.
+    Get database replication status of CouchDB server.
     .EXAMPLE
     Get-CouchDBReplication -Authorization "admin:password"
     #>
@@ -1047,7 +1141,7 @@ function Get-CouchDBReplicationScheduler () {
     .SYNOPSIS
     Get more details of database replication.
     .DESCRIPTION
-    Get more details of database replication of CouchDB.
+    List of replication jobs. Includes replications created via /_replicate endpoint as well.
     .EXAMPLE
     Get-CouchDBReplicationScheduler -Authorization "admin:password"
     #>
@@ -1063,12 +1157,37 @@ function Get-CouchDBReplicationScheduler () {
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
 }
 
+function Get-CouchDBReplicationDocument () {
+    <#
+    .SYNOPSIS
+    List of replication document states.
+    .DESCRIPTION
+    List of replication document states. Includes information about all the documents, even in completed and failed states.
+    .EXAMPLE
+    Get-CouchDBReplicationScheduler -Authorization "admin:password"
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server,
+        [int] $Port,
+        [string] $Document,
+        [switch] $Replicator,
+        [string] $Authorization,
+        [switch] $Ssl
+    )
+    $Database = "_scheduler/docs"
+    if ($Replicator.IsPresent) {
+        $Database += '/other/_replicator/' + $Document
+    }
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+}
+
 function Get-CouchDBActiveTask () {
     <#
     .SYNOPSIS
     Get an active task.
     .DESCRIPTION
-    Get a CouchDB active task.
+    List of running tasks, including the task type, name, status and process ID.
     .EXAMPLE
     Get-CouchDBActiveTask -Authorization "admin:password"
     #>
@@ -1086,9 +1205,9 @@ function Get-CouchDBActiveTask () {
 function Get-CouchDBIndex () {
     <#
     .SYNOPSIS
-    Get indexes of database.
+    Get indexes on database.
     .DESCRIPTION
-    Get indexes of CouchDB database.
+    When you make a GET request to /db/_index, you get a list of all indexes in the database
     .EXAMPLE
     Get-CouchDBIndex -Database test -Authorization "admin:password"
     #>
@@ -1132,6 +1251,94 @@ function Get-CouchDBMissingRevision () {
     Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }
 
+function Get-CouchDBRevisionDifference () {
+    <#
+    .SYNOPSIS
+    Returns the missing revisions.
+    .DESCRIPTION
+    Given a set of document/revision IDs, returns the subset of those that do not correspond to revisions stored in the database.
+    .EXAMPLE
+    Get-CouchDBRevisionDifference -Database test -Document test -Revision 2-7051cbe5c8faecd085a3fa619e6e6337,3-825cb35de44c433bfb2df415563a19de -Authorization "admin:password"
+    #>
+    param(
+        [string] $Server,
+        [int] $Port,
+        [Parameter(mandatory=$true)]
+        [string] $Database,
+        [Parameter(mandatory=$true)]
+        [string] $Document,
+        [Parameter(mandatory=$true)]
+        [array] $Revision,
+        [string] $Authorization,
+        [switch] $Ssl
+    )
+    $Data = @{$Document = $Revision}
+    $Data = $Data | ConvertTo-Json
+    $Database = $Database + '/_revs_diff'
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
+}
+
+function Get-CouchDBRevisionLimit () {
+    <#
+    .SYNOPSIS
+    Get revision limit.
+    .DESCRIPTION
+    Gets the current revs_limit (revision limit) setting.
+    .EXAMPLE
+    Get-CouchDBRevisionLimit -Database test -Authorization "admin:password"
+    #>
+    param(
+        [string] $Server,
+        [int] $Port,
+        [Parameter(mandatory=$true)]
+        [string] $Database,
+        [string] $Authorization,
+        [switch] $Ssl
+    )
+    $Database = $Database + '/_revs_limit'
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl
+}
+
+function Copy-CouchDBDocument () {
+    <#
+    .SYNOPSIS
+    Copy from document.
+    .DESCRIPTION
+    To copy from a specific version, use the revision.
+    .EXAMPLE
+    Copy-CouchDBDocument -Database test -Document "001" -Destination "copy_001" -Authorization "admin:password"
+    #>
+    param(
+        [string] $Server,
+        [int] $Port,
+        [Parameter(mandatory=$true)]
+        [string] $Database,
+        [Parameter(mandatory=$true)]
+        [string] $Document,
+        [Parameter(mandatory=$true)]
+        [string] $Destination,
+        [string] $Revision,
+        [string] $Authorization,
+        [switch] $Ssl
+    )
+    # Check document id exists
+    if (-not(Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
+        throw "The specific document $Document does not exists."
+    } else {
+        $Data = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization -Ssl:$Ssl
+        $Data._id = $Destination
+        $Data.PSObject.Properties.Remove("_rev")
+        $Data = ConvertTo-Json -InputObject $Data -Depth 99
+    }
+    # Check if document and destination are different
+    if ($Document -eq $Destination) {
+        throw "Document $Document and destination $Destination have a same name."
+    } else {
+        $Document = $Destination
+    }
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+}
+
 function Measure-CouchDBStatistics () {
     <#
     .SYNOPSIS
@@ -1145,11 +1352,15 @@ function Measure-CouchDBStatistics () {
     param(
         [string] $Server = 'localhost',
         [int] $Port,
+        [switch] $System,
         [string] $Authorization,
         [switch] $Ssl
     )
-    $Database = "_node/couchdb@$Server/_stats"
-    $Document = "couchdb"
+    if ($System.IsPresent) {
+        $Database = "_node/couchdb@$Server/_system"
+    } else {
+        $Database = "_node/couchdb@$Server/_stats"
+    }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
 }
 
@@ -1158,7 +1369,7 @@ function Clear-CouchDBView () {
     .SYNOPSIS
     Clean view indexes.
     .DESCRIPTION
-    Clean up all outdated view indexes.
+    Removes view index files that are no longer required by CouchDB as a result of changed views within design documents.
     .EXAMPLE
     Clear-CouchDBView -Database test -Authorization "admin:password"
     #>
@@ -1180,7 +1391,7 @@ function Clear-CouchDBDocuments () {
     .SYNOPSIS
     A database purge permanently document.
     .DESCRIPTION
-    A CouchDB database purge permanently document.
+    A database purge permanently removes the references to deleted documents from the database.
     .EXAMPLE
     Clear-CouchDBDatabase -Database test -Document test -Authorization "admin:password"
     #>
@@ -1209,7 +1420,7 @@ function Add-CouchDBNode () {
     .SYNOPSIS
     Add server nodes.
     .DESCRIPTION
-    Add server nodes of CouchDB.
+    Add server nodes on CouchDB cluster.
     .EXAMPLE
     Add-CouchDBNode -BindAddress server1 -Authorization "admin:password"
     #>
@@ -1241,7 +1452,7 @@ function Compress-CouchDBDatabase () {
     .SYNOPSIS
     Compress database.
     .DESCRIPTION
-    Compress database of CouchDB.
+    Request compaction of the specified database. Compaction compresses the disk database file.
     .EXAMPLE
     Compress-CouchDBDatabase -Database test -Authorization "admin:password"
     #>
@@ -1264,7 +1475,8 @@ function Compress-CouchDBDesignDocument () {
     .SYNOPSIS
     Compress design document.
     .DESCRIPTION
-    Compress a selected design document.
+    Compacts the view indexes associated with the specified design document. 
+    It may be that compacting a large view can return more storage than compacting the actual db.
     .EXAMPLE
     Compress-CouchDBDesignDocument -Database test -DesignDoc ddoc -Authorization "admin:password"
     #>
@@ -1289,7 +1501,7 @@ function Set-CouchDBDocument () {
     .SYNOPSIS
     Modify a document.
     .DESCRIPTION
-    Modify a CouchDB document json data.
+    Creates a new revision of the existing document.
     .EXAMPLE
     $data = '{"album":"...and justice for all", "band":"Metallica"}'
     Set-CouchDBDocument -Database test -Document "001" -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Data $data -Authorization "admin:password"
@@ -1380,7 +1592,7 @@ function Set-CouchDBDesignDocument () {
     .SYNOPSIS
     Modify a design document.
     .DESCRIPTION
-    Modify a CouchDB design document with json data.
+    Creates a new revision of the existing design document.
     .EXAMPLE
     Set-CouchDBDesignDocument -Database test -Document "mydesigndoc" -ViewName "data_test" -Authorization "admin:password"
     .EXAMPLE
@@ -1620,7 +1832,7 @@ function Set-CouchDBAttachment () {
     .SYNOPSIS
     Modify attachment.
     .DESCRIPTION
-    Modify attachment from CouchDB document.
+    Uploads the supplied content as an attachment to the specified document.
     .EXAMPLE
     Set-CouchDBAttachment -Database test -Document "001" -Attachment C:\test.html -Authorization "admin:password"
     #>
@@ -1719,7 +1931,7 @@ function Set-CouchDBConfiguration () {
     .SYNOPSIS
     Set element configuration.
     .DESCRIPTION
-    Set element configuration of CouchDB.
+    Set element configuration of CouchDB server.
     .EXAMPLE
     Set-CouchDBConfiguration -Element attachments -Key compression_level -Value 10 -Authorization "admin:password"
     #>
@@ -1753,7 +1965,8 @@ function Set-CouchDBReplication () {
     .SYNOPSIS
     Modify database replication.
     .DESCRIPTION
-    Modify database of CouchDB.
+    The default replicator database is _replicator. Additional replicator databases can be created. 
+    To be recognized as such by the system, their database names should end with /_replicator.
     .EXAMPLE
     Set-CouchDBReplication -Document replica_id1 -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Continuous -Authorization "admin:password"
     #>
@@ -1784,12 +1997,35 @@ function Set-CouchDBReplication () {
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Revision $Revision -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }
 
+function Set-CouchDBRevisionLimit () {
+    <#
+    .SYNOPSIS
+    Set revision limit.
+    .DESCRIPTION
+    Set the current revs_limit (revision limit) setting.
+    .EXAMPLE
+    Set-CouchDBRevisionLimit -Database test -Limit 100 -Authorization "admin:password"
+    #>
+    param(
+        [string] $Server,
+        [int] $Port,
+        [Parameter(mandatory=$true)]
+        [string] $Database,
+        [int] $Limit = 1000,
+        [string] $Authorization,
+        [switch] $Ssl
+    )
+    $Database = $Database + '/_revs_limit'
+    $Data = $Limit
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
+}
+
 function Grant-CouchDBDatabasePermission () {
     <#
     .SYNOPSIS
-    Grant permission on database.
+    Grant permission on server.
     .DESCRIPTION
-    Grant permission on database. Specify Admins and/or Readers.
+    Grant permission on server. Specify Admins and/or Readers.
     .EXAMPLE
     Grant-CouchDBDatabasePermission -Database example -AdminUser admin -AdminRoles technician -ReaderUser user1 -Authorization "admin:password"
     #>
@@ -1965,7 +2201,7 @@ function Revoke-CouchDBDatabasePermission () {
     )
     if ($Force -or $PSCmdlet.ShouldContinue("Do you wish revoke all permission on database $Database ?","Revoke all permission on database $Database")) {
         # Get a current security permission
-        if (-not(Get-CouchDBDocument -Database $Database -Document '_security' -Authorization $Authorization -Ssl:$Ssl)) {
+        if (-not(Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document '_security' -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
             throw "No security object found in database $Database"
         }
         # Revoke data permission
@@ -1986,12 +2222,119 @@ function Revoke-CouchDBDatabasePermission () {
     }
 }
 
+function Request-CouchDBReplication () {
+   <#
+    .SYNOPSIS
+    Request a replication operation.
+    .DESCRIPTION
+    Request, configure, or stop, a replication operation.
+    .EXAMPLE
+    Request-CouchDBReplication -SourceDatabase test -TargetDatabase test1 -Documents "001","002","003" -Authorization "admin:password"
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $SourceServer = 'localhost',
+        [string] $TargetServer = 'localhost',
+        [int] $SourcePort,
+        [int] $TargetPort,
+        [Parameter(mandatory=$true)]
+        [string] $SourceDatabase,
+        [Parameter(mandatory=$true)]
+        [string] $TargetDatabase,
+        [string] $Proxy,
+        [array] $Documents,
+        [string] $Filter,
+        [switch] $Continuous,
+        [switch] $Cancel,
+        [switch] $CreateTargetDatabase,
+        [string] $Authorization,
+        [switch] $Ssl
+    )
+    $Database = "_replicate"
+    $Json = @{}
+    # Set protocol
+    if ($Ssl.IsPresent) {
+        if (-not($SourcePort)) {
+            $SourcePort = 6984
+        }
+        if (-not($TargetPort)) {
+            $TargetPort = 6984
+        }
+        # Set SSL protocol
+        $Protocol = 'https'
+    } else {
+        if (-not($SourcePort)) {
+            $SourcePort = 5984
+        }
+        if (-not($TargetPort)) {
+            $TargetPort = 5984
+        }
+        # Set deafult protocol
+        $Protocol = 'http'
+    }
+    # Create Source and Target URL
+    $Source = "${Protocol}://$SourceServer`:$SourcePort/$SourceDatabase"
+    $Target = "${Protocol}://$TargetServer`:$TargetPort/$TargetDatabase"
+    # Source
+    if ($Authorization) {
+        $Json.Add("source",@{})
+        $Json.source.Add("url", $Source)
+        $Json.source.Add("headers", @{})
+        $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(($Authorization)))
+        $Json.source.headers.Add("Authorization", ("Basic {0}" -f $base64AuthInfo))
+    } else {
+        $Json.Add("source",$Source)
+    }
+    # Target
+    if ($Authorization) {
+        $Json.Add("target",@{})
+        $Json.target.Add("url", $Target)
+        $Json.target.Add("headers", @{})
+        $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(($Authorization)))
+        $Json.target.headers.Add("Authorization", ("Basic {0}" -f $base64AuthInfo))
+    } else {
+        $Json.Add("target",$Target)
+    }
+    # Check if Continuous is true
+    if ($Continuous.IsPresent) {
+        $Json.Add("continuous", $true)
+    }
+    # Check if Cancel is true
+    if ($Cancel.IsPresent) {
+        $Json.Add("cancel", $true)
+    }
+    # Check if CreateTargetDatabase is true
+    if ($CreateTargetDatabase.IsPresent) {
+        $Json.Add("create_target", $true)
+    }
+    # Check filter
+    if ($Filter) {
+        $Json.Add("filter", $Filter)
+    }
+    # Check proxy
+    if ($Proxy) {
+        $Json.Add("proxy", $Proxy)
+    }
+    # Check doc_ids
+    if ($Documents.Count -ne 0) {
+        $Json.Add("doc_ids", $Documents)
+    }
+    # Convert data to json
+    $Data = $Json | ConvertTo-Json -Depth 4
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
+}
+
 function New-CouchDBDatabase () {
     <#
     .SYNOPSIS
     Create a new database.
     .DESCRIPTION
-    Create a new CouchDB database.
+    Creates a new database. The database name must be composed by following next rules:
+    Name must begin with a lowercase letter (a-z)
+    Lowercase characters (a-z)
+    Digits (0-9)
+    Any of the characters _, $, (, ), +, -, and /.
+    If you’re familiar with Regular Expressions, the rules above could be written as ^[a-z][a-z0-9_$()+/-]*$.
     .EXAMPLE
     New-CouchDBDatabase -Database test -Authorization "admin:password"
     #>
@@ -2012,7 +2355,9 @@ function New-CouchDBDocument () {
     .SYNOPSIS
     Create a new document.
     .DESCRIPTION
-    Create a new CouchDB document with json data.
+    Creates a new document in the specified database, using the supplied JSON document structure or [hashtable] object.
+    If the JSON structure or [hashtable] object includes the _id field, then the document will be created with the specified document ID.
+    If the _id field is not specified, a new unique ID will be generated, following whatever UUID algorithm is configured for that server (Get-Help New-CouchDBUuids).
     .EXAMPLE
     $data = '{"name":"Jhon", "surname":"Lennon"}'
     New-CouchDBDocument -Database test -Document "001" -Data $data -Authorization "admin:password"
@@ -2045,7 +2390,7 @@ function New-CouchDBDesignDocument () {
     .SYNOPSIS
     Create a new design document.
     .DESCRIPTION
-    Create a new CouchDB design document with json data.
+    Create a new CouchDB design document.
     .EXAMPLE
     New-CouchDBDesignDocument -Database test -Document "mydesigndoc" -ViewName "data_test" -Authorization "admin:password"
     .EXAMPLE
@@ -2354,9 +2699,11 @@ function New-CouchDBReplication () {
 function New-CouchDBIndex () {
     <#
     .SYNOPSIS
-    Create a new index of database.
+    Create a new index on database.
     .DESCRIPTION
-    Create a new index of CouchDB database.
+    Mango is a declarative JSON querying language for CouchDB databases. 
+    Mango wraps several index types, starting with the Primary Index out-of-the-box. 
+    Mango indexes, with index type json, are built using MapReduce Views.
     .EXAMPLE
     New-CouchDBIndex -Database test -Name test-index -Fields name,surname -Authorization "admin:password"
     #>
@@ -2389,7 +2736,7 @@ function New-CouchDBUuids () {
     .SYNOPSIS
     Create a new uuids.
     .DESCRIPTION
-    Create a new CouchDB uuids.
+    Requests one or more Universally Unique Identifiers (UUIDs) from the CouchDB instance.
     .EXAMPLE
     New-CouchDBUuids -Count 3 -Authorization "admin:password"
     #>
@@ -2423,25 +2770,67 @@ function Enable-CouchDBCluster () {
         [string] $Server,
         [int] $Port,
         [int] $NodeCount = 3,
+        [switch] $SingleNode,
         [string] $Authorization,
         [switch] $Ssl
     )
+    # Check if an admin has been created
+    $name = & { if ($Authorization) { Write-Output $($Authorization -split ":")[0] } else { Write-Output "___" } }
+    $admins = Get-CouchDBAdmin -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue
+    if (-not(Get-Member -Inputobject $admins -Name "$name" -ErrorAction SilentlyContinue)) {
+        throw "Create an admin before configure cluster or specify -Authorization parameter!" 
+    }
     $Database = "_cluster_setup"
     $Credential = $Authorization -split ":"
-    $Data = "
-    {
-        `"action`": `"enable_cluster`",
-        `"bind_address`": `"0.0.0.0`",
-        `"username`": `"$($Credential[0])`",
-        `"password`": `"$($Credential[1])`",
-        `"node_count`": `"$NodeCount`"
+    # Check if single node cluster mode enabled
+    if ($SingleNode.IsPresent) {
+        $Action = "enable_single_node"
+    } else {
+        $Action = "enable_cluster"
     }
-    "
-    Write-Host "Enabling cluster"
+    $Data = "
+        {
+            `"action`": `"$Action`",
+            `"bind_address`": `"0.0.0.0`",
+            `"username`": `"$($Credential[0])`",
+            `"password`": `"$($Credential[1])`"
+        "
+    if ($Action -eq "enable_cluster") {
+        $Data += ",`"node_count`": `"$NodeCount`"}"
+    } else {
+        $Data += "}"
+    }
+    Write-Host "Enabling $Action cluster"
     Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
     $Data = '{"action": "finish_cluster"}'
-    Write-Host "Finishing cluster"
+    Write-Host "Finishing $Action cluster"
     Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
+}
+
+function Search-CouchDBHelp () {
+    <#
+    .SYNOPSIS
+    Search help.
+    .DESCRIPTION
+    Search pattern keyword in a CouchDB help topic.
+    .EXAMPLE
+    Search-CouchDBHelp -Pattern "Database"
+    .EXAMPLE
+    Search-CouchDBHelp -Pattern "Get"
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true)]
+        $Pattern
+    )
+    $helpNames = $(Get-Help *CouchDB* | Where-Object { $_.Category -ne "Alias" })
+    foreach ($helpTopic in $helpNames) {
+        $content = Get-Help -Full $helpTopic.Name | Out-String
+        if ($content -match "(.{0,30}$Pattern.{0,30})") {
+            $helpTopic | Add-Member NoteProperty Match $matches[0].Trim()
+            $helpTopic | Select-Object Name,Match
+        }
+    }
 }
 
 function Remove-CouchDBDatabase () {
@@ -2449,7 +2838,7 @@ function Remove-CouchDBDatabase () {
     .SYNOPSIS
     Remove a database.
     .DESCRIPTION
-    Remove a CouchDB database.
+    Deletes the specified database, and all the documents and attachments contained within it.
     .EXAMPLE
     Remove-CouchDBDatabase -Database test -Authorization "admin:password"
     #>
@@ -2614,7 +3003,7 @@ function Remove-CouchDBNode () {
     .SYNOPSIS
     Remove server nodes.
     .DESCRIPTION
-    Remove server nodes of CouchDB.
+    Remove server nodes on CouchDB server.
     .EXAMPLE
     Remove-CouchDBNode -Node test -Authorization "admin:password"
     #>
@@ -2639,8 +3028,8 @@ function Remove-CouchDBNode () {
             $Port = 5986
         }
     }
-    if (Get-CouchDBDocument -Port $Port -Database $Database -Document $Node -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue) {
-        $Revision = (Get-CouchDBDocument -Port $Port -Database $Database -Document $Node -Authorization $Authorization -Ssl:$Ssl)._rev
+    if (Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Node -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue) {
+        $Revision = (Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Node -Authorization $Authorization -Ssl:$Ssl)._rev
     } else {
         throw "Node $Node not exist."
     }
@@ -2655,7 +3044,7 @@ function Remove-CouchDBReplication () {
     .SYNOPSIS
     Remove replication.
     .DESCRIPTION
-    Remove replication of CouchDB.
+    Remove replication on CouchDB server.
     .EXAMPLE
     Remove-CouchDBReplication -Document replica_id1 -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:password"
     #>
@@ -2683,9 +3072,9 @@ function Remove-CouchDBReplication () {
 function Remove-CouchDBIndex () {
     <#
     .SYNOPSIS
-    Remove a index of a database.
+    Remove a index on a database.
     .DESCRIPTION
-    Remove a index of CouchDB database.
+    Remove a index on CouchDB database.
     .EXAMPLE
     $ddoc = Get-CouchDBIndex -Database test -Authorization "admin:password"
     Remove-CouchDBIndex -Database test -DesignDoc $ddoc.indexes.ddoc[1] -Name $ddoc.indexes.name[1] -Authorization "admin:password"
@@ -2733,7 +3122,7 @@ function Find-CouchDBDocuments () {
     .SYNOPSIS
     Find document data in a database.
     .DESCRIPTION
-    Find document data in a CouchDB database.
+    Find documents using a declarative JSON querying syntax. Queries can use the built-in _all_docs index or custom indexes, specified using the _index endpoint.
     .EXAMPLE
     Find-CouchDBDocuments -Database test -Selector "color" -Value "red" -Fields _id,color -Operator eq -Authorization "read_user:password"
     .EXAMPLE
@@ -2862,7 +3251,8 @@ function Write-CouchDBFullCommit () {
     .SYNOPSIS
     Commits any recent changes.
     .DESCRIPTION
-    Commits any recent changes to the specified database to disk
+    Commits any recent changes to the specified database to disk. 
+    You should call this if you want to ensure that recent changes have been flushed.
     .EXAMPLE
     Write-CouchDBFullCommit -Database test -Authorization "admin:password"
     #>

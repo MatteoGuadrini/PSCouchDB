@@ -11,14 +11,11 @@ $password = "password" | ConvertTo-SecureString -AsPlainText -Force
 New-CouchDBAdmin -Userid adminuser -Password $password
 ```
 > ATTENTION: Authentication for read and write no required by default, but required if you create custom user, like session "Grant permission" on this document. For more information see permission on [wiki permission page](https://github.com/MatteoGuadrini/PSCouchDB/wiki/Permission)
-4. Before configure database mode, create this system document whit this cmdlet:
+4. Now, configure database mode, in single node (cluster of one single node) or cluster, clicking on "Setup" on left of the menu; follow the wizard and complete this procedure or run this cmdlet:
 ```powershell
-New-CouchDBDatabase -Database _users -Authorization "adminuser:password"
-New-CouchDBDatabase -Database _replicator -Authorization "adminuser:password"
-New-CouchDBDatabase -Database _global_changes -Authorization "adminuser:password"
-```
-Now, configure database mode, in single node (cluster of one single node) or cluster, clicking on "Setup" on left of the menu; follow the wizard and complete this procedure or run this cmdlet:
-```powershell
+# Single node cluster
+Enable-CouchDBCluster -SingleNode -Authorization "adminuser:password"
+# Cluster (with three node)
 Enable-CouchDBCluster -Authorization "adminuser:password"
 ```
 5. Now, open powershell and create a first personal database:
@@ -153,7 +150,11 @@ For other operation see the [wiki](https://github.com/MatteoGuadrini/PSCouchDB/w
 ### Kanban board
 If you are curious, if you want to contribute or simply see the features, look at the project's kanban board here: [KANBAN](https://tree.taiga.io/project/matteoguadrini-pscouchdb/kanban)
 
-### Cmdlet example
+### Cmdlet help
+Search for the cmdlets using a keyword pattern and then view the help:
+```powershell
+Search-CouchDBHelp -Pattern Database | foreach {Get-Help $_.Name}
+```
 To get examples of all the cmdlets of this module, use this command:
 ```powershell
 Get-Command -Module *PSCouchDB* | foreach {Get-Help $_.Name -Example}
