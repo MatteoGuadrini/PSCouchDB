@@ -1,0 +1,385 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Real uses &mdash; PSCouchDB  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Support" href="support.html" />
+    <link rel="prev" title="Classes" href="classes.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> PSCouchDB
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="config.html">Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="config.html#nodes">Nodes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="config.html#configuration">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="permission.html">Permission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="server.html">Server operation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="server.html#replication">Replication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="auth.html">Authentication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="databases.html">Databases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="documents.html">Documents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="documents.html#query">Query</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ddoc.html">Design documents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdlets.html">Cmdlets and aliases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="classes.html">Classes</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Real uses</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#simple-machine-inventory">Simple machine inventory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#log-storage">Log storage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="support.html">Support</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PSCouchDB</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Real uses</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/uses.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="real-uses">
+<h1>Real uses<a class="headerlink" href="#real-uses" title="Permalink to this headline">¶</a></h1>
+<p>Below are some examples of real-world applications that can give the idea of the module’s potential together with CouchDB.</p>
+<div class="section" id="simple-machine-inventory">
+<h2>Simple machine inventory<a class="headerlink" href="#simple-machine-inventory" title="Permalink to this headline">¶</a></h2>
+<p>This is a simple hardware inventory in business scenario, build in three steps.</p>
+<p>First step, create database.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">New-CouchDBDatabase</span> <span class="n">-Database</span> <span class="n">hw_inventory</span>
+</pre></div>
+</div>
+<p>Second, edit a new file <em>hw_inventory.ps1</em> e paste this:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="c"># Create an Active Directory session</span>
+<span class="nv">$session</span> <span class="p">=</span> <span class="nb">New-PSSession</span> <span class="n">-ComputerName</span> <span class="s2">&quot;your_domain_controller.local&quot;</span>
+<span class="nb">Import-PSSession</span> <span class="n">-Session</span> <span class="nv">$session</span> <span class="n">-module</span> <span class="n">ActiveDirectory</span>
+<span class="c"># Get all computer</span>
+<span class="nv">$AllComputers</span> <span class="p">=</span> <span class="nb">Get-ADComputer</span> <span class="n">-Filter</span> <span class="p">*</span> <span class="n">-Properties</span> <span class="n">DNSHostName</span>
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$ComputerName</span> <span class="k">in</span> <span class="nv">$AllComputers</span><span class="p">.</span><span class="n">DNSHostName</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$info</span> <span class="p">=</span> <span class="p">@{}</span>
+    <span class="c"># Test connection of computer</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">Test-Connection</span> <span class="nv">$ComputerName</span> <span class="n">-Count</span> <span class="n">1</span> <span class="n">-Quiet</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c"># Select various info</span>
+        <span class="nv">$info</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="s1">&#39;ComputerHW&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nb">Get-CimInstance</span> <span class="n">-Class</span> <span class="n">Win32_ComputerSystem</span> <span class="n">-ComputerName</span> <span class="nv">$ComputerName</span> <span class="p">|</span>
+        <span class="n">select</span> <span class="n">Manufacturer</span><span class="p">,</span>
+               <span class="n">Model</span><span class="p">,</span>
+               <span class="n">NumberOfProcessors</span><span class="p">,</span>
+               <span class="p">@{</span><span class="n">Expression</span><span class="p">={</span><span class="nv">$_</span><span class="p">.</span><span class="n">TotalPhysicalMemory</span> <span class="p">/</span> <span class="n">1GB</span><span class="p">};</span><span class="n">Label</span><span class="p">=</span><span class="s2">&quot;TotalPhysicalMemoryGB&quot;</span><span class="p">}))</span>
+        <span class="nv">$info</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="s1">&#39;ComputerCPU&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nb">Get-CimInstance</span> <span class="n">win32_processor</span> <span class="n">-ComputerName</span> <span class="nv">$ComputerName</span> <span class="p">|</span>
+        <span class="n">select</span> <span class="n">DeviceID</span><span class="p">,</span>
+               <span class="n">Name</span><span class="p">,</span>
+               <span class="n">Manufacturer</span><span class="p">,</span>
+               <span class="n">NumberOfCores</span><span class="p">,</span>
+               <span class="n">NumberOfLogicalProcessors</span><span class="p">))</span>
+        <span class="nv">$info</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="s1">&#39;ComputerDisks&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nb">Get-CimInstance</span> <span class="n">-Class</span> <span class="n">Win32_LogicalDisk</span> <span class="n">-Filter</span> <span class="s2">&quot;DriveType=3&quot;</span> <span class="n">-ComputerName</span> <span class="nv">$ComputerName</span> <span class="p">|</span>
+        <span class="n">select</span> <span class="n">DeviceID</span><span class="p">,</span>
+               <span class="n">VolumeName</span><span class="p">,</span>
+               <span class="p">@{</span><span class="n">Expression</span><span class="p">={</span><span class="nv">$_</span><span class="p">.</span><span class="n">Size</span> <span class="p">/</span> <span class="n">1GB</span><span class="p">};</span><span class="n">Label</span><span class="p">=</span><span class="s2">&quot;SizeGB&quot;</span><span class="p">}))</span>
+        <span class="nv">$info</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="s2">&quot;timestamp&quot;</span><span class="p">,</span> <span class="p">(</span><span class="nb">Get-Date</span> <span class="o">-f</span> <span class="n">MM-dd-yyyy_HH_mm_ss</span><span class="p">))</span>
+        <span class="c"># Write on database</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">Get-CouchDBDocument</span> <span class="n">-Database</span> <span class="n">hw_inventory</span> <span class="n">-Document</span> <span class="nv">$ComputerName</span> <span class="n">-ErrorAction</span> <span class="n">SilentlyContinue</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nb">Set-CouchDBDocument</span> <span class="n">-Database</span> <span class="n">hw_inventory</span> <span class="n">-Document</span> <span class="nv">$ComputerName</span> <span class="n">-Data</span> <span class="nv">$info</span> <span class="n">-Revision</span> <span class="p">$(</span><span class="nb">Get-CouchDBDocument</span> <span class="n">-Database</span> <span class="n">hw_inventory</span> <span class="n">-Document</span> <span class="nv">$ComputerName</span><span class="p">).</span><span class="n">_rev</span> <span class="o">-Replace</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nb">New-CouchDBDocument</span> <span class="n">-Database</span> <span class="n">hw_inventory</span> <span class="n">-Document</span> <span class="nv">$ComputerName</span> <span class="n">-Data</span> <span class="nv">$info</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="nb">Get-PSSession</span> <span class="p">|</span> <span class="nb">Remove-PSSession</span>
+</pre></div>
+</div>
+<p>Third, edit your <em>profile.ps1</em> and put this function:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="c"># Find computer into inventory</span>
+<span class="k">function</span> <span class="n">Find-ComputerInventory</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">param</span><span class="p">(</span>
+        <span class="p">[</span><span class="k">Parameter</span><span class="p">(</span><span class="k">mandatory</span><span class="p">=</span><span class="nv">$true</span><span class="p">)]</span>
+        <span class="no">[string]</span> <span class="nv">$Computername</span>
+    <span class="p">)</span>
+    <span class="nv">$docs</span> <span class="p">=</span> <span class="n">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">hw_inventory</span> <span class="n">-Selector</span> <span class="s2">&quot;_id&quot;</span> <span class="n">-Operator</span> <span class="n">regex</span> <span class="n">-Value</span> <span class="s2">&quot;.*$Computername.*&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">ComputerHW</span><span class="p">,</span><span class="n">ComputerCPU</span><span class="p">,</span><span class="n">ComputerDisks</span><span class="p">,</span><span class="n">timestamp</span>
+    <span class="nv">$docs</span><span class="p">.</span><span class="n">docs</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Schedule the script every six hours.</p>
+</div>
+<div class="section" id="log-storage">
+<h2>Log storage<a class="headerlink" href="#log-storage" title="Permalink to this headline">¶</a></h2>
+<p>To create an application that stores logs from various machines in two steps.</p>
+<p>First, edit your <em>profile.ps1</em> and put this function:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="nb">Write-WindowsLog</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">param</span><span class="p">(</span>
+        <span class="p">[</span><span class="k">Parameter</span><span class="p">(</span><span class="k">mandatory</span><span class="p">=</span><span class="nv">$true</span><span class="p">)]</span>
+        <span class="no">[string]</span> <span class="nv">$ComputerName</span><span class="p">,</span>
+        <span class="no">[string]</span> <span class="nv">$Authorization</span>
+    <span class="p">)</span>
+    <span class="c"># Define logs</span>
+    <span class="nv">$Logs</span> <span class="p">=</span> <span class="p">@(</span><span class="s2">&quot;Application&quot;</span><span class="p">,</span><span class="s2">&quot;Security&quot;</span><span class="p">,</span><span class="s2">&quot;System&quot;</span><span class="p">)</span>
+    <span class="c"># Loop foreach log</span>
+    <span class="k">foreach</span> <span class="p">(</span><span class="nv">$Log</span> <span class="k">in</span> <span class="nv">$logs</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$count</span> <span class="p">=</span> <span class="n">0</span>
+        <span class="nv">$DBname</span> <span class="p">=</span> <span class="s2">&quot;${ComputerName}_$Log&quot;</span><span class="p">.</span><span class="n">ToLower</span><span class="p">()</span>
+        <span class="c"># Test if database log exists</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$null</span> <span class="o">-eq</span> <span class="p">(</span><span class="nb">Test-CouchDBDatabase</span> <span class="n">-Database</span> <span class="nv">$DBname</span> <span class="n">-ErrorAction</span> <span class="n">SilentlyContinue</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nb">New-CouchDBDatabase</span> <span class="n">-Database</span> <span class="nv">$DBname</span> <span class="n">-Authorization</span> <span class="nv">$Authorization</span>
+        <span class="p">}</span>
+        <span class="c"># Get log</span>
+        <span class="nv">$LogList</span> <span class="p">=</span> <span class="nb">Get-EventLog</span> <span class="n">-LogName</span> <span class="nv">$Log</span> <span class="n">-ComputerName</span> <span class="nv">$ComputerName</span>
+        <span class="nv">$LogList</span> <span class="p">|</span> <span class="k">foreach</span> <span class="p">{</span>
+            <span class="nv">$count</span><span class="p">++</span>
+            <span class="c"># Write on database</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">-not</span><span class="p">(</span><span class="nb">Get-CouchDBDocument</span> <span class="n">-Database</span> <span class="nv">$DBname</span> <span class="n">-Document</span> <span class="nv">$_</span><span class="p">.</span><span class="n">Index</span> <span class="n">-ErrorAction</span> <span class="n">SilentlyContinue</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nb">New-CouchDBDocument</span> <span class="n">-Database</span> <span class="nv">$DBname</span> <span class="n">-Document</span> <span class="nv">$_</span><span class="p">.</span><span class="n">Index</span> <span class="n">-Data</span> <span class="p">(</span><span class="nv">$_</span> <span class="p">|</span> <span class="nb">Convertto-Json</span> <span class="n">-Depth</span> <span class="n">10</span><span class="p">)</span> <span class="n">-Authorization</span> <span class="nv">$Authorization</span> <span class="p">|</span> <span class="nb">Out-Null</span>
+            <span class="p">}</span>
+            <span class="nb">Write-Progress</span> <span class="n">-Activity</span> <span class="s2">&quot;Write log $Log in progress&quot;</span> <span class="n">-Status</span> <span class="s2">&quot;Progress $count/</span><span class="p">$(</span><span class="nv">$LogList</span><span class="p">.</span><span class="n">count</span><span class="p">)</span><span class="s2">&quot;</span> <span class="n">-PercentComplete</span> <span class="p">(</span><span class="nv">$count</span><span class="p">/</span><span class="nv">$LogList</span><span class="p">.</span><span class="n">count</span><span class="p">*</span><span class="n">100</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Second, edit again your <em>profile.ps1</em> and put this function:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">using</span> <span class="n">module</span> <span class="n">PSCouchDB</span>
+<span class="c"># Find log with criteria</span>
+<span class="k">function</span> <span class="n">Find-WindowsLog</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">param</span><span class="p">(</span>
+        <span class="p">[</span><span class="k">Parameter</span><span class="p">(</span><span class="k">mandatory</span><span class="p">=</span><span class="nv">$true</span><span class="p">)]</span>
+        <span class="no">[string]</span> <span class="nv">$ComputerName</span><span class="p">,</span>
+        <span class="p">[</span><span class="k">Parameter</span><span class="p">(</span><span class="k">mandatory</span><span class="p">=</span><span class="nv">$true</span><span class="p">)]</span>
+        <span class="p">[</span><span class="k">ValidateSet</span><span class="p">(</span><span class="s2">&quot;Application&quot;</span><span class="p">,</span><span class="s2">&quot;Security&quot;</span><span class="p">,</span><span class="s2">&quot;System&quot;</span><span class="p">)]</span>
+        <span class="no">[string]</span> <span class="nv">$Log</span><span class="p">,</span>
+        <span class="nv">$SearchCriteria</span>
+    <span class="p">)</span>
+    <span class="c"># Check if criteria is a string or a int</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$SearchCriteria</span><span class="p">.</span><span class="n">GetType</span><span class="p">()</span> <span class="o">-eq</span>  <span class="no">[int]</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$SearchCriteria</span> <span class="p">=</span> <span class="no">[int]</span><span class="nv">$SearchCriteria</span>
+    <span class="p">}</span>
+    <span class="c"># Create Mango query</span>
+    <span class="nv">$q</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">-TypeName</span> <span class="n">PSCouchDBQuery</span>
+    <span class="nv">$q</span><span class="p">.</span><span class="n">AddSelector</span><span class="p">(</span><span class="s2">&quot;CategoryNumber&quot;</span><span class="p">,</span><span class="nv">$SearchCriteria</span><span class="p">)</span>
+    <span class="nv">$q</span><span class="p">.</span><span class="n">AddSelector</span><span class="p">(</span><span class="s2">&quot;EventID&quot;</span><span class="p">,</span><span class="nv">$SearchCriteria</span><span class="p">)</span>
+    <span class="nv">$q</span><span class="p">.</span><span class="n">AddSelector</span><span class="p">(</span><span class="s2">&quot;Message&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="nv">$q</span><span class="p">.</span><span class="n">AddSelector</span><span class="p">(</span><span class="s2">&quot;UserName&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="nv">$q</span><span class="p">.</span><span class="n">AddSelector</span><span class="p">(</span><span class="s2">&quot;Source&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="nv">$q</span><span class="p">.</span><span class="n">AddSelectorOperator</span><span class="p">(</span><span class="s1">&#39;$regex&#39;</span><span class="p">,</span><span class="s2">&quot;Message&quot;</span><span class="p">,</span><span class="s2">&quot;.*$SearchCriteria.*&quot;</span><span class="p">)</span>
+    <span class="nv">$q</span><span class="p">.</span><span class="n">AddSelectorOperator</span><span class="p">(</span><span class="s1">&#39;$regex&#39;</span><span class="p">,</span><span class="s2">&quot;UserName&quot;</span><span class="p">,</span><span class="s2">&quot;.*$SearchCriteria.*&quot;</span><span class="p">)</span>
+    <span class="nv">$q</span><span class="p">.</span><span class="n">AddSelectorOperator</span><span class="p">(</span><span class="s1">&#39;$regex&#39;</span><span class="p">,</span><span class="s2">&quot;Source&quot;</span><span class="p">,</span><span class="s2">&quot;.*$SearchCriteria.*&quot;</span><span class="p">)</span>
+    <span class="nv">$q</span><span class="p">.</span><span class="n">AddLogicalOperator</span><span class="p">(</span><span class="s1">&#39;$or&#39;</span><span class="p">)</span>
+    <span class="nv">$q</span><span class="p">.</span><span class="n">AddFields</span><span class="p">(</span><span class="s2">&quot;_id&quot;</span><span class="p">)</span>
+    <span class="nv">$q</span><span class="p">.</span><span class="n">AddFields</span><span class="p">(</span><span class="s2">&quot;MachineName&quot;</span><span class="p">)</span>
+    <span class="nv">$q</span><span class="p">.</span><span class="n">AddFields</span><span class="p">(</span><span class="s2">&quot;Data&quot;</span><span class="p">)</span>
+    <span class="nv">$q</span><span class="p">.</span><span class="n">AddFields</span><span class="p">(</span><span class="s2">&quot;Index&quot;</span><span class="p">)</span>
+    <span class="nv">$q</span><span class="p">.</span><span class="n">AddFields</span><span class="p">(</span><span class="s2">&quot;CategoryNumber&quot;</span><span class="p">)</span>
+    <span class="nv">$q</span><span class="p">.</span><span class="n">AddFields</span><span class="p">(</span><span class="s2">&quot;EventID&quot;</span><span class="p">)</span>
+    <span class="nv">$q</span><span class="p">.</span><span class="n">AddFields</span><span class="p">(</span><span class="s2">&quot;EntryType&quot;</span><span class="p">)</span>
+    <span class="nv">$q</span><span class="p">.</span><span class="n">AddFields</span><span class="p">(</span><span class="s2">&quot;Message&quot;</span><span class="p">)</span>
+    <span class="nv">$q</span><span class="p">.</span><span class="n">AddFields</span><span class="p">(</span><span class="s2">&quot;Source&quot;</span><span class="p">)</span>
+    <span class="nv">$q</span><span class="p">.</span><span class="n">AddFields</span><span class="p">(</span><span class="s2">&quot;ReplacementStrings&quot;</span><span class="p">)</span>
+    <span class="nv">$q</span><span class="p">.</span><span class="n">AddFields</span><span class="p">(</span><span class="s2">&quot;InstanceId&quot;</span><span class="p">)</span>
+    <span class="nv">$q</span><span class="p">.</span><span class="n">AddFields</span><span class="p">(</span><span class="s2">&quot;UserName&quot;</span><span class="p">)</span>
+    <span class="nv">$docs</span> <span class="p">=</span> <span class="n">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="s2">&quot;${ComputerName}_</span><span class="p">$(</span><span class="nv">$Log</span><span class="p">.</span><span class="n">ToLower</span><span class="p">())</span><span class="s2">&quot;</span> <span class="n">-Find</span> <span class="nv">$q</span><span class="p">.</span><span class="n">GetNativeQuery</span><span class="p">()</span>
+    <span class="nv">$docs</span><span class="p">.</span><span class="n">docs</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><strong>With PSCouchDB, with just a few lines of code, you can create simple applications for complex tasks.</strong></p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="support.html" class="btn btn-neutral float-right" title="Support" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="classes.html" class="btn btn-neutral" title="Classes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Matteo Guadrini
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>  
+
+  <style>
+    /* Sidebar header (and topbar for mobile) */
+    .wy-side-nav-search, .wy-nav-top {
+      background: #012456;
+    }
+    /* Sidebar */
+    .wy-nav-side {
+      background: #2161bb;
+    }
+  </style>
+
+
+
+</body>
+</html>

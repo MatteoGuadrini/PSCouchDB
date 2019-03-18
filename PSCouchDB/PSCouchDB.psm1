@@ -1,8 +1,11 @@
 # Alias for all export cmdlets
+New-Alias -Name "tcdb" -Value Test-CouchDBDatabase -Option ReadOnly
 New-Alias -Name "gcdb" -Value Get-CouchDBDatabase -Option ReadOnly
+New-Alias -Name "gcbpl" -Value Get-CouchDBDatabasePurgedLimit -Option ReadOnly
 New-Alias -Name "gcsi" -Value Get-CouchDBServer -Option ReadOnly
 New-Alias -Name "gcdbc" -Value Get-CouchDBDatabaseChanges -Option ReadOnly
 New-Alias -Name "gcdbu" -Value Get-CouchDBDatabaseUpdates -Option ReadOnly
+New-Alias -Name "gcdbsh" -Value Get-CouchDBDatabaseShards -Option ReadOnly
 New-Alias -Name "gcdoc" -Value Get-CouchDBDocument -Option ReadOnly
 New-Alias -Name "gcbdoc" -Value Get-CouchDBBulkDocument -Option ReadOnly
 New-Alias -Name "gcddoc" -Value Get-CouchDBDesignDocument -Option ReadOnly
@@ -15,12 +18,15 @@ New-Alias -Name "gcdbs" -Value Get-CouchDBDatabaseSecurity -Option ReadOnly
 New-Alias -Name "gcrpl" -Value Get-CouchDBReplication -Option ReadOnly
 New-Alias -Name "gcrpls" -Value Get-CouchDBReplicationScheduler -Option ReadOnly
 New-Alias -Name "gctsk" -Value Get-CouchDBActiveTask -Option ReadOnly
+New-Alias -Name "gccs" -Value Get-CouchDBClusterSetup -Option ReadOnly
 New-Alias -Name "gcrpdoc" -Value Get-CouchDBReplicationDocument -Option ReadOnly
 New-Alias -Name "gcidx" -Value Get-CouchDBIndex -Option ReadOnly
 New-Alias -Name "gcddd" -Value Get-CouchDBDatabaseDesignDocument -Option ReadOnly
 New-Alias -Name "gcmr" -Value Get-CouchDBMissingRevision -Option ReadOnly
 New-Alias -Name "gcrd" -Value Get-CouchDBRevisionDifference -Option ReadOnly
 New-Alias -Name "gcrl" -Value Get-CouchDBRevisionLimit -Option ReadOnly
+New-Alias -Name "gcss" -Value Get-CouchDBSession -Option ReadOnly
+New-Alias -Name "scds" -Value Sync-CouchDBDatabaseShards -Option ReadOnly
 New-Alias -Name "cpdoc" -Value Copy-CouchDBDocument -Option ReadOnly
 New-Alias -Name "mcsts" -Value Measure-CouchDBStatistics -Option ReadOnly
 New-Alias -Name "eccl" -Value Enable-CouchDBCluster -Option ReadOnly
@@ -31,6 +37,7 @@ New-Alias -Name "ccdb" -Value Compress-CouchDBDatabase -Option ReadOnly
 New-Alias -Name "ccdd" -Value Compress-CouchDBDesignDocument -Option ReadOnly
 New-Alias -Name "ccview" -Value Clear-CouchDBView -Option ReadOnly
 New-Alias -Name "ccdoc" -Value Clear-CouchDBDocuments -Option ReadOnly
+New-Alias -Name "scdbpl" -Value Set-CouchDBDatabasePurgedLimit -Option ReadOnly
 New-Alias -Name "scdoc" -Value Set-CouchDBDocument -Option ReadOnly
 New-Alias -Name "scddoc" -Value Set-CouchDBDesignDocument -Option ReadOnly
 New-Alias -Name "scatt" -Value Set-CouchDBAttachment -Option ReadOnly
@@ -40,8 +47,8 @@ New-Alias -Name "scconf" -Value Set-CouchDBConfiguration -Option ReadOnly
 New-Alias -Name "scrpl" -Value Set-CouchDBReplication -Option ReadOnly
 New-Alias -Name "scbd" -Value Set-CouchDBBulkDocument -Option ReadOnly
 New-Alias -Name "scrl" -Value Set-CouchDBRevisionLimit -Option ReadOnly
+New-Alias -Name "scs" -Value Set-CouchDBSession -Option ReadOnly
 New-Alias -Name "gcdbp" -Value Grant-CouchDBDatabasePermission -Option ReadOnly
-New-Alias -Name "gcdbsec" -Value Grant-CouchDBDatabaseSecurity -Option ReadOnly
 New-Alias -Name "rcdbp" -Value Revoke-CouchDBDatabasePermission -Option ReadOnly
 New-Alias -Name "rcdbr" -Value Request-CouchDBReplication -Option ReadOnly
 New-Alias -Name "ncdb" -Value New-CouchDBDatabase -Option ReadOnly
@@ -62,6 +69,7 @@ New-Alias -Name "rcadm" -Value Remove-CouchDBAdmin -Option ReadOnly
 New-Alias -Name "rcnode" -Value Remove-CouchDBNode -Option ReadOnly
 New-Alias -Name "rcrpl" -Value Remove-CouchDBReplication -Option ReadOnly
 New-Alias -Name "rcidx" -Value Remove-CouchDBIndex -Option ReadOnly
+New-Alias -Name "rcs" -Value Remove-CouchDBSession -Option ReadOnly
 New-Alias -Name "rcsrv" -Value Restart-CouchDBServer -Option ReadOnly
 New-Alias -Name "fcdoc" -Value Find-CouchDBDocuments -Option ReadOnly
 New-Alias -Name "finddoc" -Value Find-CouchDBDocuments -Option ReadOnly
@@ -157,6 +165,12 @@ class PSCouchDBQuery {
         $this.sort = @()
     }
 
+    # Method for removing one sort properties
+    RemoveSort ($sort) {
+        $newsort = $this.sort | Where-Object { $_.Keys.Where({$_ -ne $sort}) }
+        $this.sort = $newsort
+    }
+
     # Method for adding field properties to fields array
     AddFields ($fields) {
         $this.fields += $fields
@@ -172,9 +186,21 @@ class PSCouchDBQuery {
         $this.fields = @()
     }
 
-    # Method for adding indexies properties to indexies array
+    # Method for removing one field properties to fields array
+    RemoveFields ($field) {
+        $newfields = $this.fields | Where-Object { $_ -ne $field }
+        $this.fields = $newfields
+    }
+
+    # Method for remove indexies properties to indexies array
     RemoveIndexies () {
         $this.use_index = @()
+    }
+
+    # Method for remove one index properties to indexies array
+    RemoveIndexies ($index) {
+        $newindex = $this.use_index | Where-Object { $_ -ne $index }
+        $this.use_index = $newindex
     }
 
     # Method for setting read quorum
@@ -248,7 +274,7 @@ class PSCouchDBQuery {
                         continue
                     }
                     $this.selector.Add($selector, @{})
-                    if (($clone_selector[$selector] -as [int]) -ne $null) {
+                    if ($null -ne ($clone_selector[$selector] -as [int])) {
                         $this.selector.$selector.Add($operator, [int]$clone_selector[$selector])
                     } elseif (($clone_selector[$selector] -eq "true") -or ($clone_selector[$selector] -eq "false")) {
                         $this.selector.$selector.Add($operator, [bool]$clone_selector[$selector])
@@ -264,7 +290,7 @@ class PSCouchDBQuery {
                         continue
                     }
                     $this.selector.Add($selector, @{})
-                    if (($clone_selector[$selector] -as [int]) -ne $null) {
+                    if ($null -ne ($clone_selector[$selector] -as [int])) {
                         $this.selector.$selector.Add($operator, @([int]$clone_selector[$selector]))
                     } elseif (($clone_selector[$selector] -eq "true") -or ($clone_selector[$selector] -eq "false")) {
                         $this.selector.$selector.Add($operator, @([bool]$clone_selector[$selector]))
@@ -289,7 +315,7 @@ class PSCouchDBQuery {
                     $this.selector.$key = @{}
                     if (('$lt','$lte','$eq','$ne','$gte','$gt','$exists','$type','$mod','$regex') -contains $operator) {
                         # JSON
-                        if (($value -as [int]) -ne $null) {
+                        if ($null -ne ($value -as [int])) {
                             $this.selector.$key.Add($operator, [int]$value)
                         } elseif (($value -eq "true") -or ($value -eq "false")) {
                             $this.selector.$key.Add($operator, [bool]$value)
@@ -298,7 +324,7 @@ class PSCouchDBQuery {
                         }
                     } elseif (('$in','$nin','$size') -contains $operator) {
                         # Array
-                        if (($value -as [int]) -ne $null) {
+                        if ($null -ne ($value -as [int])) {
                             $this.selector.$key.Add($operator, @([int]$value))
                         } elseif (($value -eq "true") -or ($value -eq "false")) {
                             $this.selector.$key.Add($operator, @([bool]$value))
@@ -615,11 +641,67 @@ function(newDoc, oldDoc, userCtx) {
 function Send-CouchDBRequest {
     <#
     .SYNOPSIS
-    Sends a request to a CouchDB database server.
+    Send a request through rest method to CouchDB server.
     .DESCRIPTION
-    Sends a REST request to a CouchDB database server.
+    This command builds the url and data and uses Invoke 
+    to pass the CouchDB API call.
+    .PARAMETER Method
+    The REST method. Default is "GET".
+    The avalaible methods are:
+    "HEAD","GET","PUT","DELETE","POST"
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    This takes part in the url here: 
+    http://{server}.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    This takes part in the url here: 
+    http://localhost:{port}.
+    .PARAMETER Database
+    The CouchDB database. This takes part in the url here: 
+    http://localhost:5984/{database}.
+    .PARAMETER Document
+    The CouchDB document. This takes part in the url here: 
+    http://localhost:5984/db/{document}.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    When the authorization parameter is first specified, a 
+    session variable is created ($couchdb_session) that lasts the entire 
+    powershell session. The next calls can be made without
+    specifying the authorization parameter, 
+    if you do not have to change users.
+    This takes part in the url here: 
+    http://{authorization}@localhost:5984.
+    .PARAMETER Revision
+    The CouchDB revision document.
+    The revision document format like this: {count}-{uuid}
+    2-b91bb807b4685080c6a651115ff558f5
+    This takes part in the url here: 
+    http://localhost:5984/db/doc?rev={revision}.
+    .PARAMETER Attachment
+    The CouchDB document attachment. Is a ContentType -> multipart/form-data
+    and InFile -> path of attachment.
+    .PARAMETER Data
+    The CouchDB document data. Is a Json data format.
+    The encoding is UTF-8.
+    .PARAMETER OutFile
+    Path of download attachment file.
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
+    https://localhost:6984.
     .EXAMPLE
-    Send-CouchDBRequest -Method PUT -Database example -Authorization "admin:password"
+    This example get a database "db":
+    Send-CouchDBRequest -Server couchdb1.local -Method "GET" -Database db
+    .EXAMPLE
+    This example get a document "doc1" on database "db":
+    Send-CouchDBRequest -Server couchdb1.local -Method "GET" -Database db -Document doc1
+    .EXAMPLE
+    This example get a document "doc1" on database "db" on "localhost" server in SSL connection:
+    Send-CouchDBRequest -Method "GET" -Database db -Document doc1 -Ssl:$true
+    .LINK
+    Invoke-RestMethod
     #>
     [CmdletBinding()]
     param (
@@ -720,12 +802,16 @@ function Send-CouchDBRequest {
     # Add url
     Write-Verbose -Message "Compose the url: $url"
     $options.Add("Uri",$url)
-    # Check the credential for access on database
-    Write-Verbose -Message "Check authorization"
-    if ($Authorization) {
+    # Check session
+    if (-not($couchdb_session) -or ($Authorization)) {
+        # Check the credential for access on database
+        Write-Verbose -Message "Check authorization"
         $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(($Authorization)))
         $options.Add("Headers",@{Authorization=("Basic {0}" -f $base64AuthInfo)})
         Write-Debug -Message "`$Authorization is $Authorization"
+        $options.Add("SessionVariable","couchdb_session")
+    } else {
+        $options.Add("WebSession",$couchdb_session)
     }
     # Build the json data
     Write-Verbose -Message "Check json data"
@@ -738,10 +824,25 @@ function Send-CouchDBRequest {
     # Invoke REST with method
     Write-Verbose -Message "Finally, send request to CouchDB server $Server"
     $results = Invoke-RestMethod @options
+    Set-Variable -Name couchdb_session -Value $couchdb_session -Scope Global
     return $results
 }
 
 function ConvertTo-CouchDBPassword ([SecureString] $SecurePassword) {
+    <#
+    .SYNOPSIS
+    Convert SecureString.
+    .DESCRIPTION
+    Convert to SecureString to simple string.
+    .PARAMETER SecurePassword
+    Password format in [SecureString].
+    .EXAMPLE
+    $password = "password" | ConvertTo-SecureString -AsPlainText -Force
+    ConvertTo-CouchDBPassword -SecurePassword $password
+    This example return a readable password.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/permission.html#create-admin-user
+    #>
     $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecurePassword)
     $UnsecurePassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
     return $UnsecurePassword
@@ -753,17 +854,82 @@ function Get-CouchDBServer () {
     Get server information.
     .DESCRIPTION
     Accessing the root of a CouchDB instance returns meta information about the instance.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Status
+    Get the status of server. API _up. 
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    Get-CouchDBDatabase -Database test -Authorization "admin:password"
+    Get-CouchDBServer
+    This example get a meta information of localhost server.
+    .EXAMPLE
+    Get-CouchDBServer -Serer couchdb1.local -Port 8080 -Status
+    This example get a status of couchdb1.local server with custom port.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/server.html#server-operation
     #>
     [CmdletBinding()]
     param(
         [string] $Server,
         [int] $Port,
         [string] $Authorization,
+        [switch] $Status,
         [switch] $Ssl
     )
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Authorization $Authorization -Ssl:$Ssl
+    if ($Status.IsPresent) {
+        $Database = "_up"
+    }
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl
+}
+
+function Test-CouchDBDatabase () {
+    <#
+    .SYNOPSIS
+    Test database.
+    .DESCRIPTION
+    Test if database exists.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
+    .EXAMPLE
+    Test-CouchDBDatabase -Database test
+    This example test if database "test" exists.
+    .EXAMPLE
+    if ($null -eq (Test-CouchDBDatabase -Database test -ErrorAction SilentlyContinue)) {
+        Write-Output "Database test exists!"
+    } else {
+        Write-Output "Create it!"
+    }
+    This example test if database "test" exists and write to output the condition.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/databases.html#test-a-database
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server,
+        [int] $Port,
+        [Parameter(mandatory=$true)]
+        [string] $Database,
+        [string] $Authorization,
+        [switch] $Ssl
+    )
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "HEAD" -Database $Database -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Get-CouchDBDatabase () {
@@ -772,8 +938,27 @@ function Get-CouchDBDatabase () {
     Get a database information.
     .DESCRIPTION
     Gets information about the specified database.
+    Without database argument, return a list of all databases.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database. Default is _all_dbs.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    Get-CouchDBDatabase -Database test -Authorization "admin:password"
+    Get-CouchDBDatabase -Database test
+    This example get info of the database "test".
+    .EXAMPLE
+    Get-CouchDBDatabase
+    This example get info of all databases.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/databases.html#read-a-database
     #>
     [CmdletBinding()]
     param(
@@ -786,14 +971,66 @@ function Get-CouchDBDatabase () {
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl
 }
 
+function Get-CouchDBDatabasePurgedLimit () {
+    <#
+    .SYNOPSIS
+    Get a database purged documents limit.
+    .DESCRIPTION
+    Gets the current purged_infos_limit (purged documents limit).
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
+    .EXAMPLE
+    Get-CouchDBDatabasePurgedLimit -Database test
+    This example get info of the database purged documents limit "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/databases.html#get-purged-info-limit
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server,
+        [int] $Port,
+        [Parameter(mandatory=$true)]
+        [string] $Database,
+        [string] $Authorization,
+        [switch] $Ssl
+    )
+    $Database = $Database + "/_purged_infos_limit"
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl
+}
+
 function Get-CouchDBDatabaseInfo () {
     <#
     .SYNOPSIS
     Get a databases information.
     .DESCRIPTION
-    Returns information of a list of the specified databases in the CouchDB instance. 
+    Returns information of a list of the specified databases in the CouchDB instance.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Keys
+    Array of database names to be requested.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    Get-CouchDBDatabase -Database test -Authorization "admin:password"
+    Get-CouchDBDatabasePurgedLimit -Database test
+    This example get info of the database purged documents limit "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/databases.html#get-purged-info-limit
     #>
     [CmdletBinding()]
     param(
@@ -820,9 +1057,25 @@ function Get-CouchDBDatabaseChanges () {
     .SYNOPSIS
     Get database changelogs.
     .DESCRIPTION
-    Returns a sorted list of changes made to documents in the database, in time order of application, can be obtained from the database’s _changes resource.
+    Returns a sorted list of changes made to documents in the database, 
+    in time order of application, can be obtained from the database’s _changes resource.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    Get-CouchDBDatabaseChanges -Database test -Authorization "admin:password"
+    Get-CouchDBDatabaseChanges -Database test
+    This example get list of changes made to documents in the database "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/databases.html#changes
     #>
     [CmdletBinding()]
     param(
@@ -833,8 +1086,8 @@ function Get-CouchDBDatabaseChanges () {
         [string] $Authorization,
         [switch] $Ssl
     )
-    if (-not(Get-CouchDBDatabase -Database $Database -Authorization $Authorization -Ssl:$Ssl)) {
-        throw "Database replicator $Database is not exists."
+    if ($null -eq (Test-CouchDBDatabase -Database $Database -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
+        throw "Database $Database is not exists."
     }
     $Document = '_changes'
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
@@ -846,8 +1099,21 @@ function Get-CouchDBDatabaseUpdates () {
     Get database events.
     .DESCRIPTION
     Returns a list of all database events in the CouchDB instance.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    Get-CouchDBDatabaseChanges -Authorization "admin:password"
+    Get-CouchDBDatabaseUpdates
+    This example get list of all database events in the CouchDB instance.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/server.html#server-operation
     #>
     [CmdletBinding()]
     param(
@@ -860,6 +1126,43 @@ function Get-CouchDBDatabaseUpdates () {
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl
 }
 
+function Get-CouchDBDatabaseShards () {
+    <#
+    .SYNOPSIS
+    Get shards database list.
+    .DESCRIPTION
+    Returns a list of shard will have its internal database range, and the nodes on which replicas of those shards are stored.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
+    .EXAMPLE
+    Get-CouchDBDatabaseShards -Database test
+    This example get list of shard will have its internal database range "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/databases.html#get-shards
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server,
+        [int] $Port,
+        [Parameter(mandatory=$true)]
+        [string] $Database,
+        [string] $Authorization,
+        [switch] $Ssl
+    )
+    $Database = $Database + '/_shards'
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl
+}
+
 function Get-CouchDBDocument () {
     <#
     .SYNOPSIS
@@ -867,8 +1170,39 @@ function Get-CouchDBDocument () {
     .DESCRIPTION
     Get a CouchDB document json data.
     Executes the built-in _all_docs view, returning all of the documents in the database.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Document
+    The CouchDB document. Default is _all_docs.
+    .PARAMETER Revision
+    The CouchDB revision document.
+    .PARAMETER Local
+    Return CouchDB local document.
+    .PARAMETER Revisions
+    Return all CouchDB db revisions.
+    .PARAMETER History
+    Return all info CouchDB db revisions.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    Get-CouchDBDocument -Database test -Document "001"
+    Get-CouchDBDocument -Database test -Document "Hitchhikers"
+    This example get document "Hitchhikers" on database "test".
+    .EXAMPLE
+    Get-CouchDBDocument -Database test
+    This example get all documents on database "test".
+    .EXAMPLE
+    Get-CouchDBDocument -Database test -Revisions
+    This example get all revision of documents "Hitchhikers" on database "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/documents.html#get-a-document
     #>
     [CmdletBinding()]
     param(
@@ -900,8 +1234,25 @@ function Get-CouchDBBulkDocument () {
     Get a bulk document.
     .DESCRIPTION
     This method can be called to query several documents in bulk.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Document
+    Array of the CouchDB documents.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    Get-CouchDBBulkDocument -Database test -Document "001","002","003"
+    Get-CouchDBBulkDocument -Database test -Document "Hitchhikers","Hitchhikers Guide", "answer"
+    This example get list of three document: "Hitchhikers","Hitchhikers Guide", "answer" on a database "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/documents.html#get-a-bulk-documents
     #>
     [CmdletBinding()]
     param(
@@ -935,8 +1286,25 @@ function Get-CouchDBDesignDocument () {
     The information is returned as a hashtable structure containing meta information about the return structure, 
     including a list of all design documents and basic contents, consisting the ID, revision and key. 
     The key is the from the design document’s _id.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Document
+    The CouchDB document.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    Get-CouchDBDesignDocument -Database test -Document "mydesigndoc"
+    Get-CouchDBDesignDocument -Database test -Document "space"
+    This example get "space" design document on database "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/ddoc.html#get-a-design-document
     #>
     [CmdletBinding()]
     param(
@@ -958,9 +1326,24 @@ function Get-CouchDBDatabaseDesignDocument () {
     .SYNOPSIS
     Get all design document on a database.
     .DESCRIPTION
-    Returns a JSON structure of all of the design documents in a given database. 
+    Returns a JSON structure of all of the design documents in a given database.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
     Get-CouchDBDatabaseDesignDocument -Database test
+    This example get all design document on database "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/ddoc.html#get-a-design-document
     #>
     [CmdletBinding()]
     param(
@@ -981,10 +1364,32 @@ function Get-CouchDBAttachment () {
     Get or save attachment.
     .DESCRIPTION
     It’s possible to retrieve document with all attached files content.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Document
+    The CouchDB document.
+    .PARAMETER Attachment
+    The CouchDB attachment document.
+    .PARAMETER OutFile
+    The full path where save attachment document.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    Get-CouchDBAttachment -Database test -Document "001" -Attachment test.html -Authorization "admin:password"
+    Get-CouchDBAttachment -Database test -Document "Hitchhikers" -Attachment test.txt
+    This example get attachment "test.txt" on "Hitchhikers" document on database "test".
     .EXAMPLE
-    Get-CouchDBAttachment -Database test -Document "001" -Attachment test.html -OutFile C:\out.html -Authorization "admin:password"
+    Get-CouchDBAttachment -Database test -Document "Hitchhikers" -Attachment test.txt -OutFile C:\test.txt
+    This example save attachment "test.txt" to C:\test.txt on "Hitchhikers" document on database "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/documents.html#get-an-attachment
     #>
     [CmdletBinding()]
     param(
@@ -1009,19 +1414,34 @@ function Get-CouchDBUser () {
     Get an user.
     .DESCRIPTION
     Get a CouchDB user.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Userid
+    The user_id than exists in _users database.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    Get-CouchDBUser -Userid test_user -Authorization "admin:password"
+    Get-CouchDBUser -Userid test_user
+    This example get info of user "test_user".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/permission.html
     #>
     [CmdletBinding()]
     param(
         [string] $Server,
         [int] $Port,
-        [string] $Database = "_users",
         [Parameter(mandatory=$true)]
         [string] $Userid,
         [string] $Authorization,
         [switch] $Ssl
     )
+    $Database = "_users"
     $Document = "org.couchdb.user:$Userid"
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
 }
@@ -1032,14 +1452,29 @@ function Get-CouchDBAdmin () {
     Get an admin user.
     .DESCRIPTION
     Get a CouchDB admin user.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Node
+    The CouchDB node of cluster. Default is couchdb@localhost.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
     Get-CouchDBAdmin -Authorization "admin:password"
+    This example 
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/permission.html
     #>
     [CmdletBinding()]
     param(
         [string] $Server,
         [int] $Port,
-        [string] $Node = "couchdb@localhost",
+        [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).all_nodes -contains "couchdb@localhost") {"couchdb@localhost"} else {"couchdb@127.0.0.1"}),
         [string] $Authorization,
         [switch] $Ssl
     )
@@ -1054,8 +1489,23 @@ function Get-CouchDBDatabaseSecurity () {
     Get the current security object from the specified database.
     .DESCRIPTION
     Returns the current security object from the specified database.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
     Get-CouchDBDatabaseSecurity -Database test -Authorization "admin:password"
+    This example get the security object from database "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/permission.html#limit-read-access
     #>
     [CmdletBinding()]
     param(
@@ -1076,18 +1526,33 @@ function Get-CouchDBConfiguration () {
     Get configuration.
     .DESCRIPTION
     Get configuration of CouchDB server.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Node
+    The CouchDB node of cluster. Default is couchdb@localhost.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    Get-CouchDBConfiguration -Authorization "admin:password"
+    Get-CouchDBConfiguration
+    This example get the localhost configuration of CouchDB server.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/config.html#get-configuration
     #>
     [CmdletBinding()]
     param(
         [string] $Server,
         [int] $Port,
-        [string] $Database = "_node",
-        [string] $Node = "couchdb@localhost",
+        [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).all_nodes -contains "couchdb@localhost") {"couchdb@localhost"} else {"couchdb@127.0.0.1"}),
         [string] $Authorization,
         [switch] $Ssl
     )
+    $Database = "_node"
     $Document = "$Node/_config"
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
 }
@@ -1098,17 +1563,30 @@ function Get-CouchDBNode () {
     Get server nodes.
     .DESCRIPTION
     Displays the nodes that are part of the cluster as cluster_nodes.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
     Get-CouchDBNode -Authorization "admin:password"
+    This example get all node in a cluster.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/config.html#nodes
     #>
     [CmdletBinding()]
     param(
         [string] $Server,
         [int] $Port,
-        [string] $Database = "_membership",
         [string] $Authorization,
         [switch] $Ssl
     )
+    $Database = "_membership"
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
 }
 
@@ -1118,20 +1596,38 @@ function Get-CouchDBReplication () {
     Get database replication.
     .DESCRIPTION
     Get database replication status of CouchDB server.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Document
+    The CouchDB document. Default is _all_docs.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
     Get-CouchDBReplication -Authorization "admin:password"
+    This example get all replica documents.
+    .EXAMPLE
+    Get-CouchDBReplication -Document "localhost-test_localhost-test_dump" -Authorization "admin:password"
+    This example get "localhost-test_localhost-test_dump" replica documents.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/server.html#get-replica
     #>
     [CmdletBinding()]
     param(
         [string] $Server,
         [int] $Port,
-        [string] $Database = "_replicator",
         [string] $Document = '_all_docs',
         [string] $Authorization,
         [switch] $Ssl
     )
-    if (-not(Get-CouchDBDatabase -Database $Database -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
-        throw "Database replicator $Database is not exists."
+    $Database = "_replicator"
+    if ($null -eq (Test-CouchDBDatabase -Database $Database -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
+        throw "Database replicator $Database not exists."
     }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
 }
@@ -1142,8 +1638,21 @@ function Get-CouchDBReplicationScheduler () {
     Get more details of database replication.
     .DESCRIPTION
     List of replication jobs. Includes replications created via /_replicate endpoint as well.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
     Get-CouchDBReplicationScheduler -Authorization "admin:password"
+    This example get scheduler of replication documents.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/server.html#get-replica
     #>
     [CmdletBinding()]
     param(
@@ -1163,22 +1672,31 @@ function Get-CouchDBReplicationDocument () {
     List of replication document states.
     .DESCRIPTION
     List of replication document states. Includes information about all the documents, even in completed and failed states.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    Get-CouchDBReplicationScheduler -Authorization "admin:password"
+    Get-CouchDBReplicationDocument -Authorization "admin:password"
+    This example get the documents of replicas.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/server.html#get-replica
     #>
     [CmdletBinding()]
     param(
         [string] $Server,
         [int] $Port,
-        [string] $Document,
-        [switch] $Replicator,
         [string] $Authorization,
         [switch] $Ssl
     )
-    $Database = "_scheduler/docs"
-    if ($Replicator.IsPresent) {
-        $Database += '/other/_replicator/' + $Document
-    }
+    $Database = "_scheduler"
+    $Document = "docs"
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
 }
 
@@ -1188,8 +1706,21 @@ function Get-CouchDBActiveTask () {
     Get an active task.
     .DESCRIPTION
     List of running tasks, including the task type, name, status and process ID.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
     Get-CouchDBActiveTask -Authorization "admin:password"
+    This example get all active task.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/server.html
     #>
     [CmdletBinding()]
     param(
@@ -1202,14 +1733,62 @@ function Get-CouchDBActiveTask () {
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl
 }
 
+function Get-CouchDBClusterSetup () {
+    <#
+    .SYNOPSIS
+    Get a cluster setup.
+    .DESCRIPTION
+    Returns the status of the node or cluster, per the cluster setup wizard.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
+    .EXAMPLE
+    Get-CouchDBClusterSetup
+    This example get a cluster setup.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/server.html
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server,
+        [int] $Port,
+        [string] $Authorization,
+        [switch] $Ssl
+    )
+    $Database = "_cluster_setup"
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl
+}
+
 function Get-CouchDBIndex () {
     <#
     .SYNOPSIS
     Get indexes on database.
     .DESCRIPTION
     When you make a GET request to /db/_index, you get a list of all indexes in the database
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    Get-CouchDBIndex -Database test -Authorization "admin:password"
+    Get-CouchDBIndex -Database test
+    This example get index document for database "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/databases.html#get-a-index
     #>
     [CmdletBinding()]
     param(
@@ -1230,8 +1809,27 @@ function Get-CouchDBMissingRevision () {
     Returns the missing revisions.
     .DESCRIPTION
     With given a list of document revisions, returns the document revisions that do not exist in the database.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Document
+    The CouchDB document.
+    .PARAMETER Revision
+    Array CouchDB revisions.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    Get-CouchDBMissingRevision -Database test -Document test -Revision 2-7051cbe5c8faecd085a3fa619e6e6337,3-825cb35de44c433bfb2df415563a19de -Authorization "admin:password"
+    Get-CouchDBMissingRevision -Database test -Document "Hitchhikers" -Revision 2-7051cbe5c8faecd085a3fa619e6e6337,3-825cb35de44c433bfb2df415563a19de
+    This example check if revisions 2-7051cbe5c8faecd085a3fa619e6e6337,3-825cb35de44c433bfb2df415563a19de exists on document "Hitchhikers" from database "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/databases.html#get-missing-revisions
     #>
     param(
         [string] $Server,
@@ -1257,8 +1855,27 @@ function Get-CouchDBRevisionDifference () {
     Returns the missing revisions.
     .DESCRIPTION
     Given a set of document/revision IDs, returns the subset of those that do not correspond to revisions stored in the database.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Document
+    The CouchDB document.
+    .PARAMETER Revision
+    Array CouchDB revisions.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    Get-CouchDBRevisionDifference -Database test -Document test -Revision 2-7051cbe5c8faecd085a3fa619e6e6337,3-825cb35de44c433bfb2df415563a19de -Authorization "admin:password"
+    Get-CouchDBRevisionDifference -Database test -Document "Hitchhikers" -Revision 2-7051cbe5c8faecd085a3fa619e6e6337,3-825cb35de44c433bfb2df415563a19de
+    This example get revisions that do not correspond to revisions 2-7051cbe5c8faecd085a3fa619e6e6337,3-825cb35de44c433bfb2df415563a19de on document "Hitchhikers" from database "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/databases.html#get-revision-difference
     #>
     param(
         [string] $Server,
@@ -1284,8 +1901,23 @@ function Get-CouchDBRevisionLimit () {
     Get revision limit.
     .DESCRIPTION
     Gets the current revs_limit (revision limit) setting.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    Get-CouchDBRevisionLimit -Database test -Authorization "admin:password"
+    Get-CouchDBRevisionLimit -Database test
+    This example get revision limit number from database "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/databases.html#get-revision-limit
     #>
     param(
         [string] $Server,
@@ -1299,12 +1931,108 @@ function Get-CouchDBRevisionLimit () {
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl
 }
 
+function Get-CouchDBSession () {
+    <#
+    .SYNOPSIS
+    Get cookie authentication.
+    .DESCRIPTION
+    Get cookie authentication for current session.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
+    .EXAMPLE
+    Get-CouchDBSession
+    This example get the web session on CouchDB server.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/auth.html
+    #>
+    param(
+        [string] $Server,
+        [int] $Port,
+        [string] $Authorization,
+        [switch] $Ssl
+    )
+    $Database = '/_session'
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl
+}
+
+function Sync-CouchDBDatabaseShards () {
+    <#
+    .SYNOPSIS
+    Sync shards on database.
+    .DESCRIPTION
+    Force-starts internal shard synchronization for all replicas of all database shards.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
+    .EXAMPLE
+    Sync-CouchDBDatabaseShards -Database test -Authorization "admin:password"
+    This example sync shards in all replicas from database "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/databases.html#sync-shards
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server,
+        [int] $Port,
+        [Parameter(mandatory=$true)]
+        [string] $Database,
+        [string] $Authorization,
+        [switch] $Ssl
+    )
+    $Database = $Database + '/_sync_shards'
+    $Data = "{}"
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
+}
+
 function Copy-CouchDBDocument () {
     <#
     .SYNOPSIS
     Copy from document.
     .DESCRIPTION
     To copy from a specific version, use the revision.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Document
+    The CouchDB source document.
+    .PARAMETER Destination
+    The CouchDB destination document.
+    .PARAMETER Revision
+    The CouchDB revision document.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
+    .EXAMPLE
+    Copy-CouchDBDocument -Database test -Document "Hitchhikers" -Destination "Hitchhikers Guide" -Authorization "admin:password"
+    This example copy "Hitchhikers" document to "Hitchhikers Guide" document on same database "test".
+    .EXAMPLE
+    Copy-CouchDBDocument -Database test -Document "Hitchhikers" -Destination "Hitchhikers Guide _deleted" -Revision 3-399796e5ce019e04311637e8a8a0f402 -Authorization "admin:password"
+    This example copy specific revision 3-399796e5ce019e04311637e8a8a0f402 of "Hitchhikers" document to "Hitchhikers Guide" document on same database "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/documents.html#get-an-attachment
     .EXAMPLE
     Copy-CouchDBDocument -Database test -Document "001" -Destination "copy_001" -Authorization "admin:password"
     #>
@@ -1345,8 +2073,26 @@ function Measure-CouchDBStatistics () {
     Measure server statistics.
     .DESCRIPTION
     Measure CouchDB server statistics.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER System
+    Return system statistics.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    Measure-CouchDBStatistics -DatabaseReads -OpenDatabases -RequestTime -Authorization "admin:password"
+    Measure-CouchDBStatistics
+    This example measure statistics of CouchDB Server.
+    .EXAMPLE
+    Measure-CouchDBStatistics -System
+    This example measure statistics of CouchDB Server.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/server.html
     #>
     [CmdletBinding()]
     param(
@@ -1370,8 +2116,23 @@ function Clear-CouchDBView () {
     Clean view indexes.
     .DESCRIPTION
     Removes view index files that are no longer required by CouchDB as a result of changed views within design documents.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
     Clear-CouchDBView -Database test -Authorization "admin:password"
+    This example removes index files on database "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/databases.html#clear-view
     #>
     [CmdletBinding()]
     param(
@@ -1392,8 +2153,27 @@ function Clear-CouchDBDocuments () {
     A database purge permanently document.
     .DESCRIPTION
     A database purge permanently removes the references to deleted documents from the database.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Document
+    The CouchDB document.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Force
+    No confirmation prompt.
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    Clear-CouchDBDatabase -Database test -Document test -Authorization "admin:password"
+    Clear-CouchDBDocuments -Database test -Document "Hitchhikers" -Authorization "admin:password"
+    This example purge "Hitchhikers" document on database "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/documents.html#purge-document
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
@@ -1421,13 +2201,31 @@ function Add-CouchDBNode () {
     Add server nodes.
     .DESCRIPTION
     Add server nodes on CouchDB cluster.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER BindPort
+    The CouchDB node bind port. Default is 5984.
+    .PARAMETER BindAddress
+    The CouchDB node bind address, ip or hostname.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    Add-CouchDBNode -BindAddress server1 -Authorization "admin:password"
+    Add-CouchDBNode -BindAddress couchdb1 -Authorization "admin:password"
+    This example add node couchdb1:5984 in a cluster.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/config.html#nodes
     #>
     [CmdletBinding()]
     param(
         [string] $Server,
         [int] $Port,
+        [int] $BindPort = 5984,
         [Parameter(mandatory=$true)]
         [string] $BindAddress,
         [string] $Authorization,
@@ -1439,7 +2237,7 @@ function Add-CouchDBNode () {
     {
         `"action`": `"add_node`",
         `"host`": `"$BindAddress`",
-        `"port`": `"$Port`",
+        `"port`": `"$BindPort`",
         `"username`": `"$($Credential[0])`",
         `"password`": `"$($Credential[1])`"
     }
@@ -1453,8 +2251,25 @@ function Compress-CouchDBDatabase () {
     Compress database.
     .DESCRIPTION
     Request compaction of the specified database. Compaction compresses the disk database file.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Document
+    The CouchDB document.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
     Compress-CouchDBDatabase -Database test -Authorization "admin:password"
+    This example compact database "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/documents.html#get-an-attachment
     #>
     [CmdletBinding()]
     param(
@@ -1477,8 +2292,25 @@ function Compress-CouchDBDesignDocument () {
     .DESCRIPTION
     Compacts the view indexes associated with the specified design document. 
     It may be that compacting a large view can return more storage than compacting the actual db.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER DesignDoc
+    The CouchDB design document.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    Compress-CouchDBDesignDocument -Database test -DesignDoc ddoc -Authorization "admin:password"
+    Compress-CouchDBDesignDocument -Database test -DesignDoc space -Authorization "admin:password"
+    This example compact design document "space" on database "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/ddoc.html#compress-design-document
     #>
     [CmdletBinding()]
     param(
@@ -1496,18 +2328,84 @@ function Compress-CouchDBDesignDocument () {
     Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }
 
+function Set-CouchDBDatabasePurgedLimit () {
+    <#
+    .SYNOPSIS
+    Set a database purged documents limit.
+    .DESCRIPTION
+    Set the current purged_infos_limit (purged documents limit).
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Limit
+    The CouchDB purge limit documents number.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
+    .EXAMPLE
+    Set-CouchDBDatabasePurgedLimit -Database test -Limit 1500 -Authorization "admin:password"
+    This example set purged documents limit to 1500 on database "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/databases.html#set-purged-info-limit
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server,
+        [int] $Port,
+        [Parameter(mandatory=$true)]
+        [string] $Database,
+        [Parameter(mandatory=$true)]
+        [int] $Limit,
+        [string] $Authorization,
+        [switch] $Ssl
+    )
+    $Database = $Database + "/_purged_infos_limit"
+    $Data = "$Limit"
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
+}
+
 function Set-CouchDBDocument () {
     <#
     .SYNOPSIS
     Modify a document.
     .DESCRIPTION
     Creates a new revision of the existing document.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Document
+    The CouchDB document.
+    .PARAMETER Revision
+    The CouchDB revision document.
+    .PARAMETER Data
+    The data in Json format or hastable.
+    .PARAMETER Replace
+    Overwrite data.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    $data = '{"album":"...and justice for all", "band":"Metallica"}'
-    Set-CouchDBDocument -Database test -Document "001" -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Data $data -Authorization "admin:password"
+    $data = @{"answer"=42; "ask"="Ultimate Question of Life, the Universe and Everything"}
+    Set-CouchDBDocument -Database test -Document "Hitchhikers" -Revision 1-2c903913030efb4d711db085b1f44107 -Data $data -Authorization "admin:password"
+    The example modify document "Hitchhikers" with data $data; if the element of $data exists, overwrite, else adding new element.
     .EXAMPLE
-    $data = @{"album"="...and justice for all", "band"="Metallica"}
-    Set-CouchDBDocument -Database test -Document "001" -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Data $data -Authorization "admin:password"
+    $data = @{"answer"=42; "ask"="Ultimate Question of Life, the Universe and Everything"}
+    Set-CouchDBDocument -Database test -Document "Hitchhikers" -Revision 1-2c903913030efb4d711db085b1f44107 -Data $data -Replace -Authorization "admin:password"
+    The example overwrite document "Hitchhikers" with data $data.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/documents.html#modify-a-document
     #>
     [CmdletBinding()]
     param(
@@ -1524,7 +2422,7 @@ function Set-CouchDBDocument () {
         [string] $Authorization,
         [switch] $Ssl
     )
-    if (($Data -as [hashtable]) -eq $null) {
+    if ($null -eq ($Data -as [hashtable])) {
         # Hashtable Data
         $Json = $Data | ConvertFrom-Json
         $Data = @{}
@@ -1533,11 +2431,15 @@ function Set-CouchDBDocument () {
         }
     }
     if (-not($Replace.IsPresent)) {
-        $OldDoc = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
-        $OldDoc.psobject.properties | ForEach-Object {
-            if (-not($Data.$($_.Name))) {
-                $Data.Add($_.Name, $_.Value)
+        $OldDoc = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue
+        if ($null -ne $OldDoc.psobject.properties) {
+            $OldDoc.psobject.properties | ForEach-Object {
+                if (-not($Data.$($_.Name))) {
+                    $Data.Add($_.Name, $_.Value)
+                }
             }
+        } else {
+            throw "Document $Document not found!"
         }
     }
     $Data = $Data | ConvertTo-Json -Depth 99
@@ -1547,13 +2449,38 @@ function Set-CouchDBDocument () {
 function Set-CouchDBBulkDocument () {
     <#
     .SYNOPSIS
-    Set a bulk document.
+    Create a bulk document.
     .DESCRIPTION
     This method can be called to allows you to create and update multiple documents at the same time (only id and revision).
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Document
+    Array of the CouchDB documents.
+    .PARAMETER Revision
+    Array of the CouchDB revision documents.
+    .PARAMETER IsDeleted
+    Select only deleted document.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    Set-CouchDBBulkDocument -Database test -Document "001","002","003"
+    Set-CouchDBBulkDocument -Database test -Document "Hitchhikers","Hitchhikers_new","Hitchhikers Guide" -Revision 4-7051cbe5c8faecd085a3fa619e6e6337,$null,3-399796e5ce019e04311637e8a8a0f402 -Authorization "admin:password"
+    This example modify list of three document: "Hitchhikers","Hitchhikers_new","Hitchhikers Guide" on a database "test".
     .EXAMPLE
-    Set-CouchDBBulkDocument -Database test -Document "001","004","003" -Revision 2-7051cbe5c8faecd085a3fa619e6e6337,$null,2-7051cbe5c8faecd085a3fa619e6e6337
+    Set-CouchDBBulkDocument -Database test -Document "Hitchhikers","Hitchhikers_new","Hitchhikers Guide" -Authorization "admin:password"
+    This example create list of three document: "Hitchhikers","Hitchhikers_new","Hitchhikers Guide" on a database "test".
+    .EXAMPLE
+    Set-CouchDBBulkDocument -Database test -Document "Hitchhikers","Hitchhikers_new","Hitchhikers Guide" -Revision 4-7051cbe5c8faecd085a3fa619e6e6337,$null,3-399796e5ce019e04311637e8a8a0f402 -IsDeleted -Authorization "admin:password"
+    This example modify list of three deleted document: "Hitchhikers","Hitchhikers_new","Hitchhikers Guide" on a database "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/documents.html#create-documents-in-bulk
     #>
     [CmdletBinding()]
     param(
@@ -1593,14 +2520,56 @@ function Set-CouchDBDesignDocument () {
     Modify a design document.
     .DESCRIPTION
     Creates a new revision of the existing design document.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Document
+    The CouchDB document. Default is _all_docs.
+    .PARAMETER ViewName
+    The name of function view in the design document.
+    .PARAMETER ViewKey
+    The key of function view in the design document.
+    .PARAMETER ViewValue
+    The value of key of function view in the design document.
+    .PARAMETER GetDoc
+    Return all element of doc of function view in the design document.
+    .PARAMETER ListName
+    The name of function list in the design document.
+    .PARAMETER ShowName
+    The name of function show in the design document.
+    .PARAMETER ShowKey
+    The key of function show in the design document.
+    .PARAMETER ShowValue
+    The value of key of function show in the design document.
+    .PARAMETER ValidationRequirements
+    Array of key than required validation.
+    .PARAMETER ValidationAuthor
+    Enable validation author.
+    .PARAMETER Data
+    The data in Json format or hastable.
+    .PARAMETER Replace
+    Overwrite design document.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    Set-CouchDBDesignDocument -Database test -Document "mydesigndoc" -ViewName "data_test" -Authorization "admin:password"
+    Set-CouchDBDesignDocument -Database test -Document "space" -ViewName "planet_view" -Authorization "admin:password"
+    The example modify "space" design document with add or modify "planet_view" view.
     .EXAMPLE
     $data = '{"views":{"data_test":{"map":"function(doc) {emit(doc._id, doc._rev)}"}}}'
-    Set-CouchDBDesignDocument -Database test -Document "mydesigndoc" -Data $data -Authorization "admin:password"
+    Set-CouchDBDesignDocument -Database test -Document "space" -Data $data -Authorization "admin:password"
+    The example modify "space" design document with custom data.
     .EXAMPLE
-    $data = @{"views"=@{"data_test"=@{"map"="function(doc) {emit(doc._id, doc._rev)}"}}}
-    Set-CouchDBDesignDocument -Database test -Document "mydesigndoc" -Data $data -Authorization "admin:password"
+    Set-CouchDBDesignDocument -Database test -Document space -ShowName planet -ShowKey planet -ShowValue "Heart" -Authorization "admin:password"
+    The example modify "space" design document with add or modify "planet" show, where "planet" key equal "Heart".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/ddoc.html
     #>
     [CmdletBinding(DefaultParameterSetName = "View")]
     param(
@@ -1726,12 +2695,14 @@ function Set-CouchDBDesignDocument () {
     }
     # CustomData
     if ($PsCmdlet.ParameterSetName -eq "CustomData") {
-        if (($Data -as [hashtable]) -ne $null) {
+        if ($null -ne ($Data -as [hashtable])) {
             if (-not($Data.ContainsKey('language'))) { $Data.Add('language', 'javascript') }
             if (-not($Data.ContainsKey('views'))) { $Data.Add('views', @{}) }
             if (-not($Data.ContainsKey('shows'))) { $Data.Add('shows', @{}) }
             if (-not($Data.ContainsKey('lists'))) { $Data.Add('lists', @{}) }
             if (-not($Data.ContainsKey('validate_doc_update'))) { $Data.Add('validate_doc_update', "") }
+        } elseif ($null -ne ($Data -as [string])) {
+            $Data = $Data
         } else {
             $Json = $Data | ConvertFrom-Json
             $Data = @{}
@@ -1808,10 +2779,12 @@ function Set-CouchDBDesignDocument () {
                 }
             }
         }
-        if (($OldDesignDoc.validate_doc_update -ne $null) -and ($DesignDoc.validate_doc_update -eq $null)) {
+        if (($null -ne $OldDesignDoc.validate_doc_update) -and ($null -ne $DesignDoc.validate_doc_update)) {
             $DesignDoc.validate_doc_update = $OldDesignDoc.validate_doc_update
         } else {
-            $DesignDoc.Remove('validate_doc_update')
+            if ($DesignDoc.validate_doc_update) {
+                $DesignDoc.Remove('validate_doc_update')
+            }
         }
     }
     if ($OldDesignDoc._rev) {
@@ -1833,8 +2806,29 @@ function Set-CouchDBAttachment () {
     Modify attachment.
     .DESCRIPTION
     Uploads the supplied content as an attachment to the specified document.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Document
+    The CouchDB document.
+    .PARAMETER Revision
+    The CouchDB revision document.
+    .PARAMETER Attachment
+    The CouchDB attachment document.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    Set-CouchDBAttachment -Database test -Document "001" -Attachment C:\test.html -Authorization "admin:password"
+    Set-CouchDBAttachment -Database test -Document "Hitchhikers" -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Attachment test.txt
+    This example modify attachment "test.txt" on "Hitchhikers" document from database "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/documents.html#modify-an-attachment
     #>
     [CmdletBinding()]
     param(
@@ -1859,15 +2853,35 @@ function Set-CouchDBUser () {
     Set an user properties.
     .DESCRIPTION
     Set a CouchDB user properties with roles. Reset password user.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Userid
+    The user_id than exists in _users database.
+    .PARAMETER Password
+    The password in SecureString.
+    .PARAMETER Roles
+    Array of roles.
+    .PARAMETER Revision
+    The revision document of user_id.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
     $password = "password" | ConvertTo-SecureString -AsPlainText -Force
     Set-CouchDBUser -Userid test_user -Password $password -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:password"
+    This example reset password of user "test_user".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/permission.html#reset-user-password
     #>
     [CmdletBinding()]
     param(
         [string] $Server,
         [int] $Port,
-        [string] $Database = "_users",
         [Parameter(mandatory=$true)]
         [string] $Userid,
         [Parameter(mandatory=$true)]
@@ -1878,6 +2892,7 @@ function Set-CouchDBUser () {
         [string] $Authorization,
         [switch] $Ssl
     )
+    $Database = "_users"
     $Document = "org.couchdb.user:$Userid"
     if ($Roles.Count -eq 1) {
         $Roles = "[$($Roles | ConvertTo-Json)]"
@@ -1903,16 +2918,34 @@ function Set-CouchDBAdmin () {
     Reset password of admin user.
     .DESCRIPTION
     Reset password of CouchDB admin user.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Node
+    The CouchDB node of cluster. Default is couchdb@localhost.
+    .PARAMETER Userid
+    The user_id than exists in _users database.
+    .PARAMETER Password
+    The password in SecureString.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
     $password = "password" | ConvertTo-SecureString -AsPlainText -Force
-    Set-CouchDBAdmin -Userid test_user -Password $password -Authorization "admin:password"
+    Set-CouchDBAdmin -Userid admin -Password $password -Authorization "admin:password"
+    This example reset password of "admin" user admin.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/permission.html#reset-admin-password
     #>
     [CmdletBinding()]
     param(
         [string] $Server,
         [int] $Port,
-        [string] $Database = "_node",
-        [string] $Node = "couchdb@localhost",
+        [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).all_nodes -contains "couchdb@localhost") {"couchdb@localhost"} else {"couchdb@127.0.0.1"}),
         [Parameter(mandatory=$true)]
         [string] $Userid,
         [Parameter(mandatory=$true)]
@@ -1920,6 +2953,7 @@ function Set-CouchDBAdmin () {
         [string] $Authorization,
         [switch] $Ssl
     )
+    $Database = "_node"
     $Document = "$Node/_config/admins/$Userid"
     $ClearPassword = ConvertTo-CouchDBPassword -SecurePassword $Password
     $Data = "`"$ClearPassword`""
@@ -1932,15 +2966,35 @@ function Set-CouchDBConfiguration () {
     Set element configuration.
     .DESCRIPTION
     Set element configuration of CouchDB server.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Node
+    The CouchDB node of cluster. Default is couchdb@localhost.
+    .PARAMETER Element
+    The element of configuration.
+    .PARAMETER Key
+    The key of configuration.
+    .PARAMETER Value
+    The value of key of configuration.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    Set-CouchDBConfiguration -Element attachments -Key compression_level -Value 10 -Authorization "admin:password"
+    Set-CouchDBConfiguration -Element ssl -Key port -Value 443 -Authorization "admin:password"
+    This example set the localhost ssl port on 443 in configuration of CouchDB server.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/config.html#modify-configuration
     #>
     [CmdletBinding()]
     param(
         [string] $Server,
         [int] $Port,
-        [string] $Database = "_node",
-        [string] $Node = "couchdb@localhost",
+        [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).all_nodes -contains "couchdb@localhost") {"couchdb@localhost"} else {"couchdb@127.0.0.1"}),
         [Parameter(mandatory=$true)]
         [string] $Element,
         [Parameter(mandatory=$true)]
@@ -1950,6 +3004,7 @@ function Set-CouchDBConfiguration () {
         [string] $Authorization,
         [switch] $Ssl
     )
+    $Database = "_node"
     $Document = "$Node/_config"
     if ((Get-CouchDBConfiguration -Authorization $Authorization -Ssl:$Ssl).$Element) {
         $Document += "/$Element/$Key"
@@ -1967,14 +3022,33 @@ function Set-CouchDBReplication () {
     .DESCRIPTION
     The default replicator database is _replicator. Additional replicator databases can be created. 
     To be recognized as such by the system, their database names should end with /_replicator.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Document
+    The CouchDB document.
+    .PARAMETER Continuous
+    The Continuous mode of replication.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    Set-CouchDBReplication -Document replica_id1 -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Continuous -Authorization "admin:password"
+    Get-CouchDBReplication -Authorization "admin:password"
+    This example get all replica documents.
+    .EXAMPLE
+    Set-CouchDBReplication -Document localhost-test_localhost-test_dump -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Continuous -Authorization "admin:password"
+    This example set replication document "localhost-test_localhost-test_dump" with Continuous replica mode.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/server.html#modify-replica
     #>
     [CmdletBinding()]
     param(
         [string] $Server,
         [int] $Port,
-        [string] $Database = "_replicator",
         [Parameter(mandatory=$true)]
         [string] $Document,
         [Parameter(mandatory=$true)]
@@ -1983,8 +3057,9 @@ function Set-CouchDBReplication () {
         [string] $Authorization,
         [switch] $Ssl
     )
-    if (-not(Get-CouchDBDatabase -Database $Database -Authorization $Authorization -Ssl:$Ssl)) {
-        throw "Database replicator $Database is not exists."
+    $Database = "_replicator"
+    if ($null -eq (Test-CouchDBDatabase -Database $Database -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
+        throw "Database _replicator not exists."
     }
     if ($Continuous.IsPresent) {
         $Continuous_value = $true
@@ -2003,8 +3078,25 @@ function Set-CouchDBRevisionLimit () {
     Set revision limit.
     .DESCRIPTION
     Set the current revs_limit (revision limit) setting.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Limit
+    The CouchDB revision limit. Default is 1000.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
     Set-CouchDBRevisionLimit -Database test -Limit 100 -Authorization "admin:password"
+    This example set revision limit number to 1000 on database "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/databases.html#set-revision-limit
     #>
     param(
         [string] $Server,
@@ -2020,93 +3112,84 @@ function Set-CouchDBRevisionLimit () {
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }
 
-function Grant-CouchDBDatabasePermission () {
+function Set-CouchDBSession () {
     <#
     .SYNOPSIS
-    Grant permission on server.
+    Set cookie authentication.
     .DESCRIPTION
-    Grant permission on server. Specify Admins and/or Readers.
+    Set cookie authentication (RFC 2109) CouchDB generates a token that the client can use for the next few requests to CouchDB. 
+    Tokens are valid until a timeout.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER UserId
+    The CouchDB user_id.
+    .PARAMETER Password
+    The password of user_id in SecureString.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    Grant-CouchDBDatabasePermission -Database example -AdminUser admin -AdminRoles technician -ReaderUser user1 -Authorization "admin:password"
+    $password = "password" | ConvertTo-SecureString -AsPlainText -Force
+    Set-CouchDBSession -UserId admin -Password $password
+    This example manually set the web session on CouchDB server.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/auth.html
     #>
-    [CmdletBinding()]
     param(
         [string] $Server,
         [int] $Port,
-        [array]$AdminUser,
-        [array]$AdminRoles,
-        [array]$ReaderUser,
-        [array]$UserRoles,
-        [string] $Authorization,
+        [Parameter(mandatory=$true)]
+        [string] $UserId,
+        [Parameter(mandatory=$true)]
+        [SecureString] $Password,
         [switch] $Ssl
     )
-    [string] $Database = '_users'
-    # Check if admin user exists
-    foreach ($User in $AdminUser) {
-        if (-not((Get-CouchDBUser -Database $Database -Userid $User -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue).name -eq $User)) {
-            throw "Admin user $User not exists!"
-        }
-    }
-    # Check if reader user exists
-    foreach ($User in $ReaderUser) {
-        if (-not((Get-CouchDBUser -Database $Database -Userid $User -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue).name -eq $User)) {
-            throw "Reader user $User not exists!"
-        }
-    }
-    # TODO migrate to hashtable and convert to json
-    if ($AdminUser.Count -eq 1) {
-        $AdminUser = "[$($AdminUser | ConvertTo-Json)]"
-    } elseif ($AdminUser.Count -gt 1) {
-        $AdminUser = $AdminUser | ConvertTo-Json
-    } else {
-        $AdminUser = '[]'
-    }
-    if ($AdminRoles.Count -eq 1) {
-        $AdminRoles = "[$($AdminRoles | ConvertTo-Json)]"
-    } elseif ($AdminRoles.Count -gt 1) {
-        $AdminRoles = $AdminRoles | ConvertTo-Json
-    } else {
-        $AdminRoles = '[]'
-    }
-    if ($ReaderUser.Count -eq 1) {
-        $ReaderUser = "[$($ReaderUser | ConvertTo-Json)]"
-    } elseif ($ReaderUser.Count -gt 1) {
-        $ReaderUser = $ReaderUser | ConvertTo-Json
-    } else {
-        $ReaderUser = '[]'
-    }
-    if ($UserRoles.Count -eq 1) {
-        $UserRoles = "[$($UserRoles | ConvertTo-Json)]"
-    } elseif ($UserRoles.Count -gt 1) {
-        $UserRoles = $UserRoles | ConvertTo-Json
-    } else {
-        $UserRoles = '[]'
-    }
-    # Create data permission
-    $Data = "
-    {
-        `"admins`": {
-            `"names`": $AdminUser,
-            `"roles`": $AdminRoles
-        },
-        `"members`": {
-            `"names`": $ReaderUser,
-            `"roles`": $UserRoles
-        }
-    }
-    "
-    $Document = "_security"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    $Database = '/_session'
+    $ClearPassword = ConvertTo-CouchDBPassword -SecurePassword $Password
+    $Data = "{
+        `"name`": `"$UserId`",
+        `"password`": `"$ClearPassword`"
+        }"
+    $Authorization = "${UserId}:${ClearPassword}" 
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }
 
-function Grant-CouchDBDatabaseSecurity () {
+function Grant-CouchDBDatabasePermission () {
     <#
     .SYNOPSIS
     Grant the security object for the given database.
     .DESCRIPTION
     Grant the security object for the given CouchDB database. Specify Admins and/or Readers.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER AdminUser
+    The CouchDB user_id of admin user.
+    .PARAMETER AdminRoles
+    The CouchDB user_roles of admin user.
+    .PARAMETER ReaderUser
+    The CouchDB user_id of standard user.
+    .PARAMETER UserRoles
+    The CouchDB user_roles of standard user.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    Grant-CouchDBDatabaseSecurity -Database example -AdminUser admin -AdminRoles technician -ReaderUser user1 -Authorization "admin:password"
+    Grant-CouchDBDatabasePermission -Database test -ReaderUser read_user -Authorization "admin:password"
+    This example grant read_user user on "test" database on CouchDB server.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/permission.html#limit-read-access
     #>
     [CmdletBinding()]
     param(
@@ -2186,8 +3269,19 @@ function Revoke-CouchDBDatabasePermission () {
     Revoke permission on database.
     .DESCRIPTION
     Revoke permission on database. Specify Admins and/or Readers.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Force
+    No confirmation prompt.
     .EXAMPLE
-    Revoke-CouchDBDatabasePermission -Database example -Authorization "admin:password"
+    Revoke-CouchDBDatabasePermission -Database test -Authorization "admin:password"
+    This example revoke all permission on database "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/permission.html#revoke-database-permissions
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
@@ -2228,8 +3322,43 @@ function Request-CouchDBReplication () {
     Request a replication operation.
     .DESCRIPTION
     Request, configure, or stop, a replication operation.
+    .PARAMETER SourceServer
+    The source CouchDB server name. Default is localhost.
+    .PARAMETER TargetServer
+    The destination CouchDB server name. Default is localhost.
+    .PARAMETER SourcePort
+    The source CouchDB server port. Default is 5984.
+    .PARAMETER TargetPort
+    The destination CouchDB server port. Default is 5984.
+    .PARAMETER SourceDatabase
+    The source CouchDB database.
+    .PARAMETER TargetDatabase
+    The destination CouchDB database.
+    .PARAMETER Proxy
+    The proxy server.
+    .PARAMETER Document
+    Array of CouchDB document.
+    .PARAMETER Filter
+    The filter function.
+    .PARAMETER Continuous
+    The Continuous mode of replica.
+    .PARAMETER Cancel
+    Cancel replica request.
+    .PARAMETER CreateTargetDatabase
+    Create a target database if not exists.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Force
+    No confirmation prompt.
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    Request-CouchDBReplication -SourceDatabase test -TargetDatabase test1 -Documents "001","002","003" -Authorization "admin:password"
+    Request-CouchDBReplication -SourceDatabase test -TargetDatabase test_dump -Documents "Hitchhikers","Hitchhikers_Guide" -Authorization "admin:password"
+    This example request replication of documents "Hitchhikers","Hitchhikers_Guide" from database "test" to database "test_dump".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/server.html#replication-request
     #>
     [CmdletBinding()]
     param(
@@ -2334,9 +3463,24 @@ function New-CouchDBDatabase () {
     Lowercase characters (a-z)
     Digits (0-9)
     Any of the characters _, $, (, ), +, -, and /.
-    If you’re familiar with Regular Expressions, the rules above could be written as ^[a-z][a-z0-9_$()+/-]*$.
+    If you're familiar with Regular Expressions, the rules above could be written as ^[a-z][a-z0-9_$()+/-]*$.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
     New-CouchDBDatabase -Database test -Authorization "admin:password"
+    This example create a database "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/databases.html#create-a-database
     #>
     [CmdletBinding()]
     param(
@@ -2358,12 +3502,28 @@ function New-CouchDBDocument () {
     Creates a new document in the specified database, using the supplied JSON document structure or [hashtable] object.
     If the JSON structure or [hashtable] object includes the _id field, then the document will be created with the specified document ID.
     If the _id field is not specified, a new unique ID will be generated, following whatever UUID algorithm is configured for that server (Get-Help New-CouchDBUuids).
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Document
+    The CouchDB document.
+    .PARAMETER Data
+    The data in Json format or hastable.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    $data = '{"name":"Jhon", "surname":"Lennon"}'
-    New-CouchDBDocument -Database test -Document "001" -Data $data -Authorization "admin:password"
-    .EXAMPLE
-    $data = @{"name"="Jhon", "surname"="Lennon"}
-    New-CouchDBDocument -Database test -Document "001" -Data $data -Authorization "admin:password"
+    $data = @{"answer"=42; "ask"="Ultimate Question of Life, the Universe and Everything"}
+    Set-CouchDBDocument -Database test -Document "Hitchhikers"-Data $data -Authorization "admin:password"
+    The example modify document "Hitchhikers" with data $data; if the element of $data exists, overwrite, else adding new element.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/documents.html#create-a-document
     #>
     [CmdletBinding()]
     param(
@@ -2378,7 +3538,7 @@ function New-CouchDBDocument () {
         [string] $Authorization,
         [switch] $Ssl
     )
-    if (($Data -as [hashtable]) -ne $null) {
+    if ($null -ne ($Data -as [hashtable])) {
         # Json Data
         $Data = $Data | ConvertTo-Json -Depth 99
     }
@@ -2391,14 +3551,54 @@ function New-CouchDBDesignDocument () {
     Create a new design document.
     .DESCRIPTION
     Create a new CouchDB design document.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Document
+    The CouchDB document. Default is _all_docs.
+    .PARAMETER ViewName
+    The name of function view in the design document.
+    .PARAMETER ViewKey
+    The key of function view in the design document.
+    .PARAMETER ViewValue
+    The value of key of function view in the design document.
+    .PARAMETER GetDoc
+    Return all element of doc of function view in the design document.
+    .PARAMETER ListName
+    The name of function list in the design document.
+    .PARAMETER ShowName
+    The name of function show in the design document.
+    .PARAMETER ShowKey
+    The key of function show in the design document.
+    .PARAMETER ShowValue
+    The value of key of function show in the design document.
+    .PARAMETER ValidationRequirements
+    Array of key than required validation.
+    .PARAMETER ValidationAuthor
+    Enable validation author.
+    .PARAMETER Data
+    The data in Json format or hastable.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    New-CouchDBDesignDocument -Database test -Document "mydesigndoc" -ViewName "data_test" -Authorization "admin:password"
+    New-CouchDBDesignDocument -Database test -Document "space" -ViewName "planet_view" -Authorization "admin:password"
+    The example create "space" design document with add or modify "planet_view" view.
     .EXAMPLE
     $data = '{"views":{"data_test":{"map":"function(doc) {emit(doc._id, doc._rev)}"}}}'
-    New-CouchDBDesignDocument -Database test -Document "mydesigndoc" -Data $data -Authorization "admin:password"
+    New-CouchDBDesignDocument -Database test -Document "space" -Data $data -Authorization "admin:password"
+    The example create "space" design document with custom data.
     .EXAMPLE
-    $data = @{"views"=@{"data_test"=@{"map"="function(doc) {emit(doc._id, doc._rev)}"}}}
-    New-CouchDBDesignDocument -Database test -Document "mydesigndoc" -Data $data -Authorization "admin:password"
+    New-CouchDBDesignDocument -Database test -Document space -ShowName planet -ShowKey planet -ShowValue "Heart" -Authorization "admin:password"
+    The example create "space" design document with add or modify "planet" show, where "planet" key equal "Heart".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/ddoc.html#creates-a-design-document
     #>
     [CmdletBinding(DefaultParameterSetName = "View")]
     param(
@@ -2521,7 +3721,7 @@ function New-CouchDBDesignDocument () {
     }
     # CustomData
     if ($PsCmdlet.ParameterSetName -eq "CustomData") {
-        if (($Data -as [hashtable]) -ne $null) {
+        if ($null -ne ($Data -as [hashtable])) {
             $Data = $Data | ConvertTo-Json -Depth 99
         }
     }
@@ -2534,8 +3734,29 @@ function New-CouchDBAttachment () {
     Create a new attachment document.
     .DESCRIPTION
     Create a new CouchDB attachment document.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Document
+    The CouchDB document.
+    .PARAMETER Attachment
+    The CouchDB attachment document.
+    .PARAMETER Revision
+    The CouchDB revision document.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    New-CouchDBAttachment -Database test -Document "001" -Attachment C:\test.html -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:password"
+    New-CouchDBAttachment -Database test -Document "Hitchhikers" -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Attachment test.txt
+    This example add attachment "test.txt" on "Hitchhikers" document from database "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/documents.html#create-an-attachment
     #>
     [CmdletBinding()]
     param(
@@ -2561,15 +3782,33 @@ function New-CouchDBUser () {
     Create a new user.
     .DESCRIPTION
     Create a new CouchDB user with roles.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Userid
+    The user_id than exists in _users database.
+    .PARAMETER Password
+    The password in SecureString.
+    .PARAMETER Roles
+    Array of roles.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
     $password = "password" | ConvertTo-SecureString -AsPlainText -Force
     New-CouchDBUser -Userid test_user -Password $password -Authorization "admin:password"
+    This example creates user "test_user" of password "password".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/permission.html#create-admin-user
     #>
     [CmdletBinding()]
     param(
         [string] $Server,
         [int] $Port,
-        [string] $Database = "_users",
         [Parameter(mandatory=$true)]
         [string] $Userid,
         [Parameter(mandatory=$true)]
@@ -2578,6 +3817,7 @@ function New-CouchDBUser () {
         [string] $Authorization,
         [switch] $Ssl
     )
+    $Database = "_users"
     $Document = "org.couchdb.user:$Userid"
     if ($Roles.Count -eq 1) {
         $Roles = "[$($Roles | ConvertTo-Json)]"
@@ -2603,16 +3843,34 @@ function New-CouchDBAdmin () {
     Create a new admin user.
     .DESCRIPTION
     Create a new CouchDB admin user.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Node
+    The CouchDB node of cluster. Default is couchdb@localhost.
+    .PARAMETER Userid
+    The user_id than exists in _users database.
+    .PARAMETER Password
+    The password in SecureString.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
     $password = "password" | ConvertTo-SecureString -AsPlainText -Force
-    New-CouchDBAdmin -Userid test_user -Password $password -Authorization "admin:password"
+    New-CouchDBAdmin -Userid admin -Password $password -Authorization "admin:password"
+    This example creates "admin" user admin with password "password".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/permission.html#create-admin-user
     #>
     [CmdletBinding()]
     param(
         [string] $Server,
         [int] $Port,
-        [string] $Database = "_node",
-        [string] $Node = "couchdb@localhost",
+        [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).all_nodes -contains "couchdb@localhost") {"couchdb@localhost"} else {"couchdb@127.0.0.1"}),
         [Parameter(mandatory=$true)]
         [string] $Userid,
         [Parameter(mandatory=$true)]
@@ -2620,6 +3878,7 @@ function New-CouchDBAdmin () {
         [string] $Authorization,
         [switch] $Ssl
     )
+    $Database = "_node"
     $Document = "$Node/_config/admins/$Userid"
     $ClearPassword = ConvertTo-CouchDBPassword -SecurePassword $Password
     $Data = "`"$ClearPassword`""
@@ -2632,8 +3891,31 @@ function New-CouchDBReplication () {
     Create a new replication job.
     .DESCRIPTION
     Create a new replication job for a specidfic database.
+    .PARAMETER SourceServer
+    The source CouchDB server name. Default is localhost.
+    .PARAMETER TargetServer
+    The destination CouchDB server name. Default is localhost.
+    .PARAMETER SourcePort
+    The source CouchDB server port. Default is 5984.
+    .PARAMETER TargetPort
+    The destination CouchDB server port. Default is 5984.
+    .PARAMETER SourceDatabase
+    The source CouchDB database.
+    .PARAMETER TargetDatabase
+    The destination CouchDB database.
+    .PARAMETER Continuous
+    The Continuous mode of replica.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    New-CouchDBReplication -SourceServer localhost -TargetServer server1 -SourceDatabase test -TargetDatabase test_replica -Continuous -Authorization "admin:password"
+    New-CouchDBReplication -SourceDatabase test -TargetDatabase test_dump -Continuous -Authorization "admin:password"
+    This example create replication from database "test" to database "test_dump" in Continuous mode.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/server.html#create-replica
     #>
     [CmdletBinding()]
     param(
@@ -2641,13 +3923,13 @@ function New-CouchDBReplication () {
         [string] $TargetServer = 'localhost',
         [int] $SourcePort,
         [int] $TargetPort,
-        [string] $Database = "_replicator",
         [string] $SourceDatabase,
         [string] $TargetDatabase,
         [switch] $Continuous,
         [string] $Authorization,
         [switch] $Ssl
     )
+    $Database = "_replicator"
     $Server = $SourceServer
     $Port = $SourcePort
     # Check if replicator database exists
@@ -2704,8 +3986,27 @@ function New-CouchDBIndex () {
     Mango is a declarative JSON querying language for CouchDB databases. 
     Mango wraps several index types, starting with the Primary Index out-of-the-box. 
     Mango indexes, with index type json, are built using MapReduce Views.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Name
+    The name of index.
+    .PARAMETER Fields
+    Array fields that are indexed.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
     New-CouchDBIndex -Database test -Name test-index -Fields name,surname -Authorization "admin:password"
+    This example create index document "test_index" with fields "name" and "surname" for database "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/databases.html#create-a-new-index
     #>
     [CmdletBinding()]
     param(
@@ -2737,14 +4038,28 @@ function New-CouchDBUuids () {
     Create a new uuids.
     .DESCRIPTION
     Requests one or more Universally Unique Identifiers (UUIDs) from the CouchDB instance.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Count
+    Return uuid number equal to count.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    New-CouchDBUuids -Count 3 -Authorization "admin:password"
+    New-CouchDBUuids -Count 3
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/server.html
     #>
     [CmdletBinding()]
     param(
         [string] $Server,
         [int] $Port,
-        [int] $Count,
+        [int] $Count = 10,
         [string] $Authorization,
         [switch] $Ssl
     )
@@ -2762,8 +4077,25 @@ function Enable-CouchDBCluster () {
     Create a new cluster.
     .DESCRIPTION
     Create a new cluster CouchDB server.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER NodeCount
+    Enable CouchDB cluster. Default node clustern is 3.
+    .PARAMETER SingleNode
+    Enable CouchDB cluster in a single node.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    Enable-CouchDBCluster -Authorization "admin:password"
+    Enable-CouchDBCluster -SingleNode -Authorization "admin:password"
+    This example get a cluster setup.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/config.html#setup
     #>
     [CmdletBinding()]
     param(
@@ -2798,13 +4130,17 @@ function Enable-CouchDBCluster () {
     if ($Action -eq "enable_cluster") {
         $Data += ",`"node_count`": `"$NodeCount`"}"
     } else {
-        $Data += "}"
+        $Data += ",`"node_count`": `"1`"}"
     }
     Write-Host "Enabling $Action cluster"
     Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
-    $Data = '{"action": "finish_cluster"}'
-    Write-Host "Finishing $Action cluster"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    if ($Action -eq "enable_cluster") { 
+        $Data = '{"action": "finish_cluster"}'
+        Write-Host "Finishing $Action cluster"
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    } else {
+        Write-Host "Finishing $Action cluster"
+    }
 }
 
 function Search-CouchDBHelp () {
@@ -2813,10 +4149,14 @@ function Search-CouchDBHelp () {
     Search help.
     .DESCRIPTION
     Search pattern keyword in a CouchDB help topic.
+    .PARAMETER Pattern
+    The pattern of serach criteria. The pattern it can be a verb, a nuoun or a parameter..
     .EXAMPLE
     Search-CouchDBHelp -Pattern "Database"
     .EXAMPLE
     Search-CouchDBHelp -Pattern "Get"
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/intro.html#start
     #>
     [CmdletBinding()]
     param(
@@ -2839,8 +4179,25 @@ function Remove-CouchDBDatabase () {
     Remove a database.
     .DESCRIPTION
     Deletes the specified database, and all the documents and attachments contained within it.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Force
+    No confirmation prompt.
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
     Remove-CouchDBDatabase -Database test -Authorization "admin:password"
+    This example remove a database "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/databases.html#remove-a-database
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
@@ -2863,8 +4220,29 @@ function Remove-CouchDBDocument () {
     Remove a document.
     .DESCRIPTION
     Remove a CouchDB document.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Document
+    The CouchDB document.
+    .PARAMETER Revision
+    The CouchDB revision document.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Force
+    No confirmation prompt.
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    Remove-CouchDBDocument -Database test -Document "001" -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:password"
+    Remove-CouchDBDocument -Database test -Document "Hitchhikers" -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:password"
+    The example removes a "Hitchhikers" on database "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/documents.html#delete-a-document
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
@@ -2891,8 +4269,29 @@ function Remove-CouchDBDesignDocument () {
     Remove a design document.
     .DESCRIPTION
     Remove a CouchDB design document.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Document
+    The CouchDB document.
+    .PARAMETER Revision
+    The CouchDB revision document.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Force
+    No confirmation prompt.
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    Remove-CouchDBDesignDocument -Database test -Document "mydesigndoc" -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:password"
+    Remove-CouchDBDesignDocument -Database test -Document "space" -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:password"
+    The example removes a design document "space" on database "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/ddoc.html#remove-design-document
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
@@ -2920,8 +4319,29 @@ function Remove-CouchDBAttachment () {
     Remove an attachment document.
     .DESCRIPTION
     Remove a CouchDB attachment document.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Document
+    The CouchDB document.
+    .PARAMETER Attachment
+    The CouchDB attachment document.
+    .PARAMETER Revision
+    The CouchDB revision document.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    Remove-CouchDBAttachment -Database test -Document "001" -Attachment test.html -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:password"
+    Remove-CouchDBAttachment -Database test -Document "Hitchhikers" -Attachment test.txt -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:password"
+    The example removes an attachment "test.txt" on document "Hitchhikers" from database "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/documents.html#delete-an-attachment
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
@@ -2949,14 +4369,32 @@ function Remove-CouchDBUser () {
     Remove an user.
     .DESCRIPTION
     Remove a CouchDB user with roles.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Userid
+    The user_id than exists in _users database.
+    .PARAMETER Revision
+    The revision document of user_id.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Force
+    No confirmation prompt.
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
     Remove-CouchDBUser -Userid test_user -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:password"
+    The example removes test_user standard user.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/permission.html#remove-a-user
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
         [string] $Server,
         [int] $Port,
-        [string] $Database = "_users",
         [Parameter(mandatory=$true)]
         [string] $Userid,
         [Parameter(mandatory=$true)]
@@ -2965,7 +4403,8 @@ function Remove-CouchDBUser () {
         [switch]$Force,
         [switch] $Ssl
     )
-    $Document = "org.couchdb.user:$Userid"
+    $Database = "_users"
+    $Document = & { if ($Userid -like "org.couchdb.user:*") { $Userid } else { "org.couchdb.user:$Userid" }}
     if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove user $Userid ?","Remove $Userid on database $Database")) {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization -Ssl:$Ssl
     }
@@ -2977,21 +4416,38 @@ function Remove-CouchDBAdmin () {
     Remove an admin user.
     .DESCRIPTION
     Remove a CouchDB admin user.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Userid
+    The user_id than exists admin.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Force
+    No confirmation prompt.
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    Remove-CouchDBAdmin -Userid test_user -Authorization "admin:password"
+    Remove-CouchDBAdmin -Userid admin -Authorization "admin:password"
+    The example removes "admin" user admin.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/permission.html#remove-an-admin
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
         [string] $Server,
         [int] $Port,
-        [string] $Database = "_node",
-        [string] $Node = "couchdb@localhost",
+        [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).all_nodes -contains "couchdb@localhost") {"couchdb@localhost"} else {"couchdb@127.0.0.1"}),
         [Parameter(mandatory=$true)]
         [string] $Userid,
         [string] $Authorization,
         [switch]$Force,
         [switch] $Ssl
     )
+    $Database = "_node"
     $Document = "$Node/_config/admins/$Userid"
     if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove admin user $Userid ?","Remove $Userid on node $Node")) {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
@@ -3004,20 +4460,37 @@ function Remove-CouchDBNode () {
     Remove server nodes.
     .DESCRIPTION
     Remove server nodes on CouchDB server.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Node
+    The CouchDB node of cluster.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Force
+    No confirmation prompt.
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    Remove-CouchDBNode -Node test -Authorization "admin:password"
+    Remove-CouchDBAdmin -Userid admin -Authorization "admin:password"
+    The example removes "test" node on cluster configuration.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/permission.html#remove-an-admin
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
         [string] $Server,
         [int] $Port,
-        [string] $Database = "_nodes",
         [Parameter(mandatory=$true)]
         [string] $Node,
         [string] $Authorization,
         [switch]$Force,
         [switch] $Ssl
     )
+    $Database = "_nodes"
     # Set protocol
     if ($Ssl.IsPresent) {
         if (-not($Port)) {
@@ -3045,14 +4518,32 @@ function Remove-CouchDBReplication () {
     Remove replication.
     .DESCRIPTION
     Remove replication on CouchDB server.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Document
+    The CouchDB replication document.
+    .PARAMETER Revision
+    The CouchDB revision document.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Force
+    No confirmation prompt.
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    Remove-CouchDBReplication -Document replica_id1 -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:password"
+    Remove-CouchDBReplication -Document localhost-test_localhost-test_dump -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:password"
+    The example removes "localhost-test_localhost-test_dump" replication document.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/server.html#remove-replica
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
         [string] $Server,
         [int] $Port,
-        [string] $Database = "_replicator",
         [Parameter(mandatory=$true)]
         [string] $Document,
         [Parameter(mandatory=$true)]
@@ -3061,8 +4552,9 @@ function Remove-CouchDBReplication () {
         [switch] $Force,
         [switch] $Ssl
     )
-    if (-not(Get-CouchDBDatabase -Database $Database -Authorization $Authorization -Ssl:$Ssl)) {
-        throw "Database replicator $Database is not exists."
+    $Database = "_replicator"
+    if ($null -eq (Test-CouchDBDatabase -Database $Database -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
+        throw "Database _replicator is not exists."
     }
     if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove replication $Document ?","Remove $Document")) {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization -Ssl:$Ssl
@@ -3075,9 +4567,32 @@ function Remove-CouchDBIndex () {
     Remove a index on a database.
     .DESCRIPTION
     Remove a index on CouchDB database.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER DesignDoc
+    The CouchDB design document.
+    .PARAMETER Name
+    The name of index.
+    .PARAMETER Fields
+    Array fields that are indexed.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Force
+    No confirmation prompt.
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
     $ddoc = Get-CouchDBIndex -Database test -Authorization "admin:password"
     Remove-CouchDBIndex -Database test -DesignDoc $ddoc.indexes.ddoc[1] -Name $ddoc.indexes.name[1] -Authorization "admin:password"
+    The example removes an index document on database "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/databases.html#remove-a-index
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
@@ -3099,14 +4614,52 @@ function Remove-CouchDBIndex () {
     }
 }
 
+function Remove-CouchDBSession () {
+    <#
+    .SYNOPSIS
+    Remove current cookie authentication.
+    .DESCRIPTION
+    Remove cookie authentication for current session.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
+    .EXAMPLE
+    Remove-CouchDBSession -Authorization "admin:password"
+    The example remove current session. 
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/auth.html
+    #>
+    param(
+        [string] $Server,
+        [int] $Port,
+        [string] $Authorization,
+        [switch] $Ssl
+    )
+    $Database = '_session'
+    Clear-Variable -Name couchdb_session -Scope Global
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Authorization $Authorization -Ssl:$Ssl
+}
+
 function Restart-CouchDBServer () {
     <#
     .SYNOPSIS
     Restart server.
     .DESCRIPTION
     Restart CouchDB server.
+    .PARAMETER Force
+    No confirmation prompt.
     .EXAMPLE
     Restart-CouchDBServer -Authorization "admin:password"
+    The example restart CouchDB server. 
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/server.html
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
@@ -3123,18 +4676,72 @@ function Find-CouchDBDocuments () {
     Find document data in a database.
     .DESCRIPTION
     Find documents using a declarative JSON querying syntax. Queries can use the built-in _all_docs index or custom indexes, specified using the _index endpoint.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Explain
+    The CouchDB database _explain.
+    .PARAMETER Selector
+    The selector of Mango query.
+    .PARAMETER Value
+    The value of selector of Mango query.
+    .PARAMETER Limit
+    The limit number of documents that come back.
+    .PARAMETER Skip
+    The skip number of documents that come back.
+    .PARAMETER Fields
+    Array of fields that can return.
+    .PARAMETER Sort
+    Array of sort fields that can return.
+    .PARAMETER Sort
+    Array of index that can use.
+    .PARAMETER ReadQuorum
+    The ReadQuorum number.
+    .PARAMETER Bookmark
+    The Bookmark that can use.
+    .PARAMETER NoUpdate
+    Disable document update.
+    .PARAMETER Stable
+    Whether or not the view results should be returned from a “stable” set of shards.
+    .PARAMETER Stale
+    Combination of update=false and stable=true options. Possible options: "ok".
+    .PARAMETER ExecutionStats
+    Include execution statistics in the query response.
+    .PARAMETER Operator
+    The comparison operator.
+    .PARAMETER Find
+    The Json query structure.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Force
+    No confirmation prompt.
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
-    Find-CouchDBDocuments -Database test -Selector "color" -Value "red" -Fields _id,color -Operator eq -Authorization "read_user:password"
+    Find-CouchDBDocuments -Database test -Selector "name" -Operator eq -Value "Arthur Dent" -Fields _id,name,planet
+    The example query a database "test" with manual selector and operator.
     .EXAMPLE
-    Find-CouchDBDocuments -Database test -Find '{"selector": {"color":{"$eq":"red"}},"fields":["_id","color"]}' -Authorization "read_user:password"
+    Find-CouchDBDocuments -Database test -Find '{"selector": {"name":{"$eq":"Arthur Dent"}},"fields":["_id","name","planet"]}'
+    The example query a database "test" with native Mango query.
     .EXAMPLE
     using module PSCouchDB
     $q = New-Object -TypeName PSCouchDBQuery
-    $q.AddSelector("color","red")
+    $q.AddSelector("name","Arthur Dent")
     $q.AddSelectorOperator('$eq')
     $q.AddFields("_id")
-    $q.AddFields("color")
-    Find-CouchDBDocuments -Database test -Find $q.GetNativeQuery() -Authorization "read_user:password"
+    $q.AddFields("name")
+    $q.AddFields("planet")
+    Find-CouchDBDocuments -Database test -Find $q.GetNativeQuery()
+    The example query a database "test" with PSCouchDBQuery object.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/documents.html#query
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/classes.html#pscouchdbquery-class
     #>
     [CmdletBinding(DefaultParameterSetName = "PSCouchDB")]
     param (
@@ -3196,7 +4803,7 @@ function Find-CouchDBDocuments () {
         $Document = '_find'
     }
     if ($Find) {
-        if (($Find -as [hashtable]) -ne $null) {
+        if ($null -ne ($Find -as [hashtable])) {
             # Json Data
             $Data = $Find | ConvertTo-Json -Depth 99
         } else {
@@ -3253,8 +4860,25 @@ function Write-CouchDBFullCommit () {
     .DESCRIPTION
     Commits any recent changes to the specified database to disk. 
     You should call this if you want to ensure that recent changes have been flushed.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Force
+    No confirmation prompt.
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
     .EXAMPLE
     Write-CouchDBFullCommit -Database test -Authorization "admin:password"
+    The example write all commit the disk of database "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/databases.html#write-a-commit
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(

@@ -12,7 +12,7 @@
     RootModule = 'PSCouchDB.psm1'
 
     # Version number of this module.
-    ModuleVersion = '1.8.0'
+    ModuleVersion = '1.9.0'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -70,10 +70,13 @@
 
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
     FunctionsToExport = @("Get-CouchDBDatabase",
+                        "Test-CouchDBDatabase",
                         "Get-CouchDBServer",
                         "Get-CouchDBDatabaseInfo",
                         "Get-CouchDBDatabaseChanges",
+                        "Get-CouchDBDatabasePurgedLimit",
                         "Get-CouchDBDatabaseUpdates",
+                        "Get-CouchDBDatabaseShards",
                         "Get-CouchDBDocument",
                         "Get-CouchDBBulkDocument",
                         "Get-CouchDBDesignDocument",
@@ -88,10 +91,13 @@
                         "Get-CouchDBReplicationScheduler",
                         "Get-CouchDBReplicationDocument",
                         "Get-CouchDBActiveTask",
+                        "Get-CouchDBClusterSetup",
                         "Get-CouchDBIndex",
                         "Get-CouchDBMissingRevision",
                         "Get-CouchDBRevisionDifference",
                         "Get-CouchDBRevisionLimit",
+                        "Get-CouchDBSession",
+                        "Sync-CouchDBDatabaseShards",
                         "Copy-CouchDBDocument",
                         "Measure-CouchDBStatistics",
                         "Enable-CouchDBCluster",
@@ -101,6 +107,7 @@
                         "Compress-CouchDBDesignDocument",
                         "Clear-CouchDBView",
                         "Clear-CouchDBDocuments",
+                        "Set-CouchDBDatabasePurgedLimit",
                         "Set-CouchDBDocument",
                         "Set-CouchDBBulkDocument",
                         "Set-CouchDBDesignDocument",
@@ -110,8 +117,8 @@
                         "Set-CouchDBConfiguration",
                         "Set-CouchDBReplication",
                         "Set-CouchDBRevisionLimit",
+                        "Set-CouchDBSession",
                         "Grant-CouchDBDatabasePermission",
-                        "Grant-CouchDBDatabaseSecurity",
                         "Revoke-CouchDBDatabasePermission",
                         "Request-CouchDBReplication",
                         "New-CouchDBDatabase",
@@ -132,6 +139,7 @@
                         "Remove-CouchDBNode",
                         "Remove-CouchDBReplication",
                         "Remove-CouchDBIndex",
+                        "Remove-CouchDBSession",
                         "Restart-CouchDBServer",
                         "Find-CouchDBDocuments",
                         "Write-CouchDBFullCommit"
@@ -141,17 +149,20 @@
     CmdletsToExport = @()
 
     # Variables to export from this module
-    #VariablesToExport = '*'
+    VariablesToExport = 'couchdb_session'
 
     # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
     AliasesToExport = @("gcdb",
+                        "tcdb",
                         "gcsi",
                         "gcdbc",
                         "gcdbu",
+                        "gcdbsh",
                         "gcdbs",
                         "gcdoc",
                         "gcbdoc",
                         "gcddoc",
+                        "gcbpl",
                         "gcatt",
                         "gcusr",
                         "gcadm",
@@ -162,10 +173,13 @@
                         "gcrd",
                         "gcrpdoc",
                         "gctsk",
+                        "gccs",
                         "gcidx",
                         "gcddd",
                         "gcrl",
                         "gcmr",
+                        "gcss",
+                        "scds",
                         "cpdoc",
                         "mcsts",
                         "eccl",
@@ -176,6 +190,7 @@
                         "ccdd",
                         "ccview",
                         "ccdoc",
+                        "scdbpl",
                         "scdoc",
                         "scddoc",
                         "scatt",
@@ -185,8 +200,8 @@
                         "scbd",
                         "scrpl",
                         "scrl",
+                        "scs",
                         "gcdbp",
-                        "gcdbsec",
                         "rcdbp",
                         "rcdbr",
                         "ncdb",
@@ -208,6 +223,7 @@
                         "rcrpl",
                         "rcidx",
                         "rcsrv",
+                        "rcs",
                         "fcdoc",
                         "finddoc",
                         "wcfc"
@@ -228,16 +244,16 @@
         PSData = @{
 
             # Tags applied to this module. These help with module discovery in online galleries.
-            Tags = @("CouchDB","Apache","curl")
+            Tags = @("CouchDB","Apache","curl","Database","NoSql")
 
             # A URL to the license for this module.
-            # LicenseUri = ''
+            LicenseUri = 'https://github.com/MatteoGuadrini/PSCouchDB/blob/master/LICENSE.md'
 
             # A URL to the main website for this project.
             ProjectUri = 'https://matteoguadrini.github.io/PSCouchDB'
 
             # A URL to an icon representing this module.
-            IconUri = 'https://image.ibb.co/mU6TNz/pscouchdb_logo.png'
+            IconUri = 'https://i.ibb.co/XWs40Sj/pscouchdb-logo.png'
 
             # ReleaseNotes of this module
             # ReleaseNotes = ''
@@ -247,7 +263,7 @@
     } # End of PrivateData hashtable
 
     # HelpInfo URI of this module
-    HelpInfoURI = 'https://github.com/MatteoGuadrini/PSCouchDB/wiki'
+    HelpInfoURI = 'https://pscouchdb.readthedocs.io/en/latest/'
 
     # Default prefix for commands exported from this module. Override the default prefix using Import-Module -Prefix.
     # DefaultCommandPrefix = ''

@@ -1,46 +1,50 @@
 # The complete and powerfull powershell module for CouchDB v2.X
 [Powershell](https://github.com/PowerShell/PowerShell "Powershell source") meet [CouchDB](http://couchdb.apache.org/ "CouchDB site")
 
+<img src="https://i.ibb.co/XWs40Sj/pscouchdb-logo.png" alt="PSCouchDB" title="PSCouchDB" width="320" height="224" />
+
 ## Installation and simple usage
 1. Download and install CouchDB following the [docs](http://docs.couchdb.org/en/latest/install/index.html).
 2. Download and install latest PSCouchDB module by copying it under `%Windir%\System32\WindowsPowerShell\v1.0\Modules` for all users or under `%UserProfile%\Documents\WindowsPowerShell\Modules` for the current user or install through [PowershellGallery](https://www.powershellgallery.com/packages/PSCouchDB).
 > ATTENTION: This module is not signed. Before import or execute cmdlet on this module, see [about_signing](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_signing) session. To skip this part and continue, run ```Set-ExecutionPolicy -ExecutionPolicy Unrestricted```
-3. Now let's start by creating an admin user by connecting to [Fauxton](http://localhost:5984/_utils) and going to session "Admin Party!" on left of the menu or run this cmdlet:
+3. Now let's start by creating an admin user, run this cmdlet:
 ```powershell
 $password = "password" | ConvertTo-SecureString -AsPlainText -Force
-New-CouchDBAdmin -Userid adminuser -Password $password
+New-CouchDBAdmin -Userid admin -Password $password
 ```
-> ATTENTION: Authentication for read and write no required by default, but required if you create custom user, like session "Grant permission" on this document. For more information see permission on [wiki permission page](https://github.com/MatteoGuadrini/PSCouchDB/wiki/Permission)
-4. Now, configure database mode, in single node (cluster of one single node) or cluster, clicking on "Setup" on left of the menu; follow the wizard and complete this procedure or run this cmdlet:
+> ATTENTION: Authentication for read and write no required by default, but required if you create custom user, like session "Grant permission" on this document. For more information see permission on [docs permission page](permission.html#admin-party)
+4. Now, configure database mode, in single node (cluster of one single node) or cluster, run this cmdlet:
 ```powershell
 # Single node cluster
-Enable-CouchDBCluster -SingleNode -Authorization "adminuser:password"
+Enable-CouchDBCluster -SingleNode -Authorization "admin:password"
 # Cluster (with three node)
-Enable-CouchDBCluster -Authorization "adminuser:password"
+Enable-CouchDBCluster -Authorization "admin:password"
 ```
+For more details, see the [docs](https://pscouchdb.readthedocs.io/en/latest/config.html).
+
 5. Now, open powershell and create a first personal database:
 ```powershell
-New-CouchDBDatabase -Database test -Authorization "adminuser:password"
+New-CouchDBDatabase -Database test -Authorization "admin:password"
 ```
-where adminuser is a newly created user and your password.
+where admin is a newly created user and your password.
 
 6. Create a sample document for `test` database:
 ```powershell
 $Data = '{
-	"color": "red",
-	"value": "#f00"
+	"name": "Arthur",
+	"planet": "Heart"
 }'
-New-CouchDBDocument -Database test -Document "red" -Data $Data -Authorization "adminuser:password"
+New-CouchDBDocument -Database test -Document "Hitchhikers" -Data $Data -Authorization "admin:password"
 ```
 7. Add attachment file in our docuemnt:
 ```powershell
-$rev = (Get-CouchDBDocument -Database test -Document "red")._rev
-"Blood is red" | Out-File C:\file.txt
-New-CouchDBAttachment -Database test -Document "red" -revision $rev -Attachment C:\file.txt -Authorization "adminuser:password"
+$rev = (Get-CouchDBDocument -Database test -Document "Hitchhikers")._rev
+"Ultimate Question of Life, the Universe and Everything" | Out-File C:\file.txt
+New-CouchDBAttachment -Database test -Document "Hitchhikers" -revision $rev -Attachment C:\file.txt -Authorization "admin:password"
 ```
 8. Finally, get a document:
 ```powershell
-Get-CouchDBAttachment -Database test -Document "red" -Attachment file.txt
+Get-CouchDBAttachment -Database test -Document "Hitchhikers" -Attachment file.txt
 ```
 
 ## Grant permission
@@ -48,14 +52,14 @@ First, check all the available databases:
 ```powershell
 Get-CouchDBDatabase
 ```
-Create a new user in \_users database:
+Create a new user in *\_users* database:
 ```powershell
 $password = "password" | ConvertTo-SecureString -AsPlainText -Force
-New-CouchDBUser -Userid admin_test -Password $password -Roles admin -Authorization "adminuser:password"
+New-CouchDBUser -Userid admin_test -Password $password -Roles admin -Authorization "admin:password"
 ```
 Apply the correct permissions to the database:
 ```powershell
-Grant-CouchDBDatabasePermission -Database test -AdminUser admin_test -AdminRoles admin -Authorization "adminuser:password"
+Grant-CouchDBDatabasePermission -Database test -admin admin_test -AdminRoles admin -Authorization "admin:password"
 ```
 Test the new permissions by creating a new document:
 ```powershell
@@ -65,51 +69,22 @@ $Data = '{
 }'
 New-CouchDBDocument -Database test -Document "blue" -Data $Data -Authorization "admin_test:passw0rd"
 ```
+For more details, see the [docs](https://pscouchdb.readthedocs.io/en/latest/permission.html#limit-write-access).
 
 ## Revoke permission
 To revoke all permissions on a database, use this cmdlet:
 ```powershell
-Revoke-CouchDBDocument -Database test -Authorization "admin_test:passw0rd"
+Revoke-CouchDBDatabasePermission -Database test -Authorization "admin:password"
 ```
+For more details, see the [docs](https://pscouchdb.readthedocs.io/en/latest/permission.html#revoke-database-permissions).
 
 ## Find data on database
 To search for data in a specific database, use this cmdlet:
 ```powershell
-Find-CouchDBDocuments -Database test -Selector "color" -Value "red" -Fields _id,color -Operator eq
+Find-CouchDBDocuments -Database test -Selector "name" -Value "Arthur" -Fields _id,name,planet -Operator eq
 ```
 `Selector` is the search field; `Value` is the value of the selector; `Fields` they are the fields that return from the research and `Operator` it is the comparison operator used to compare the selector.
-The operators available, for now, are the following:
-- 'lt'  	The field is less than the argument.  
-- 'lte'   	The field is less than or equal to the argument.
-- 'eq'    	The field is equal to the argument.
-- 'ne'    	The field is not equal to the argument.
-- 'gte'   	The field is greater than or equal to the argument.
-- 'gt'    	The field is greater than the to the argument.
-- 'exists'	Check whether the field exists or not, regardless of its value.
-- 'type'  	Check the document field’s type. Valid values are "null", "boolean", "number", "string", "array", and "object".
-- 'in'    	The document field must exist in the list provided.
-- 'nin'   	The document field not must exist in the list provided.
-- 'size'   	Special condition to match the length of an array field in a document. Non-array fields cannot match this condition.
-- 'mod'     Divisor and Remainder are both positive or negative integers. Non-integer values result in a 404. Matches documents where ```field % Divisor == Remainder``` is true, and only when the document field is an integer.
-- 'regex'       A regular expression pattern to match against the document field. Only matches when the field is a string value and matches the supplied regular expression. The matching algorithms are based on the Perl Compatible Regular Expression (PCRE) library. For more information about what is implemented, see the see the [Erlang Regular Expression](http://erlang.org/doc/man/re.html "Perl-like regular expressions for Erlang")
-
-See the help for complete usage.
-
-### Find data with other operator
-Search data with other comparison operator:
-```powershell
-Find-CouchDBDocuments -Database test -Selector "answer" -Value 42 -Fields _id,answer -Operator lt
-Find-CouchDBDocuments -Database test -Selector "answer" -Value 42 -Fields _id,answer -Operator gt
-Find-CouchDBDocuments -Database test -Selector "color" -Value "blue" -Fields _id,color -Operator ne
-Find-CouchDBDocuments -Database test -Selector "color" -Value true -Fields _id,color -Operator exists
-Find-CouchDBDocuments -Database test -Selector "color" -Value string -Fields _id,color -Operator type
-Find-CouchDBDocuments -Database test -Selector "answer" -Value number -Fields _id,answer -Operator type
-Find-CouchDBDocuments -Database test -Selector "array" -Value "value1" -Fields _id,array -Operator in
-Find-CouchDBDocuments -Database test -Selector "array" -Value "value 2" -Fields _id,array -Operator nin
-Find-CouchDBDocuments -Database test -Selector "array" -Value 1 -Fields _id,array -Operator size
-Find-CouchDBDocuments -Database test -Selector "answer" -Value 1 -Fields _id,answer -Operator mod
-Find-CouchDBDocuments -Database test -Selector "color" -Value "^[rR].[dD]" -Fields _id,color -Operator regex
-```
+For more details, see the [docs](https://pscouchdb.readthedocs.io/en/latest/documents.html#find-a-document).
 
 ## Logical Operators
 For logical operators, use native class **PSCouchDBQuery**. So, run this:
@@ -144,13 +119,19 @@ $myquery.AddLogicalOperator('$nor')
 Find-CouchDBDocuments -Database test -Find $myquery.GetNativeQuery()
 ```
 
-### Other operation
-For other operation see the [wiki](https://github.com/MatteoGuadrini/PSCouchDB/wiki).
+For more details, see the [docs](https://pscouchdb.readthedocs.io/en/latest/documents.html#logical-operators).
+
+### Complete documentation
+For other operation, for more details and for learning all cmdlets and possibilities, see the [docs](https://pscouchdb.readthedocs.io/en/latest/).
 
 ### Kanban board
-If you are curious, if you want to contribute or simply see the features, look at the project's kanban board here: [KANBAN](https://tree.taiga.io/project/matteoguadrini-pscouchdb/kanban)
+If you are curious, if you want to contribute or simply see the features, look at the project's kanban board here: [KANBAN](https://tree.taiga.io/project/matteoguadrini-pscouchdb/kanban).
 
 ### Cmdlet help
+If you want to have an overview of the module, do this:
+```powershell
+help about_pscouchdb
+```
 Search for the cmdlets using a keyword pattern and then view the help:
 ```powershell
 Search-CouchDBHelp -Pattern Database | foreach {Get-Help $_.Name}
@@ -159,7 +140,7 @@ To get examples of all the cmdlets of this module, use this command:
 ```powershell
 Get-Command -Module *PSCouchDB* | foreach {Get-Help $_.Name -Example}
 ```
-or see [wiki page](https://github.com/MatteoGuadrini/PSCouchDB/wiki)
+or see [docs](https://pscouchdb.readthedocs.io/en/latest).
+For a little demonstration, see [here](https://asciinema.org/a/232696)
 
-
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=CYB2W93Z5JY8C)
+## [Donation and Support](https://pscouchdb.readthedocs.io/en/latest/support.html).

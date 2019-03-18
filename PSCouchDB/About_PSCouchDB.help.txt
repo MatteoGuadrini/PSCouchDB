@@ -1,0 +1,20 @@
+TOPIC
+	about_pscouchdb_content
+SHORT DESCRIPTION
+	The complete and powerfull powershell module for CouchDB v2.X
+LONG DESCRIPTION
+	This module is an interface to CouchDB nosql database.
+	With this you can:
+		- Configure server
+		- Manage database (create, modify, delete)
+		- Manage documents (create, modify, delete)
+		- Manage design documents (create, modify, delete)
+		- Find documents in a database
+		- Configure and manage replica
+		- Configure and manage node of cluster
+		- Restart server
+		- Develop complex object for query and design document
+SEE ALSO
+	Invoke-RestMethod
+LINK
+    https://pscouchdb.readthedocs.io/en/latest

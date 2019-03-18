@@ -1,0 +1,707 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Classes &mdash; PSCouchDB  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Real uses" href="uses.html" />
+    <link rel="prev" title="Cmdlets and aliases" href="cmdlets.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> PSCouchDB
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="config.html">Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="config.html#nodes">Nodes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="config.html#configuration">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="permission.html">Permission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="server.html">Server operation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="server.html#replication">Replication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="auth.html">Authentication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="databases.html">Databases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="documents.html">Documents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="documents.html#query">Query</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ddoc.html">Design documents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdlets.html">Cmdlets and aliases</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Classes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#pscouchdbquery-class">PSCouchDBQuery class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#properties">Properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#methods">Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#build-a-query">Build a query</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#work-with-selector">Work with selector</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#add-selector">Add selector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#remove-selector">Remove selector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#replace-selector">Replace selector</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#limit-and-skip">Limit and Skip</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sort">Sort</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fields">Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#indexies">Indexies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#readquorum">ReadQuorum</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bookmark">Bookmark</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#update-stable-and-stale">Update, Stable and Stale</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#executionstat">ExecutionStat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#selector-operators">Selector Operators</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#lt-lte-eq-ne-gte-gt">$lt,$lte,$eq,$ne,$gte,$gt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#exists-type-in-nin-size-mod">$exists,$type,$in,$nin,$size,$mod</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regex">$regex</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#logical-operators">Logical operators</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#and-or-not-nor">$and,$or,$not,$nor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#all-elemmatch-allmatch">$all,$elemMatch,$allMatch</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#native-query-format-mango">Native query format (Mango)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#pscouchdbdesigndoc-class">PSCouchDBDesignDoc class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#build-a-design-document">Build a design document</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#work-with-views">Work with views</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#simple-view">Simple view</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#view-if-document-key-exists">View if document key exists</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#view-if-document-key-exists-and-your-value-is-value-specified">View if document key exists and your value is value specified</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#view-if-document-key-exists-and-your-value-is-value-specified-and-return-entire-doc">View if document key exists and your value is value specified, and return entire doc</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#work-with-lists">Work with Lists</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#work-with-shows">Work with Shows</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#simple-show">Simple show</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#show-if-document-key-exists">Show if document key exists</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#show-if-document-key-exists-and-your-value-is-value-specified">Show if document key exists and your value is value specified</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#work-with-validation">Work with validation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#native-design-document">Native design document</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#create-design-document">Create design document</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="uses.html">Real uses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="support.html">Support</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PSCouchDB</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Classes</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/classes.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="classes">
+<h1>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h1>
+<p>PSCouchDB module has powershell classes that can be used to construct certain objects.</p>
+<div class="section" id="pscouchdbquery-class">
+<h2>PSCouchDBQuery class<a class="headerlink" href="#pscouchdbquery-class" title="Permalink to this headline">¶</a></h2>
+<p>This class is used to construct a query object that is compatible with Mango core.</p>
+<div class="section" id="properties">
+<h3>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">bookmark</span>            <span class="n">Property</span>   <span class="n">string</span> <span class="n">bookmark</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+<span class="n">execution_stats</span>     <span class="n">Property</span>   <span class="n">bool</span> <span class="n">execution_stats</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+<span class="n">fields</span>              <span class="n">Property</span>   <span class="n">array</span> <span class="n">fields</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+<span class="n">limit</span>               <span class="n">Property</span>   <span class="n">int</span> <span class="n">limit</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+<span class="n">r</span>                   <span class="n">Property</span>   <span class="n">int</span> <span class="n">r</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+<span class="n">selector</span>            <span class="n">Property</span>   <span class="n">hashtable</span> <span class="n">selector</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+<span class="n">skip</span>                <span class="n">Property</span>   <span class="n">int</span> <span class="n">skip</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+<span class="n">sort</span>                <span class="n">Property</span>   <span class="n">array</span> <span class="n">sort</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+<span class="n">stable</span>              <span class="n">Property</span>   <span class="n">bool</span> <span class="n">stable</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+<span class="n">stale</span>               <span class="n">Property</span>   <span class="n">string</span> <span class="n">stale</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+<span class="n">update</span>              <span class="n">Property</span>   <span class="n">bool</span> <span class="n">update</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+<span class="n">use_index</span>           <span class="n">Property</span>   <span class="n">array</span> <span class="n">use_index</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="methods">
+<h3>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">AddFields</span>           <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddFields</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">fields</span><span class="p">)</span>
+<span class="n">AddIndexies</span>         <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddIndexies</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">indexies</span><span class="p">)</span>
+<span class="n">AddLogicalOperator</span>  <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddLogicalOperator</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">operator</span><span class="p">)</span>
+<span class="n">AddSelector</span>         <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddSelector</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">key</span><span class="p">,</span> <span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">value</span><span class="p">)</span>
+<span class="n">AddSelectorOperator</span> <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddSelectorOperator</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">operator</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddSelectorOperator</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">operator</span><span class="p">,</span> <span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">key</span><span class="p">,</span> <span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">value</span><span class="p">)</span>
+<span class="n">AddSortAsc</span>          <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddSortAsc</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">selector</span><span class="p">)</span>
+<span class="n">AddSortDesc</span>         <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddSortDesc</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">selector</span><span class="p">)</span>
+<span class="n">DisableUpdate</span>       <span class="n">Method</span>     <span class="n">void</span> <span class="n">DisableUpdate</span><span class="p">()</span>
+<span class="n">Equals</span>              <span class="n">Method</span>     <span class="n">bool</span> <span class="n">Equals</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">obj</span><span class="p">)</span>
+<span class="n">GetHashCode</span>         <span class="n">Method</span>     <span class="n">int</span> <span class="n">GetHashCode</span><span class="p">()</span>
+<span class="n">GetNativeQuery</span>      <span class="n">Method</span>     <span class="n">string</span> <span class="n">GetNativeQuery</span><span class="p">()</span>
+<span class="n">GetType</span>             <span class="n">Method</span>     <span class="n">type</span> <span class="n">GetType</span><span class="p">()</span>
+<span class="n">RemoveFields</span>        <span class="n">Method</span>     <span class="n">void</span> <span class="n">RemoveFields</span><span class="p">(),</span> <span class="n">void</span> <span class="n">RemoveFields</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">field</span><span class="p">)</span>
+<span class="n">RemoveIndexies</span>      <span class="n">Method</span>     <span class="n">void</span> <span class="n">RemoveIndexies</span><span class="p">(),</span> <span class="n">void</span> <span class="n">RemoveIndexies</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">index</span><span class="p">)</span>
+<span class="n">RemoveSelector</span>      <span class="n">Method</span>     <span class="n">void</span> <span class="n">RemoveSelector</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">key</span><span class="p">)</span>
+<span class="n">RemoveSort</span>          <span class="n">Method</span>     <span class="n">void</span> <span class="n">RemoveSort</span><span class="p">(),</span> <span class="n">void</span> <span class="n">RemoveSort</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">sort</span><span class="p">)</span>
+<span class="n">ReplaceSelector</span>     <span class="n">Method</span>     <span class="n">void</span> <span class="n">ReplaceSelector</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">key</span><span class="p">,</span> <span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">value</span><span class="p">)</span>
+<span class="n">SetBookmark</span>         <span class="n">Method</span>     <span class="n">void</span> <span class="n">SetBookmark</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">bookmark</span><span class="p">)</span>
+<span class="n">SetExecutionStat</span>    <span class="n">Method</span>     <span class="n">void</span> <span class="n">SetExecutionStat</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">bool</span><span class="p">)</span>
+<span class="n">SetLimit</span>            <span class="n">Method</span>     <span class="n">void</span> <span class="n">SetLimit</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">limit</span><span class="p">)</span>
+<span class="n">SetReadQuorum</span>       <span class="n">Method</span>     <span class="n">void</span> <span class="n">SetReadQuorum</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">r</span><span class="p">)</span>
+<span class="n">SetSkip</span>             <span class="n">Method</span>     <span class="n">void</span> <span class="n">SetSkip</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">skip</span><span class="p">)</span>
+<span class="n">SetStable</span>           <span class="n">Method</span>     <span class="n">void</span> <span class="n">SetStable</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">bool</span><span class="p">)</span>
+<span class="n">SetStale</span>            <span class="n">Method</span>     <span class="n">void</span> <span class="n">SetStale</span><span class="p">()</span>
+<span class="n">ToString</span>            <span class="n">Method</span>     <span class="n">string</span> <span class="n">ToString</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="build-a-query">
+<h3>Build a query<a class="headerlink" href="#build-a-query" title="Permalink to this headline">¶</a></h3>
+<p>To create a <code class="docutils literal notranslate"><span class="pre">PSCouchDBQuery</span></code> object, just do the following.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">using</span> <span class="n">module</span> <span class="n">PSCouchDB</span>
+<span class="nv">$query</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">-TypeName</span> <span class="n">PSCouchDBQuery</span>
+<span class="nv">$query</span><span class="p">.</span><span class="n">GetType</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="work-with-selector">
+<h3>Work with selector<a class="headerlink" href="#work-with-selector" title="Permalink to this headline">¶</a></h3>
+<p>A CouchDB query is interpreted by Mango engine, so must have some elements. <em>Selector</em> is first our element which allows to have a search criterion.</p>
+<div class="section" id="add-selector">
+<h4>Add selector<a class="headerlink" href="#add-selector" title="Permalink to this headline">¶</a></h4>
+<p>To add one selector to object using <em>AddSelector</em> method.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$query</span><span class="p">.</span><span class="n">AddSelector</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The search criterion and its exact <code class="docutils literal notranslate"><span class="pre">key</span></code> and your <code class="docutils literal notranslate"><span class="pre">value</span></code>. Now, to verify our query, just get the json, with this method <em>GetNativeQuery</em>.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$query</span><span class="p">.</span><span class="n">GetNativeQuery</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="remove-selector">
+<h4>Remove selector<a class="headerlink" href="#remove-selector" title="Permalink to this headline">¶</a></h4>
+<p>If we were wrong to enter the values, it will be enough to remove them with <em>RemoveSelector</em> and then insert them again.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$query</span><span class="p">.</span><span class="n">RemoveSelector</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">)</span>
+<span class="nv">$query</span><span class="p">.</span><span class="n">AddSelector</span><span class="p">(</span><span class="s1">&#39;answer&#39;</span><span class="p">,</span> <span class="n">42</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="replace-selector">
+<h4>Replace selector<a class="headerlink" href="#replace-selector" title="Permalink to this headline">¶</a></h4>
+<p>Instead if we were wrong to enter only the value of our search key, just do a replace, using the <em>ReplaceSelector</em> method</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$query</span><span class="p">.</span><span class="n">ReplaceSelector</span><span class="p">(</span><span class="s1">&#39;answer&#39;</span><span class="p">,</span> <span class="n">43</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="limit-and-skip">
+<h3>Limit and Skip<a class="headerlink" href="#limit-and-skip" title="Permalink to this headline">¶</a></h3>
+<p>To limit or skip line of query result, set the values with the appropriate methods, <em>SetLimit</em> and <em>SetSkip</em>.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$query</span><span class="p">.</span><span class="n">SetLimit</span><span class="p">(</span><span class="n">5</span><span class="p">)</span>
+<span class="nv">$query</span><span class="p">.</span><span class="n">SetSkip</span><span class="p">(</span><span class="n">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To remove the set values, just set them to null.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$query</span><span class="p">.</span><span class="n">limit</span> <span class="p">=</span> <span class="nv">$null</span>
+<span class="nv">$query</span><span class="p">.</span><span class="n">skip</span> <span class="p">=</span> <span class="nv">$null</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="sort">
+<h3>Sort<a class="headerlink" href="#sort" title="Permalink to this headline">¶</a></h3>
+<p>To add a sort criterion, use the <em>AddSortAsc</em> method for ascending and <em>AddSortDesc</em> for the descendant.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$query</span><span class="p">.</span><span class="n">AddSortAsc</span><span class="p">(</span><span class="s1">&#39;answer&#39;</span><span class="p">)</span>
+<span class="nv">$query</span><span class="p">.</span><span class="n">AddSortDesc</span><span class="p">(</span><span class="s1">&#39;answer&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To reset the sort, just remove sorting with <em>RemoveSort</em>.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$query</span><span class="p">.</span><span class="n">RemoveSort</span><span class="p">()</span>
+<span class="nv">$query</span><span class="p">.</span><span class="n">RemoveSort</span><span class="p">(</span><span class="s1">&#39;answer&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="fields">
+<h3>Fields<a class="headerlink" href="#fields" title="Permalink to this headline">¶</a></h3>
+<p>Fields are the values that return from the query. To add them with <em>AddFields</em>.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$query</span><span class="p">.</span><span class="n">AddFields</span><span class="p">(</span><span class="s1">&#39;_id&#39;</span><span class="p">)</span>
+<span class="nv">$query</span><span class="p">.</span><span class="n">AddFields</span><span class="p">(</span><span class="s1">&#39;_rev&#39;</span><span class="p">)</span>
+<span class="nv">$query</span><span class="p">.</span><span class="n">AddFields</span><span class="p">(</span><span class="s1">&#39;answer&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To remove all fields use <em>RemoveFields</em>.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$query</span><span class="p">.</span><span class="n">RemoveFields</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>To remove manually one or more fields.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$query</span><span class="p">.</span><span class="n">RemoveFields</span><span class="p">(</span><span class="s1">&#39;_rev&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="indexies">
+<h3>Indexies<a class="headerlink" href="#indexies" title="Permalink to this headline">¶</a></h3>
+<p>To configure indexes created previously with <a class="reference external" href="databases.html#create-a-new-index">New-CouchDBIndex</a>.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$query</span><span class="p">.</span><span class="n">AddIndexies</span><span class="p">(</span><span class="s1">&#39;test-index&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To remove all indexes or one.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$query</span><span class="p">.</span><span class="n">RemoveIndexies</span><span class="p">()</span>
+<span class="nv">$query</span><span class="p">.</span><span class="n">RemoveIndexies</span><span class="p">(</span><span class="s1">&#39;test-index&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="readquorum">
+<h3>ReadQuorum<a class="headerlink" href="#readquorum" title="Permalink to this headline">¶</a></h3>
+<p>To set <em>ReadQuorum</em>.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$query</span><span class="p">.</span><span class="n">SetReadQuorum</span><span class="p">(</span><span class="n">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To remove it.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$query</span><span class="p">.</span><span class="n">r</span> <span class="p">=</span> <span class="nv">$null</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="bookmark">
+<h3>Bookmark<a class="headerlink" href="#bookmark" title="Permalink to this headline">¶</a></h3>
+<p>To configure bookmarks created previously.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$query</span><span class="p">.</span><span class="n">SetBookmark</span><span class="p">(</span><span class="s1">&#39;mybookmark&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To remove it.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$query</span><span class="p">.</span><span class="n">bookmark</span> <span class="p">=</span> <span class="nv">$null</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="update-stable-and-stale">
+<h3>Update, Stable and Stale<a class="headerlink" href="#update-stable-and-stale" title="Permalink to this headline">¶</a></h3>
+<p><em>Update</em> is enabled by default. To disable it.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$query</span><span class="p">.</span><span class="n">DisableUpdate</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>To re-enabled it.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$query</span><span class="p">.</span><span class="n">update</span> <span class="p">=</span> <span class="nv">$true</span>
+</pre></div>
+</div>
+<p>To enable <em>stable</em>.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$query</span><span class="p">.</span><span class="n">SetStable</span><span class="p">(</span><span class="nv">$true</span><span class="p">)</span> <span class="c">#or $query.SetStable(1)</span>
+</pre></div>
+</div>
+<p>To disable it.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$query</span><span class="p">.</span><span class="n">SetStable</span><span class="p">(</span><span class="nv">$false</span><span class="p">)</span> <span class="c">#or $query.SetStable(0)</span>
+</pre></div>
+</div>
+<p><em>stale</em> properties, basically sets <em>update</em> to <code class="docutils literal notranslate"><span class="pre">false</span></code> and <em>stable</em> to <code class="docutils literal notranslate"><span class="pre">true</span></code>.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$query</span><span class="p">.</span><span class="n">SetStale</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>To restore all changes.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$query</span><span class="p">.</span><span class="n">update</span> <span class="p">=</span> <span class="nv">$true</span>
+<span class="nv">$query</span><span class="p">.</span><span class="n">stable</span> <span class="p">=</span> <span class="nv">$false</span>
+<span class="nv">$query</span><span class="p">.</span><span class="n">stale</span> <span class="p">=</span> <span class="nv">$null</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="executionstat">
+<h3>ExecutionStat<a class="headerlink" href="#executionstat" title="Permalink to this headline">¶</a></h3>
+<p>To return execution statistic, just enable it.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$query</span><span class="p">.</span><span class="n">SetExecutionStat</span><span class="p">(</span><span class="nv">$true</span><span class="p">)</span> <span class="c">#or $query.SetExecutionStat(1)</span>
+</pre></div>
+</div>
+<p>To disable it.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$query</span><span class="p">.</span><span class="n">SetExecutionStat</span><span class="p">(</span><span class="nv">$false</span><span class="p">)</span> <span class="c">#or $query.SetExecutionStat(0)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="selector-operators">
+<h3>Selector Operators<a class="headerlink" href="#selector-operators" title="Permalink to this headline">¶</a></h3>
+<p>The selector operators that can be used are the following: <code class="docutils literal notranslate"><span class="pre">$lt,$lte,$eq,$ne,$gte,$gt,$exists,$type,$in,$nin,$size,$mod,$regex</span></code> (see <a class="reference external" href="documents.html#operators">operator table</a>).
+The method <em>AddSelectorOperator</em> works in two ways: by specifying only the operator, so it will be applied to all the selector;
+by specifying the selector and the value that you want to associate.</p>
+<div class="section" id="lt-lte-eq-ne-gte-gt">
+<h4>$lt,$lte,$eq,$ne,$gte,$gt<a class="headerlink" href="#lt-lte-eq-ne-gte-gt" title="Permalink to this headline">¶</a></h4>
+<p>The implicit operator used is <code class="docutils literal notranslate"><span class="pre">$eq</span></code>. The <em>AddSelectorOperator</em> method append operators at the designated selector.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$query</span><span class="p">.</span><span class="n">AddSelectorOperator</span><span class="p">(</span><span class="s1">&#39;$eq&#39;</span><span class="p">)</span>
+<span class="n">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Find</span> <span class="nv">$query</span><span class="p">.</span><span class="n">GetNativeQuery</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>To change operator or restore changes.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$query</span><span class="p">.</span><span class="n">ReplaceSelector</span><span class="p">(</span><span class="s1">&#39;answer&#39;</span><span class="p">,</span> <span class="n">42</span><span class="p">)</span> <span class="c">#to restore only this</span>
+<span class="nv">$query</span><span class="p">.</span><span class="n">AddSelectorOperator</span><span class="p">(</span><span class="s1">&#39;$lt&#39;</span><span class="p">)</span>
+<span class="n">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Find</span> <span class="nv">$query</span><span class="p">.</span><span class="n">GetNativeQuery</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="exists-type-in-nin-size-mod">
+<h4>$exists,$type,$in,$nin,$size,$mod<a class="headerlink" href="#exists-type-in-nin-size-mod" title="Permalink to this headline">¶</a></h4>
+<p>With these operators we must also specify the selector we want and its value.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$query</span><span class="p">.</span><span class="n">AddSelectorOperator</span><span class="p">(</span><span class="s1">&#39;$exists&#39;</span><span class="p">,</span><span class="s1">&#39;answer&#39;</span><span class="p">,</span><span class="s1">&#39;true&#39;</span><span class="p">)</span>
+<span class="c">#or</span>
+<span class="nv">$query</span><span class="p">.</span><span class="n">AddSelectorOperator</span><span class="p">(</span><span class="s1">&#39;$type&#39;</span><span class="p">,</span><span class="s1">&#39;answer&#39;</span><span class="p">,</span><span class="s1">&#39;string&#39;</span><span class="p">)</span>
+<span class="c">#or</span>
+<span class="nv">$query</span><span class="p">.</span><span class="n">AddSelector</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span><span class="s1">&#39;Arthur&#39;</span><span class="p">)</span>
+<span class="nv">$query</span><span class="p">.</span><span class="n">AddSelector</span><span class="p">(</span><span class="s1">&#39;planet&#39;</span><span class="p">,@(</span><span class="s1">&#39;Heart&#39;</span><span class="p">,</span><span class="s1">&#39;Magrathea&#39;</span><span class="p">))</span>
+<span class="nv">$query</span><span class="p">.</span><span class="n">AddSelectorOperator</span><span class="p">(</span><span class="s1">&#39;$in&#39;</span><span class="p">,</span><span class="s1">&#39;planet&#39;</span><span class="p">,</span><span class="s1">&#39;Magrathea&#39;</span><span class="p">)</span>
+<span class="c">#or</span>
+<span class="nv">$query</span><span class="p">.</span><span class="n">AddSelectorOperator</span><span class="p">(</span><span class="s1">&#39;$nin&#39;</span><span class="p">,</span><span class="s1">&#39;planet&#39;</span><span class="p">,</span><span class="s1">&#39;Vogsphere&#39;</span><span class="p">)</span>
+<span class="c">#or apply operator for all selector</span>
+<span class="nv">$query</span><span class="p">.</span><span class="n">ReplaceSelector</span><span class="p">(</span><span class="s1">&#39;answer&#39;</span><span class="p">,</span><span class="n">43</span><span class="p">)</span>
+<span class="nv">$query</span><span class="p">.</span><span class="n">ReplaceSelector</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span><span class="s1">&#39;Arthur&#39;</span><span class="p">)</span>
+<span class="nv">$query</span><span class="p">.</span><span class="n">ReplaceSelector</span><span class="p">(</span><span class="s1">&#39;planet&#39;</span><span class="p">,@(</span><span class="s1">&#39;heart&#39;</span><span class="p">,</span><span class="s1">&#39;magrathea&#39;</span><span class="p">))</span>
+<span class="nv">$query</span><span class="p">.</span><span class="n">AddSelectorOperator</span><span class="p">(</span><span class="s1">&#39;$in&#39;</span><span class="p">)</span>
+<span class="n">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Find</span> <span class="nv">$query</span><span class="p">.</span><span class="n">GetNativeQuery</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="regex">
+<h4>$regex<a class="headerlink" href="#regex" title="Permalink to this headline">¶</a></h4>
+<p>CouchDB support regular expression (BRE and ERE).</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$query</span><span class="p">.</span><span class="n">AddSelector</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span><span class="s1">&#39;Arthur&#39;</span><span class="p">)</span>
+<span class="nv">$query</span><span class="p">.</span><span class="n">AddSelector</span><span class="p">(</span><span class="s1">&#39;planet&#39;</span><span class="p">,@(</span><span class="s1">&#39;Heart&#39;</span><span class="p">,</span><span class="s1">&#39;Magrathea&#39;</span><span class="p">))</span>
+<span class="nv">$query</span><span class="p">.</span><span class="n">AddSelectorOperator</span><span class="p">(</span><span class="s1">&#39;$regex&#39;</span><span class="p">,</span><span class="s1">&#39;name&#39;</span><span class="p">,</span><span class="s1">&#39;^[Aa]r{1}[th]{2}.r$&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="logical-operators">
+<h3>Logical operators<a class="headerlink" href="#logical-operators" title="Permalink to this headline">¶</a></h3>
+<p>PSCouchDBQuery object support logical operators; these are the allowed operators: <code class="docutils literal notranslate"><span class="pre">$and,$or,$not,$nor,$all,$elemMatch,$allMatch</span></code> (see <a class="reference external" href="documents.html#logical-operators">logical operator table</a>).</p>
+<div class="section" id="and-or-not-nor">
+<h4>$and,$or,$not,$nor<a class="headerlink" href="#and-or-not-nor" title="Permalink to this headline">¶</a></h4>
+<p>With method <em>AddLogicalOperator</em> logical conditions can be added.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$query</span><span class="p">.</span><span class="n">AddSelector</span><span class="p">(</span><span class="s1">&#39;answer&#39;</span><span class="p">,</span><span class="n">43</span><span class="p">)</span>
+<span class="nv">$query</span><span class="p">.</span><span class="n">AddSelector</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span><span class="s1">&#39;Arthur&#39;</span><span class="p">)</span>
+<span class="nv">$query</span><span class="p">.</span><span class="n">AddSelector</span><span class="p">(</span><span class="s1">&#39;planet&#39;</span><span class="p">,@(</span><span class="s1">&#39;Heart&#39;</span><span class="p">,</span><span class="s1">&#39;Magrathea&#39;</span><span class="p">))</span>
+<span class="nv">$query</span><span class="p">.</span><span class="n">AddLogicalOperator</span><span class="p">(</span><span class="s1">&#39;$or&#39;</span><span class="p">)</span>
+<span class="n">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Find</span> <span class="nv">$query</span><span class="p">.</span><span class="n">GetNativeQuery</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="all-elemmatch-allmatch">
+<h4>$all,$elemMatch,$allMatch<a class="headerlink" href="#all-elemmatch-allmatch" title="Permalink to this headline">¶</a></h4>
+<p>With these logical operators, return a single or all matches.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$query</span><span class="p">.</span><span class="n">AddSelector</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span><span class="s1">&#39;Arthur&#39;</span><span class="p">)</span>
+<span class="nv">$query</span><span class="p">.</span><span class="n">AddLogicalOperator</span><span class="p">(</span><span class="s1">&#39;$elemMatch&#39;</span><span class="p">)</span>
+<span class="n">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Find</span> <span class="nv">$query</span><span class="p">.</span><span class="n">GetNativeQuery</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="native-query-format-mango">
+<h3>Native query format (Mango)<a class="headerlink" href="#native-query-format-mango" title="Permalink to this headline">¶</a></h3>
+<p>To receive the object in native format (Mango query) use the <em>GetNativeQuery</em> method.</p>
+<p>. code-block:: powershell</p>
+<blockquote>
+<div>$query.GetNativeQuery()</div></blockquote>
+</div>
+</div>
+<div class="section" id="pscouchdbdesigndoc-class">
+<h2>PSCouchDBDesignDoc class<a class="headerlink" href="#pscouchdbdesigndoc-class" title="Permalink to this headline">¶</a></h2>
+<p>This class is used to construct a design documents, simple or complex.</p>
+<div class="section" id="id1">
+<h3>Properties<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">lists</span>               <span class="n">Property</span>   <span class="n">hashtable</span> <span class="n">lists</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+<span class="n">shows</span>               <span class="n">Property</span>   <span class="n">hashtable</span> <span class="n">shows</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+<span class="n">validate_doc_update</span> <span class="n">Property</span>   <span class="n">string</span> <span class="n">validate_doc_update</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+<span class="n">views</span>               <span class="n">Property</span>   <span class="n">hashtable</span> <span class="n">views</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id2">
+<h3>Methods<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">AddList</span>             <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddList</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">name</span><span class="p">)</span>
+<span class="n">AddShow</span>             <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddShow</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">name</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddShow</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">name</span><span class="p">,</span> <span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">key</span><span class="p">)...</span>
+<span class="n">AddValidation</span>       <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddValidation</span><span class="p">(</span><span class="n">array</span> <span class="n">requirements</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddValidation</span><span class="p">(</span><span class="n">array</span> <span class="n">requirements</span><span class="p">,</span> <span class="n">System</span><span class="p">...</span>
+<span class="n">AddView</span>             <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddView</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">name</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddView</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">name</span><span class="p">,</span> <span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">key</span><span class="p">)...</span>
+<span class="n">Equals</span>              <span class="n">Method</span>     <span class="n">bool</span> <span class="n">Equals</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">obj</span><span class="p">)</span>
+<span class="n">GetDesignDocuments</span>  <span class="n">Method</span>     <span class="n">string</span> <span class="n">GetDesignDocuments</span><span class="p">()</span>
+<span class="n">GetHashCode</span>         <span class="n">Method</span>     <span class="n">int</span> <span class="n">GetHashCode</span><span class="p">()</span>
+<span class="n">GetType</span>             <span class="n">Method</span>     <span class="n">type</span> <span class="n">GetType</span><span class="p">()</span>
+<span class="n">SetName</span>             <span class="n">Method</span>     <span class="n">void</span> <span class="n">SetName</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">name</span><span class="p">)</span>
+<span class="n">ToString</span>            <span class="n">Method</span>     <span class="n">string</span> <span class="n">ToString</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="build-a-design-document">
+<h3>Build a design document<a class="headerlink" href="#build-a-design-document" title="Permalink to this headline">¶</a></h3>
+<p>To create a <code class="docutils literal notranslate"><span class="pre">PSCouchDBDesignDoc</span></code> object, just do the following.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">using</span> <span class="n">module</span> <span class="n">PSCouchDB</span>
+<span class="nv">$ddoc</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">-TypeName</span> <span class="n">PSCouchDBDesignDoc</span>
+<span class="nv">$ddoc</span><span class="p">.</span><span class="n">GetType</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="work-with-views">
+<h3>Work with views<a class="headerlink" href="#work-with-views" title="Permalink to this headline">¶</a></h3>
+<p>Views are the primary tool used for querying and reporting on CouchDB documents. With <em>AddView</em> it is possible to add four types of predefined views.</p>
+<div class="section" id="simple-view">
+<h4>Simple view<a class="headerlink" href="#simple-view" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$ddoc</span><span class="p">.</span><span class="n">AddView</span><span class="p">(</span><span class="s1">&#39;myview&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="view-if-document-key-exists">
+<h4>View if document key exists<a class="headerlink" href="#view-if-document-key-exists" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$ddoc</span><span class="p">.</span><span class="n">AddView</span><span class="p">(</span><span class="s1">&#39;myviewexists&#39;</span><span class="p">,</span><span class="s1">&#39;key&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="view-if-document-key-exists-and-your-value-is-value-specified">
+<h4>View if document key exists and your value is value specified<a class="headerlink" href="#view-if-document-key-exists-and-your-value-is-value-specified" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$ddoc</span><span class="p">.</span><span class="n">AddView</span><span class="p">(</span><span class="s1">&#39;myviewvalue&#39;</span><span class="p">,</span><span class="s1">&#39;key&#39;</span><span class="p">,</span><span class="s1">&#39;value&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="view-if-document-key-exists-and-your-value-is-value-specified-and-return-entire-doc">
+<h4>View if document key exists and your value is value specified, and return entire doc<a class="headerlink" href="#view-if-document-key-exists-and-your-value-is-value-specified-and-return-entire-doc" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$ddoc</span><span class="p">.</span><span class="n">AddView</span><span class="p">(</span><span class="s1">&#39;myviewdoc&#39;</span><span class="p">,</span><span class="s1">&#39;key&#39;</span><span class="p">,</span><span class="s1">&#39;value&#39;</span><span class="p">,</span><span class="nv">$true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="work-with-lists">
+<h3>Work with Lists<a class="headerlink" href="#work-with-lists" title="Permalink to this headline">¶</a></h3>
+<p>List functions are used to represent documents in various formats, commonly as HTML pages with nice formatting.
+Use <em>AddList</em> for add one list or more. List functions they need at least one view.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$ddoc</span><span class="p">.</span><span class="n">AddList</span><span class="p">(</span><span class="s2">&quot;mylist&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="work-with-shows">
+<h3>Work with Shows<a class="headerlink" href="#work-with-shows" title="Permalink to this headline">¶</a></h3>
+<p>With <em>AddShow</em> it is possible to add three types of predefined show function. Only one function is allowed at a time.</p>
+<div class="section" id="simple-show">
+<h4>Simple show<a class="headerlink" href="#simple-show" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$ddoc</span><span class="p">.</span><span class="n">AddShow</span><span class="p">(</span><span class="s2">&quot;myshow&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="show-if-document-key-exists">
+<h4>Show if document key exists<a class="headerlink" href="#show-if-document-key-exists" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="c"># reset object</span>
+<span class="nv">$ddoc</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">-TypeName</span> <span class="n">PSCouchDBDesignDoc</span>
+<span class="nv">$ddoc</span><span class="p">.</span><span class="n">AddShow</span><span class="p">(</span><span class="s2">&quot;myshow&quot;</span><span class="p">,</span><span class="s2">&quot;key&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="show-if-document-key-exists-and-your-value-is-value-specified">
+<h4>Show if document key exists and your value is value specified<a class="headerlink" href="#show-if-document-key-exists-and-your-value-is-value-specified" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="c"># reset object</span>
+<span class="nv">$ddoc</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">-TypeName</span> <span class="n">PSCouchDBDesignDoc</span>
+<span class="p">$</span><span class="nv">$ddoc</span><span class="p">.</span><span class="n">AddShow</span><span class="p">(</span><span class="s2">&quot;myshow&quot;</span><span class="p">,</span><span class="s2">&quot;key&quot;</span><span class="p">,</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="work-with-validation">
+<h3>Work with validation<a class="headerlink" href="#work-with-validation" title="Permalink to this headline">¶</a></h3>
+<p>A design document may contain a function named <code class="docutils literal notranslate"><span class="pre">validate_doc_update</span></code> which can be used to prevent invalid or unauthorized document update requests from being stored.
+Use <em>AddValidation</em> for add one. Only one function is allowed at a time.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$ddoc</span><span class="p">.</span><span class="n">AddValidation</span><span class="p">(</span><span class="s2">&quot;myvalidation&quot;</span><span class="p">)</span>
+<span class="c">#or add also user authorization</span>
+<span class="nv">$ddoc</span><span class="p">.</span><span class="n">AddValidation</span><span class="p">(</span><span class="s2">&quot;myvalidation&quot;</span><span class="p">,</span><span class="nv">$true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="native-design-document">
+<h3>Native design document<a class="headerlink" href="#native-design-document" title="Permalink to this headline">¶</a></h3>
+<p>To receive the design document in native format use the <em>GetDesignDocuments</em> method.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$ddoc</span><span class="p">.</span><span class="n">GetDesignDocuments</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="create-design-document">
+<h3>Create design document<a class="headerlink" href="#create-design-document" title="Permalink to this headline">¶</a></h3>
+<p>See <a class="reference external" href="ddoc.html#custom-functions">Create design document</a>.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">New-CouchDBDesignDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;mydesigndoc&quot;</span> <span class="n">-Data</span> <span class="nv">$ddoc</span><span class="p">.</span><span class="n">GetDesignDocuments</span><span class="p">()</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="uses.html" class="btn btn-neutral float-right" title="Real uses" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="cmdlets.html" class="btn btn-neutral" title="Cmdlets and aliases" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Matteo Guadrini
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>  
+
+  <style>
+    /* Sidebar header (and topbar for mobile) */
+    .wy-side-nav-search, .wy-nav-top {
+      background: #012456;
+    }
+    /* Sidebar */
+    .wy-nav-side {
+      background: #2161bb;
+    }
+  </style>
+
+
+
+</body>
+</html>

@@ -1,0 +1,356 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Server operation &mdash; PSCouchDB  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Authentication" href="auth.html" />
+    <link rel="prev" title="Permission" href="permission.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> PSCouchDB
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="config.html">Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="config.html#nodes">Nodes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="config.html#configuration">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="permission.html">Permission</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Server operation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#replication">Replication</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#get-replica">Get replica</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#create-replica">Create replica</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#modify-replica">Modify replica</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#remove-replica">Remove replica</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#replication-request">Replication request</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="auth.html">Authentication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="databases.html">Databases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="documents.html">Documents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="documents.html#query">Query</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ddoc.html">Design documents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdlets.html">Cmdlets and aliases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="classes.html">Classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uses.html">Real uses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="support.html">Support</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PSCouchDB</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Server operation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/server.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="server-operation">
+<h1>Server operation<a class="headerlink" href="#server-operation" title="Permalink to this headline">¶</a></h1>
+<p>Below are all the cmdlets needed to get all the information on the CouchDB server.</p>
+<p>To get the version and other info on the server, run:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBServer</span>
+</pre></div>
+</div>
+<p>To get list of running tasks, including the task type, name, status and process ID:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBActiveTask</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+</pre></div>
+</div>
+<p>To get list of all the databases in the CouchDB instance:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDatabase</span>
+</pre></div>
+</div>
+<p>To get information of a list of the specified databases in the CouchDB instance:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDatabaseInfo</span> <span class="n">-Keys</span> <span class="n">test</span><span class="p">,</span><span class="n">test1</span><span class="p">,</span><span class="n">test2</span>
+</pre></div>
+</div>
+<p>To get the status of the node or cluster, run this:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBClusterSetup</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+</pre></div>
+</div>
+<p>To get a list of all database events in the CouchDB instance:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDatabaseUpdates</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+</pre></div>
+</div>
+<p>To displays the nodes that are part of the cluster:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBNode</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+</pre></div>
+</div>
+<p>To get the statistics for the running server:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Measure-CouchDBStatistics</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+<span class="nb">Measure-CouchDBStatistics</span> <span class="n">-System</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+</pre></div>
+</div>
+<p>To restart server:</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This task required privileged access on operating system</p>
+</div>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Restart-CouchDBServer</span>
+</pre></div>
+</div>
+<p>And check health:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBServer</span> <span class="n">-Status</span>
+</pre></div>
+</div>
+<p>To get one or more Universally Unique Identifiers (UUIDs) from the CouchDB instance:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">New-CouchDBUuids</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="replication">
+<h1>Replication<a class="headerlink" href="#replication" title="Permalink to this headline">¶</a></h1>
+<p>The replication is an incremental one way process involving two databases (a source and a destination).</p>
+<div class="section" id="get-replica">
+<h2>Get replica<a class="headerlink" href="#get-replica" title="Permalink to this headline">¶</a></h2>
+<p>To get a replication document.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBReplication</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+</pre></div>
+</div>
+<p>To get a list of replication jobs.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBReplicationScheduler</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+</pre></div>
+</div>
+<p>And to get a list of replication document states.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBReplicationDocument</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="create-replica">
+<h2>Create replica<a class="headerlink" href="#create-replica" title="Permalink to this headline">¶</a></h2>
+<p>Creation of the replicator database and replication agent is automatically in the same time.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">New-CouchDBReplication</span> <span class="n">-SourceDatabase</span> <span class="n">test</span> <span class="n">-TargetDatabase</span> <span class="n">test_dump</span> <span class="n">-Continuous</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The <code class="docutils literal notranslate"><span class="pre">Authorization</span></code> parameter refers to source database.
+It is preferable that the destination database is not password protected, otherwise an inaccessibility error will return.</p>
+</div>
+<p>Now that we have a replicated document, let’s take a look at the change.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDatabaseChanges</span> <span class="n">-Database</span> <span class="n">test_dump</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="modify-replica">
+<h2>Modify replica<a class="headerlink" href="#modify-replica" title="Permalink to this headline">¶</a></h2>
+<p>To change the replication agent settings (continuous: true | false).</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$replica</span> <span class="p">=</span> <span class="nb">Get-CouchDBReplication</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+<span class="nb">Write-Output</span> <span class="nv">$replica</span><span class="p">.</span><span class="n">rows</span><span class="p">.</span><span class="n">id</span><span class="p">[</span><span class="n">1</span><span class="p">]</span> <span class="nv">$replica</span><span class="p">.</span><span class="n">rows</span><span class="p">.</span><span class="n">value</span><span class="p">[</span><span class="n">1</span><span class="p">].</span><span class="n">rev</span>
+<span class="c"># continuous: false</span>
+<span class="nb">Set-CouchDBReplication</span> <span class="n">-Document</span> <span class="nv">$replica</span><span class="p">.</span><span class="n">rows</span><span class="p">.</span><span class="n">id</span><span class="p">[</span><span class="n">1</span><span class="p">]</span> <span class="n">-Revision</span> <span class="nv">$replica</span><span class="p">.</span><span class="n">rows</span><span class="p">.</span><span class="n">value</span><span class="p">[</span><span class="n">1</span><span class="p">].</span><span class="n">rev</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+<span class="c"># continuous: true</span>
+<span class="nb">Set-CouchDBReplication</span> <span class="n">-Document</span> <span class="nv">$replica</span><span class="p">.</span><span class="n">rows</span><span class="p">.</span><span class="n">id</span><span class="p">[</span><span class="n">1</span><span class="p">]</span> <span class="n">-Revision</span> <span class="nv">$replica</span><span class="p">.</span><span class="n">rows</span><span class="p">.</span><span class="n">value</span><span class="p">[</span><span class="n">1</span><span class="p">].</span><span class="n">rev</span> <span class="n">-Continuous</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="remove-replica">
+<h2>Remove replica<a class="headerlink" href="#remove-replica" title="Permalink to this headline">¶</a></h2>
+<p>To remove the replication agent.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Remove-CouchDBReplication</span> <span class="n">-Document</span> <span class="n">localhost-test_localhost-test_dump</span> <span class="n">-Authorization</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="replication-request">
+<h2>Replication request<a class="headerlink" href="#replication-request" title="Permalink to this headline">¶</a></h2>
+<p>Request, configure, or stop, a replication operation.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">Request-CouchDBReplication</span> <span class="n">-SourceDatabase</span> <span class="n">test</span> <span class="n">-TargetDatabase</span> <span class="n">test_dump</span> <span class="n">-Documents</span> <span class="s2">&quot;Hitchhikers&quot;</span><span class="p">,</span><span class="s2">&quot;Hitchhikers_Guide&quot;</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="auth.html" class="btn btn-neutral float-right" title="Authentication" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="permission.html" class="btn btn-neutral" title="Permission" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Matteo Guadrini
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>  
+
+  <style>
+    /* Sidebar header (and topbar for mobile) */
+    .wy-side-nav-search, .wy-nav-top {
+      background: #012456;
+    }
+    /* Sidebar */
+    .wy-nav-side {
+      background: #2161bb;
+    }
+  </style>
+
+
+
+</body>
+</html>
