@@ -6,7 +6,7 @@
 Welcome to PSCouchDB's documentation!
 =====================================
 
-.. figure:: https://i.ibb.co/XWs40Sj/pscouchdb-logo.png
+.. figure:: ./_static/pscouchdb-logo.png
     :height: 224 px
     :width: 320 px
     :align: center

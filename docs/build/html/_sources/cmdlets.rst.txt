@@ -435,6 +435,12 @@ Documents
 
     Clear-CouchDBDocuments [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [[-Authorization] <String>] [-Force] [-Ssl] [-WhatIf] [-Confirm] [<CommonParameters>]
 
+**Search-CouchDBFullText**
+
+.. code-block:: powershell
+
+    Search-CouchDBFullText [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Patterns] <Array> [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+
 **Find-CouchDBDocuments**
 
 .. code-block:: powershell
@@ -563,7 +569,8 @@ _______
     scdbpl -> Set-CouchDBDatabasePurgedLimit       
     scddoc -> Set-CouchDBDesignDocument            
     scdoc -> Set-CouchDBDocument                   
-    scds -> Sync-CouchDBDatabaseShards             
+    scds -> Sync-CouchDBDatabaseShards
+    scft -> Search-CouchDBFullText             
     scrl -> Set-CouchDBRevisionLimit               
     scrpl -> Set-CouchDBReplication                
     scs -> Set-CouchDBSession                      

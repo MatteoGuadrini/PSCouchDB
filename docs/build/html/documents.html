@@ -117,6 +117,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="#query">Query</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#find-a-document">Find a document</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#search-a-document">Search a document</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#selector">Selector</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#operators">Operators</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#logical-operators">Logical operators</a></li>
@@ -376,6 +377,17 @@ This is to ensure that deleted documents can be replicated to other databases as
 </pre></div>
 </div>
 <p>If you want to use Mango queries, follow the next sections. Otherwise you can see more examples in the <a class="reference external" href="classes.html">Classes section</a>.</p>
+<div class="section" id="search-a-document">
+<h3>Search a document<a class="headerlink" href="#search-a-document" title="Permalink to this headline">¶</a></h3>
+<p>To perform a more generic search in a database, without knowing the various selectors, use:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">Search-CouchDBFullText</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Patterns</span> <span class="s2">&quot;space&quot;</span><span class="p">,</span><span class="s2">&quot;planet&quot;</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This search is much slower than the <code class="docutils literal notranslate"><span class="pre">Find-CouchdbDocuments</span></code> cmdlet.</p>
+</div>
+</div>
 <div class="section" id="selector">
 <h3>Selector<a class="headerlink" href="#selector" title="Permalink to this headline">¶</a></h3>
 <p>Selectors are expressed as a JSON object describing documents of interest. Within this structure, you can apply conditional logic using specially named fields.</p>

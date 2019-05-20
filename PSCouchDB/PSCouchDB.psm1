@@ -71,6 +71,7 @@ New-Alias -Name "rcrpl" -Value Remove-CouchDBReplication -Option ReadOnly
 New-Alias -Name "rcidx" -Value Remove-CouchDBIndex -Option ReadOnly
 New-Alias -Name "rcs" -Value Remove-CouchDBSession -Option ReadOnly
 New-Alias -Name "rcsrv" -Value Restart-CouchDBServer -Option ReadOnly
+New-Alias -Name "scft" -Value Search-CouchDBFullText -Option ReadOnly
 New-Alias -Name "fcdoc" -Value Find-CouchDBDocuments -Option ReadOnly
 New-Alias -Name "finddoc" -Value Find-CouchDBDocuments -Option ReadOnly
 New-Alias -Name "wcfc" -Value Write-CouchDBFullCommit -Option ReadOnly
@@ -4668,6 +4669,63 @@ function Restart-CouchDBServer () {
     if ($Force -or $PSCmdlet.ShouldContinue("Do you wish to restart CouchDB server ?","Restart server")) {
         Restart-Service -Name "Apache CouchDB" -Force
     }
+}
+
+function Search-CouchDBFullText () {
+    <#
+    .SYNOPSIS
+    Full text search.
+    .DESCRIPTION
+    Full text search across entire database.
+    WARNING! This search is much slower than the Find-CouchdbDocuments cmdlet. 
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Patterns
+    The pattern for full text search.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
+    .EXAMPLE
+    Search-CouchDBFullText -Database test -Patterns "space","planet"
+    This example search the word "space" and "planet in each document of database test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/documents.html#search-a-document
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server,
+        [int] $Port,
+        [Parameter(mandatory=$true)]
+        [string] $Database,
+        [Parameter(mandatory=$true)]
+        [array] $Patterns,
+        [string] $Authorization,
+        [switch] $Ssl
+    )
+    $result = [PSCustomObject]@{
+        total_rows      = 0
+        rows            = New-Object System.Collections.Generic.List[System.Object]
+    }
+    foreach ($doc in (Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl).rows) {
+        $json = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $doc.id -Authorization $Authorization -Ssl:$Ssl | ConvertTo-Json -Depth 99
+        foreach ($Pattern in $Patterns) {
+            if ($json -match "$Pattern") {
+                $convert = $json | ConvertFrom-Json
+                if ($result.rows -notcontains $convert) {
+                    $result.total_rows += 1
+                    $result.rows.Add($convert)
+                }
+            }
+        }
+    }
+    return $result
 }
 
 function Find-CouchDBDocuments () {

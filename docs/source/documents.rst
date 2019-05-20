@@ -233,6 +233,18 @@ or with class (for complex query)
 
 If you want to use Mango queries, follow the next sections. Otherwise you can see more examples in the `Classes section <classes.html>`_.
 
+Search a document
+*****************
+
+To perform a more generic search in a database, without knowing the various selectors, use:
+
+.. code-block:: powershell
+
+    Search-CouchDBFullText -Database test -Patterns "space","planet"
+
+.. warning::
+    This search is much slower than the ``Find-CouchdbDocuments`` cmdlet.
+
 Selector
 ********
 

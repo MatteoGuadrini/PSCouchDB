@@ -141,6 +141,7 @@
                         "Remove-CouchDBIndex",
                         "Remove-CouchDBSession",
                         "Restart-CouchDBServer",
+                        "Search-CouchDBFullText",
                         "Find-CouchDBDocuments",
                         "Write-CouchDBFullCommit"
                         )
@@ -224,6 +225,7 @@
                         "rcidx",
                         "rcsrv",
                         "rcs",
+                        "scft",
                         "fcdoc",
                         "finddoc",
                         "wcfc"
