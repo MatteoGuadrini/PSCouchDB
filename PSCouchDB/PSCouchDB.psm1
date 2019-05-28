@@ -925,7 +925,7 @@ function Test-CouchDBDatabase () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Database,
         [string] $Authorization,
         [switch] $Ssl
@@ -963,6 +963,7 @@ function Get-CouchDBDatabase () {
     #>
     [CmdletBinding()]
     param(
+        [Parameter(ValueFromPipeline=$true)]
         [string] $Server,
         [int] $Port,
         [string] $Database = "_all_dbs",
@@ -1000,7 +1001,7 @@ function Get-CouchDBDatabasePurgedLimit () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Database,
         [string] $Authorization,
         [switch] $Ssl
@@ -1028,7 +1029,7 @@ function Get-CouchDBDatabaseInfo () {
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
     .EXAMPLE
-    Get-CouchDBDatabasePurgedLimit -Database test
+    Get-CouchDBDatabaseInfo -Database test
     This example get info of the database purged documents limit "test".
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/databases.html#get-purged-info-limit
@@ -1037,6 +1038,7 @@ function Get-CouchDBDatabaseInfo () {
     param(
         [string] $Server,
         [int] $Port,
+        [Parameter(ValueFromPipeline=$true)]
         [array] $Keys,
         [string] $Authorization,
         [switch] $Ssl
@@ -1082,7 +1084,7 @@ function Get-CouchDBDatabaseChanges () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Database,
         [string] $Authorization,
         [switch] $Ssl
@@ -1118,6 +1120,7 @@ function Get-CouchDBDatabaseUpdates () {
     #>
     [CmdletBinding()]
     param(
+        [Parameter(ValueFromPipeline=$true)]
         [string] $Server,
         [int] $Port,
         [string] $Authorization,
@@ -1155,7 +1158,7 @@ function Get-CouchDBDatabaseShards () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Database,
         [string] $Authorization,
         [switch] $Ssl
@@ -1209,7 +1212,7 @@ function Get-CouchDBDocument () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Database,
         [string] $Document = "_all_docs",
         [string] $Revision,
@@ -1261,7 +1264,7 @@ function Get-CouchDBBulkDocument () {
         [int] $Port,
         [Parameter(mandatory=$true)]
         [string] $Database,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [array] $Document,
         [string] $Authorization,
         [switch] $Ssl
@@ -1313,7 +1316,7 @@ function Get-CouchDBDesignDocument () {
         [int] $Port,
         [Parameter(mandatory=$true)]
         [string] $Database,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Document,
         [string] $Authorization,
         [switch] $Ssl
@@ -1350,7 +1353,7 @@ function Get-CouchDBDatabaseDesignDocument () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Database,
         [string] $Authorization,
         [switch] $Ssl
@@ -1398,7 +1401,7 @@ function Get-CouchDBAttachment () {
         [int] $Port,
         [Parameter(mandatory=$true)]
         [string] $Database,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Document,
         [Parameter(mandatory=$true)]
         [string] $Attachment,
@@ -1437,7 +1440,7 @@ function Get-CouchDBUser () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Userid,
         [string] $Authorization,
         [switch] $Ssl
@@ -1473,6 +1476,7 @@ function Get-CouchDBAdmin () {
     #>
     [CmdletBinding()]
     param(
+        [Parameter(ValueFromPipeline=$true)]
         [string] $Server,
         [int] $Port,
         [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).all_nodes -contains "couchdb@localhost") {"couchdb@localhost"} else {"couchdb@127.0.0.1"}),
@@ -1512,7 +1516,7 @@ function Get-CouchDBDatabaseSecurity () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Database,
         [string] $Authorization,
         [switch] $Ssl
@@ -1547,6 +1551,7 @@ function Get-CouchDBConfiguration () {
     #>
     [CmdletBinding()]
     param(
+        [Parameter(ValueFromPipeline=$true)]
         [string] $Server,
         [int] $Port,
         [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).all_nodes -contains "couchdb@localhost") {"couchdb@localhost"} else {"couchdb@127.0.0.1"}),
@@ -1582,6 +1587,7 @@ function Get-CouchDBNode () {
     #>
     [CmdletBinding()]
     param(
+        [Parameter(ValueFromPipeline=$true)]
         [string] $Server,
         [int] $Port,
         [string] $Authorization,
@@ -1622,12 +1628,13 @@ function Get-CouchDBReplication () {
     param(
         [string] $Server,
         [int] $Port,
+        [Parameter(ValueFromPipeline=$true)]
         [string] $Document = '_all_docs',
         [string] $Authorization,
         [switch] $Ssl
     )
     $Database = "_replicator"
-    if ($null -eq (Test-CouchDBDatabase -Database $Database -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
+    if ($null -eq (Test-CouchDBDatabase -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
         throw "Database replicator $Database not exists."
     }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
@@ -1657,6 +1664,7 @@ function Get-CouchDBReplicationScheduler () {
     #>
     [CmdletBinding()]
     param(
+        [Parameter(ValueFromPipeline=$true)]
         [string] $Server,
         [int] $Port,
         [string] $Authorization,
@@ -1691,6 +1699,7 @@ function Get-CouchDBReplicationDocument () {
     #>
     [CmdletBinding()]
     param(
+        [Parameter(ValueFromPipeline=$true)]
         [string] $Server,
         [int] $Port,
         [string] $Authorization,
@@ -1725,6 +1734,7 @@ function Get-CouchDBActiveTask () {
     #>
     [CmdletBinding()]
     param(
+        [Parameter(ValueFromPipeline=$true)]
         [string] $Server,
         [int] $Port,
         [string] $Authorization,
@@ -1758,6 +1768,7 @@ function Get-CouchDBClusterSetup () {
     #>
     [CmdletBinding()]
     param(
+        [Parameter(ValueFromPipeline=$true)]
         [string] $Server,
         [int] $Port,
         [string] $Authorization,
@@ -1795,7 +1806,7 @@ function Get-CouchDBIndex () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Database,
         [string] $Authorization,
         [switch] $Ssl
@@ -1839,7 +1850,7 @@ function Get-CouchDBMissingRevision () {
         [string] $Database,
         [Parameter(mandatory=$true)]
         [string] $Document,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [array] $Revision,
         [string] $Authorization,
         [switch] $Ssl
@@ -1885,7 +1896,7 @@ function Get-CouchDBRevisionDifference () {
         [string] $Database,
         [Parameter(mandatory=$true)]
         [string] $Document,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [array] $Revision,
         [string] $Authorization,
         [switch] $Ssl
@@ -1923,7 +1934,7 @@ function Get-CouchDBRevisionLimit () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Database,
         [string] $Authorization,
         [switch] $Ssl
@@ -1955,6 +1966,7 @@ function Get-CouchDBSession () {
     https://pscouchdb.readthedocs.io/en/latest/auth.html
     #>
     param(
+        [Parameter(ValueFromPipeline=$true)]
         [string] $Server,
         [int] $Port,
         [string] $Authorization,
@@ -1992,7 +2004,7 @@ function Sync-CouchDBDatabaseShards () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Database,
         [string] $Authorization,
         [switch] $Ssl
@@ -2042,7 +2054,7 @@ function Copy-CouchDBDocument () {
         [int] $Port,
         [Parameter(mandatory=$true)]
         [string] $Database,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Document,
         [Parameter(mandatory=$true)]
         [string] $Destination,
@@ -2097,6 +2109,7 @@ function Measure-CouchDBStatistics () {
     #>
     [CmdletBinding()]
     param(
+        [Parameter(ValueFromPipeline=$true)]
         [string] $Server = 'localhost',
         [int] $Port,
         [switch] $System,
@@ -2139,7 +2152,7 @@ function Clear-CouchDBView () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Database,
         [string] $Authorization,
         [switch] $Ssl
@@ -2182,7 +2195,7 @@ function Clear-CouchDBDocuments () {
         [int] $Port,
         [Parameter(mandatory=$true)]
         [string] $Database,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Document,
         [string] $Authorization,
         [switch] $Force,
@@ -2227,7 +2240,7 @@ function Add-CouchDBNode () {
         [string] $Server,
         [int] $Port,
         [int] $BindPort = 5984,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $BindAddress,
         [string] $Authorization,
         [switch] $Ssl
@@ -2276,7 +2289,7 @@ function Compress-CouchDBDatabase () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Database,
         [string] $Authorization,
         [switch] $Ssl
@@ -2319,7 +2332,7 @@ function Compress-CouchDBDesignDocument () {
         [int] $Port,
         [Parameter(mandatory=$true)]
         [string] $Database,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $DesignDoc,
         [string] $Authorization,
         [switch] $Ssl
@@ -2359,7 +2372,7 @@ function Set-CouchDBDatabasePurgedLimit () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Database,
         [Parameter(mandatory=$true)]
         [int] $Limit,
@@ -2414,7 +2427,7 @@ function Set-CouchDBDocument () {
         [int] $Port,
         [Parameter(mandatory=$true)]
         [string] $Database,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Document,
         [Parameter(mandatory=$true)]
         [string] $Revision,
@@ -2489,7 +2502,7 @@ function Set-CouchDBBulkDocument () {
         [int] $Port,
         [Parameter(mandatory=$true)]
         [string] $Database,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [array] $Document,
         [array] $Revision,
         [switch] $IsDeleted,
@@ -2598,7 +2611,7 @@ function Set-CouchDBDesignDocument () {
         [Parameter(ParameterSetName = "Show")]
         [Parameter(ParameterSetName = "Validation")]
         [Parameter(ParameterSetName = "CustomData")]
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Document,
         [Parameter(ParameterSetName = "View")]
         [Parameter(ParameterSetName = "List")]
@@ -2837,7 +2850,7 @@ function Set-CouchDBAttachment () {
         [int] $Port,
         [Parameter(mandatory=$true)]
         [string] $Database,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Document,
         [Parameter(mandatory=$true)]
         [string] $Revision,
@@ -2883,7 +2896,7 @@ function Set-CouchDBUser () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Userid,
         [Parameter(mandatory=$true)]
         [SecureString] $Password,
@@ -2944,6 +2957,7 @@ function Set-CouchDBAdmin () {
     #>
     [CmdletBinding()]
     param(
+        [Parameter(ValueFromPipeline=$true)]
         [string] $Server,
         [int] $Port,
         [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).all_nodes -contains "couchdb@localhost") {"couchdb@localhost"} else {"couchdb@127.0.0.1"}),
@@ -2993,6 +3007,7 @@ function Set-CouchDBConfiguration () {
     #>
     [CmdletBinding()]
     param(
+        [Parameter(ValueFromPipeline=$true)]
         [string] $Server,
         [int] $Port,
         [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).all_nodes -contains "couchdb@localhost") {"couchdb@localhost"} else {"couchdb@127.0.0.1"}),
@@ -3007,7 +3022,7 @@ function Set-CouchDBConfiguration () {
     )
     $Database = "_node"
     $Document = "$Node/_config"
-    if ((Get-CouchDBConfiguration -Authorization $Authorization -Ssl:$Ssl).$Element) {
+    if ((Get-CouchDBConfiguration -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).$Element) {
         $Document += "/$Element/$Key"
     } else {
         throw "Element $Element not exist!"
@@ -3050,7 +3065,7 @@ function Set-CouchDBReplication () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Document,
         [Parameter(mandatory=$true)]
         [string] $Revision,
@@ -3067,7 +3082,7 @@ function Set-CouchDBReplication () {
     } else {
         $Continuous_value = $false
     }
-    $Data = Get-CouchDBReplication -Document $Document -Authorization $Authorization -Ssl:$Ssl
+    $Data = Get-CouchDBReplication -Server $Server -Port $Port -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
     $Data.continuous = $Continuous_value
     $Data = $Data | ConvertTo-Json
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Revision $Revision -Data $Data -Authorization $Authorization -Ssl:$Ssl
@@ -3102,7 +3117,7 @@ function Set-CouchDBRevisionLimit () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Database,
         [int] $Limit = 1000,
         [string] $Authorization,
@@ -3196,7 +3211,7 @@ function Grant-CouchDBDatabasePermission () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Database,
         [array]$AdminUser,
         [array]$AdminRoles,
@@ -3288,7 +3303,7 @@ function Revoke-CouchDBDatabasePermission () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Database,
         [string] $Authorization,
         [switch]$Force,
@@ -3487,7 +3502,7 @@ function New-CouchDBDatabase () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Database,
         [string] $Authorization,
         [switch] $Ssl
@@ -3521,7 +3536,7 @@ function New-CouchDBDocument () {
     This modify protocol to https and port to 6984.
     .EXAMPLE
     $data = @{"answer"=42; "ask"="Ultimate Question of Life, the Universe and Everything"}
-    Set-CouchDBDocument -Database test -Document "Hitchhikers"-Data $data -Authorization "admin:password"
+    New-CouchDBDocument -Database test -Document "Hitchhikers"-Data $data -Authorization "admin:password"
     The example modify document "Hitchhikers" with data $data; if the element of $data exists, overwrite, else adding new element.
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/documents.html#create-a-document
@@ -3532,7 +3547,7 @@ function New-CouchDBDocument () {
         [int] $Port,
         [Parameter(mandatory=$true)]
         [string] $Database,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Document,
         [Parameter(mandatory=$true)]
         $Data,
@@ -3627,7 +3642,7 @@ function New-CouchDBDesignDocument () {
         [Parameter(ParameterSetName = "Show")]
         [Parameter(ParameterSetName = "Validation")]
         [Parameter(ParameterSetName = "CustomData")]
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Document,
         [Parameter(ParameterSetName = "View")]
         [Parameter(ParameterSetName = "List")]
@@ -3808,6 +3823,7 @@ function New-CouchDBUser () {
     #>
     [CmdletBinding()]
     param(
+        [Parameter(ValueFromPipeline=$true)]
         [string] $Server,
         [int] $Port,
         [Parameter(mandatory=$true)]
@@ -3869,6 +3885,7 @@ function New-CouchDBAdmin () {
     #>
     [CmdletBinding()]
     param(
+        [Parameter(ValueFromPipeline=$true)]
         [string] $Server,
         [int] $Port,
         [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).all_nodes -contains "couchdb@localhost") {"couchdb@localhost"} else {"couchdb@127.0.0.1"}),
@@ -4013,7 +4030,7 @@ function New-CouchDBIndex () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Database,
         [Parameter(mandatory=$true)]
         [string] $Name,
@@ -4060,6 +4077,7 @@ function New-CouchDBUuids () {
     param(
         [string] $Server,
         [int] $Port,
+        [Parameter(ValueFromPipeline=$true)]
         [int] $Count = 10,
         [string] $Authorization,
         [switch] $Ssl
@@ -4100,6 +4118,7 @@ function Enable-CouchDBCluster () {
     #>
     [CmdletBinding()]
     param(
+        [Parameter(ValueFromPipeline=$true)]
         [string] $Server,
         [int] $Port,
         [int] $NodeCount = 3,
@@ -4161,7 +4180,7 @@ function Search-CouchDBHelp () {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         $Pattern
     )
     $helpNames = $(Get-Help *CouchDB* | Where-Object { $_.Category -ne "Alias" })
@@ -4204,7 +4223,7 @@ function Remove-CouchDBDatabase () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Database,
         [string] $Authorization,
         [switch]$Force,
@@ -4249,7 +4268,7 @@ function Remove-CouchDBDocument () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Database,
         [Parameter(mandatory=$true)]
         [string] $Document,
@@ -4298,7 +4317,7 @@ function Remove-CouchDBDesignDocument () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(Mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Database,
         [Parameter(Mandatory=$true)]
         [string] $Document,
@@ -4348,7 +4367,7 @@ function Remove-CouchDBAttachment () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Database,
         [Parameter(mandatory=$true)]
         [string] $Document,
@@ -4394,6 +4413,7 @@ function Remove-CouchDBUser () {
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
+        [Parameter(ValueFromPipeline=$true)]
         [string] $Server,
         [int] $Port,
         [Parameter(mandatory=$true)]
@@ -4439,6 +4459,7 @@ function Remove-CouchDBAdmin () {
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
+        [Parameter(ValueFromPipeline=$true)]
         [string] $Server,
         [int] $Port,
         [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).all_nodes -contains "couchdb@localhost") {"couchdb@localhost"} else {"couchdb@127.0.0.1"}),
@@ -4476,16 +4497,16 @@ function Remove-CouchDBNode () {
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
     .EXAMPLE
-    Remove-CouchDBAdmin -Userid admin -Authorization "admin:password"
+    Remove-CouchDBNode -Node "couchdb@localhost" -Authorization "admin:password"
     The example removes "test" node on cluster configuration.
     .LINK
-    https://pscouchdb.readthedocs.io/en/latest/permission.html#remove-an-admin
+    https://pscouchdb.readthedocs.io/en/latest/config.html#remove-a-node
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Node,
         [string] $Authorization,
         [switch]$Force,
@@ -4543,6 +4564,7 @@ function Remove-CouchDBReplication () {
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
+        [Parameter(ValueFromPipeline=$true)]
         [string] $Server,
         [int] $Port,
         [Parameter(mandatory=$true)]
@@ -4603,7 +4625,7 @@ function Remove-CouchDBIndex () {
         [string] $Database,
         [Parameter(mandatory=$true)]
         [string] $DesignDoc,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Name,
         [string] $Authorization,
         [switch]$Force,
@@ -4638,6 +4660,7 @@ function Remove-CouchDBSession () {
     https://pscouchdb.readthedocs.io/en/latest/auth.html
     #>
     param(
+        [Parameter(ValueFromPipeline=$true)]
         [string] $Server,
         [int] $Port,
         [string] $Authorization,
@@ -4702,7 +4725,7 @@ function Search-CouchDBFullText () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Database,
         [Parameter(mandatory=$true)]
         [array] $Patterns,
@@ -4811,7 +4834,7 @@ function Find-CouchDBDocuments () {
         [int] $Port,
         [Parameter(ParameterSetName = "PSCouchDB")]
         [Parameter(ParameterSetName = "Native")]
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Database,
         [Parameter(ParameterSetName = "PSCouchDB")]
         [switch] $Explain,
@@ -4942,7 +4965,7 @@ function Write-CouchDBFullCommit () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Database,
         [string] $Authorization,
         [switch]$Force,
