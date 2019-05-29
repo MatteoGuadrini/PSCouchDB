@@ -123,6 +123,12 @@ Also is possible save a file.
 
     Get-CouchDBAttachment -Database test -Document "Hitchhikers" -Attachment test.txt -OutFile "C:\out.txt"
 
+Or get info of specific attachment.
+
+.. code-block:: powershell
+
+    Get-CouchDBAttachment -Database test -Document "Hitchhikers" -Attachment test.txt -Info
+
 Create an attachment
 ********************
 

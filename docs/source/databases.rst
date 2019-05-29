@@ -27,9 +27,6 @@ To verify the existence of a database.
 
     Test-CouchDBDatabase -Database test
 
-.. note::
-    If database exist and if no-read protected, this cmdlet return nothing.
-
 Read a database
 _______________
 

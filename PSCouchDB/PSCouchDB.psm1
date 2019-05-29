@@ -822,10 +822,19 @@ function Send-CouchDBRequest {
         Write-Debug -Message "`$Data is $Data"
         Write-Verbose -Message "`$Data is $Data"
     }
-    # Invoke REST with method
-    Write-Verbose -Message "Finally, send request to CouchDB server $Server"
-    $results = Invoke-RestMethod @options
-    Set-Variable -Name couchdb_session -Value $couchdb_session -Scope Global
+    # Check return header or not
+    if ($Method -eq "HEAD") {
+        # Invoke WEB request
+        Write-Verbose -Message "Finally, send request to CouchDB server $Server"
+        $results = Invoke-WebRequest @options
+        Set-Variable -Name couchdb_session -Value $couchdb_session -Scope Global
+    } else {
+        # Invoke REST method
+        Write-Verbose -Message "Finally, send request to CouchDB server $Server"
+        $results = Invoke-RestMethod @options
+        Set-Variable -Name couchdb_session -Value $couchdb_session -Scope Global
+        
+    }
     return $results
 }
 
@@ -1089,7 +1098,7 @@ function Get-CouchDBDatabaseChanges () {
         [string] $Authorization,
         [switch] $Ssl
     )
-    if ($null -eq (Test-CouchDBDatabase -Database $Database -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
+    if (-not(Test-CouchDBDatabase -Database $Database -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
         throw "Database $Database is not exists."
     }
     $Document = '_changes'
@@ -1376,8 +1385,12 @@ function Get-CouchDBAttachment () {
     The CouchDB database.
     .PARAMETER Document
     The CouchDB document.
+    .PARAMETER Revision
+    The CouchDB revision document.
     .PARAMETER Attachment
     The CouchDB attachment document.
+    .PARAMETER Info
+    The CouchDB attachment document infos.
     .PARAMETER OutFile
     The full path where save attachment document.
     .PARAMETER Authorization
@@ -1392,24 +1405,53 @@ function Get-CouchDBAttachment () {
     .EXAMPLE
     Get-CouchDBAttachment -Database test -Document "Hitchhikers" -Attachment test.txt -OutFile C:\test.txt
     This example save attachment "test.txt" to C:\test.txt on "Hitchhikers" document on database "test".
+    .EXAMPLE
+    Get-CouchDBAttachment -Database test -Document "Hitchhikers" -Attachment test.txt -info
+    This example get attachment "test.txt" infos on "Hitchhikers" document on database "test".
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/documents.html#get-an-attachment
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Attachment")]
     param(
+        [Parameter(ParameterSetName = "Attachment")]
+        [Parameter(ParameterSetName = "Info")]
         [string] $Server,
+        [Parameter(ParameterSetName = "Attachment")]
+        [Parameter(ParameterSetName = "Info")]
         [int] $Port,
+        [Parameter(ParameterSetName = "Attachment")]
+        [Parameter(ParameterSetName = "Info")]
         [Parameter(mandatory=$true)]
         [string] $Database,
+        [Parameter(ParameterSetName = "Attachment")]
+        [Parameter(ParameterSetName = "Info")]
         [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Document,
+        [Parameter(ParameterSetName = "Attachment")]
+        [Parameter(ParameterSetName = "Info")]
+        [string] $Revision,
+        [Parameter(ParameterSetName = "Info")]
+        [switch] $Info,
+        [Parameter(ParameterSetName = "Attachment")]
+        [Parameter(ParameterSetName = "Info")]
         [Parameter(mandatory=$true)]
         [string] $Attachment,
+        [Parameter(ParameterSetName = "Attachment")]
+        [Parameter(ParameterSetName = "Info")]
         [string] $OutFile,
+        [Parameter(ParameterSetName = "Attachment")]
+        [Parameter(ParameterSetName = "Info")]
         [string] $Authorization,
+        [Parameter(ParameterSetName = "Attachment")]
+        [Parameter(ParameterSetName = "Info")]
         [switch] $Ssl
     )
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Attachment $Attachment -OutFile $OutFile -Authorization $Authorization -Ssl:$Ssl
+    if ($Info.IsPresent) {
+        $Method = "HEAD"
+    } else {
+        $Method = "GET"
+    }
+    Send-CouchDBRequest -Server $Server -Port $Port -Method $Method -Database $Database -Document $Document -Revision $Revision -Attachment $Attachment -OutFile $OutFile -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Get-CouchDBUser () {
@@ -1634,7 +1676,7 @@ function Get-CouchDBReplication () {
         [switch] $Ssl
     )
     $Database = "_replicator"
-    if ($null -eq (Test-CouchDBDatabase -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
+    if (-not(Test-CouchDBDatabase -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
         throw "Database replicator $Database not exists."
     }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
@@ -3074,7 +3116,7 @@ function Set-CouchDBReplication () {
         [switch] $Ssl
     )
     $Database = "_replicator"
-    if ($null -eq (Test-CouchDBDatabase -Database $Database -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
+    if (-not(Test-CouchDBDatabase -Database $Database -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
         throw "Database _replicator not exists."
     }
     if ($Continuous.IsPresent) {
@@ -3951,11 +3993,11 @@ function New-CouchDBReplication () {
     $Server = $SourceServer
     $Port = $SourcePort
     # Check if replicator database exists
-    if (-not(Get-CouchDBDatabase -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
+    if (-not(Test-CouchDBDatabase -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
         New-CouchDBDatabase -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl | Out-Null
     }
     # Check if target database exists
-    if (-not(Get-CouchDBDatabase -Server $Server -Port $Port -Database $TargetDatabase -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
+    if (-not(Test-CouchDBDatabase -Server $Server -Port $Port -Database $TargetDatabase -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
         New-CouchDBDatabase -Server $Server -Port $Port -Database $TargetDatabase -Authorization $Authorization -Ssl:$Ssl | Out-Null
     }
     # Set protocol
@@ -4576,7 +4618,7 @@ function Remove-CouchDBReplication () {
         [switch] $Ssl
     )
     $Database = "_replicator"
-    if ($null -eq (Test-CouchDBDatabase -Database $Database -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
+    if (-not(Test-CouchDBDatabase -Database $Database -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
         throw "Database _replicator is not exists."
     }
     if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove replication $Document ?","Remove $Document")) {

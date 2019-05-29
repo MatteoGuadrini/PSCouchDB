@@ -1,7 +1,7 @@
 # The complete and powerfull powershell module for CouchDB v2.X
 [Powershell](https://github.com/PowerShell/PowerShell "Powershell source") meet [CouchDB](http://couchdb.apache.org/ "CouchDB site")
 
-<img src="https://i.ibb.co/XWs40Sj/pscouchdb-logo.png" alt="PSCouchDB" title="PSCouchDB" width="320" height="224" />
+<img src="https://pscouchdb.readthedocs.io/en/latest/_images/pscouchdb-logo.png" alt="PSCouchDB" title="PSCouchDB" width="320" height="224" />
 
 ## Installation and simple usage
 1. Download and install CouchDB following the [docs](http://docs.couchdb.org/en/latest/install/index.html).
