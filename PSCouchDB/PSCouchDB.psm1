@@ -2446,6 +2446,9 @@ function Set-CouchDBDocument () {
     The data in Json format or hastable.
     .PARAMETER Replace
     Overwrite data.
+    .PARAMETER BatchMode
+    Write documents to the database at a higher rate by using the batch option.
+    Documents in the batch may be manually flushed by using the Write-CouchDBFullCommit cmdlet.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -2475,6 +2478,7 @@ function Set-CouchDBDocument () {
         [string] $Revision,
         $Data,
         [switch] $Replace,
+        [switch] $BatchMode,
         [string] $Authorization,
         [switch] $Ssl
     )
@@ -2487,17 +2491,21 @@ function Set-CouchDBDocument () {
         }
     }
     if (-not($Replace.IsPresent)) {
-        $OldDoc = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue
+        $OldDoc = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue
         if ($null -ne $OldDoc.psobject.properties) {
             $OldDoc.psobject.properties | ForEach-Object {
-                if (-not($Data.$($_.Name))) {
+                if (-not($Data)) {
                     $Data.Add($_.Name, $_.Value)
+                } else {
+                    $Data.$($_.Name) = $_.Value
                 }
             }
         } else {
             throw "Document $Document not found!"
         }
     }
+    # Check BatchMode
+    if ($BatchMode.IsPresent) { $Document += "?batch=ok" }
     $Data = $Data | ConvertTo-Json -Depth 99
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Revision $Revision -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }
@@ -3570,6 +3578,9 @@ function New-CouchDBDocument () {
     The CouchDB document.
     .PARAMETER Data
     The data in Json format or hastable.
+    .PARAMETER BatchMode
+    Write documents to the database at a higher rate by using the batch option.
+    Documents in the batch may be manually flushed by using the Write-CouchDBFullCommit cmdlet.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -3593,6 +3604,7 @@ function New-CouchDBDocument () {
         [string] $Document,
         [Parameter(mandatory=$true)]
         $Data,
+        [switch] $BatchMode,
         [string] $Authorization,
         [switch] $Ssl
     )
@@ -3600,6 +3612,8 @@ function New-CouchDBDocument () {
         # Json Data
         $Data = $Data | ConvertTo-Json -Depth 99
     }
+    # Check BatchMode
+    if ($BatchMode.IsPresent) { $Document += "?batch=ok" }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }
 

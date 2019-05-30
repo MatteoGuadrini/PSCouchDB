@@ -47,7 +47,7 @@ Same thing of the single node, but with two or more nodes. By default the nodes 
 Nodes
 =====
 
-Nodes are the songoli elements of a cluster. by element we mean a server, local or remote. To verify the active cluster nodes, run:
+Nodes are the single elements of a cluster. by element we mean a server, local or remote. To verify the active cluster nodes, run:
 
 .. code-block:: powershell
 

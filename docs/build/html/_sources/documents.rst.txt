@@ -37,6 +37,17 @@ To creates a new named document, or creates a new revision of the existing docum
     $data = '{"planet":"Magrathea", "name":"Slartibartfast"}'
     New-CouchDBDocument -Database test -Document "Hitchhikers" -Data $data -Authorization "admin:password"
 
+There is also the possibility of enabling a batch mode.
+
+.. code-block:: powershell
+
+    $data = '{"planet":"Magrathea", "name":"Slartibartfast"}'
+    New-CouchDBDocument -Database test -Document "Hitchhikers" -Data $data -BatchMode -Authorization "admin:password"
+    Write-CouchDBFullCommit -Database test -Authorization "admin:password"
+
+.. note::
+    Until you run the ``Write-CouchDBFullCommit`` cmdlet, the document will not be written to disk but kept only in memory. This can be useful in case of bulk writing.
+
 Modify a document
 __________________
 

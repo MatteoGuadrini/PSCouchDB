@@ -373,13 +373,13 @@ Documents
 
 .. code-block:: powershell
 
-    New-CouchDBDocument [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [-Data] <Object> [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    New-CouchDBDocument [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [-Data] <Object> [-BatchMode] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
 
 **Set-CouchDBDocument**
 
 .. code-block:: powershell
 
-    Set-CouchDBDocument [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [-Revision] <String> [[-Data] <Object>] [-Replace] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    Set-CouchDBDocument [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [-Revision] <String> [[-Data] <Object>] [-Replace] [-BatchMode] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
 
 **Remove-CouchDBDocument**
 

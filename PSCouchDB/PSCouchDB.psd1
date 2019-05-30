@@ -255,7 +255,7 @@
             ProjectUri = 'https://matteoguadrini.github.io/PSCouchDB'
 
             # A URL to an icon representing this module.
-            IconUri = 'https://i.ibb.co/XWs40Sj/pscouchdb-logo.png'
+            IconUri = 'https://pscouchdb.readthedocs.io/en/latest/_images/pscouchdb-logo.png'
 
             # ReleaseNotes of this module
             # ReleaseNotes = ''

@@ -34,9 +34,3 @@ Welcome to PSCouchDB's documentation!
     classes
     uses
     support
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`search`
