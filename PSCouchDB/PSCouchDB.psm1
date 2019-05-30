@@ -4765,6 +4765,8 @@ function Search-CouchDBFullText () {
     The CouchDB database.
     .PARAMETER Patterns
     The pattern for full text search.
+    .PARAMETER UseQueries
+    Use an array patterns of query objects with fields for the parameters of each individual view query to be executed.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -4773,7 +4775,10 @@ function Search-CouchDBFullText () {
     This modify protocol to https and port to 6984.
     .EXAMPLE
     Search-CouchDBFullText -Database test -Patterns "space","planet"
-    This example search the word "space" and "planet in each document of database test".
+    This example search the word "space" and "planet" in each document of database test.
+    .EXAMPLE
+    Search-CouchDBFullText -Database test -Patterns "space","planet" -UseQueries
+    This example search the word "space" and "planet" in each document of database test, using queries mode.
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/documents.html#search-a-document
     #>
@@ -4785,26 +4790,42 @@ function Search-CouchDBFullText () {
         [string] $Database,
         [Parameter(mandatory=$true)]
         [array] $Patterns,
+        [switch] $UseQueries,
         [string] $Authorization,
         [switch] $Ssl
     )
-    $result = [PSCustomObject]@{
-        total_rows      = 0
-        rows            = New-Object System.Collections.Generic.List[System.Object]
-    }
-    foreach ($doc in (Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl).rows) {
-        $json = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $doc.id -Authorization $Authorization -Ssl:$Ssl | ConvertTo-Json -Depth 99
-        foreach ($Pattern in $Patterns) {
-            if ($json -match "$Pattern") {
-                $convert = $json | ConvertFrom-Json
-                if ($result.rows -notcontains $convert) {
-                    $result.total_rows += 1
-                    $result.rows.Add($convert)
+    # Check if UseQueries has been used
+    if ($UseQueries.IsPresent) {
+        $Data = @"
+        {
+            "queries": [
+                {
+                    "keys": $($Patterns | ConvertTo-Json -Compress)
+                }
+            ]
+        }
+"@
+        $Document = "_all_docs/queries"
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    } else {
+        $result = [PSCustomObject]@{
+            total_rows      = 0
+            rows            = New-Object System.Collections.Generic.List[System.Object]
+        }
+        foreach ($doc in (Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl).rows) {
+            $json = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $doc.id -Authorization $Authorization -Ssl:$Ssl | ConvertTo-Json -Depth 99
+            foreach ($Pattern in $Patterns) {
+                if ($json -match "$Pattern") {
+                    $convert = $json | ConvertFrom-Json
+                    if ($result.rows -notcontains $convert) {
+                        $result.total_rows += 1
+                        $result.rows.Add($convert)
+                    }
                 }
             }
         }
+        return $result
     }
-    return $result
 }
 
 function Find-CouchDBDocuments () {

@@ -441,8 +441,8 @@ Documents
 
 .. code-block:: powershell
 
-    Search-CouchDBFullText [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Patterns] <Array> [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
-
+    Search-CouchDBFullText [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Patterns] <Array> [-UseQueries] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    
 **Find-CouchDBDocuments**
 
 .. code-block:: powershell
