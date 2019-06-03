@@ -1079,6 +1079,8 @@ function Get-CouchDBDatabaseChanges () {
     The CouchDB database.
     .PARAMETER Filter
     Reference to a filter function from a design document that will filter whole stream emitting only filtered events.
+    .PARAMETER Continuous
+    Sends a line of JSON per event. Keeps the socket open until timeout.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -1098,6 +1100,7 @@ function Get-CouchDBDatabaseChanges () {
         [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Database,
         [array] $Filter,
+        [switch] $Continuous ,
         [string] $Authorization,
         [switch] $Ssl
     )
@@ -1108,6 +1111,10 @@ function Get-CouchDBDatabaseChanges () {
     if ($Filter) {
         $Document += '?filter=_doc_ids'
         $Data = "{ `"doc_ids`": $($Filter | ConvertTo-Json -Compress) }"
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    } elseif ($Continuous.IsPresent) { 
+        $Document += '?feed=continuous'
+        $Data = "{}"
         Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
     } else {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
