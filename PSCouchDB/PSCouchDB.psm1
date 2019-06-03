@@ -1077,6 +1077,8 @@ function Get-CouchDBDatabaseChanges () {
     The CouchDB server port. Default is 5984.
     .PARAMETER Database
     The CouchDB database.
+    .PARAMETER Filter
+    Reference to a filter function from a design document that will filter whole stream emitting only filtered events.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -1095,14 +1097,21 @@ function Get-CouchDBDatabaseChanges () {
         [int] $Port,
         [Parameter(mandatory=$true,ValueFromPipeline=$true)]
         [string] $Database,
+        [array] $Filter,
         [string] $Authorization,
         [switch] $Ssl
     )
-    if (-not(Test-CouchDBDatabase -Database $Database -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
+    if (-not(Test-CouchDBDatabase -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
         throw "Database $Database is not exists."
     }
     $Document = '_changes'
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+    if ($Filter) {
+        $Document += '?filter=_doc_ids'
+        $Data = "{ `"doc_ids`": $($Filter | ConvertTo-Json -Compress) }"
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    } else {
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+    }
 }
 
 function Get-CouchDBDatabaseUpdates () {
