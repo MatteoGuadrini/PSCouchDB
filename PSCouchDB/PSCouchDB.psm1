@@ -88,7 +88,7 @@ class PSCouchDBQuery {
     $query = New-Object PSCouchDBQuery
     #>
     # Properties of query
-    [hashtable]$selector = @{}
+    [hashtable]$selector = @{ }
     [int]$limit
     [int]$skip
     [array]$sort = @()
@@ -103,9 +103,9 @@ class PSCouchDBQuery {
 
     # Hidden properties
     hidden [int]$Depth
-    hidden [ValidateSet('$and','$or','$not','$nor','$all','$elemMatch','$allMatch')]
+    hidden [ValidateSet('$and', '$or', '$not', '$nor', '$all', '$elemMatch', '$allMatch')]
     [string]$LogicalOperator
-    hidden [ValidateSet('$lt','$lte','$eq','$ne','$gte','$gt','$exists','$type','$in','$nin','$size','$mod','$regex')]
+    hidden [ValidateSet('$lt', '$lte', '$eq', '$ne', '$gte', '$gt', '$exists', '$type', '$in', '$nin', '$size', '$mod', '$regex')]
     [string]$operator
 
     # Method for add selector key=value
@@ -168,7 +168,7 @@ class PSCouchDBQuery {
 
     # Method for removing one sort properties
     RemoveSort ($sort) {
-        $newsort = $this.sort | Where-Object { $_.Keys.Where({$_ -ne $sort}) }
+        $newsort = $this.sort | Where-Object { $_.Keys.Where( { $_ -ne $sort }) }
         $this.sort = $newsort
     }
 
@@ -243,17 +243,17 @@ class PSCouchDBQuery {
             $clone_selector = $this.selector.Clone()
             $this.selector.Clear()
             # Check if array or selector
-            if (('$and','$or','$nor','$all') -contains $operator ) {
+            if (('$and', '$or', '$nor', '$all') -contains $operator ) {
                 # Array
                 $this.selector.Add($operator, @())
                 foreach ($selector in $clone_selector.Keys) {
                     $this.selector."$operator" += @{ $selector = $clone_selector[$selector] }
                 }
-                $this.Depth = $this.Depth +2
+                $this.Depth = $this.Depth + 2
             } else {
                 # Selector
                 $this.selector.Add($operator, $clone_selector)
-                $this.Depth = $this.Depth +1
+                $this.Depth = $this.Depth + 1
             }
         } else {
             throw "One or more selector are required!"
@@ -267,14 +267,14 @@ class PSCouchDBQuery {
             $clone_selector = $this.selector.Clone()
             $this.selector.Clear()
             # Check if array, selector or json
-            if (('$lt','$lte','$eq','$ne','$gte','$gt','$exists','$type','$mod','$regex') -contains $operator) {
+            if (('$lt', '$lte', '$eq', '$ne', '$gte', '$gt', '$exists', '$type', '$mod', '$regex') -contains $operator) {
                 # JSON
                 foreach ($selector in $clone_selector.Keys) {
-                    if (('$and','$or','$not','$nor','$all','$elemMatch','$allMatch') -contains $selector) {
+                    if (('$and', '$or', '$not', '$nor', '$all', '$elemMatch', '$allMatch') -contains $selector) {
                         $this.selector.Add($selector, $clone_selector[$selector])
                         continue
                     }
-                    $this.selector.Add($selector, @{})
+                    $this.selector.Add($selector, @{ })
                     if ($null -ne ($clone_selector[$selector] -as [int])) {
                         $this.selector.$selector.Add($operator, [int]$clone_selector[$selector])
                     } elseif (($clone_selector[$selector] -eq "true") -or ($clone_selector[$selector] -eq "false")) {
@@ -283,14 +283,14 @@ class PSCouchDBQuery {
                         $this.selector.$selector.Add($operator, $clone_selector[$selector])
                     }
                 }
-            } elseif (('$in','$nin','$size') -contains $operator) {
+            } elseif (('$in', '$nin', '$size') -contains $operator) {
                 # Array
                 foreach ($selector in $clone_selector.Keys) {
-                    if (('$and','$or','$not','$nor','$all','$elemMatch','$allMatch') -contains $selector) {
+                    if (('$and', '$or', '$not', '$nor', '$all', '$elemMatch', '$allMatch') -contains $selector) {
                         $this.selector.Add($selector, $clone_selector[$selector])
                         continue
                     }
-                    $this.selector.Add($selector, @{})
+                    $this.selector.Add($selector, @{ })
                     if ($null -ne ($clone_selector[$selector] -as [int])) {
                         $this.selector.$selector.Add($operator, @([int]$clone_selector[$selector]))
                     } elseif (($clone_selector[$selector] -eq "true") -or ($clone_selector[$selector] -eq "false")) {
@@ -300,7 +300,7 @@ class PSCouchDBQuery {
                     }
                 }
             }
-            $this.Depth = $this.Depth +3
+            $this.Depth = $this.Depth + 3
         } else {
             throw "One or more selector are required!"
         }
@@ -311,10 +311,10 @@ class PSCouchDBQuery {
         if ($this.selector.Count -ne 0) {
             $this.operator = $operator
             if ($this.selector.ContainsKey($key)) {
-                if (-not(('$and','$or','$not','$nor','$all','$elemMatch','$allMatch') -contains $key)) {
+                if (-not(('$and', '$or', '$not', '$nor', '$all', '$elemMatch', '$allMatch') -contains $key)) {
                     # Check if array, selector or json
-                    $this.selector.$key = @{}
-                    if (('$lt','$lte','$eq','$ne','$gte','$gt','$exists','$type','$mod','$regex') -contains $operator) {
+                    $this.selector.$key = @{ }
+                    if (('$lt', '$lte', '$eq', '$ne', '$gte', '$gt', '$exists', '$type', '$mod', '$regex') -contains $operator) {
                         # JSON
                         if ($null -ne ($value -as [int])) {
                             $this.selector.$key.Add($operator, [int]$value)
@@ -323,7 +323,7 @@ class PSCouchDBQuery {
                         } else {
                             $this.selector.$key.Add($operator, $value)
                         }
-                    } elseif (('$in','$nin','$size') -contains $operator) {
+                    } elseif (('$in', '$nin', '$size') -contains $operator) {
                         # Array
                         if ($null -ne ($value -as [int])) {
                             $this.selector.$key.Add($operator, @([int]$value))
@@ -334,7 +334,7 @@ class PSCouchDBQuery {
                         }
                     }
                 }
-                $this.Depth = $this.Depth +3
+                $this.Depth = $this.Depth + 3
             } else {
                 throw "selector $key not exists!"
             }
@@ -345,7 +345,7 @@ class PSCouchDBQuery {
 
     # Method for get a native query in json format
     [string] GetNativeQuery () {
-        [hashtable]$query = @{}
+        [hashtable]$query = @{ }
         if ($this.selector.PSBase.Count -ne 0) {
             $query.selector = $this.selector
             $this.Depth = $this.Depth + $query.selector.PSBase.Count
@@ -363,7 +363,7 @@ class PSCouchDBQuery {
         if ($this.stable) { $query.stable = $this.stable }
         if ($this.stale) { $query.stale = $this.stale }
         if ($this.execution_stats) { $query.execution_stats = $this.execution_stats }
-        return $query | ConvertTo-Json -Depth ($this.Depth +1)
+        return $query | ConvertTo-Json -Depth ($this.Depth + 1)
     }
 }
 
@@ -378,9 +378,9 @@ class PSCouchDBDesignDoc {
     $design_doc = New-Object PSCouchDBDesignDoc
     #>
     # Properties of design document
-    [hashtable]$views = @{}
-    [hashtable]$shows = @{}
-    [hashtable]$lists = @{}
+    [hashtable]$views = @{ }
+    [hashtable]$shows = @{ }
+    [hashtable]$lists = @{ }
     [string]$validate_doc_update
 
     # Hidden properties
@@ -401,7 +401,7 @@ function(doc) {
     emit(doc._id, doc._rev)
 }
 "@
-            $this.views.Add("$name", @{})
+            $this.views.Add("$name", @{ })
             $this.views.$name.Add("map", $map)
             $this.Depth++
         } else {
@@ -420,7 +420,7 @@ function(doc) {
     }
 }
 "@
-            $this.views.Add("$name", @{})
+            $this.views.Add("$name", @{ })
             $this.views.$name.Add("map", $map)
             $this.Depth++
         } else {
@@ -439,7 +439,7 @@ function(doc) {
     }
 }
 "@
-            $this.views.Add("$name", @{})
+            $this.views.Add("$name", @{ })
             $this.views.$name.Add("map", $map)
             $this.Depth++
         } else {
@@ -463,7 +463,7 @@ function(doc) {
     }
 }
 "@
-            $this.views.Add("$name", @{})
+            $this.views.Add("$name", @{ })
             $this.views.$name.Add("map", $map)
             $this.Depth++
         } else {
@@ -627,13 +627,13 @@ function(newDoc, oldDoc, userCtx) {
 
     # Method for get native json design documents format
     [string] GetDesignDocuments () {
-        [hashtable]$json = @{}
+        [hashtable]$json = @{ }
         if ($this.views.PSBase.Count -ne 0) { $json.Add('views', $this.views) }
         if ($this.shows.PSBase.Count -ne 0) { $json.Add('shows', $this.shows) }
         if ($this.lists.PSBase.Count -ne 0) { $json.Add('lists', $this.lists) }
         if ($this.validate_doc_update) { $json.Add('validate_doc_update', $this.validate_doc_update) }
         $json.Add('language', $this.language)
-        return $json | ConvertTo-Json -Depth ($this.Depth +1)
+        return $json | ConvertTo-Json -Depth ($this.Depth + 1)
     }
 }
 
@@ -706,7 +706,7 @@ function Send-CouchDBRequest {
     #>
     [CmdletBinding()]
     param (
-        [ValidateSet("HEAD","GET","PUT","DELETE","POST")] [string] $Method,
+        [ValidateSet("HEAD", "GET", "PUT", "DELETE", "POST")] [string] $Method,
         [string] $Server,
         [int] $Port,
         [string] $Database,
@@ -748,17 +748,17 @@ function Send-CouchDBRequest {
         Write-Debug -Message "`$Protocol is $Protocol"
     }
     # Initialize option of command
-    $options = @{}
+    $options = @{ }
     # Analize method for web request
     Write-Verbose -Message "Check http method, default is GET"
     Write-Debug -Message "`$Method is $Method"
     switch ($Method) {
-        "HEAD"      { $options.Add("Method","HEAD") }
-        "GET"       { $options.Add("Method","GET") }
-        "PUT"       { $options.Add("Method","PUT") }
-        "DELETE"    { $options.Add("Method","DELETE") }
-        "POST"      { $options.Add("Method","POST") }
-        Default     { $options.Add("Method","GET") }
+        "HEAD" { $options.Add("Method", "HEAD") }
+        "GET" { $options.Add("Method", "GET") }
+        "PUT" { $options.Add("Method", "PUT") }
+        "DELETE" { $options.Add("Method", "DELETE") }
+        "POST" { $options.Add("Method", "POST") }
+        Default { $options.Add("Method", "GET") }
     }
     # Build the url
     Write-Verbose -Message "Build the url"
@@ -781,14 +781,14 @@ function Send-CouchDBRequest {
         Write-Debug -Message "`$Attachment is $Attachment"
         if (Test-Path $Attachment) {
             $AttachmentName = (Get-Item $Attachment).Name
-            $options.Add("ContentType","multipart/form-data")
-            $options.Add("InFile",$Attachment)
+            $options.Add("ContentType", "multipart/form-data")
+            $options.Add("InFile", $Attachment)
             Write-Debug -Message "Tested attachment path $Attachment"
         } else {
             $AttachmentName = $Attachment
             Write-Debug -Message "Tested name of attachment $AttachmentName"
             if ($OutFile) {
-                $options.Add("OutFile",$OutFile)
+                $options.Add("OutFile", $OutFile)
                 Write-Debug -Message "Get attachment $AttachmentName to file $OutFile"
             }
         }
@@ -802,23 +802,23 @@ function Send-CouchDBRequest {
     }
     # Add url
     Write-Verbose -Message "Compose the url: $url"
-    $options.Add("Uri",$url)
+    $options.Add("Uri", $url)
     # Check session
     if (-not($couchdb_session) -or ($Authorization)) {
         # Check the credential for access on database
         Write-Verbose -Message "Check authorization"
         $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(($Authorization)))
-        $options.Add("Headers",@{Authorization=("Basic {0}" -f $base64AuthInfo)})
+        $options.Add("Headers", @{Authorization = ("Basic {0}" -f $base64AuthInfo) })
         Write-Debug -Message "`$Authorization is $Authorization"
-        $options.Add("SessionVariable","couchdb_session")
+        $options.Add("SessionVariable", "couchdb_session")
     } else {
-        $options.Add("WebSession",$couchdb_session)
+        $options.Add("WebSession", $couchdb_session)
     }
     # Build the json data
     Write-Verbose -Message "Check json data"
     if (($Data) -and ($Database)) {
-        $options.Add("ContentType","application/json")
-        $options.Add("Body",([System.Text.Encoding]::UTF8.GetBytes($Data)))
+        $options.Add("ContentType", "application/json")
+        $options.Add("Body", ([System.Text.Encoding]::UTF8.GetBytes($Data)))
         Write-Debug -Message "`$Data is $Data"
         Write-Verbose -Message "`$Data is $Data"
     }
@@ -934,7 +934,7 @@ function Test-CouchDBDatabase () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
         [string] $Authorization,
         [switch] $Ssl
@@ -972,7 +972,7 @@ function Get-CouchDBDatabase () {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(ValueFromPipeline=$true)]
+        [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
         [string] $Database = "_all_dbs",
@@ -1010,7 +1010,7 @@ function Get-CouchDBDatabasePurgedLimit () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
         [string] $Authorization,
         [switch] $Ssl
@@ -1047,7 +1047,7 @@ function Get-CouchDBDatabaseInfo () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(ValueFromPipeline=$true)]
+        [Parameter(ValueFromPipeline = $true)]
         [array] $Keys,
         [string] $Authorization,
         [switch] $Ssl
@@ -1097,7 +1097,7 @@ function Get-CouchDBDatabaseChanges () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
         [array] $Filter,
         [switch] $Continuous ,
@@ -1145,7 +1145,7 @@ function Get-CouchDBDatabaseUpdates () {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(ValueFromPipeline=$true)]
+        [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
         [string] $Authorization,
@@ -1183,7 +1183,7 @@ function Get-CouchDBDatabaseShards () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
         [string] $Authorization,
         [switch] $Ssl
@@ -1215,6 +1215,24 @@ function Get-CouchDBDocument () {
     Return all CouchDB db revisions.
     .PARAMETER History
     Return all info CouchDB db revisions.
+    .PARAMETER Attachments
+    Includes attachments bodies in response.
+    .PARAMETER AttachmentsInfo
+    Includes encoding information in attachment stubs if the particular attachment is compressed.
+    .PARAMETER AttachmentsSince
+    Includes attachments only since specified revisions. Doesn’t includes attachments for specified revisions.
+    .PARAMETER Conflicts
+    Includes information about conflicts in document.
+    .PARAMETER DeletedConflicts
+    Includes information about deleted conflicted revisions.
+    .PARAMETER Latest
+    Forces retrieving latest “leaf” revision, no matter what rev was requested.
+    .PARAMETER LocalSequence
+    Includes last update sequence for the document.
+    .PARAMETER Metadata
+    Acts same as specifying all conflicts, deleted_conflicts and revs_info query parameters.
+    .PARAMETER OpenRevisions
+    Retrieves documents of specified leaf revisions. Additionally, value all id default and  to return all leaf revisions.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -1237,24 +1255,170 @@ function Get-CouchDBDocument () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
         [string] $Document = "_all_docs",
         [string] $Revision,
         [switch] $Local,
         [switch] $Revisions,
         [switch] $History,
+        [switch] $Attachments,
+        [switch] $AttachmentsInfo,
+        [ValidateCount(2, 10)]
+        [array] $AttachmentsSince,
+        [switch] $Conflicts,
+        [switch] $DeletedConflicts,
+        [switch] $Latest,
+        [switch] $LocalSequence,
+        [switch] $Metadata,
+        [array] $OpenRevisions,
         [string] $Authorization,
         [switch] $Ssl
     )
+    # Check local docs
     if ($Local.IsPresent) {
+        if ($Document -ne '_all_docs') {
+            Write-Warning -Message "`$Document $Document parameter is rewrite in _local_docs because -Local parameter is specified."
+        }
         $Document = "_local_docs"
-    } elseif ($Revisions.IsPresent) {
-        $Document = $Document + "?revs=true"
-    } elseif ($History.IsPresent) {
-        $Document = $Document + "?revs_info=true"
     }
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization -Ssl:$Ssl
+    # Select a revision
+    if ($Revision) {
+        $Document += "?rev=$Revision"
+    }
+    # Check various parameter
+    if ($Revisions.IsPresent) {
+        if ($Document -ne '_all_docs') {
+            if ($Document -match "\?") {
+                $Document += "&revs=true"
+            } else {
+                $Document += "?revs=true"
+            }
+        } else {
+            Write-Error -Message "revs= parameter is not compatible with _all_docs"
+        }
+    } 
+    if ($History.IsPresent) {
+        if ($Document -ne '_all_docs') {
+            if ($Document -match "\?") {
+                $Document += "&revs_info=true"
+            } else {
+                $Document += "?revs_info=true"
+            }
+        } else {
+            Write-Error -Message "revs_info= parameter is not compatible with _all_docs"
+        }
+    } 
+    if ($Attachments.IsPresent) {
+        if ($Document -ne '_all_docs') {
+            if ($Document -match "\?") {
+                $Document += "&attachments=true"
+            } else {
+                $Document += "?attachments=true"
+            }
+        } else {
+            Write-Error -Message "attachments= parameter is not compatible with _all_docs"
+        }
+    } 
+    if ($AttachmentsInfo.IsPresent) {
+        if ($Document -ne '_all_docs') {
+            if ($Document -match "\?") {
+                $Document += "&att_encoding_info=true"
+            } else {
+                $Document += "?att_encoding_info=true"
+            }
+        } else {
+            Write-Error -Message "att_encoding_info= parameter is not compatible with _all_docs"
+        }
+    } 
+    if ($AttachmentsSince) {
+        if ($Document -ne '_all_docs') {
+            if ($Document -match "\?") {
+                $Document += "&atts_since=$($AttachmentsSince | ConvertTo-Json -Compress)"
+            } else {
+                $Document += "?atts_since=$($AttachmentsSince | ConvertTo-Json -Compress)"
+            }
+        } else {
+            Write-Error -Message "atts_since= parameter is not compatible with _all_docs"
+        }
+    } 
+    if ($Conflicts.IsPresent) {
+        if ($Document -ne '_all_docs') {
+            if ($Document -match "\?") {
+                $Document += "&conflicts=true"
+            } else {
+                $Document += "?conflicts=true"
+            }
+        } else {
+            Write-Error -Message "atts_since= parameter is not compatible with _all_docs"
+        }
+    } 
+    if ($DeletedConflicts.IsPresent) {
+        if ($Document -ne '_all_docs') {
+            if ($Document -match "\?") {
+                $Document += "&deleted_conflicts=true"
+            } else {
+                $Document += "?deleted_conflicts=true"
+            }
+        } else {
+            Write-Error -Message "atts_since= parameter is not compatible with _all_docs"
+        }
+    }
+    if ($Latest.IsPresent) {
+        if ($Document -ne '_all_docs') {
+            if ($Document -match "\?") {
+                $Document += "&latest=true"
+            } else {
+                $Document += "?latest=true"
+            }
+        } else {
+            Write-Error -Message "atts_since= parameter is not compatible with _all_docs"
+        }
+    }
+    if ($LocalSequence.IsPresent) {
+        if ($Document -ne '_all_docs') {
+            if ($Document -match "\?") {
+                $Document += "&latest=true"
+            } else {
+                $Document += "?latest=true"
+            }
+        } else {
+            Write-Error -Message "atts_since= parameter is not compatible with _all_docs"
+        }
+    }
+    if ($Metadata.IsPresent) {
+        if ($Document -ne '_all_docs') {
+            if ($Document -match "\?") {
+                $Document += "&meta=true"
+            } else {
+                $Document += "?meta=true"
+            }
+        } else {
+            Write-Error -Message "meta= parameter is not compatible with _all_docs"
+        }
+    }
+    if ($OpenRevisions) {
+        if ($Document -ne '_all_docs') {
+            if ($Document -match "\?") {
+                $Document += "&open_revs=$($OpenRevisions | ConvertTo-Json -Compress)"
+            } else {
+                $Document += "?open_revs=$($OpenRevisions | ConvertTo-Json -Compress)"
+            }
+        } else {
+            Write-Error -Message "open_revs= parameter is not compatible with _all_docs"
+        }
+    } else {
+        if ($Document -ne '_all_docs') {
+            if ($Document -match "\?") {
+                $Document += '&open_revs=all'
+            } else {
+                $Document += '?open_revs=all'
+            }
+        } else {
+            Write-Error -Message "open_revs= parameter is not compatible with _all_docs"
+        }
+    }
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Get-CouchDBBulkDocument () {
@@ -1287,9 +1451,9 @@ function Get-CouchDBBulkDocument () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Database,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [array] $Document,
         [string] $Authorization,
         [switch] $Ssl
@@ -1339,9 +1503,9 @@ function Get-CouchDBDesignDocument () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Database,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Document,
         [string] $Authorization,
         [switch] $Ssl
@@ -1378,7 +1542,7 @@ function Get-CouchDBDatabaseDesignDocument () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
         [string] $Authorization,
         [switch] $Ssl
@@ -1437,11 +1601,11 @@ function Get-CouchDBAttachment () {
         [int] $Port,
         [Parameter(ParameterSetName = "Attachment")]
         [Parameter(ParameterSetName = "Info")]
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Database,
         [Parameter(ParameterSetName = "Attachment")]
         [Parameter(ParameterSetName = "Info")]
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Document,
         [Parameter(ParameterSetName = "Attachment")]
         [Parameter(ParameterSetName = "Info")]
@@ -1450,7 +1614,7 @@ function Get-CouchDBAttachment () {
         [switch] $Info,
         [Parameter(ParameterSetName = "Attachment")]
         [Parameter(ParameterSetName = "Info")]
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Attachment,
         [Parameter(ParameterSetName = "Attachment")]
         [Parameter(ParameterSetName = "Info")]
@@ -1498,7 +1662,7 @@ function Get-CouchDBUser () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Userid,
         [string] $Authorization,
         [switch] $Ssl
@@ -1534,10 +1698,10 @@ function Get-CouchDBAdmin () {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(ValueFromPipeline=$true)]
+        [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
-        [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).all_nodes -contains "couchdb@localhost") {"couchdb@localhost"} else {"couchdb@127.0.0.1"}),
+        [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).all_nodes -contains "couchdb@localhost") { "couchdb@localhost" } else { "couchdb@127.0.0.1" }),
         [string] $Authorization,
         [switch] $Ssl
     )
@@ -1574,7 +1738,7 @@ function Get-CouchDBDatabaseSecurity () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
         [string] $Authorization,
         [switch] $Ssl
@@ -1609,10 +1773,10 @@ function Get-CouchDBConfiguration () {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(ValueFromPipeline=$true)]
+        [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
-        [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).all_nodes -contains "couchdb@localhost") {"couchdb@localhost"} else {"couchdb@127.0.0.1"}),
+        [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).all_nodes -contains "couchdb@localhost") { "couchdb@localhost" } else { "couchdb@127.0.0.1" }),
         [string] $Authorization,
         [switch] $Ssl
     )
@@ -1645,7 +1809,7 @@ function Get-CouchDBNode () {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(ValueFromPipeline=$true)]
+        [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
         [string] $Authorization,
@@ -1686,7 +1850,7 @@ function Get-CouchDBReplication () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(ValueFromPipeline=$true)]
+        [Parameter(ValueFromPipeline = $true)]
         [string] $Document = '_all_docs',
         [string] $Authorization,
         [switch] $Ssl
@@ -1722,7 +1886,7 @@ function Get-CouchDBReplicationScheduler () {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(ValueFromPipeline=$true)]
+        [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
         [string] $Authorization,
@@ -1757,7 +1921,7 @@ function Get-CouchDBReplicationDocument () {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(ValueFromPipeline=$true)]
+        [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
         [string] $Authorization,
@@ -1792,7 +1956,7 @@ function Get-CouchDBActiveTask () {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(ValueFromPipeline=$true)]
+        [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
         [string] $Authorization,
@@ -1826,7 +1990,7 @@ function Get-CouchDBClusterSetup () {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(ValueFromPipeline=$true)]
+        [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
         [string] $Authorization,
@@ -1864,7 +2028,7 @@ function Get-CouchDBIndex () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
         [string] $Authorization,
         [switch] $Ssl
@@ -1904,16 +2068,16 @@ function Get-CouchDBMissingRevision () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Database,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Document,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [array] $Revision,
         [string] $Authorization,
         [switch] $Ssl
     )
-    $Data = @{$Document = $Revision}
+    $Data = @{$Document = $Revision }
     $Data = $Data | ConvertTo-Json
     $Database = $Database + '/_missing_revs'
     Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
@@ -1950,16 +2114,16 @@ function Get-CouchDBRevisionDifference () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Database,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Document,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [array] $Revision,
         [string] $Authorization,
         [switch] $Ssl
     )
-    $Data = @{$Document = $Revision}
+    $Data = @{$Document = $Revision }
     $Data = $Data | ConvertTo-Json
     $Database = $Database + '/_revs_diff'
     Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
@@ -1992,7 +2156,7 @@ function Get-CouchDBRevisionLimit () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
         [string] $Authorization,
         [switch] $Ssl
@@ -2024,7 +2188,7 @@ function Get-CouchDBSession () {
     https://pscouchdb.readthedocs.io/en/latest/auth.html
     #>
     param(
-        [Parameter(ValueFromPipeline=$true)]
+        [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
         [string] $Authorization,
@@ -2062,7 +2226,7 @@ function Sync-CouchDBDatabaseShards () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
         [string] $Authorization,
         [switch] $Ssl
@@ -2110,11 +2274,11 @@ function Copy-CouchDBDocument () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Database,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Document,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Destination,
         [string] $Revision,
         [string] $Authorization,
@@ -2167,7 +2331,7 @@ function Measure-CouchDBStatistics () {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(ValueFromPipeline=$true)]
+        [Parameter(ValueFromPipeline = $true)]
         [string] $Server = 'localhost',
         [int] $Port,
         [switch] $System,
@@ -2210,7 +2374,7 @@ function Clear-CouchDBView () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
         [string] $Authorization,
         [switch] $Ssl
@@ -2251,18 +2415,18 @@ function Clear-CouchDBDocuments () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Database,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Document,
         [string] $Authorization,
         [switch] $Force,
         [switch] $Ssl
     )
-    $Data = @{$Document = @((Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl)._rev)}
+    $Data = @{$Document = @((Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl)._rev) }
     $Data = $Data | ConvertTo-Json
     $Database = $Database + '/_purge'
-    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish to purge permanently document ?","Purge permanently document")) {
+    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish to purge permanently document ?", "Purge permanently document")) {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
     }
 }
@@ -2298,7 +2462,7 @@ function Add-CouchDBNode () {
         [string] $Server,
         [int] $Port,
         [int] $BindPort = 5984,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $BindAddress,
         [string] $Authorization,
         [switch] $Ssl
@@ -2347,7 +2511,7 @@ function Compress-CouchDBDatabase () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
         [string] $Authorization,
         [switch] $Ssl
@@ -2388,9 +2552,9 @@ function Compress-CouchDBDesignDocument () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Database,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $DesignDoc,
         [string] $Authorization,
         [switch] $Ssl
@@ -2430,9 +2594,9 @@ function Set-CouchDBDatabasePurgedLimit () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [int] $Limit,
         [string] $Authorization,
         [switch] $Ssl
@@ -2486,11 +2650,11 @@ function Set-CouchDBDocument () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Database,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Document,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Revision,
         $Data,
         [switch] $Replace,
@@ -2501,7 +2665,7 @@ function Set-CouchDBDocument () {
     if ($null -eq ($Data -as [hashtable])) {
         # Hashtable Data
         $Json = $Data | ConvertFrom-Json
-        $Data = @{}
+        $Data = @{ }
         $Json.psobject.properties | ForEach-Object {
             $Data.Add($_.Name, $_.Value)
         }
@@ -2566,9 +2730,9 @@ function Set-CouchDBBulkDocument () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Database,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [array] $Document,
         [array] $Revision,
         [switch] $IsDeleted,
@@ -2670,14 +2834,14 @@ function Set-CouchDBDesignDocument () {
         [Parameter(ParameterSetName = "Show")]
         [Parameter(ParameterSetName = "Validation")]
         [Parameter(ParameterSetName = "CustomData")]
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Database,
         [Parameter(ParameterSetName = "View")]
         [Parameter(ParameterSetName = "List")]
         [Parameter(ParameterSetName = "Show")]
         [Parameter(ParameterSetName = "Validation")]
         [Parameter(ParameterSetName = "CustomData")]
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Document,
         [Parameter(ParameterSetName = "View")]
         [Parameter(ParameterSetName = "List")]
@@ -2777,38 +2941,41 @@ function Set-CouchDBDesignDocument () {
     if ($PsCmdlet.ParameterSetName -eq "CustomData") {
         if ($null -ne ($Data -as [hashtable])) {
             if (-not($Data.ContainsKey('language'))) { $Data.Add('language', 'javascript') }
-            if (-not($Data.ContainsKey('views'))) { $Data.Add('views', @{}) }
-            if (-not($Data.ContainsKey('shows'))) { $Data.Add('shows', @{}) }
-            if (-not($Data.ContainsKey('lists'))) { $Data.Add('lists', @{}) }
+            if (-not($Data.ContainsKey('views'))) { $Data.Add('views', @{ }) 
+            }
+            if (-not($Data.ContainsKey('shows'))) { $Data.Add('shows', @{ }) 
+            }
+            if (-not($Data.ContainsKey('lists'))) { $Data.Add('lists', @{ }) 
+            }
             if (-not($Data.ContainsKey('validate_doc_update'))) { $Data.Add('validate_doc_update', "") }
         } elseif ($null -ne ($Data -as [string])) {
             $Data = $Data
         } else {
             $Json = $Data | ConvertFrom-Json
-            $Data = @{}
+            $Data = @{ }
             if (-not($Json.language.psobject.properties)) {
                 $Data.language = "javascript"
             }
             if (-not($Json.views.psobject.properties)) {
-                $Data.views = @{}
+                $Data.views = @{ }
             } else {
-                $Data.views = @{}
+                $Data.views = @{ }
                 $Json.views.psobject.properties | ForEach-Object {
                     $Data.views.Add($_.Name, $_.Value)
                 }
             }
             if (-not($Json.shows.psobject.properties)) {
-                $Data.shows = @{}
+                $Data.shows = @{ }
             } else {
-                $Data.shows = @{}
+                $Data.shows = @{ }
                 $Json.shows.psobject.properties | ForEach-Object {
                     $Data.shows.Add($_.Name, $_.Value)
                 }
             }
             if (-not($Json.lists.psobject.properties)) {
-                $Data.lists = @{}
+                $Data.lists = @{ }
             } else {
-                $Data.lists = @{}
+                $Data.lists = @{ }
                 $Json.lists.psobject.properties | ForEach-Object {
                     $Data.lists.Add($_.Name, $_.Value)
                 }
@@ -2914,11 +3081,11 @@ function Set-CouchDBAttachment () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Database,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Document,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Revision,
         [string] $Attachment,
         [string] $Authorization,
@@ -2962,12 +3129,12 @@ function Set-CouchDBUser () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Userid,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [SecureString] $Password,
         [array] $Roles,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Revision,
         [string] $Authorization,
         [switch] $Ssl
@@ -3023,13 +3190,13 @@ function Set-CouchDBAdmin () {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(ValueFromPipeline=$true)]
+        [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
-        [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).all_nodes -contains "couchdb@localhost") {"couchdb@localhost"} else {"couchdb@127.0.0.1"}),
-        [Parameter(mandatory=$true)]
+        [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).all_nodes -contains "couchdb@localhost") { "couchdb@localhost" } else { "couchdb@127.0.0.1" }),
+        [Parameter(mandatory = $true)]
         [string] $Userid,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [SecureString] $Password,
         [string] $Authorization,
         [switch] $Ssl
@@ -3073,15 +3240,15 @@ function Set-CouchDBConfiguration () {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(ValueFromPipeline=$true)]
+        [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
-        [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).all_nodes -contains "couchdb@localhost") {"couchdb@localhost"} else {"couchdb@127.0.0.1"}),
-        [Parameter(mandatory=$true)]
+        [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).all_nodes -contains "couchdb@localhost") { "couchdb@localhost" } else { "couchdb@127.0.0.1" }),
+        [Parameter(mandatory = $true)]
         [string] $Element,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Key,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Value,
         [string] $Authorization,
         [switch] $Ssl
@@ -3131,9 +3298,9 @@ function Set-CouchDBReplication () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Document,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Revision,
         [switch] $Continuous,
         [string] $Authorization,
@@ -3183,7 +3350,7 @@ function Set-CouchDBRevisionLimit () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
         [int] $Limit = 1000,
         [string] $Authorization,
@@ -3225,9 +3392,9 @@ function Set-CouchDBSession () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $UserId,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [SecureString] $Password,
         [switch] $Ssl
     )
@@ -3277,7 +3444,7 @@ function Grant-CouchDBDatabasePermission () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
         [array]$AdminUser,
         [array]$AdminRoles,
@@ -3369,13 +3536,13 @@ function Revoke-CouchDBDatabasePermission () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
         [string] $Authorization,
         [switch]$Force,
         [switch] $Ssl
     )
-    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish revoke all permission on database $Database ?","Revoke all permission on database $Database")) {
+    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish revoke all permission on database $Database ?", "Revoke all permission on database $Database")) {
         # Get a current security permission
         if (-not(Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document '_security' -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
             throw "No security object found in database $Database"
@@ -3399,7 +3566,7 @@ function Revoke-CouchDBDatabasePermission () {
 }
 
 function Request-CouchDBReplication () {
-   <#
+    <#
     .SYNOPSIS
     Request a replication operation.
     .DESCRIPTION
@@ -3448,9 +3615,9 @@ function Request-CouchDBReplication () {
         [string] $TargetServer = 'localhost',
         [int] $SourcePort,
         [int] $TargetPort,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $SourceDatabase,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $TargetDatabase,
         [string] $Proxy,
         [array] $Documents,
@@ -3462,7 +3629,7 @@ function Request-CouchDBReplication () {
         [switch] $Ssl
     )
     $Database = "_replicate"
-    $Json = @{}
+    $Json = @{ }
     # Set protocol
     if ($Ssl.IsPresent) {
         if (-not($SourcePort)) {
@@ -3488,23 +3655,23 @@ function Request-CouchDBReplication () {
     $Target = "${Protocol}://$TargetServer`:$TargetPort/$TargetDatabase"
     # Source
     if ($Authorization) {
-        $Json.Add("source",@{})
+        $Json.Add("source", @{ })
         $Json.source.Add("url", $Source)
-        $Json.source.Add("headers", @{})
+        $Json.source.Add("headers", @{ })
         $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(($Authorization)))
         $Json.source.headers.Add("Authorization", ("Basic {0}" -f $base64AuthInfo))
     } else {
-        $Json.Add("source",$Source)
+        $Json.Add("source", $Source)
     }
     # Target
     if ($Authorization) {
-        $Json.Add("target",@{})
+        $Json.Add("target", @{ })
         $Json.target.Add("url", $Target)
-        $Json.target.Add("headers", @{})
+        $Json.target.Add("headers", @{ })
         $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(($Authorization)))
         $Json.target.headers.Add("Authorization", ("Basic {0}" -f $base64AuthInfo))
     } else {
-        $Json.Add("target",$Target)
+        $Json.Add("target", $Target)
     }
     # Check if Continuous is true
     if ($Continuous.IsPresent) {
@@ -3568,7 +3735,7 @@ function New-CouchDBDatabase () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
         [string] $Authorization,
         [switch] $Ssl
@@ -3614,11 +3781,11 @@ function New-CouchDBDocument () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Database,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Document,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         $Data,
         [switch] $BatchMode,
         [string] $Authorization,
@@ -3707,14 +3874,14 @@ function New-CouchDBDesignDocument () {
         [Parameter(ParameterSetName = "Show")]
         [Parameter(ParameterSetName = "Validation")]
         [Parameter(ParameterSetName = "CustomData")]
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Database,
         [Parameter(ParameterSetName = "View")]
         [Parameter(ParameterSetName = "List")]
         [Parameter(ParameterSetName = "Show")]
         [Parameter(ParameterSetName = "Validation")]
         [Parameter(ParameterSetName = "CustomData")]
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Document,
         [Parameter(ParameterSetName = "View")]
         [Parameter(ParameterSetName = "List")]
@@ -3850,13 +4017,13 @@ function New-CouchDBAttachment () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Database,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Document,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Attachment,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Revision,
         [string] $Authorization,
         [switch] $Ssl
@@ -3895,12 +4062,12 @@ function New-CouchDBUser () {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(ValueFromPipeline=$true)]
+        [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Userid,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [SecureString] $Password,
         [array] $Roles,
         [string] $Authorization,
@@ -3957,13 +4124,13 @@ function New-CouchDBAdmin () {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(ValueFromPipeline=$true)]
+        [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
-        [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).all_nodes -contains "couchdb@localhost") {"couchdb@localhost"} else {"couchdb@127.0.0.1"}),
-        [Parameter(mandatory=$true)]
+        [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).all_nodes -contains "couchdb@localhost") { "couchdb@localhost" } else { "couchdb@127.0.0.1" }),
+        [Parameter(mandatory = $true)]
         [string] $Userid,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [SecureString] $Password,
         [string] $Authorization,
         [switch] $Ssl
@@ -4102,17 +4269,17 @@ function New-CouchDBIndex () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Name,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [array] $Fields,
         [string] $Authorization,
         [switch] $Ssl
     )
     $Document = '_index'
-    $index = @{ 'index' = @{}; 'type' = 'json' }
+    $index = @{ 'index' = @{ }; 'type' = 'json' }
     $index.name = "$Name"
     $index.index.fields = @()
     foreach ($Field in $Fields) {
@@ -4149,7 +4316,7 @@ function New-CouchDBUuids () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(ValueFromPipeline=$true)]
+        [Parameter(ValueFromPipeline = $true)]
         [int] $Count = 10,
         [string] $Authorization,
         [switch] $Ssl
@@ -4190,7 +4357,7 @@ function Enable-CouchDBCluster () {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(ValueFromPipeline=$true)]
+        [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
         [int] $NodeCount = 3,
@@ -4252,7 +4419,7 @@ function Search-CouchDBHelp () {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         $Pattern
     )
     $helpNames = $(Get-Help *CouchDB* | Where-Object { $_.Category -ne "Alias" })
@@ -4260,7 +4427,7 @@ function Search-CouchDBHelp () {
         $content = Get-Help -Full $helpTopic.Name | Out-String
         if ($content -match "(.{0,30}$Pattern.{0,30})") {
             $helpTopic | Add-Member NoteProperty Match $matches[0].Trim()
-            $helpTopic | Select-Object Name,Match
+            $helpTopic | Select-Object Name, Match
         }
     }
 }
@@ -4295,13 +4462,13 @@ function Remove-CouchDBDatabase () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
         [string] $Authorization,
         [switch]$Force,
         [switch] $Ssl
     )
-    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove database $Database ?","Remove database $Database")) {
+    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove database $Database ?", "Remove database $Database")) {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Authorization $Authorization -Ssl:$Ssl
     }
 }
@@ -4340,17 +4507,17 @@ function Remove-CouchDBDocument () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Document,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Revision,
         [string] $Authorization,
         [switch]$Force,
         [switch] $Ssl
     )
-    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove document $Document on database $Database ?","Remove document $Document on database $Database")) {
+    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove document $Document on database $Database ?", "Remove document $Document on database $Database")) {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization -Ssl:$Ssl
     }
 }
@@ -4389,18 +4556,18 @@ function Remove-CouchDBDesignDocument () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string] $Document,
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string] $Revision,
         [string] $Authorization,
         [switch]$Force,
         [switch] $Ssl
     )
     $Document = "_design/$Document"
-    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove design document $Document on database $Database ?","Remove design document $Document on database $Database")) {
+    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove design document $Document on database $Database ?", "Remove design document $Document on database $Database")) {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization -Ssl:$Ssl
     }
 }
@@ -4439,18 +4606,18 @@ function Remove-CouchDBAttachment () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Document,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Attachment,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Revision,
         [string] $Authorization,
         [switch] $Ssl
     )
-    if ($PSCmdlet.ShouldContinue("Do you wish remove attachment $Attachment in document $Document on database $Database ?","Remove attachment $Attachment in document $Document on database $Database")) {
+    if ($PSCmdlet.ShouldContinue("Do you wish remove attachment $Attachment in document $Document on database $Database ?", "Remove attachment $Attachment in document $Document on database $Database")) {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Attachment $Attachment -Revision $Revision -Authorization $Authorization -Ssl:$Ssl
     }
 }
@@ -4485,20 +4652,20 @@ function Remove-CouchDBUser () {
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
-        [Parameter(ValueFromPipeline=$true)]
+        [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Userid,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Revision,
         [string] $Authorization,
         [switch]$Force,
         [switch] $Ssl
     )
     $Database = "_users"
-    $Document = & { if ($Userid -like "org.couchdb.user:*") { $Userid } else { "org.couchdb.user:$Userid" }}
-    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove user $Userid ?","Remove $Userid on database $Database")) {
+    $Document = & { if ($Userid -like "org.couchdb.user:*") { $Userid } else { "org.couchdb.user:$Userid" } }
+    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove user $Userid ?", "Remove $Userid on database $Database")) {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization -Ssl:$Ssl
     }
 }
@@ -4531,11 +4698,11 @@ function Remove-CouchDBAdmin () {
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
-        [Parameter(ValueFromPipeline=$true)]
+        [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
-        [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).all_nodes -contains "couchdb@localhost") {"couchdb@localhost"} else {"couchdb@127.0.0.1"}),
-        [Parameter(mandatory=$true)]
+        [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).all_nodes -contains "couchdb@localhost") { "couchdb@localhost" } else { "couchdb@127.0.0.1" }),
+        [Parameter(mandatory = $true)]
         [string] $Userid,
         [string] $Authorization,
         [switch]$Force,
@@ -4543,7 +4710,7 @@ function Remove-CouchDBAdmin () {
     )
     $Database = "_node"
     $Document = "$Node/_config/admins/$Userid"
-    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove admin user $Userid ?","Remove $Userid on node $Node")) {
+    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove admin user $Userid ?", "Remove $Userid on node $Node")) {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
     }
 }
@@ -4578,7 +4745,7 @@ function Remove-CouchDBNode () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Node,
         [string] $Authorization,
         [switch]$Force,
@@ -4601,7 +4768,7 @@ function Remove-CouchDBNode () {
         throw "Node $Node not exist."
     }
     $Document = $Node
-    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove node $Node ?","Remove $Node")) {
+    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove node $Node ?", "Remove $Node")) {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization -Ssl:$Ssl
     }
 }
@@ -4636,12 +4803,12 @@ function Remove-CouchDBReplication () {
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
-        [Parameter(ValueFromPipeline=$true)]
+        [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Document,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Revision,
         [string] $Authorization,
         [switch] $Force,
@@ -4651,7 +4818,7 @@ function Remove-CouchDBReplication () {
     if (-not(Test-CouchDBDatabase -Database $Database -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
         throw "Database _replicator is not exists."
     }
-    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove replication $Document ?","Remove $Document")) {
+    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove replication $Document ?", "Remove $Document")) {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization -Ssl:$Ssl
     }
 }
@@ -4693,18 +4860,18 @@ function Remove-CouchDBIndex () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $Database,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [string] $DesignDoc,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Name,
         [string] $Authorization,
         [switch]$Force,
         [switch] $Ssl
     )
     $Document = "_index/$DesignDoc/json/$Name"
-    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove index $DesignDoc ?","Remove index $DesignDoc on database $Database")) {
+    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove index $DesignDoc ?", "Remove index $DesignDoc on database $Database")) {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
     }
 }
@@ -4732,7 +4899,7 @@ function Remove-CouchDBSession () {
     https://pscouchdb.readthedocs.io/en/latest/auth.html
     #>
     param(
-        [Parameter(ValueFromPipeline=$true)]
+        [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
         [string] $Authorization,
@@ -4761,7 +4928,7 @@ function Restart-CouchDBServer () {
     param(
         [switch] $Force
     )
-    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish to restart CouchDB server ?","Restart server")) {
+    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish to restart CouchDB server ?", "Restart server")) {
         Restart-Service -Name "Apache CouchDB" -Force
     }
 }
@@ -4802,9 +4969,9 @@ function Search-CouchDBFullText () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
-        [Parameter(mandatory=$true)]
+        [Parameter(mandatory = $true)]
         [array] $Patterns,
         [switch] $UseQueries,
         [string] $Authorization,
@@ -4825,8 +4992,8 @@ function Search-CouchDBFullText () {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
     } else {
         $result = [PSCustomObject]@{
-            total_rows      = 0
-            rows            = New-Object System.Collections.Generic.List[System.Object]
+            total_rows = 0
+            rows       = New-Object System.Collections.Generic.List[System.Object]
         }
         foreach ($doc in (Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl).rows) {
             $json = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $doc.id -Authorization $Authorization -Ssl:$Ssl | ConvertTo-Json -Depth 99
@@ -4927,7 +5094,7 @@ function Find-CouchDBDocuments () {
         [int] $Port,
         [Parameter(ParameterSetName = "PSCouchDB")]
         [Parameter(ParameterSetName = "Native")]
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
         [Parameter(ParameterSetName = "PSCouchDB")]
         [switch] $Explain,
@@ -4959,7 +5126,7 @@ function Find-CouchDBDocuments () {
         [Parameter(ParameterSetName = "PSCouchDB")]
         [switch] $ExecutionStats,
         [Parameter(ParameterSetName = "PSCouchDB")]
-        [ValidateSet('lt','lte','eq','ne','gte','gt','exists','type','in','nin','size','mod','regex')]
+        [ValidateSet('lt', 'lte', 'eq', 'ne', 'gte', 'gt', 'exists', 'type', 'in', 'nin', 'size', 'mod', 'regex')]
         [string] $Operator,
         [Parameter(ParameterSetName = "Native")]
         [string] $Find,
@@ -5006,19 +5173,19 @@ function Find-CouchDBDocuments () {
         }
         # operator
         switch ($Operator) {
-            'lt'        { $Query.AddSelectorOperator('$lt') }
-            'lte'       { $Query.AddSelectorOperator('$lte') }
-            'eq'        { $Query.AddSelectorOperator('$eq') }
-            'ne'        { $Query.AddSelectorOperator('$ne') }
-            'gte'       { $Query.AddSelectorOperator('$gte') }
-            'gt'        { $Query.AddSelectorOperator('$gt') }
-            'exists'    { $Query.AddSelectorOperator('$exists') }
-            'type'      { $Query.AddSelectorOperator('$type') }
-            'in'        { $Query.AddSelectorOperator('$in') }
-            'nin'       { $Query.AddSelectorOperator('$nin') }
-            'size'      { $Query.AddSelectorOperator('$size') }
-            'mod'       { $Query.AddSelectorOperator('$mod') }
-            'regex'     { $Query.AddSelectorOperator('$regex') }
+            'lt' { $Query.AddSelectorOperator('$lt') }
+            'lte' { $Query.AddSelectorOperator('$lte') }
+            'eq' { $Query.AddSelectorOperator('$eq') }
+            'ne' { $Query.AddSelectorOperator('$ne') }
+            'gte' { $Query.AddSelectorOperator('$gte') }
+            'gt' { $Query.AddSelectorOperator('$gt') }
+            'exists' { $Query.AddSelectorOperator('$exists') }
+            'type' { $Query.AddSelectorOperator('$type') }
+            'in' { $Query.AddSelectorOperator('$in') }
+            'nin' { $Query.AddSelectorOperator('$nin') }
+            'size' { $Query.AddSelectorOperator('$size') }
+            'mod' { $Query.AddSelectorOperator('$mod') }
+            'regex' { $Query.AddSelectorOperator('$regex') }
         }
         # Data
         $Data = $Query.GetNativeQuery()
@@ -5058,7 +5225,7 @@ function Write-CouchDBFullCommit () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory=$true,ValueFromPipeline=$true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
         [string] $Authorization,
         [switch]$Force,
@@ -5066,7 +5233,7 @@ function Write-CouchDBFullCommit () {
     )
     $Document = '_ensure_full_commit'
     $Data = '{}'
-    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish to commits any recent changes to the specified database $Database to disk ?","Commit changes")) {
+    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish to commits any recent changes to the specified database $Database to disk ?", "Commit changes")) {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
     }
 }

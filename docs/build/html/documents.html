@@ -214,6 +214,59 @@
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;Hitchhikers&quot;</span>
 </pre></div>
 </div>
+<p>In this table you can find all the possible parameters to get the documents with this cmdlet.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="12%" />
+<col width="88%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">PARAMETER</th>
+<th class="head">DESCRIPTION</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Revision</td>
+<td>The CouchDB revision document.</td>
+</tr>
+<tr class="row-odd"><td>Local</td>
+<td>Return CouchDB local document.</td>
+</tr>
+<tr class="row-even"><td>Revisions</td>
+<td>Return all CouchDB db revisions.</td>
+</tr>
+<tr class="row-odd"><td>History</td>
+<td>Return all info CouchDB db revisions.</td>
+</tr>
+<tr class="row-even"><td>Attachments</td>
+<td>Includes attachments bodies in response.</td>
+</tr>
+<tr class="row-odd"><td>AttachmentsInfo</td>
+<td>Includes encoding information in attachment stubs if the particular attachment is compressed.</td>
+</tr>
+<tr class="row-even"><td>AttachmentsSince</td>
+<td>Includes attachments only since specified revisions. Doesn’t includes attachments for specified revisions.</td>
+</tr>
+<tr class="row-odd"><td>Conflicts</td>
+<td>Includes information about conflicts in document.</td>
+</tr>
+<tr class="row-even"><td>DeletedConflicts</td>
+<td>Includes information about deleted conflicted revisions.</td>
+</tr>
+<tr class="row-odd"><td>Latest</td>
+<td>Forces retrieving latest “leaf” revision, no matter what rev was requested.</td>
+</tr>
+<tr class="row-even"><td>LocalSequence</td>
+<td>Includes last update sequence for the document.</td>
+</tr>
+<tr class="row-odd"><td>Metadata</td>
+<td>Acts same as specifying all conflicts, deleted_conflicts and revs_info query parameters.</td>
+</tr>
+<tr class="row-even"><td>OpenRevisions</td>
+<td>Retrieves documents of specified leaf revisions. Additionally, value all id default and  to return all leaf revisions.</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="section" id="create-a-document">
 <h2>Create a document<a class="headerlink" href="#create-a-document" title="Permalink to this headline">¶</a></h2>

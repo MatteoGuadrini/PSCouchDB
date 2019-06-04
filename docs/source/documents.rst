@@ -27,6 +27,27 @@ To get document by the specified ``Document`` from the specified ``Database``. U
 
     Get-CouchDBDocument -Database test -Document "Hitchhikers"
 
+In this table you can find all the possible parameters to get the documents with this cmdlet.
+
+================    ===========
+PARAMETER           DESCRIPTION
+================    ===========
+Revision            The CouchDB revision document.
+Local               Return CouchDB local document.
+Revisions           Return all CouchDB db revisions.
+History             Return all info CouchDB db revisions.
+Attachments         Includes attachments bodies in response.
+AttachmentsInfo     Includes encoding information in attachment stubs if the particular attachment is compressed.
+AttachmentsSince    Includes attachments only since specified revisions. Doesn’t includes attachments for specified revisions.
+Conflicts           Includes information about conflicts in document.
+DeletedConflicts    Includes information about deleted conflicted revisions.
+Latest              Forces retrieving latest “leaf” revision, no matter what rev was requested.
+LocalSequence       Includes last update sequence for the document.
+Metadata            Acts same as specifying all conflicts, deleted_conflicts and revs_info query parameters.
+OpenRevisions       Retrieves documents of specified leaf revisions. Additionally, value all id default and  to return all leaf revisions.
+================    ===========
+
+
 Create a document
 _________________
 
