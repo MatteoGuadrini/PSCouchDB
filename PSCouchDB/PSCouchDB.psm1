@@ -1397,25 +1397,27 @@ function Get-CouchDBDocument () {
             Write-Error -Message "meta= parameter is not compatible with _all_docs"
         }
     }
-    if ($OpenRevisions) {
-        if ($Document -ne '_all_docs') {
-            if ($Document -match "\?") {
-                $Document += "&open_revs=$($OpenRevisions | ConvertTo-Json -Compress)"
+    if ($MyInvocation.BoundParameters.Keys -match 'OpenRevisions') {
+        if ($OpenRevisions) {
+            if ($Document -ne '_all_docs') {
+                if ($Document -match "\?") {
+                    $Document += "&open_revs=$($OpenRevisions | ConvertTo-Json -Compress)"
+                } else {
+                    $Document += "?open_revs=$($OpenRevisions | ConvertTo-Json -Compress)"
+                }
             } else {
-                $Document += "?open_revs=$($OpenRevisions | ConvertTo-Json -Compress)"
+                Write-Error -Message "open_revs= parameter is not compatible with _all_docs"
             }
-        } else {
-            Write-Error -Message "open_revs= parameter is not compatible with _all_docs"
-        }
-    } else {
-        if ($Document -ne '_all_docs') {
-            if ($Document -match "\?") {
-                $Document += '&open_revs=all'
+        } elseif ($OpenRevisions.Length -eq 0) {
+            if ($Document -ne '_all_docs') {
+                if ($Document -match "\?") {
+                    $Document += '&open_revs=all'
+                } else {
+                    $Document += '?open_revs=all'
+                }
             } else {
-                $Document += '?open_revs=all'
+                Write-Error -Message "open_revs= parameter is not compatible with _all_docs"
             }
-        } else {
-            Write-Error -Message "open_revs= parameter is not compatible with _all_docs"
         }
     }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
