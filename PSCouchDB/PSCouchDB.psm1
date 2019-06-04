@@ -2631,6 +2631,8 @@ function Set-CouchDBDocument () {
     .PARAMETER BatchMode
     Write documents to the database at a higher rate by using the batch option.
     Documents in the batch may be manually flushed by using the Write-CouchDBFullCommit cmdlet.
+    .PARAMETER NoConflict
+    No prevents insertion of a conflicting document.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -2661,6 +2663,7 @@ function Set-CouchDBDocument () {
         $Data,
         [switch] $Replace,
         [switch] $BatchMode,
+        [switch] $NoConflict,
         [string] $Authorization,
         [switch] $Ssl
     )
@@ -2687,7 +2690,13 @@ function Set-CouchDBDocument () {
         }
     }
     # Check BatchMode
-    if ($BatchMode.IsPresent) { $Document += "?batch=ok" }
+    if ($BatchMode.IsPresent) { 
+        $Document += "?batch=ok" 
+    # Check NoConflict
+    } elseif ($NoConflict.IsPresent -and $Revision) { 
+        $Document += "?rev=$Revision&new_edits=false"
+        $Revision = $null
+    }
     $Data = $Data | ConvertTo-Json -Depth 99
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Revision $Revision -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }

@@ -368,7 +368,7 @@ Documents
 .. code-block:: powershell
 
     Get-CouchDBDocument [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [[-Document] <String>] [[-Revision] <String>] [-Local] [-Revisions] [-History] [-Attachments] [-AttachmentsInfo] [[-AttachmentsSince] <Array>] [-Conflicts] [-DeletedConflicts] [-Latest] [-LocalSequence] [-Metadata] [[-OpenRevisions] <Array>] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
-    
+
 **New-CouchDBDocument**
 
 .. code-block:: powershell
@@ -379,7 +379,7 @@ Documents
 
 .. code-block:: powershell
 
-    Set-CouchDBDocument [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [-Revision] <String> [[-Data] <Object>] [-Replace] [-BatchMode] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    Set-CouchDBDocument [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [-Revision] <String> [[-Data] <Object>] [-Replace] [-BatchMode] [-NoConflict] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
 
 **Remove-CouchDBDocument**
 
