@@ -360,6 +360,12 @@ Databases
 
     Set-CouchDBRevisionLimit [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [[-Limit] <Int32>] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
 
+**Export-CouchDBDatabase**
+
+.. code-block:: powershell
+
+    Export-CouchDBDatabase [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [[-Path] <String>] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+
 Documents
 *********
 
@@ -579,4 +585,6 @@ _______
     scusr -> Set-CouchDBUser                       
     src -> Search-CouchDBHelp                      
     tcdb -> Test-CouchDBDatabase                   
-    wcfc -> Write-CouchDBFullCommit                
+    wcfc -> Write-CouchDBFullCommit
+    ecdb -> Export-CouchDBDatabase
+    exportdb -> Export-CouchDBDatabase  

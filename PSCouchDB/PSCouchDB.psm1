@@ -75,6 +75,8 @@ New-Alias -Name "scft" -Value Search-CouchDBFullText -Option ReadOnly
 New-Alias -Name "fcdoc" -Value Find-CouchDBDocuments -Option ReadOnly
 New-Alias -Name "finddoc" -Value Find-CouchDBDocuments -Option ReadOnly
 New-Alias -Name "wcfc" -Value Write-CouchDBFullCommit -Option ReadOnly
+New-Alias -Name "ecdb" -Value Export-CouchDBDatabase -Option ReadOnly
+New-Alias -Name "exportdb" -Value Export-CouchDBDatabase -Option ReadOnly
 
 # Native Powershell CouchDB class
 class PSCouchDBQuery {
@@ -5246,5 +5248,65 @@ function Write-CouchDBFullCommit () {
     $Data = '{}'
     if ($Force -or $PSCmdlet.ShouldContinue("Do you wish to commits any recent changes to the specified database $Database to disk ?", "Commit changes")) {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    }
+}
+
+function Export-CouchDBDatabase () {
+    <#
+    .SYNOPSIS
+    Export database.
+    .DESCRIPTION
+    Dump specified database in a JSON file.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Path
+    The path of JSON file.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
+    .EXAMPLE
+    Export-CouchDBDatabase -Database test
+    Export "test" database in a json file.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/databases.html#test-a-database
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server,
+        [int] $Port,
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
+        [string] $Database,
+        [string] $Path = $(Join-Path -Path "$($PWD.path)" -ChildPath "$($Database)_$(Get-Date -Format 'MM-dd-yyyy_HH_mm_ss').json"),
+        [string] $Authorization,
+        [switch] $Ssl
+    )
+    # Create list container
+    $list = New-Object System.Collections.Generic.List[System.Object]
+    $count = 0
+    $all_docs = (Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl).rows
+    foreach ($doc in $all_docs) {
+        $count++
+        $list.Add($(Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $doc.id -Authorization $Authorization -Ssl:$Ssl))
+        Write-Progress -Activity "Export document $($doc.id) in progress" -Status "Progress $count/$($all_docs.count)" -PercentComplete ($count/$all_docs.count*100)
+    }
+    Write-Host "Export JSON file to $Path."
+    # Export all docs to json file
+    $list | ConvertTo-Json -Depth 99 | Out-File -FilePath $Path -Encoding utf8
+    # Result
+    if (Test-Path -Path $Path -ErrorAction SilentlyContinue) {
+        Write-Host "ok"
+        Write-Host "--"
+        Write-Host $true
+    } else {
+        Write-Host "ok"
+        Write-Host "--"
+        Write-Host $false
     }
 }

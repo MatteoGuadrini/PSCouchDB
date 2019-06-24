@@ -117,6 +117,10 @@
 <li class="toctree-l3"><a class="reference internal" href="#set-revision-limit">Set revision limit</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#export-databases">Export databases</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#export">Export</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="documents.html">Documents</a></li>
@@ -346,6 +350,21 @@ The compaction process runs as a background process.</p>
 <h3>Set revision limit<a class="headerlink" href="#set-revision-limit" title="Permalink to this headline">¶</a></h3>
 <p>Sets the maximum number of document revisions that will be tracked by CouchDB.</p>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Set-CouchDBRevisionLimit</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Limit</span> <span class="n">1500</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="export-databases">
+<h2>Export databases<a class="headerlink" href="#export-databases" title="Permalink to this headline">¶</a></h2>
+<p>One of the most common practices for perform backup a database is to export it. On the other hand, to restore a database, just import it.</p>
+<div class="section" id="export">
+<h3>Export<a class="headerlink" href="#export" title="Permalink to this headline">¶</a></h3>
+<p>For export a database in a json file format.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you do not specify the path and file name, a JSON file will be saved in UTF8 format in the current path (<code class="docutils literal notranslate"><span class="pre">$pwd</span></code>) with this name: name-of-database_t-i-m-e_s_t_a_m_p.json.</p>
+</div>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Export-CouchDBDatabase</span> <span class="n">-Database</span> <span class="n">test</span>
 </pre></div>
 </div>
 </div>
