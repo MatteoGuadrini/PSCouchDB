@@ -77,6 +77,8 @@ New-Alias -Name "finddoc" -Value Find-CouchDBDocuments -Option ReadOnly
 New-Alias -Name "wcfc" -Value Write-CouchDBFullCommit -Option ReadOnly
 New-Alias -Name "ecdb" -Value Export-CouchDBDatabase -Option ReadOnly
 New-Alias -Name "exportdb" -Value Export-CouchDBDatabase -Option ReadOnly
+New-Alias -Name "icdb" -Value Import-CouchDBDatabase -Option ReadOnly
+New-Alias -Name "importdb" -Value Import-CouchDBDatabase -Option ReadOnly
 
 # Native Powershell CouchDB class
 class PSCouchDBQuery {
@@ -5275,7 +5277,7 @@ function Export-CouchDBDatabase () {
     Export-CouchDBDatabase -Database test
     Export "test" database in a json file.
     .LINK
-    https://pscouchdb.readthedocs.io/en/latest/databases.html#test-a-database
+    https://pscouchdb.readthedocs.io/en/latest/databases.html#export
     #>
     [CmdletBinding()]
     param(
@@ -5301,12 +5303,77 @@ function Export-CouchDBDatabase () {
     $list | ConvertTo-Json -Depth 99 | Out-File -FilePath $Path -Encoding utf8
     # Result
     if (Test-Path -Path $Path -ErrorAction SilentlyContinue) {
+        Write-Host
         Write-Host "ok"
         Write-Host "--"
         Write-Host $true
     } else {
+        Write-Host
         Write-Host "ok"
         Write-Host "--"
         Write-Host $false
     }
+}
+
+function Import-CouchDBDatabase () {
+    <#
+    .SYNOPSIS
+    Import database.
+    .DESCRIPTION
+    Restore specified database from a JSON file.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Path
+    The path of JSON file.
+    .PARAMETER RemoveRevision
+    Remove all revision to docs.
+    This is useful when creating a new database.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
+    .EXAMPLE
+    Import-CouchDBDatabase -Path test_01-25-2019_00_01_00.json
+    Import "test" database from a json file.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/databases.html#import
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server,
+        [int] $Port,
+        [Parameter(mandatory = $true)]
+        [string] $Database,
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
+        [string] $Path,
+        [switch] $RemoveRevision,
+        [string] $Authorization,
+        [switch] $Ssl
+    )
+    # Check RemoveRevision parameter
+    if ($RemoveRevision.IsPresent) {
+        $_docs = $(Get-Content -Path $Path)
+        $docs = @()
+        foreach ($doc in $_docs) {
+            $doc = $doc -replace '"_rev":.*,',""
+            $docs += $doc
+        }
+    } else {
+        # Create container "docs"
+        $docs = $(Get-Content -Path $Path)
+    }
+    # Check if database exists
+    if (-not(Test-CouchDBDatabase -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
+        New-CouchDBDatabase -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl | Out-Null
+    }
+    # Import data in bulk
+    [string] $Document = "_bulk_docs"
+    $Data = "{ `"docs`" : $(($docs | ConvertFrom-Json) | ConvertTo-Json -Depth 99)}"
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }

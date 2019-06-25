@@ -217,8 +217,8 @@ Sets the maximum number of document revisions that will be tracked by CouchDB.
 
     Set-CouchDBRevisionLimit -Database test -Limit 1500 -Authorization "admin:password"
 
-Export databases
-________________
+Export and import databases
+___________________________
 
 One of the most common practices for perform backup a database is to export it. On the other hand, to restore a database, just import it.
 
@@ -233,3 +233,18 @@ For export a database in a json file format.
 .. code-block:: powershell
 
     Export-CouchDBDatabase -Database test
+
+Import
+******
+
+For import or restore a database from JSON file.
+
+.. code-block:: powershell
+
+    Import-CouchDBDatabase -Database test -Path test_01-25-2019_00_01_00.json
+
+And this, for create a new database from JSON file.
+
+.. code-block:: powershell
+
+    Import-CouchDBDatabase -Database test_restored -Path test_01-25-2019_00_01_00.json -RemoveRevision

@@ -144,7 +144,8 @@
                         "Search-CouchDBFullText",
                         "Find-CouchDBDocuments",
                         "Write-CouchDBFullCommit",
-                        "Export-CouchDBDatabase"
+                        "Export-CouchDBDatabase",
+                        "Import-CouchDBDatabase"
                         )
 
     # Cmdlet s to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
@@ -231,7 +232,9 @@
                         "finddoc",
                         "wcfc",
                         "ecdb",
-                        "exportdb"
+                        "exportdb",
+                        "icdb",
+                        "importdb"
                         )
 
     # DSC resources to export from this module

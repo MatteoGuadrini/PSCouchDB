@@ -366,6 +366,12 @@ Databases
 
     Export-CouchDBDatabase [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [[-Path] <String>] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
 
+**Import-CouchDBDatabase**
+
+.. code-block:: powershell
+
+    Import-CouchDBDatabase [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Path] <String> [-RemoveRevision] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+
 Documents
 *********
 
@@ -587,4 +593,6 @@ _______
     tcdb -> Test-CouchDBDatabase                   
     wcfc -> Write-CouchDBFullCommit
     ecdb -> Export-CouchDBDatabase
-    exportdb -> Export-CouchDBDatabase  
+    exportdb -> Export-CouchDBDatabase
+    icdb -> Export-CouchDBDatabase
+    importdb -> Export-CouchDBDatabase  

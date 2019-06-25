@@ -117,8 +117,9 @@
 <li class="toctree-l3"><a class="reference internal" href="#set-revision-limit">Set revision limit</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#export-databases">Export databases</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#export-and-import-databases">Export and import databases</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#export">Export</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#import">Import</a></li>
 </ul>
 </li>
 </ul>
@@ -354,8 +355,8 @@ The compaction process runs as a background process.</p>
 </div>
 </div>
 </div>
-<div class="section" id="export-databases">
-<h2>Export databases<a class="headerlink" href="#export-databases" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="export-and-import-databases">
+<h2>Export and import databases<a class="headerlink" href="#export-and-import-databases" title="Permalink to this headline">¶</a></h2>
 <p>One of the most common practices for perform backup a database is to export it. On the other hand, to restore a database, just import it.</p>
 <div class="section" id="export">
 <h3>Export<a class="headerlink" href="#export" title="Permalink to this headline">¶</a></h3>
@@ -365,6 +366,17 @@ The compaction process runs as a background process.</p>
 <p class="last">If you do not specify the path and file name, a JSON file will be saved in UTF8 format in the current path (<code class="docutils literal notranslate"><span class="pre">$pwd</span></code>) with this name: name-of-database_t-i-m-e_s_t_a_m_p.json.</p>
 </div>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Export-CouchDBDatabase</span> <span class="n">-Database</span> <span class="n">test</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="import">
+<h3>Import<a class="headerlink" href="#import" title="Permalink to this headline">¶</a></h3>
+<p>For import or restore a database from JSON file.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Import-CouchDBDatabase</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Path</span> <span class="n">test_01</span><span class="p">-</span><span class="n">25</span><span class="p">-</span><span class="n">2019_00_01_00</span><span class="p">.</span><span class="n">json</span>
+</pre></div>
+</div>
+<p>And this, for create a new database from JSON file.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Import-CouchDBDatabase</span> <span class="n">-Database</span> <span class="n">test_restored</span> <span class="n">-Path</span> <span class="n">test_01</span><span class="p">-</span><span class="n">25</span><span class="p">-</span><span class="n">2019_00_01_00</span><span class="p">.</span><span class="n">json</span> <span class="n">-RemoveRevision</span>
 </pre></div>
 </div>
 </div>
