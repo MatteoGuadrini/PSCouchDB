@@ -81,7 +81,10 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#install-with-git">Install with git</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#signing">Signing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#start">Start</a></li>
 </ul>
@@ -178,6 +181,18 @@
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">For unix users the powershell module path is <code class="docutils literal notranslate"><span class="pre">/usr/local/share/powershell/Modules</span></code> for all users and <code class="docutils literal notranslate"><span class="pre">~/.local/share/powershell/Modules</span></code> for current user.</p>
+</div>
+<div class="section" id="install-with-git">
+<h3>Install with git<a class="headerlink" href="#install-with-git" title="Permalink to this headline">¶</a></h3>
+<p>Installation by git from Github.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/MatteoGuadrini/PSCouchDB.git
+<span class="nb">cd</span> PSCouchDB
+<span class="c1"># for Windows</span>
+copy /Y PSCouchDB %Windir%<span class="se">\S</span>ystem32<span class="se">\W</span>indowsPowerShell<span class="se">\v</span><span class="m">1</span>.0<span class="se">\M</span>odules
+<span class="c1"># for Unix</span>
+cp -var PSCouchDB /usr/local/share/powershell/Modules
+</pre></div>
+</div>
 </div>
 </div>
 <div class="section" id="signing">

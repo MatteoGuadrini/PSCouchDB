@@ -29,6 +29,20 @@ Download and install latest `PSCouchDB module <https://github.com/MatteoGuadrini
 .. note::
     For unix users the powershell module path is ``/usr/local/share/powershell/Modules`` for all users and ``~/.local/share/powershell/Modules`` for current user.
 
+Install with git
+****************
+
+Installation by git from Github.
+
+.. code-block:: bash
+
+    git clone https://github.com/MatteoGuadrini/PSCouchDB.git
+    cd PSCouchDB
+    # for Windows
+    copy /Y PSCouchDB %Windir%\System32\WindowsPowerShell\v1.0\Modules
+    # for Unix
+    cp -var PSCouchDB /usr/local/share/powershell/Modules
+
 Signing
 _______
 
