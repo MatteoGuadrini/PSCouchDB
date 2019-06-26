@@ -89,6 +89,75 @@ To get one or more Universally Unique Identifiers (UUIDs) from the CouchDB insta
 
     New-CouchDBUuids
 
+Read the log
+____________
+
+To read entire log.
+
+.. code-block:: powershell
+
+    Read-CouchDBLog
+
+.. note::
+    The default path on Windows is ``C:\CouchDB\couch.log``, while on Unix it is ``/var/log/couchdb/couch.log``.
+    Otherwise, if the log is in a custom path, specify the path using the ``-Path`` parameter.
+
+This example is used to read only the last 15 lines of log.
+
+.. code-block:: powershell
+
+    Read-CouchDBLog -Tail 15
+
+Instead this to stay in append on the log for the level of warning.
+
+.. code-block:: powershell
+
+    Read-CouchDBLog -Level warning -Follow
+
+Level
+*****
+
+Each entry in the log has its own color, so as to identify the line of interest "at a glance".
+
+.. role:: goldenrod 
+.. role:: dimgray
+.. role:: gray
+.. role:: yellow
+.. role:: red
+.. role:: darkred
+.. role:: darkmagenta
+.. role:: magenta
+
+.. raw:: html
+
+  <style type="text/css"><!--
+   .goldenrod {color: goldenrod;}
+   .dimgray {color: dimgray;}
+   .gray {color: gray;}
+   .yellow {color: yellow;}
+   .red {color: red;}
+   .darkred {color: darkred;}
+   .darkmagenta {color: darkmagenta;}
+   .magenta {color: magenta;}
+   --></style>
+
+:goldenrod:`debug` : Detailed debug logging.
+
+:dimgray:`info` : Informative logging. Includes HTTP requests headlines, startup of an external processes etc.
+
+:gray:`notice`
+
+:yellow:`warning` : Warning messages are alerts about edge situations that may lead to errors.
+
+:red:`error` : Error level includes only things that go wrong, like crash reports and HTTP error responses (5xx codes).
+
+:darkred:`critical`
+
+:darkmagenta:`alert`
+
+:magenta:`emergency`
+
+
 Replication
 ===========
 

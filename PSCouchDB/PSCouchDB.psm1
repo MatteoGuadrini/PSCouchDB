@@ -79,6 +79,7 @@ New-Alias -Name "ecdb" -Value Export-CouchDBDatabase -Option ReadOnly
 New-Alias -Name "exportdb" -Value Export-CouchDBDatabase -Option ReadOnly
 New-Alias -Name "icdb" -Value Import-CouchDBDatabase -Option ReadOnly
 New-Alias -Name "importdb" -Value Import-CouchDBDatabase -Option ReadOnly
+New-Alias -Name "rdblog" -Value Read-CouchDBLog -Option ReadOnly
 
 # Native Powershell CouchDB class
 class PSCouchDBQuery {
@@ -5376,4 +5377,131 @@ function Import-CouchDBDatabase () {
     [string] $Document = "_bulk_docs"
     $Data = "{ `"docs`" : $(($docs | ConvertFrom-Json) | ConvertTo-Json -Depth 99)}"
     Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+}
+
+function Read-CouchDBLog () {
+    <#
+    .SYNOPSIS
+    Read or tail log.
+    .DESCRIPTION
+    Read, tail and follow CouchDB log (couch.log).
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Path
+    The path of log file. Default, is C:\CouchDB\couch.log on Windows and /var/log/couchdb/couch.log on Unix.
+    .PARAMETER Level
+    Select level of log. Default is "info".
+    Available levels:
+        debug: Detailed debug logging.
+        info: Informative logging. Includes HTTP requests headlines, startup of an external processes etc.
+        notice
+        warning: Warning messages are alerts about edge situations that may lead to errors.
+        error: Error level includes only things that go wrong, like crash reports and HTTP error responses (5xx codes).
+        critical
+        alert
+        emergency
+    .PARAMETER Follow
+    Output appended data as the file grows.
+    .PARAMETER Tail
+    The last n lines of log. Default is 10.
+    .EXAMPLE
+    Read-CouchDBLog -Level warning -Follow
+    Append and wait new warning entry on default log.
+    .EXAMPLE
+    Read-CouchDBLog -Path /custom/couchdb/log/couch.log -Level error | Out-File error_couchdb.log
+    Read only error,critical,alert,emergency log in a custom path and redirect to a new file.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/server.html#read-the-log
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server,
+        [int] $Port,
+        [string] $Path,
+        [ValidateSet("debug", "info", "notice", "warning", "error", "critical", "alert", "emergency")]
+        [Parameter(ValueFromPipeline = $true)]
+        [string] $Level = "info",
+        [switch] $Follow,
+        [int] $Tail
+    )
+    # Check if $Path is empty
+    if (-not($Path)) {
+        # Set default path...
+        $Windows = ([bool](Get-CimInstance -ClassName Win32_OperatingSystem -ErrorAction SilentlyContinue))
+        # Windows platform
+        if ($Windows) {
+            $Path = "C:\CouchDB\couch.log"
+            $root = "C:\CouchDB"
+        # Unix platform
+        } else {
+            $Path = "/var/log/couchdb/couch.log"
+            $root = "/var/log"
+        }
+        # ...and if not exists, search it
+        if (-not(Test-Path -Path $Path)) {
+            Write-Warning -Message "Default log path $Path not exists!"
+            Write-Host "Search couch.log in the $root path..."
+            $Path = (Get-ChildItem -Path $root -Recurse | Where-Object {$_.Name -like "couch.log"} | Select-Object FullName).FullName
+            if (-not(Test-Path -Path $Path)) {
+                throw "couch.log not found! Specify the `$Path parameter or check configuration!"
+            }
+            Write-Host
+        }
+        # Set level
+        $Levels = [PSCustomObject]@{
+            debug = @{
+                color = "DarkYellow"
+                level = "debug", "info", "notice", "warning", "error", "critical", "alert", "emergency"
+            }
+            info = @{
+                color = "DarkGray"
+                level = "info", "notice", "warning", "error", "critical", "alert", "emergency"
+            }
+            notice = @{
+                color = "Gray"
+                level = "notice", "warning", "error", "critical", "alert", "emergency"
+            }
+            warning = @{
+                color = "Yellow"
+                level = "warning", "error", "critical", "alert", "emergency"
+            }
+            error = @{
+                color = "Red"
+                level = "error", "critical", "alert", "emergency"
+            }
+            critical = @{
+                color = "DarkRed"
+                level = "critical", "alert", "emergency"
+            }
+            alert = @{
+                color = "DarkMagenta"
+                level = "alert", "emergency"
+            }
+            emergency = @{
+                color = "Magenta"
+                level = "emergency"
+            }
+        }
+        # Set option of Get-Content cmdlet
+        $Parameters = @{
+            Path = $Path
+        }
+        if ($Follow.IsPresent) {
+            if (-not($Tail)) { $Parameters.Add("Tail", 10) }
+            $Parameters.Add("Wait", $true)
+        }
+        if ($Tail) {
+            $Parameters.Add("Tail", $Tail)
+        }
+        # Run Get-Content
+        Get-Content @Parameters | ForEach-Object {
+            foreach ($lev in $Levels.$level.level) {
+                if ($_ -match "\[$lev\]") { Write-Host -ForegroundColor $Levels.$lev.color $_ }
+            }
+        }
+    } else {
+        Write-Error -Message "$Path not found!"
+    }
 }

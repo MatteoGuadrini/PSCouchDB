@@ -85,7 +85,13 @@
 <li class="toctree-l1"><a class="reference internal" href="config.html#nodes">Nodes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="config.html#configuration">Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="permission.html">Permission</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Server operation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Server operation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#read-the-log">Read the log</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#level">Level</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="#replication">Replication</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#get-replica">Get replica</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#create-replica">Create replica</a></li>
@@ -218,6 +224,47 @@
 <p>To get one or more Universally Unique Identifiers (UUIDs) from the CouchDB instance:</p>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">New-CouchDBUuids</span>
 </pre></div>
+</div>
+<div class="section" id="read-the-log">
+<h2>Read the log<a class="headerlink" href="#read-the-log" title="Permalink to this headline">¶</a></h2>
+<p>To read entire log.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Read-CouchDBLog</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The default path on Windows is <code class="docutils literal notranslate"><span class="pre">C:\CouchDB\couch.log</span></code>, while on Unix it is <code class="docutils literal notranslate"><span class="pre">/var/log/couchdb/couch.log</span></code>.
+Otherwise, if the log is in a custom path, specify the path using the <code class="docutils literal notranslate"><span class="pre">-Path</span></code> parameter.</p>
+</div>
+<p>This example is used to read only the last 15 lines of log.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Read-CouchDBLog</span> <span class="n">-Tail</span> <span class="n">15</span>
+</pre></div>
+</div>
+<p>Instead this to stay in append on the log for the level of warning.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Read-CouchDBLog</span> <span class="n">-Level</span> <span class="n">warning</span> <span class="n">-Follow</span>
+</pre></div>
+</div>
+<div class="section" id="level">
+<h3>Level<a class="headerlink" href="#level" title="Permalink to this headline">¶</a></h3>
+<p>Each entry in the log has its own color, so as to identify the line of interest “at a glance”.</p>
+<style type="text/css"><!--
+ .goldenrod {color: goldenrod;}
+ .dimgray {color: dimgray;}
+ .gray {color: gray;}
+ .yellow {color: yellow;}
+ .red {color: red;}
+ .darkred {color: darkred;}
+ .darkmagenta {color: darkmagenta;}
+ .magenta {color: magenta;}
+ --></style><p><span class="goldenrod">debug</span> : Detailed debug logging.</p>
+<p><span class="dimgray">info</span> : Informative logging. Includes HTTP requests headlines, startup of an external processes etc.</p>
+<p><span class="gray">notice</span></p>
+<p><span class="yellow">warning</span> : Warning messages are alerts about edge situations that may lead to errors.</p>
+<p><span class="red">error</span> : Error level includes only things that go wrong, like crash reports and HTTP error responses (5xx codes).</p>
+<p><span class="darkred">critical</span></p>
+<p><span class="darkmagenta">alert</span></p>
+<p><span class="magenta">emergency</span></p>
+</div>
 </div>
 </div>
 <div class="section" id="replication">

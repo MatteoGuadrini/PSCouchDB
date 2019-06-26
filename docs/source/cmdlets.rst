@@ -171,6 +171,12 @@ Server
 
     New-CouchDBUuids [[-Server] <String>] [[-Port] <Int32>] [[-Count] <Int32>] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
 
+**Read-CouchDBLog**
+
+.. code-block:: powershell
+
+    Read-CouchDBLog [[-Server] <String>] [[-Port] <Int32>] [[-Path] <String>] [[-Level] <String>] [-Follow] [[-Tail] <Int32>] [<CommonParameters>]
+
 Replication
 ***********
 
@@ -595,4 +601,5 @@ _______
     ecdb -> Export-CouchDBDatabase
     exportdb -> Export-CouchDBDatabase
     icdb -> Export-CouchDBDatabase
-    importdb -> Export-CouchDBDatabase  
+    importdb -> Export-CouchDBDatabase
+    rdblog -> Read-CouchDBLog
