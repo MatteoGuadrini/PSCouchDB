@@ -80,6 +80,7 @@ New-Alias -Name "exportdb" -Value Export-CouchDBDatabase -Option ReadOnly
 New-Alias -Name "icdb" -Value Import-CouchDBDatabase -Option ReadOnly
 New-Alias -Name "importdb" -Value Import-CouchDBDatabase -Option ReadOnly
 New-Alias -Name "rdblog" -Value Read-CouchDBLog -Option ReadOnly
+New-Alias -Name "cdblog" -Value Clear-CouchDBLog -Option ReadOnly
 
 # Native Powershell CouchDB class
 class PSCouchDBQuery {
@@ -5440,7 +5441,7 @@ function Read-CouchDBLog () {
             $root = "/var/log"
         }
         # ...and if not exists, search it
-        if (-not(Test-Path -Path $Path)) {
+        if (-not(Test-Path -Path $Path -ErrorAction SilentlyContinue)) {
             Write-Warning -Message "Default log path $Path not exists!"
             Write-Host "Search couch.log in the $root path..."
             $Path = (Get-ChildItem -Path $root -Recurse | Where-Object {$_.Name -like "couch.log"} | Select-Object FullName).FullName
@@ -5503,5 +5504,63 @@ function Read-CouchDBLog () {
         }
     } else {
         Write-Error -Message "$Path not found!"
+    }
+}
+
+function Clear-CouchDBLog () {
+    <#
+    .SYNOPSIS
+    Clear log.
+    .DESCRIPTION
+    Clear and rotate CouchDB log (couch.log).
+    .PARAMETER Path
+    The path of log file. Default, is C:\CouchDB\couch.log on Windows and /var/log/couchdb/couch.log on Unix.
+    .PARAMETER Rotate
+    Rotate an existing log. Copy before delete in this format couch.log.t-i-m-e_s_t_a_m_p
+    .EXAMPLE
+    Clear-CouchDBLog -Rotate
+    Clear default couch.log and save a copy before delete it.
+    .EXAMPLE
+    Clear-CouchDBLog -Path /custom/couchdb/log/couch.log
+    Clear custom log /custom/couchdb/log/couch.log.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/server.html#clear-the-log
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(ValueFromPipeline = $true)]
+        [string] $Path,
+        [switch] $Rotate
+    )
+    # Check if $Path is empty
+    if (-not($Path)) {
+        # Set default path...
+        $Windows = ([bool](Get-CimInstance -ClassName Win32_OperatingSystem -ErrorAction SilentlyContinue))
+        # Windows platform
+        if ($Windows) {
+            $Path = "C:\CouchDB\couch.log"
+            $root = "C:\CouchDB"
+        # Unix platform
+        } else {
+            $Path = "/var/log/couchdb/couch.log"
+            $root = "/var/log"
+        }
+        # ...and if not exists, search it
+        if (-not(Test-Path -Path $Path -ErrorAction SilentlyContinue)) {
+            Write-Warning -Message "Default log path $Path not exists!"
+            Write-Host "Search couch.log in the $root path..."
+            $Path = (Get-ChildItem -Path $root -Recurse | Where-Object {$_.Name -like "couch.log"} | Select-Object FullName).FullName
+            if (-not(Test-Path -Path $Path)) {
+                throw "couch.log not found! Specify the `$Path parameter or check configuration!"
+            }
+            Write-Host
+        }
+        # Clear log
+        if ($Rotate.IsPresent) {
+            Copy-Item -Path $Path -Destination "$Path.$(Get-Date -Format 'MM-dd-yyyy_HH_mm_ss')" -Force
+            Clear-Content -Path $Path -Force
+        } else {
+            Clear-Content -Path $Path -Force
+        }
     }
 }

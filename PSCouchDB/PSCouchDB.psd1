@@ -146,7 +146,8 @@
                         "Write-CouchDBFullCommit",
                         "Export-CouchDBDatabase",
                         "Import-CouchDBDatabase",
-                        "Read-CouchDBLog"
+                        "Read-CouchDBLog",
+                        "Clear-CouchDBLog"
                         )
 
     # Cmdlet s to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
@@ -236,7 +237,8 @@
                         "exportdb",
                         "icdb",
                         "importdb",
-                        "rdblog"
+                        "rdblog",
+                        "cdblog"
                         )
 
     # DSC resources to export from this module

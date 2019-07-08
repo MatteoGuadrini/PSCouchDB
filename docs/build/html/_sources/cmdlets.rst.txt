@@ -177,6 +177,12 @@ Server
 
     Read-CouchDBLog [[-Server] <String>] [[-Port] <Int32>] [[-Path] <String>] [[-Level] <String>] [-Follow] [[-Tail] <Int32>] [<CommonParameters>]
 
+**Clear-CouchDBLog**
+
+.. code-block:: powershell
+
+    Clear-CouchDBLog [[-Server] <String>] [[-Port] <Int32>] [[-Path] <String>] [-Rotate] [<CommonParameters>]
+
 Replication
 ***********
 

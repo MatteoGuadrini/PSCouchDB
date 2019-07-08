@@ -90,6 +90,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#level">Level</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#clear-the-log">Clear the log</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="#replication">Replication</a><ul>
@@ -264,6 +265,13 @@ Otherwise, if the log is in a custom path, specify the path using the <code clas
 <p><span class="darkred">critical</span></p>
 <p><span class="darkmagenta">alert</span></p>
 <p><span class="magenta">emergency</span></p>
+</div>
+</div>
+<div class="section" id="clear-the-log">
+<h2>Clear the log<a class="headerlink" href="#clear-the-log" title="Permalink to this headline">¶</a></h2>
+<p>Clear entire and rotate (save a copy in the same folder) log.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Clear-CouchDBLog</span> <span class="n">-Rotate</span>
+</pre></div>
 </div>
 </div>
 </div>

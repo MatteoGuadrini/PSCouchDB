@@ -157,6 +157,15 @@ Each entry in the log has its own color, so as to identify the line of interest 
 
 :magenta:`emergency`
 
+Clear the log
+_____________
+
+Clear entire and rotate (save a copy in the same folder) log.
+
+.. code-block:: powershell
+
+    Clear-CouchDBLog -Rotate
+
 
 Replication
 ===========
