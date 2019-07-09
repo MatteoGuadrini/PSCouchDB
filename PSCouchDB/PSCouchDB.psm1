@@ -1,5 +1,6 @@
 # Alias for all export cmdlets
 New-Alias -Name "tcdb" -Value Test-CouchDBDatabase -Option ReadOnly
+New-Alias -Name "cpdb" -Value Copy-CouchDBDatabase -Option ReadOnly
 New-Alias -Name "gcdb" -Value Get-CouchDBDatabase -Option ReadOnly
 New-Alias -Name "gcbpl" -Value Get-CouchDBDatabasePurgedLimit -Option ReadOnly
 New-Alias -Name "gcsi" -Value Get-CouchDBServer -Option ReadOnly
@@ -946,6 +947,65 @@ function Test-CouchDBDatabase () {
         [switch] $Ssl
     )
     Send-CouchDBRequest -Server $Server -Port $Port -Method "HEAD" -Database $Database -Authorization $Authorization -Ssl:$Ssl
+}
+
+function Copy-CouchDBDatabase () {
+    <#
+    .SYNOPSIS
+    Copy database.
+    .DESCRIPTION
+    Create a new database by copying it from an existing one.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The source CouchDB database.
+    .PARAMETER Destination
+    The destination CouchDB database. A new name must be specified.
+    .PARAMETER ExcludeIds
+    Array of Docids to exclude to copy. 
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
+    .EXAMPLE
+    Test-CouchDBDatabase -Database test -Destination test_new -Authorization admin:password
+    Copy a test database in a new test_new database.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/databases.html#copy-a-database
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server,
+        [int] $Port,
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
+        [string] $Database,
+        [Parameter(mandatory = $true)]
+        [string] $Destination,
+        [array] $ExcludeIds,
+        [string] $Authorization,
+        [switch] $Ssl
+    )
+    $count = 0
+    $all_docs = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl
+    if (-not(Test-CouchDBDatabase -Server $Server -Port $Port -Database $Destination -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
+        New-CouchDBDatabase -Server $Server -Port $Port -Database $Destination -Authorization $Authorization -Ssl:$Ssl | Out-Null
+    } else {
+        throw "Database $Destination exists! Choose another name."
+    }
+    foreach ($doc in $all_docs.rows) {
+        if ($ExcludeIds -notcontains $doc.id) {
+            $count++
+            $Data = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $doc.id -Authorization $Authorization -Ssl:$Ssl | ConvertTo-Json -Depth 99 
+            New-CouchDBDocument -Server $Server -Port $Port -Database $Destination -Document $doc.id -Data $($Data -replace '"_rev":.*,',"") -Authorization $Authorization -Ssl:$Ssl
+            Write-Progress -Activity "Copy document $($doc.id) in a new database $Destination in progress" -Status "Progress $count/$($all_docs.total_rows)" -PercentComplete ($count/$all_docs.total_rows*100)
+        } else {
+            Write-Host "Skip $($doc.id) because exists in exclude list."
+        }   
+    }
 }
 
 function Get-CouchDBDatabase () {
@@ -5386,10 +5446,6 @@ function Read-CouchDBLog () {
     Read or tail log.
     .DESCRIPTION
     Read, tail and follow CouchDB log (couch.log).
-    .PARAMETER Server
-    The CouchDB server name. Default is localhost.
-    .PARAMETER Port
-    The CouchDB server port. Default is 5984.
     .PARAMETER Path
     The path of log file. Default, is C:\CouchDB\couch.log on Windows and /var/log/couchdb/couch.log on Unix.
     .PARAMETER Level
@@ -5418,8 +5474,6 @@ function Read-CouchDBLog () {
     #>
     [CmdletBinding()]
     param(
-        [string] $Server,
-        [int] $Port,
         [string] $Path,
         [ValidateSet("debug", "info", "notice", "warning", "error", "critical", "alert", "emergency")]
         [Parameter(ValueFromPipeline = $true)]

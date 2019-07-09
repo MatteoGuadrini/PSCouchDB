@@ -64,6 +64,15 @@ Deletes the specified database, and all the documents and attachments contained 
 
     Remove-CouchDBDatabase -Database test -Authorization "admin:password"
 
+Copy a database
+_______________
+
+Create a new database *test_copy* by copying it from *test* database.
+
+.. code-block:: powershell
+
+    Copy-CouchDBDatabase -Database test -Destination test_copy -Authorization "admin:password"
+
 Index
 _____
 

@@ -175,13 +175,13 @@ Server
 
 .. code-block:: powershell
 
-    Read-CouchDBLog [[-Server] <String>] [[-Port] <Int32>] [[-Path] <String>] [[-Level] <String>] [-Follow] [[-Tail] <Int32>] [<CommonParameters>]
+    Read-CouchDBLog [[-Path] <String>] [[-Level] <String>] [-Follow] [[-Tail] <Int32>] [<CommonParameters>]
 
 **Clear-CouchDBLog**
 
 .. code-block:: powershell
 
-    Clear-CouchDBLog [[-Server] <String>] [[-Port] <Int32>] [[-Path] <String>] [-Rotate] [<CommonParameters>]
+    Clear-CouchDBLog [[-Path] <String>] [-Rotate] [<CommonParameters>]
 
 Replication
 ***********
@@ -263,6 +263,12 @@ Databases
 .. code-block:: powershell
 
     Test-CouchDBDatabase [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+
+**Copy-CouchDBDatabase**
+
+.. code-block:: powershell
+
+    Copy-CouchDBDatabase [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Destination] <String> [[-ExcludeIds] <Array>] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
 
 **Get-CouchDBDatabase**
 
@@ -534,7 +540,8 @@ _______
     ccdd -> Compress-CouchDBDesignDocument         
     ccdoc -> Clear-CouchDBDocuments                
     ccview -> Clear-CouchDBView                    
-    cpdoc -> Copy-CouchDBDocument                  
+    cpdoc -> Copy-CouchDBDocument  
+    gcdb -> Copy-CouchDBDatabase                
     eccl -> Enable-CouchDBCluster                  
     fcdoc -> Find-CouchDBDocuments                 
     finddoc -> Find-CouchDBDocuments               
@@ -609,3 +616,4 @@ _______
     icdb -> Export-CouchDBDatabase
     importdb -> Export-CouchDBDatabase
     rdblog -> Read-CouchDBLog
+    cdblog -> Clear-CouchDBLog

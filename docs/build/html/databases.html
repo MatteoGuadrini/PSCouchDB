@@ -93,6 +93,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#read-a-database">Read a database</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#create-a-database">Create a database</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#remove-a-database">Remove a database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#copy-a-database">Copy a database</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#index">Index</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#get-a-index">Get a index</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#create-a-new-index">Create a new index</a></li>
@@ -232,6 +233,13 @@ If an invalid database name is supplied, CouchDB returns response with <code cla
 <h2>Remove a database<a class="headerlink" href="#remove-a-database" title="Permalink to this headline">¶</a></h2>
 <p>Deletes the specified database, and all the documents and attachments contained within it.</p>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Remove-CouchDBDatabase</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="copy-a-database">
+<h2>Copy a database<a class="headerlink" href="#copy-a-database" title="Permalink to this headline">¶</a></h2>
+<p>Create a new database <em>test_copy</em> by copying it from <em>test</em> database.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Copy-CouchDBDatabase</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Destination</span> <span class="n">test_copy</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>

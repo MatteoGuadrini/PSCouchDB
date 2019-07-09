@@ -12,7 +12,7 @@
     RootModule = 'PSCouchDB.psm1'
 
     # Version number of this module.
-    ModuleVersion = '1.10.0'
+    ModuleVersion = '1.11.0'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -71,6 +71,7 @@
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
     FunctionsToExport = @("Get-CouchDBDatabase",
                         "Test-CouchDBDatabase",
+                        "Copy-CouchDBDatabase",
                         "Get-CouchDBServer",
                         "Get-CouchDBDatabaseInfo",
                         "Get-CouchDBDatabaseChanges",
@@ -158,6 +159,7 @@
 
     # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
     AliasesToExport = @("gcdb",
+                        "cpdb",
                         "tcdb",
                         "gcsi",
                         "gcdbc",
