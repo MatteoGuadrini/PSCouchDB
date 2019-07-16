@@ -871,6 +871,10 @@ function Get-CouchDBServer () {
     Get server information.
     .DESCRIPTION
     Accessing the root of a CouchDB instance returns meta information about the instance.
+    .NOTES
+    CouchDB API:
+        GET /
+        GET /_up
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -912,6 +916,9 @@ function Test-CouchDBDatabase () {
     Test database.
     .DESCRIPTION
     Test if database exists.
+    .NOTES
+    CouchDB API:
+        HEAD /{db}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -955,6 +962,12 @@ function Copy-CouchDBDatabase () {
     Copy database.
     .DESCRIPTION
     Create a new database by copying it from an existing one.
+    .NOTES
+    CouchDB API:
+        HEAD /{db}
+        PUT /{db}
+        GET /{db}/_all_docs
+        PUT /{db}/{doc}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -1000,8 +1013,8 @@ function Copy-CouchDBDatabase () {
         if ($ExcludeIds -notcontains $doc.id) {
             $count++
             $Data = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $doc.id -Authorization $Authorization -Ssl:$Ssl | ConvertTo-Json -Depth 99 
-            New-CouchDBDocument -Server $Server -Port $Port -Database $Destination -Document $doc.id -Data $($Data -replace '"_rev":.*,',"") -Authorization $Authorization -Ssl:$Ssl
-            Write-Progress -Activity "Copy document $($doc.id) in a new database $Destination in progress" -Status "Progress $count/$($all_docs.total_rows)" -PercentComplete ($count/$all_docs.total_rows*100)
+            New-CouchDBDocument -Server $Server -Port $Port -Database $Destination -Document $doc.id -Data $($Data -replace '"_rev":.*,', "") -Authorization $Authorization -Ssl:$Ssl
+            Write-Progress -Activity "Copy document $($doc.id) in a new database $Destination in progress" -Status "Progress $count/$($all_docs.total_rows)" -PercentComplete ($count / $all_docs.total_rows * 100)
         } else {
             Write-Host "Skip $($doc.id) because exists in exclude list."
         }   
@@ -1015,6 +1028,10 @@ function Get-CouchDBDatabase () {
     .DESCRIPTION
     Gets information about the specified database.
     Without database argument, return a list of all databases.
+    .NOTES
+    CouchDB API:
+        GET /{db}
+        GET /_all_dbs
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -1054,6 +1071,9 @@ function Get-CouchDBDatabasePurgedLimit () {
     Get a database purged documents limit.
     .DESCRIPTION
     Gets the current purged_infos_limit (purged documents limit).
+    .NOTES
+    CouchDB API:
+        GET /_purged_infos_limit
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -1091,6 +1111,9 @@ function Get-CouchDBDatabaseInfo () {
     Get a databases information.
     .DESCRIPTION
     Returns information of a list of the specified databases in the CouchDB instance.
+    .NOTES
+    CouchDB API:
+        GET /_purged_infos_limit
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -1137,6 +1160,10 @@ function Get-CouchDBDatabaseChanges () {
     .DESCRIPTION
     Returns a sorted list of changes made to documents in the database, 
     in time order of application, can be obtained from the database’s _changes resource.
+    .NOTES
+    CouchDB API:
+        GET /_changes
+        POST /_changes/
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -1193,6 +1220,9 @@ function Get-CouchDBDatabaseUpdates () {
     Get database events.
     .DESCRIPTION
     Returns a list of all database events in the CouchDB instance.
+    .NOTES
+    CouchDB API:
+        GET /_db_updates
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -1227,6 +1257,9 @@ function Get-CouchDBDatabaseShards () {
     Get shards database list.
     .DESCRIPTION
     Returns a list of shard will have its internal database range, and the nodes on which replicas of those shards are stored.
+    .NOTES
+    CouchDB API:
+        GET /{db}/_shards
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -1265,6 +1298,11 @@ function Get-CouchDBDocument () {
     .DESCRIPTION
     Get a CouchDB document json data.
     Executes the built-in _all_docs view, returning all of the documents in the database.
+    .NOTES
+    CouchDB API:
+        GET /{db}/_local_docs
+        GET /{db}/_all_docs
+        GET /{db}/{docid}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -1495,6 +1533,9 @@ function Get-CouchDBBulkDocument () {
     Get a bulk document.
     .DESCRIPTION
     This method can be called to query several documents in bulk.
+    .NOTES
+    CouchDB API:
+        POST /{db}/_bulk_get
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -1547,6 +1588,9 @@ function Get-CouchDBDesignDocument () {
     The information is returned as a hashtable structure containing meta information about the return structure, 
     including a list of all design documents and basic contents, consisting the ID, revision and key. 
     The key is the from the design document’s _id.
+    .NOTES
+    CouchDB API:
+        GET /{db}/_design/{ddoc}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -1588,6 +1632,9 @@ function Get-CouchDBDatabaseDesignDocument () {
     Get all design document on a database.
     .DESCRIPTION
     Returns a JSON structure of all of the design documents in a given database.
+    .NOTES
+    CouchDB API:
+        GET /{db}/_design_docs
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -1625,6 +1672,10 @@ function Get-CouchDBAttachment () {
     Get or save attachment.
     .DESCRIPTION
     It’s possible to retrieve document with all attached files content.
+    .NOTES
+    CouchDB API:
+        GET /{db}/{docid}/{attname}
+        HEAD /{db}/{docid}/{attname}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -1708,6 +1759,9 @@ function Get-CouchDBUser () {
     Get an user.
     .DESCRIPTION
     Get a CouchDB user.
+    .NOTES
+    CouchDB API:
+        GET /_users
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -1746,6 +1800,9 @@ function Get-CouchDBAdmin () {
     Get an admin user.
     .DESCRIPTION
     Get a CouchDB admin user.
+    .NOTES
+    CouchDB API:
+        GET /_node/{node-name}/_config/admins
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -1784,6 +1841,9 @@ function Get-CouchDBDatabaseSecurity () {
     Get the current security object from the specified database.
     .DESCRIPTION
     Returns the current security object from the specified database.
+    .NOTES
+    CouchDB API:
+        GET /{db}/_security
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -1821,6 +1881,9 @@ function Get-CouchDBConfiguration () {
     Get configuration.
     .DESCRIPTION
     Get configuration of CouchDB server.
+    .NOTES
+    CouchDB API:
+        GET /_node/{node-name}/_config
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -1859,6 +1922,9 @@ function Get-CouchDBNode () {
     Get server nodes.
     .DESCRIPTION
     Displays the nodes that are part of the cluster as cluster_nodes.
+    .NOTES
+    CouchDB API:
+        GET /_membership
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -1893,6 +1959,10 @@ function Get-CouchDBReplication () {
     Get database replication.
     .DESCRIPTION
     Get database replication status of CouchDB server.
+    .NOTES
+    CouchDB API:
+        GET /_replicator/{docid}
+        GET /_replicator/_all_docs
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -1936,6 +2006,9 @@ function Get-CouchDBReplicationScheduler () {
     Get more details of database replication.
     .DESCRIPTION
     List of replication jobs. Includes replications created via /_replicate endpoint as well.
+    .NOTES
+    CouchDB API:
+        GET /_scheduler/jobs
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -1971,6 +2044,9 @@ function Get-CouchDBReplicationDocument () {
     List of replication document states.
     .DESCRIPTION
     List of replication document states. Includes information about all the documents, even in completed and failed states.
+    .NOTES
+    CouchDB API:
+        GET /_scheduler/docs
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -2006,6 +2082,9 @@ function Get-CouchDBActiveTask () {
     Get an active task.
     .DESCRIPTION
     List of running tasks, including the task type, name, status and process ID.
+    .NOTES
+    CouchDB API:
+        GET /_active_tasks
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -2040,6 +2119,9 @@ function Get-CouchDBClusterSetup () {
     Get a cluster setup.
     .DESCRIPTION
     Returns the status of the node or cluster, per the cluster setup wizard.
+    .NOTES
+    CouchDB API:
+        GET /_cluster_setup
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -2074,6 +2156,9 @@ function Get-CouchDBIndex () {
     Get indexes on database.
     .DESCRIPTION
     When you make a GET request to /db/_index, you get a list of all indexes in the database
+    .NOTES
+    CouchDB API:
+        GET /{db}/_index
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -2111,6 +2196,9 @@ function Get-CouchDBMissingRevision () {
     Returns the missing revisions.
     .DESCRIPTION
     With given a list of document revisions, returns the document revisions that do not exist in the database.
+    .NOTES
+    CouchDB API:
+        POST /{db}/_missing_revs
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -2154,9 +2242,12 @@ function Get-CouchDBMissingRevision () {
 function Get-CouchDBRevisionDifference () {
     <#
     .SYNOPSIS
-    Returns the missing revisions.
+    Returns the revision's difference.
     .DESCRIPTION
     Given a set of document/revision IDs, returns the subset of those that do not correspond to revisions stored in the database.
+    .NOTES
+    CouchDB API:
+        POST /{db}/_revs_diff
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -2200,9 +2291,12 @@ function Get-CouchDBRevisionDifference () {
 function Get-CouchDBRevisionLimit () {
     <#
     .SYNOPSIS
-    Get revision limit.
+    Get revision's limit.
     .DESCRIPTION
     Gets the current revs_limit (revision limit) setting.
+    .NOTES
+    CouchDB API:
+        GET /{db}/_revs_limit
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -2239,6 +2333,9 @@ function Get-CouchDBSession () {
     Get cookie authentication.
     .DESCRIPTION
     Get cookie authentication for current session.
+    .NOTES
+    CouchDB API:
+        GET /_session
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -2272,6 +2369,9 @@ function Sync-CouchDBDatabaseShards () {
     Sync shards on database.
     .DESCRIPTION
     Force-starts internal shard synchronization for all replicas of all database shards.
+    .NOTES
+    CouchDB API:
+        POST /{db}/_sync_shards
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -2310,6 +2410,9 @@ function Copy-CouchDBDocument () {
     Copy from document.
     .DESCRIPTION
     To copy from a specific version, use the revision.
+    .NOTES
+    CouchDB API:
+        COPY /{db}/{ddoc}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -2376,6 +2479,10 @@ function Measure-CouchDBStatistics () {
     Measure server statistics.
     .DESCRIPTION
     Measure CouchDB server statistics.
+    .NOTES
+    CouchDB API:
+        GET /_node/{node-name}/_system
+        GET /_node/{node-name}/_stats
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -2420,6 +2527,9 @@ function Clear-CouchDBView () {
     Clean view indexes.
     .DESCRIPTION
     Removes view index files that are no longer required by CouchDB as a result of changed views within design documents.
+    .NOTES
+    CouchDB API:
+        GET /{db}/_view_cleanup
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -2457,6 +2567,9 @@ function Clear-CouchDBDocuments () {
     A database purge permanently document.
     .DESCRIPTION
     A database purge permanently removes the references to deleted documents from the database.
+    .NOTES
+    CouchDB API:
+        POST /{db}/_purge
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -2505,6 +2618,9 @@ function Add-CouchDBNode () {
     Add server nodes.
     .DESCRIPTION
     Add server nodes on CouchDB cluster.
+    .NOTES
+    CouchDB API:
+        POST /_cluster_setup
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -2555,6 +2671,9 @@ function Compress-CouchDBDatabase () {
     Compress database.
     .DESCRIPTION
     Request compaction of the specified database. Compaction compresses the disk database file.
+    .NOTES
+    CouchDB API:
+        POST /{db}/_compact
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -2596,6 +2715,9 @@ function Compress-CouchDBDesignDocument () {
     .DESCRIPTION
     Compacts the view indexes associated with the specified design document. 
     It may be that compacting a large view can return more storage than compacting the actual db.
+    .NOTES
+    CouchDB API:
+        POST /{db}/_compact/{ddoc}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -2638,6 +2760,9 @@ function Set-CouchDBDatabasePurgedLimit () {
     Set a database purged documents limit.
     .DESCRIPTION
     Set the current purged_infos_limit (purged documents limit).
+    .NOTES
+    CouchDB API:
+        PUT /{db}/_purged_infos_limit
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -2680,6 +2805,9 @@ function Set-CouchDBDocument () {
     Modify a document.
     .DESCRIPTION
     Creates a new revision of the existing document.
+    .NOTES
+    CouchDB API:
+        PUT /{db}/{docid}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -2758,7 +2886,7 @@ function Set-CouchDBDocument () {
     # Check BatchMode
     if ($BatchMode.IsPresent) { 
         $Document += "?batch=ok" 
-    # Check NoConflict
+        # Check NoConflict
     } elseif ($NoConflict.IsPresent -and $Revision) { 
         $Document += "?rev=$Revision&new_edits=false"
         $Revision = $null
@@ -2773,6 +2901,9 @@ function Set-CouchDBBulkDocument () {
     Create a bulk document.
     .DESCRIPTION
     This method can be called to allows you to create and update multiple documents at the same time (only id and revision).
+    .NOTES
+    CouchDB API:
+        POST /{db}/_bulk_docs
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -2841,6 +2972,9 @@ function Set-CouchDBDesignDocument () {
     Modify a design document.
     .DESCRIPTION
     Creates a new revision of the existing design document.
+    .NOTES
+    CouchDB API:
+        PUT /{db}/_design/{ddoc}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -3130,6 +3264,9 @@ function Set-CouchDBAttachment () {
     Modify attachment.
     .DESCRIPTION
     Uploads the supplied content as an attachment to the specified document.
+    .NOTES
+    CouchDB API:
+        PUT /{db}/{ddoc}/{attname}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -3177,6 +3314,9 @@ function Set-CouchDBUser () {
     Set an user properties.
     .DESCRIPTION
     Set a CouchDB user properties with roles. Reset password user.
+    .NOTES
+    CouchDB API:
+        PUT /_users
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -3242,6 +3382,9 @@ function Set-CouchDBAdmin () {
     Reset password of admin user.
     .DESCRIPTION
     Reset password of CouchDB admin user.
+    .NOTES
+    CouchDB API:
+        PUT /_node/{node-name}/_config/{section}/{key}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -3291,6 +3434,9 @@ function Set-CouchDBConfiguration () {
     Set element configuration.
     .DESCRIPTION
     Set element configuration of CouchDB server.
+    .NOTES
+    CouchDB API:
+        PUT /_node/{node-name}/_config/{section}/{key}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -3348,6 +3494,9 @@ function Set-CouchDBReplication () {
     .DESCRIPTION
     The default replicator database is _replicator. Additional replicator databases can be created. 
     To be recognized as such by the system, their database names should end with /_replicator.
+    .NOTES
+    CouchDB API:
+        PUT /_replicator/{docid}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -3404,6 +3553,9 @@ function Set-CouchDBRevisionLimit () {
     Set revision limit.
     .DESCRIPTION
     Set the current revs_limit (revision limit) setting.
+    .NOTES
+    CouchDB API:
+        PUT /{db}/_revs_limit
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -3445,6 +3597,9 @@ function Set-CouchDBSession () {
     .DESCRIPTION
     Set cookie authentication (RFC 2109) CouchDB generates a token that the client can use for the next few requests to CouchDB. 
     Tokens are valid until a timeout.
+    .NOTES
+    CouchDB API:
+        POST /_session
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -3491,6 +3646,9 @@ function Grant-CouchDBDatabasePermission () {
     Grant the security object for the given database.
     .DESCRIPTION
     Grant the security object for the given CouchDB database. Specify Admins and/or Readers.
+    .NOTES
+    CouchDB API:
+        PUT /{db}/_security
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -3595,6 +3753,9 @@ function Revoke-CouchDBDatabasePermission () {
     Revoke permission on database.
     .DESCRIPTION
     Revoke permission on database. Specify Admins and/or Readers.
+    .NOTES
+    CouchDB API:
+        PUT /{db}/_security
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -3648,6 +3809,9 @@ function Request-CouchDBReplication () {
     Request a replication operation.
     .DESCRIPTION
     Request, configure, or stop, a replication operation.
+    .NOTES
+    CouchDB API:
+        POST /_replicate
     .PARAMETER SourceServer
     The source CouchDB server name. Default is localhost.
     .PARAMETER TargetServer
@@ -3790,6 +3954,9 @@ function New-CouchDBDatabase () {
     Digits (0-9)
     Any of the characters _, $, (, ), +, -, and /.
     If you're familiar with Regular Expressions, the rules above could be written as ^[a-z][a-z0-9_$()+/-]*$.
+    .NOTES
+    CouchDB API:
+        PUT /{db}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -3828,6 +3995,9 @@ function New-CouchDBDocument () {
     Creates a new document in the specified database, using the supplied JSON document structure or [hashtable] object.
     If the JSON structure or [hashtable] object includes the _id field, then the document will be created with the specified document ID.
     If the _id field is not specified, a new unique ID will be generated, following whatever UUID algorithm is configured for that server (Get-Help New-CouchDBUuids).
+    .NOTES
+    CouchDB API:
+        PUT /{db}/{docid}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -3883,6 +4053,9 @@ function New-CouchDBDesignDocument () {
     Create a new design document.
     .DESCRIPTION
     Create a new CouchDB design document.
+    .NOTES
+    CouchDB API:
+        PUT /{db}/_design/{ddoc}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -4066,6 +4239,9 @@ function New-CouchDBAttachment () {
     Create a new attachment document.
     .DESCRIPTION
     Create a new CouchDB attachment document.
+    .NOTES
+    CouchDB API:
+        PUT /{db}/{docid}/{attname}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -4114,6 +4290,9 @@ function New-CouchDBUser () {
     Create a new user.
     .DESCRIPTION
     Create a new CouchDB user with roles.
+    .NOTES
+    CouchDB API:
+        PUT /_users
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -4176,6 +4355,9 @@ function New-CouchDBAdmin () {
     Create a new admin user.
     .DESCRIPTION
     Create a new CouchDB admin user.
+    .NOTES
+    CouchDB API:
+        PUT /_node/{node-name}/_config/{section}/{key}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -4225,6 +4407,9 @@ function New-CouchDBReplication () {
     Create a new replication job.
     .DESCRIPTION
     Create a new replication job for a specidfic database.
+    .NOTES
+    CouchDB API:
+        PUT /_replicator
     .PARAMETER SourceServer
     The source CouchDB server name. Default is localhost.
     .PARAMETER TargetServer
@@ -4320,6 +4505,9 @@ function New-CouchDBIndex () {
     Mango is a declarative JSON querying language for CouchDB databases. 
     Mango wraps several index types, starting with the Primary Index out-of-the-box. 
     Mango indexes, with index type json, are built using MapReduce Views.
+    .NOTES
+    CouchDB API:
+        POST /{db}/_index
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -4372,6 +4560,9 @@ function New-CouchDBUuids () {
     Create a new uuids.
     .DESCRIPTION
     Requests one or more Universally Unique Identifiers (UUIDs) from the CouchDB instance.
+    .NOTES
+    CouchDB API:
+        GET /_uuids
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -4412,6 +4603,9 @@ function Enable-CouchDBCluster () {
     Create a new cluster.
     .DESCRIPTION
     Create a new cluster CouchDB server.
+    .NOTES
+    CouchDB API:
+        POST /_cluster_setup
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -4515,6 +4709,9 @@ function Remove-CouchDBDatabase () {
     Remove a database.
     .DESCRIPTION
     Deletes the specified database, and all the documents and attachments contained within it.
+    .NOTES
+    CouchDB API:
+        DELETE /{db}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -4556,6 +4753,9 @@ function Remove-CouchDBDocument () {
     Remove a document.
     .DESCRIPTION
     Remove a CouchDB document.
+    .NOTES
+    CouchDB API:
+        DELETE /{db}/{docid}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -4605,6 +4805,9 @@ function Remove-CouchDBDesignDocument () {
     Remove a design document.
     .DESCRIPTION
     Remove a CouchDB design document.
+    .NOTES
+    CouchDB API:
+        DELETE /{db}/_design/{ddoc}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -4655,6 +4858,9 @@ function Remove-CouchDBAttachment () {
     Remove an attachment document.
     .DESCRIPTION
     Remove a CouchDB attachment document.
+    .NOTES
+    CouchDB API:
+        DELETE /{db}/{docid}/{attname}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -4705,6 +4911,9 @@ function Remove-CouchDBUser () {
     Remove an user.
     .DESCRIPTION
     Remove a CouchDB user with roles.
+    .NOTES
+    CouchDB API:
+        DELETE /_users
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -4753,6 +4962,9 @@ function Remove-CouchDBAdmin () {
     Remove an admin user.
     .DESCRIPTION
     Remove a CouchDB admin user.
+    .NOTES
+    CouchDB API:
+        DELETE /_node/{node-name}/_config/{section}/{key}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -4798,6 +5010,9 @@ function Remove-CouchDBNode () {
     Remove server nodes.
     .DESCRIPTION
     Remove server nodes on CouchDB server.
+    .NOTES
+    CouchDB API:
+        DELETE /_node/{node-name}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -4856,6 +5071,9 @@ function Remove-CouchDBReplication () {
     Remove replication.
     .DESCRIPTION
     Remove replication on CouchDB server.
+    .NOTES
+    CouchDB API:
+        DELETE /_replicator/{docid}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -4906,6 +5124,9 @@ function Remove-CouchDBIndex () {
     Remove a index on a database.
     .DESCRIPTION
     Remove a index on CouchDB database.
+    .NOTES
+    CouchDB API:
+        DELETE /{db}/_index/{designdoc}/json/{name}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -4959,6 +5180,9 @@ function Remove-CouchDBSession () {
     Remove current cookie authentication.
     .DESCRIPTION
     Remove cookie authentication for current session.
+    .NOTES
+    CouchDB API:
+        DELETE /_session
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -5016,7 +5240,10 @@ function Search-CouchDBFullText () {
     Full text search.
     .DESCRIPTION
     Full text search across entire database.
-    WARNING! This search is much slower than the Find-CouchdbDocuments cmdlet. 
+    WARNING! This search is much slower than the Find-CouchdbDocuments cmdlet.
+    .NOTES
+    CouchDB API:
+        POST /{db}/_all_docs/queries
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -5094,6 +5321,10 @@ function Find-CouchDBDocuments () {
     Find document data in a database.
     .DESCRIPTION
     Find documents using a declarative JSON querying syntax. Queries can use the built-in _all_docs index or custom indexes, specified using the _index endpoint.
+    .NOTES
+    CouchDB API:
+        POST /{db}/_find
+        POST /{db}/_explain
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -5278,6 +5509,9 @@ function Write-CouchDBFullCommit () {
     .DESCRIPTION
     Commits any recent changes to the specified database to disk. 
     You should call this if you want to ensure that recent changes have been flushed.
+    .NOTES
+    CouchDB API:
+        POST /{db}/_ensure_full_commit
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -5321,6 +5555,9 @@ function Export-CouchDBDatabase () {
     Export database.
     .DESCRIPTION
     Dump specified database in a JSON file.
+    .NOTES
+    CouchDB API:
+        GET /{db}/{docid}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -5358,7 +5595,7 @@ function Export-CouchDBDatabase () {
     foreach ($doc in $all_docs) {
         $count++
         $list.Add($(Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $doc.id -Authorization $Authorization -Ssl:$Ssl))
-        Write-Progress -Activity "Export document $($doc.id) in progress" -Status "Progress $count/$($all_docs.count)" -PercentComplete ($count/$all_docs.count*100)
+        Write-Progress -Activity "Export document $($doc.id) in progress" -Status "Progress $count/$($all_docs.count)" -PercentComplete ($count / $all_docs.count * 100)
     }
     Write-Host "Export JSON file to $Path."
     # Export all docs to json file
@@ -5383,6 +5620,10 @@ function Import-CouchDBDatabase () {
     Import database.
     .DESCRIPTION
     Restore specified database from a JSON file.
+    .NOTES
+    CouchDB API:
+        POST /{db}/_bulk_docs
+        PUT /{db}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -5423,7 +5664,7 @@ function Import-CouchDBDatabase () {
         $_docs = $(Get-Content -Path $Path)
         $docs = @()
         foreach ($doc in $_docs) {
-            $doc = $doc -replace '"_rev":.*,',""
+            $doc = $doc -replace '"_rev":.*,', ""
             $docs += $doc
         }
     } else {
@@ -5489,7 +5730,7 @@ function Read-CouchDBLog () {
         if ($Windows) {
             $Path = "C:\CouchDB\couch.log"
             $root = "C:\CouchDB"
-        # Unix platform
+            # Unix platform
         } else {
             $Path = "/var/log/couchdb/couch.log"
             $root = "/var/log"
@@ -5498,7 +5739,7 @@ function Read-CouchDBLog () {
         if (-not(Test-Path -Path $Path -ErrorAction SilentlyContinue)) {
             Write-Warning -Message "Default log path $Path not exists!"
             Write-Host "Search couch.log in the $root path..."
-            $Path = (Get-ChildItem -Path $root -Recurse | Where-Object {$_.Name -like "couch.log"} | Select-Object FullName).FullName
+            $Path = (Get-ChildItem -Path $root -Recurse | Where-Object { $_.Name -like "couch.log" } | Select-Object FullName).FullName
             if (-not(Test-Path -Path $Path)) {
                 throw "couch.log not found! Specify the `$Path parameter or check configuration!"
             }
@@ -5506,31 +5747,31 @@ function Read-CouchDBLog () {
         }
         # Set level
         $Levels = [PSCustomObject]@{
-            debug = @{
+            debug     = @{
                 color = "DarkYellow"
                 level = "debug", "info", "notice", "warning", "error", "critical", "alert", "emergency"
             }
-            info = @{
+            info      = @{
                 color = "DarkGray"
                 level = "info", "notice", "warning", "error", "critical", "alert", "emergency"
             }
-            notice = @{
+            notice    = @{
                 color = "Gray"
                 level = "notice", "warning", "error", "critical", "alert", "emergency"
             }
-            warning = @{
+            warning   = @{
                 color = "Yellow"
                 level = "warning", "error", "critical", "alert", "emergency"
             }
-            error = @{
+            error     = @{
                 color = "Red"
                 level = "error", "critical", "alert", "emergency"
             }
-            critical = @{
+            critical  = @{
                 color = "DarkRed"
                 level = "critical", "alert", "emergency"
             }
-            alert = @{
+            alert     = @{
                 color = "DarkMagenta"
                 level = "alert", "emergency"
             }
@@ -5594,7 +5835,7 @@ function Clear-CouchDBLog () {
         if ($Windows) {
             $Path = "C:\CouchDB\couch.log"
             $root = "C:\CouchDB"
-        # Unix platform
+            # Unix platform
         } else {
             $Path = "/var/log/couchdb/couch.log"
             $root = "/var/log"
@@ -5603,7 +5844,7 @@ function Clear-CouchDBLog () {
         if (-not(Test-Path -Path $Path -ErrorAction SilentlyContinue)) {
             Write-Warning -Message "Default log path $Path not exists!"
             Write-Host "Search couch.log in the $root path..."
-            $Path = (Get-ChildItem -Path $root -Recurse | Where-Object {$_.Name -like "couch.log"} | Select-Object FullName).FullName
+            $Path = (Get-ChildItem -Path $root -Recurse | Where-Object { $_.Name -like "couch.log" } | Select-Object FullName).FullName
             if (-not(Test-Path -Path $Path)) {
                 throw "couch.log not found! Specify the `$Path parameter or check configuration!"
             }

@@ -71,6 +71,12 @@ and display the help of one the cmdlet found:
 
     Search-CouchDBHelp -Pattern New-CouchDBReplication | Get-Help -Full
 
+or search CouchDB API name:
+
+.. code-block:: powershell
+
+    Search-CouchDBHelp -Pattern _cluster_setup
+
 or help about a module.
 
 .. code-block:: powershell
