@@ -5745,60 +5745,58 @@ function Read-CouchDBLog () {
             }
             Write-Host
         }
-        # Set level
-        $Levels = [PSCustomObject]@{
-            debug     = @{
-                color = "DarkYellow"
-                level = "debug", "info", "notice", "warning", "error", "critical", "alert", "emergency"
-            }
-            info      = @{
-                color = "DarkGray"
-                level = "info", "notice", "warning", "error", "critical", "alert", "emergency"
-            }
-            notice    = @{
-                color = "Gray"
-                level = "notice", "warning", "error", "critical", "alert", "emergency"
-            }
-            warning   = @{
-                color = "Yellow"
-                level = "warning", "error", "critical", "alert", "emergency"
-            }
-            error     = @{
-                color = "Red"
-                level = "error", "critical", "alert", "emergency"
-            }
-            critical  = @{
-                color = "DarkRed"
-                level = "critical", "alert", "emergency"
-            }
-            alert     = @{
-                color = "DarkMagenta"
-                level = "alert", "emergency"
-            }
-            emergency = @{
-                color = "Magenta"
-                level = "emergency"
-            }
+    }
+    # Set level
+    $Levels = [PSCustomObject]@{
+        debug     = @{
+            color = "DarkYellow"
+            level = "debug", "info", "notice", "warning", "error", "critical", "alert", "emergency"
         }
-        # Set option of Get-Content cmdlet
-        $Parameters = @{
-            Path = $Path
+        info      = @{
+            color = "DarkGray"
+            level = "info", "notice", "warning", "error", "critical", "alert", "emergency"
         }
-        if ($Follow.IsPresent) {
-            if (-not($Tail)) { $Parameters.Add("Tail", 10) }
-            $Parameters.Add("Wait", $true)
+        notice    = @{
+            color = "Gray"
+            level = "notice", "warning", "error", "critical", "alert", "emergency"
         }
-        if ($Tail) {
-            $Parameters.Add("Tail", $Tail)
+        warning   = @{
+            color = "Yellow"
+            level = "warning", "error", "critical", "alert", "emergency"
         }
-        # Run Get-Content
-        Get-Content @Parameters | ForEach-Object {
-            foreach ($lev in $Levels.$level.level) {
-                if ($_ -match "\[$lev\]") { Write-Host -ForegroundColor $Levels.$lev.color $_ }
-            }
+        error     = @{
+            color = "Red"
+            level = "error", "critical", "alert", "emergency"
         }
-    } else {
-        Write-Error -Message "$Path not found!"
+        critical  = @{
+            color = "DarkRed"
+            level = "critical", "alert", "emergency"
+        }
+        alert     = @{
+            color = "DarkMagenta"
+            level = "alert", "emergency"
+        }
+        emergency = @{
+            color = "Magenta"
+            level = "emergency"
+        }
+    }
+    # Set option of Get-Content cmdlet
+    $Parameters = @{
+        Path = $Path
+    }
+    if ($Follow.IsPresent) {
+        if (-not($Tail)) { $Parameters.Add("Tail", 10) }
+        $Parameters.Add("Wait", $true)
+    }
+    if ($Tail) {
+        $Parameters.Add("Tail", $Tail)
+    }
+    # Run Get-Content
+    Get-Content @Parameters | ForEach-Object {
+        foreach ($lev in $Levels.$level.level) {
+            if ($_ -match "\[$lev\]") { Write-Host -ForegroundColor $Levels.$lev.color $_ }
+        }
     }
 }
 
@@ -5840,22 +5838,22 @@ function Clear-CouchDBLog () {
             $Path = "/var/log/couchdb/couch.log"
             $root = "/var/log"
         }
-        # ...and if not exists, search it
-        if (-not(Test-Path -Path $Path -ErrorAction SilentlyContinue)) {
-            Write-Warning -Message "Default log path $Path not exists!"
-            Write-Host "Search couch.log in the $root path..."
-            $Path = (Get-ChildItem -Path $root -Recurse | Where-Object { $_.Name -like "couch.log" } | Select-Object FullName).FullName
-            if (-not(Test-Path -Path $Path)) {
-                throw "couch.log not found! Specify the `$Path parameter or check configuration!"
-            }
-            Write-Host
+    }
+    # ...and if not exists, search it
+    if (-not(Test-Path -Path $Path -ErrorAction SilentlyContinue)) {
+        Write-Warning -Message "Default log path $Path not exists!"
+        Write-Host "Search couch.log in the $root path..."
+        $Path = (Get-ChildItem -Path $root -Recurse | Where-Object { $_.Name -like "couch.log" } | Select-Object FullName).FullName
+        if (-not(Test-Path -Path $Path)) {
+            throw "couch.log not found! Specify the `$Path parameter or check configuration!"
         }
-        # Clear log
-        if ($Rotate.IsPresent) {
-            Copy-Item -Path $Path -Destination "$Path.$(Get-Date -Format 'MM-dd-yyyy_HH_mm_ss')" -Force
-            Clear-Content -Path $Path -Force
-        } else {
-            Clear-Content -Path $Path -Force
-        }
+        Write-Host
+    }
+    # Clear log
+    if ($Rotate.IsPresent) {
+        Copy-Item -Path $Path -Destination "$Path.$(Get-Date -Format 'MM-dd-yyyy_HH_mm_ss')" -Force
+        Clear-Content -Path $Path -Force
+    } else {
+        Clear-Content -Path $Path -Force
     }
 }
