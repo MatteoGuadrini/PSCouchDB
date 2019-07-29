@@ -813,6 +813,13 @@ function Send-CouchDBRequest {
     # Check session
     if (-not($couchdb_session) -or ($Authorization)) {
         # Check the credential for access on database
+        $cred = $Authorization -split ":"
+        if (-not($cred[1])) { 
+            $password = ConvertTo-CouchDBPassword -SecurePassword (Read-Host "Enter password for $($cred[0])" -AsSecureString)
+            $Authorization = $cred + ":" + $password
+            $Authorization = $Authorization.Replace(" ","")
+            Remove-Variable $password
+        }
         Write-Verbose -Message "Check authorization"
         $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(($Authorization)))
         $options.Add("Headers", @{Authorization = ("Basic {0}" -f $base64AuthInfo) })
