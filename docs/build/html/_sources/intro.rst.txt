@@ -48,7 +48,8 @@ _______
 
 .. important::  
     This module is not signed. Before import or execute cmdlet on this module, see `about_signing <https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_signing>`_ session. 
-    To skip this part and continue, run ``Set-ExecutionPolicy -ExecutionPolicy Unrestricted``
+    Verify execution of scripts is allowed with ``Get-ExecutionPolicy`` (should be RemoteSigned or Unrestricted). 
+    If scripts are not enabled, run PowerShell as Administrator and call ``Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Confirm``.
 
 Start
 _____

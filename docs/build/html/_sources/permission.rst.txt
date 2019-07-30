@@ -35,6 +35,10 @@ Admin Party allows any user to perform any database operation.
 This could be perfect for application development or on a test machine, but for production it would create many problems.
 To solve this problem, just create an admin user. At this point the admin user can create/modify/delete documents from the database.
 
+.. important::  
+    If the password is not specified, it will be prompted. For example, ``-Authorization admin`` will ask you to write the password at the prompt.
+    The password has the format *****.
+
 .. code-block:: powershell
 
     $password = "password" | ConvertTo-SecureString -AsPlainText -Force

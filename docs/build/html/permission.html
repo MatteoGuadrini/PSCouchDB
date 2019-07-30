@@ -185,6 +185,11 @@
 <p>Admin Party allows any user to perform any database operation.
 This could be perfect for application development or on a test machine, but for production it would create many problems.
 To solve this problem, just create an admin user. At this point the admin user can create/modify/delete documents from the database.</p>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">If the password is not specified, it will be prompted. For example, <code class="docutils literal notranslate"><span class="pre">-Authorization</span> <span class="pre">admin</span></code> will ask you to write the password at the prompt.
+The password has the format <strong>*</strong>.</p>
+</div>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$password</span> <span class="p">=</span> <span class="s2">&quot;password&quot;</span> <span class="p">|</span> <span class="nb">ConvertTo-SecureString</span> <span class="n">-AsPlainText</span> <span class="n">-Force</span>
 <span class="nb">New-CouchDBAdmin</span> <span class="n">-Userid</span> <span class="n">admin</span> <span class="n">-Password</span> <span class="nv">$password</span>
 </pre></div>

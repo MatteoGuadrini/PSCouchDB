@@ -200,7 +200,8 @@ cp -var PSCouchDB /usr/local/share/powershell/Modules
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
 <p class="last">This module is not signed. Before import or execute cmdlet on this module, see <a class="reference external" href="https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_signing">about_signing</a> session.
-To skip this part and continue, run <code class="docutils literal notranslate"><span class="pre">Set-ExecutionPolicy</span> <span class="pre">-ExecutionPolicy</span> <span class="pre">Unrestricted</span></code></p>
+Verify execution of scripts is allowed with <code class="docutils literal notranslate"><span class="pre">Get-ExecutionPolicy</span></code> (should be RemoteSigned or Unrestricted).
+If scripts are not enabled, run PowerShell as Administrator and call <code class="docutils literal notranslate"><span class="pre">Set-ExecutionPolicy</span> <span class="pre">RemoteSigned</span> <span class="pre">-Scope</span> <span class="pre">CurrentUser</span> <span class="pre">-Confirm</span></code>.</p>
 </div>
 </div>
 <div class="section" id="start">

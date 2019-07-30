@@ -674,11 +674,13 @@ function Send-CouchDBRequest {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     When the authorization parameter is first specified, a 
     session variable is created ($couchdb_session) that lasts the entire 
     powershell session. The next calls can be made without
     specifying the authorization parameter, 
     if you do not have to change users.
+    ATTENTION: if the password is not specified, it will be prompted.
     This takes part in the url here: 
     http://{authorization}@localhost:5984.
     .PARAMETER Revision
@@ -814,11 +816,10 @@ function Send-CouchDBRequest {
     if (-not($couchdb_session) -or ($Authorization)) {
         # Check the credential for access on database
         $cred = $Authorization -split ":"
-        if (-not($cred[1])) { 
+        if (-not($cred[1]) -and ($cred[0])) { 
             $password = ConvertTo-CouchDBPassword -SecurePassword (Read-Host "Enter password for $($cred[0])" -AsSecureString)
-            $Authorization = $cred + ":" + $password
-            $Authorization = $Authorization.Replace(" ","")
-            Remove-Variable $password
+            $Authorization = "$($cred[0]):${password}".Replace(" ", "")
+            Remove-Variable -Name password
         }
         Write-Verbose -Message "Check authorization"
         $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(($Authorization)))
@@ -889,6 +890,7 @@ function Get-CouchDBServer () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Status
     Get the status of server. API _up. 
     .PARAMETER Ssl
@@ -935,6 +937,7 @@ function Test-CouchDBDatabase () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -988,6 +991,7 @@ function Copy-CouchDBDatabase () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -1048,6 +1052,7 @@ function Get-CouchDBDatabase () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -1090,6 +1095,7 @@ function Get-CouchDBDatabasePurgedLimit () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -1130,6 +1136,7 @@ function Get-CouchDBDatabaseInfo () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -1184,6 +1191,7 @@ function Get-CouchDBDatabaseChanges () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -1237,6 +1245,7 @@ function Get-CouchDBDatabaseUpdates () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -1276,6 +1285,7 @@ function Get-CouchDBDatabaseShards () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -1347,6 +1357,7 @@ function Get-CouchDBDocument () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -1554,6 +1565,7 @@ function Get-CouchDBBulkDocument () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -1609,6 +1621,7 @@ function Get-CouchDBDesignDocument () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -1651,6 +1664,7 @@ function Get-CouchDBDatabaseDesignDocument () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -1702,6 +1716,7 @@ function Get-CouchDBAttachment () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -1778,6 +1793,7 @@ function Get-CouchDBUser () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -1819,6 +1835,7 @@ function Get-CouchDBAdmin () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -1860,6 +1877,7 @@ function Get-CouchDBDatabaseSecurity () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -1900,6 +1918,7 @@ function Get-CouchDBConfiguration () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -1939,6 +1958,7 @@ function Get-CouchDBNode () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -1979,6 +1999,7 @@ function Get-CouchDBReplication () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -2023,6 +2044,7 @@ function Get-CouchDBReplicationScheduler () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -2061,6 +2083,7 @@ function Get-CouchDBReplicationDocument () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -2099,6 +2122,7 @@ function Get-CouchDBActiveTask () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -2136,6 +2160,7 @@ function Get-CouchDBClusterSetup () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -2175,6 +2200,7 @@ function Get-CouchDBIndex () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -2219,6 +2245,7 @@ function Get-CouchDBMissingRevision () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -2268,6 +2295,7 @@ function Get-CouchDBRevisionDifference () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -2313,6 +2341,7 @@ function Get-CouchDBRevisionLimit () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -2350,6 +2379,7 @@ function Get-CouchDBSession () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -2388,6 +2418,7 @@ function Sync-CouchDBDatabaseShards () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -2435,6 +2466,7 @@ function Copy-CouchDBDocument () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -2499,6 +2531,7 @@ function Measure-CouchDBStatistics () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -2546,6 +2579,7 @@ function Clear-CouchDBView () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -2588,6 +2622,7 @@ function Clear-CouchDBDocuments () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Force
     No confirmation prompt.
     .PARAMETER Ssl
@@ -2639,6 +2674,7 @@ function Add-CouchDBNode () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -2692,6 +2728,7 @@ function Compress-CouchDBDatabase () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -2736,6 +2773,7 @@ function Compress-CouchDBDesignDocument () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -2781,6 +2819,7 @@ function Set-CouchDBDatabasePurgedLimit () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -2837,6 +2876,7 @@ function Set-CouchDBDocument () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -2926,6 +2966,7 @@ function Set-CouchDBBulkDocument () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -3017,6 +3058,7 @@ function Set-CouchDBDesignDocument () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -3289,6 +3331,7 @@ function Set-CouchDBAttachment () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -3339,6 +3382,7 @@ function Set-CouchDBUser () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -3405,6 +3449,7 @@ function Set-CouchDBAdmin () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -3459,6 +3504,7 @@ function Set-CouchDBConfiguration () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -3515,6 +3561,7 @@ function Set-CouchDBReplication () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -3574,6 +3621,7 @@ function Set-CouchDBRevisionLimit () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -3618,6 +3666,7 @@ function Set-CouchDBSession () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -3673,6 +3722,7 @@ function Grant-CouchDBDatabasePermission () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -3846,6 +3896,7 @@ function Request-CouchDBReplication () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Force
     No confirmation prompt.
     .PARAMETER Ssl
@@ -3973,6 +4024,7 @@ function New-CouchDBDatabase () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -4021,6 +4073,7 @@ function New-CouchDBDocument () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -4096,6 +4149,7 @@ function New-CouchDBDesignDocument () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -4264,6 +4318,7 @@ function New-CouchDBAttachment () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -4313,6 +4368,7 @@ function New-CouchDBUser () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -4378,6 +4434,7 @@ function New-CouchDBAdmin () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -4434,6 +4491,7 @@ function New-CouchDBReplication () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -4528,6 +4586,7 @@ function New-CouchDBIndex () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -4579,6 +4638,7 @@ function New-CouchDBUuids () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -4624,6 +4684,7 @@ function Enable-CouchDBCluster () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -4728,6 +4789,7 @@ function Remove-CouchDBDatabase () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Force
     No confirmation prompt.
     .PARAMETER Ssl
@@ -4776,6 +4838,7 @@ function Remove-CouchDBDocument () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Force
     No confirmation prompt.
     .PARAMETER Ssl
@@ -4828,6 +4891,7 @@ function Remove-CouchDBDesignDocument () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Force
     No confirmation prompt.
     .PARAMETER Ssl
@@ -4883,6 +4947,7 @@ function Remove-CouchDBAttachment () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -4932,6 +4997,7 @@ function Remove-CouchDBUser () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Force
     No confirmation prompt.
     .PARAMETER Ssl
@@ -4981,6 +5047,7 @@ function Remove-CouchDBAdmin () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Force
     No confirmation prompt.
     .PARAMETER Ssl
@@ -5029,6 +5096,7 @@ function Remove-CouchDBNode () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Force
     No confirmation prompt.
     .PARAMETER Ssl
@@ -5092,6 +5160,7 @@ function Remove-CouchDBReplication () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Force
     No confirmation prompt.
     .PARAMETER Ssl
@@ -5149,6 +5218,7 @@ function Remove-CouchDBIndex () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Force
     No confirmation prompt.
     .PARAMETER Ssl
@@ -5197,6 +5267,7 @@ function Remove-CouchDBSession () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -5264,6 +5335,7 @@ function Search-CouchDBFullText () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -5373,6 +5445,7 @@ function Find-CouchDBDocuments () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Force
     No confirmation prompt.
     .PARAMETER Ssl
@@ -5528,6 +5601,7 @@ function Write-CouchDBFullCommit () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Force
     No confirmation prompt.
     .PARAMETER Ssl
@@ -5576,6 +5650,7 @@ function Export-CouchDBDatabase () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
@@ -5645,6 +5720,7 @@ function Import-CouchDBDatabase () {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
