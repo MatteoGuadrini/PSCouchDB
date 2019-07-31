@@ -680,7 +680,6 @@ function Send-CouchDBRequest {
     powershell session. The next calls can be made without
     specifying the authorization parameter, 
     if you do not have to change users.
-    ATTENTION: if the password is not specified, it will be prompted.
     This takes part in the url here: 
     http://{authorization}@localhost:5984.
     .PARAMETER Revision
@@ -5292,13 +5291,13 @@ function Remove-CouchDBSession () {
 function Restart-CouchDBServer () {
     <#
     .SYNOPSIS
-    Restart server.
+    Restart service.
     .DESCRIPTION
-    Restart CouchDB server.
+    Restart CouchDB server service.
     .PARAMETER Force
     No confirmation prompt.
     .EXAMPLE
-    Restart-CouchDBServer -Authorization "admin:password"
+    Restart-CouchDBServer
     The example restart CouchDB server. 
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/server.html
@@ -5307,8 +5306,15 @@ function Restart-CouchDBServer () {
     param(
         [switch] $Force
     )
+    $Service = "Apache CouchDB"
     if ($Force -or $PSCmdlet.ShouldContinue("Do you wish to restart CouchDB server ?", "Restart server")) {
-        Restart-Service -Name "Apache CouchDB" -Force
+        try {
+            Restart-Service -Name $Service -Force -ErrorAction Stop
+        } catch [Microsoft.PowerShell.Commands.ServiceCommandException] {
+            throw "Cannot open $Service service on computer"
+        }
+        Write-Host
+        Write-Host -ForegroundColor Green "Apache CouchDB restarted successfully."
     }
 }
 
