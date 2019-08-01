@@ -12,7 +12,7 @@
     RootModule        = 'PSCouchDB.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '1.11.2'
+    ModuleVersion     = '1.11.3'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()

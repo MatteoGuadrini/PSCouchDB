@@ -1757,7 +1757,6 @@ function Get-CouchDBAttachment () {
         [Parameter(mandatory = $true)]
         [string] $Attachment,
         [Parameter(ParameterSetName = "Attachment")]
-        [Parameter(ParameterSetName = "Info")]
         [string] $OutFile,
         [Parameter(ParameterSetName = "Attachment")]
         [Parameter(ParameterSetName = "Info")]
