@@ -1319,6 +1319,9 @@ function Get-CouchDBDocument () {
         GET /{db}/_local_docs
         GET /{db}/_all_docs
         GET /{db}/{docid}
+        HEAD /{db}/_local_docs
+        HEAD /{db}/_all_docs
+        HEAD /{db}/{docid}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -1331,6 +1334,8 @@ function Get-CouchDBDocument () {
     The CouchDB revision document.
     .PARAMETER Local
     Return CouchDB local document.
+    .PARAMETER Info
+    Return CouchDB header info of document.
     .PARAMETER Revisions
     Return all CouchDB db revisions.
     .PARAMETER History
@@ -1372,40 +1377,74 @@ function Get-CouchDBDocument () {
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/documents.html#get-a-document
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Document")]
     param(
+        [Parameter(ParameterSetName = "Document")]
+        [Parameter(ParameterSetName = "Info")]
         [string] $Server,
+        [Parameter(ParameterSetName = "Document")]
+        [Parameter(ParameterSetName = "Info")]
         [int] $Port,
+        [Parameter(ParameterSetName = "Document")]
+        [Parameter(ParameterSetName = "Info")]
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
+        [Parameter(ParameterSetName = "Document")]
+        [Parameter(ParameterSetName = "Info")]
         [string] $Document = "_all_docs",
+        [Parameter(ParameterSetName = "Document")]
+        [Parameter(ParameterSetName = "Info")]
         [string] $Revision,
+        [Parameter(ParameterSetName = "Info")]
+        [switch] $Info,
+        [Parameter(ParameterSetName = "Document")]
+        [Parameter(ParameterSetName = "Info")]
         [switch] $Local,
+        [Parameter(ParameterSetName = "Document")]
         [switch] $Revisions,
+        [Parameter(ParameterSetName = "Document")]
         [switch] $History,
+        [Parameter(ParameterSetName = "Document")]
         [switch] $Attachments,
+        [Parameter(ParameterSetName = "Document")]
         [switch] $AttachmentsInfo,
         [ValidateCount(2, 10)]
+        [Parameter(ParameterSetName = "Document")]
         [array] $AttachmentsSince,
+        [Parameter(ParameterSetName = "Document")]
         [switch] $Conflicts,
+        [Parameter(ParameterSetName = "Document")]
         [switch] $DeletedConflicts,
+        [Parameter(ParameterSetName = "Document")]
         [switch] $Latest,
+        [Parameter(ParameterSetName = "Document")]
         [switch] $LocalSequence,
+        [Parameter(ParameterSetName = "Document")]
         [switch] $Metadata,
+        [Parameter(ParameterSetName = "Document")]
         [array] $OpenRevisions,
+        [Parameter(ParameterSetName = "Document")]
+        [Parameter(ParameterSetName = "Info")]
         [string] $Authorization,
+        [Parameter(ParameterSetName = "Document")]
+        [Parameter(ParameterSetName = "Info")]
         [switch] $Ssl
     )
     # Check local docs
     if ($Local.IsPresent) {
         if ($Document -ne '_all_docs') {
-            Write-Warning -Message "`$Document $Document parameter is rewrite in _local_docs because -Local parameter is specified."
+            Write-Warning -Message "-Document $Document parameter is rewrite in _local_docs because -Local parameter is specified."
         }
         $Document = "_local_docs"
     }
     # Select a revision
     if ($Revision) {
         $Document += "?rev=$Revision"
+    }
+    # Check info
+    if ($Info.IsPresent) {
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "HEAD" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+        return
     }
     # Check various parameter
     if ($Revisions.IsPresent) {
