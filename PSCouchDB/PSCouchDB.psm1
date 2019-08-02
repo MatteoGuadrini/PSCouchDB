@@ -1373,7 +1373,10 @@ function Get-CouchDBDocument () {
     This example get all documents on database "test".
     .EXAMPLE
     Get-CouchDBDocument -Database test -Revisions
-    This example get all revision of documents "Hitchhikers" on database "test".
+    This example get all revision on database "test".
+    .EXAMPLE
+    if (Get-CouchDBDocument -Database test -Document "Hitchhikers" -Info) { echo doc exists! }
+    Test if document "Hitchhikers" on database "test" exists.
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/documents.html#get-a-document
     #>
@@ -2484,6 +2487,7 @@ function Copy-CouchDBDocument () {
     .SYNOPSIS
     Copy from document.
     .DESCRIPTION
+    Copy document to another in same database.
     To copy from a specific version, use the revision.
     .NOTES
     CouchDB API:
@@ -2513,10 +2517,10 @@ function Copy-CouchDBDocument () {
     .EXAMPLE
     Copy-CouchDBDocument -Database test -Document "Hitchhikers" -Destination "Hitchhikers Guide _deleted" -Revision 3-399796e5ce019e04311637e8a8a0f402 -Authorization "admin:password"
     This example copy specific revision 3-399796e5ce019e04311637e8a8a0f402 of "Hitchhikers" document to "Hitchhikers Guide" document on same database "test".
-    .LINK
-    https://pscouchdb.readthedocs.io/en/latest/documents.html#get-an-attachment
     .EXAMPLE
     Copy-CouchDBDocument -Database test -Document "001" -Destination "copy_001" -Authorization "admin:password"
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/documents.html#get-an-attachment
     #>
     param(
         [string] $Server,
@@ -2532,7 +2536,7 @@ function Copy-CouchDBDocument () {
         [switch] $Ssl
     )
     # Check document id exists
-    if (-not(Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
+    if (-not(Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Document -Revision $Revision -Info -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
         throw "The specific document $Document does not exists."
     } else {
         $Data = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization -Ssl:$Ssl
@@ -3876,7 +3880,7 @@ function Revoke-CouchDBDatabasePermission () {
     )
     if ($Force -or $PSCmdlet.ShouldContinue("Do you wish revoke all permission on database $Database ?", "Revoke all permission on database $Database")) {
         # Get a current security permission
-        if (-not(Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document '_security' -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
+        if (-not(Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document '_security' -Info -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
             throw "No security object found in database $Database"
         }
         # Revoke data permission
@@ -5166,7 +5170,7 @@ function Remove-CouchDBNode () {
             $Port = 5986
         }
     }
-    if (Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Node -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue) {
+    if (Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Node -Info -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue) {
         $Revision = (Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Node -Authorization $Authorization -Ssl:$Ssl)._rev
     } else {
         throw "Node $Node not exist."
