@@ -490,7 +490,7 @@ Design documents
 
 .. code-block:: powershell
 
-    Get-CouchDBDesignDocument [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    Get-CouchDBDesignDocument [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [-Info] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
 
 **New-CouchDBDesignDocument**
 

@@ -1651,6 +1651,7 @@ function Get-CouchDBDesignDocument () {
     .NOTES
     CouchDB API:
         GET /{db}/_design/{ddoc}
+        HEAD /{db}/_design/{ddoc}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -1659,6 +1660,8 @@ function Get-CouchDBDesignDocument () {
     The CouchDB database.
     .PARAMETER Document
     The CouchDB document.
+    .PARAMETER Info
+    The CouchDB header of document.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -1680,11 +1683,13 @@ function Get-CouchDBDesignDocument () {
         [string] $Database,
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Document,
+        [switch] $Info,
         [string] $Authorization,
         [switch] $Ssl
     )
     $Document = "_design/$Document"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+    if ($Info.IsPresent) { $Method = "HEAD" } else { $Method = "GET" }
+    Send-CouchDBRequest -Server $Server -Port $Port -Method $Method -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Get-CouchDBDatabaseDesignDocument () {
