@@ -74,14 +74,24 @@ New-Alias -Name "rcs" -Value Remove-CouchDBSession -Option ReadOnly
 New-Alias -Name "rcsrv" -Value Restart-CouchDBServer -Option ReadOnly
 New-Alias -Name "scft" -Value Search-CouchDBFullText -Option ReadOnly
 New-Alias -Name "fcdoc" -Value Find-CouchDBDocuments -Option ReadOnly
-New-Alias -Name "finddoc" -Value Find-CouchDBDocuments -Option ReadOnly
 New-Alias -Name "wcfc" -Value Write-CouchDBFullCommit -Option ReadOnly
 New-Alias -Name "ecdb" -Value Export-CouchDBDatabase -Option ReadOnly
-New-Alias -Name "exportdb" -Value Export-CouchDBDatabase -Option ReadOnly
 New-Alias -Name "icdb" -Value Import-CouchDBDatabase -Option ReadOnly
-New-Alias -Name "importdb" -Value Import-CouchDBDatabase -Option ReadOnly
 New-Alias -Name "rdblog" -Value Read-CouchDBLog -Option ReadOnly
 New-Alias -Name "cdblog" -Value Clear-CouchDBLog -Option ReadOnly
+
+# Intuitive alias
+New-Alias -Name "mkdb" -Value New-CouchDBDatabase -Option ReadOnly
+New-Alias -Name "mkdoc" -Value New-CouchDBDocument -Option ReadOnly
+New-Alias -Name "mkuser" -Value New-CouchDBUser -Option ReadOnly
+New-Alias -Name "mkadmin" -Value New-CouchDBAdmin -Option ReadOnly
+New-Alias -Name "rmdb" -Value Remove-CouchDBDatabase -Option ReadOnly
+New-Alias -Name "rmdoc" -Value Remove-CouchDBDocument -Option ReadOnly
+New-Alias -Name "rmuser" -Value Remove-CouchDBUser -Option ReadOnly
+New-Alias -Name "rmadmin" -Value Remove-CouchDBAdmin -Option ReadOnly
+New-Alias -Name "finddoc" -Value Find-CouchDBDocuments -Option ReadOnly
+New-Alias -Name "importdb" -Value Import-CouchDBDatabase -Option ReadOnly
+New-Alias -Name "exportdb" -Value Export-CouchDBDatabase -Option ReadOnly
 
 # Native Powershell CouchDB class
 class PSCouchDBQuery {

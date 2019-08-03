@@ -240,7 +240,15 @@
         "icdb",
         "importdb",
         "rdblog",
-        "cdblog"
+        "cdblog",
+        "mkdb",
+        "mkdoc",
+        "mkuser",
+        "mkadmin",
+        "rmdb",
+        "rmdoc",
+        "rmuser",
+        "rmadmin"
     )
 
     # DSC resources to export from this module

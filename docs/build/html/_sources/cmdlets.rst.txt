@@ -619,3 +619,11 @@ _______
     importdb -> Export-CouchDBDatabase
     rdblog -> Read-CouchDBLog
     cdblog -> Clear-CouchDBLog
+    mkdb -> New-CouchDBDatabase
+    mkdoc -> New-CouchDBDocument
+    mkuser -> New-CouchDBUser
+    mkadmin -> New-CouchDBAdmin
+    rmdb -> Remove-CouchDBDatabase
+    rmdoc -> Remove-CouchDBDocument
+    rmuser -> Remove-CouchDBUser
+    rmadmin -> Remove-CouchDBAdmin
