@@ -92,7 +92,10 @@
 <li class="toctree-l1"><a class="reference internal" href="documents.html">Documents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="documents.html#query">Query</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Design documents</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#get-a-design-document">Get a design document</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#get-a-design-document">Get a design document</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#design-document-attachment">Design document attachment</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#creates-a-design-document">Creates a design document</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#views">Views</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#list">List</a></li>
@@ -189,6 +192,13 @@ Unless you request a specific revision, the latest revision of the document will
 <p>To get all the Design Documents in a database.</p>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDatabaseDesignDocument</span> <span class="n">-Database</span> <span class="n">test</span>
 </pre></div>
+</div>
+<div class="section" id="design-document-attachment">
+<h3>Design document attachment<a class="headerlink" href="#design-document-attachment" title="Permalink to this headline">¶</a></h3>
+<p>To retrieve or save an attachment in a design document.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDesignDocumentAttachment</span> <span class="n">-Database</span> <span class="n">test2</span> <span class="n">-Document</span> <span class="n">space</span> <span class="n">-Attachment</span> <span class="n">test</span><span class="p">.</span><span class="n">txt</span> <span class="n">-OutFile</span>
+</pre></div>
+</div>
 </div>
 </div>
 <div class="section" id="creates-a-design-document">

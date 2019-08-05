@@ -12,7 +12,7 @@
     RootModule        = 'PSCouchDB.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '1.11.4'
+    ModuleVersion     = '1.11.5'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -81,6 +81,7 @@
         "Get-CouchDBDocument",
         "Get-CouchDBBulkDocument",
         "Get-CouchDBDesignDocument",
+        "Get-CouchDBDesignDocumentAttachment",
         "Get-CouchDBDatabaseDesignDocument",
         "Get-CouchDBAttachment",
         "Get-CouchDBUser",
@@ -169,6 +170,7 @@
         "gcdoc",
         "gcbdoc",
         "gcddoc",
+        "gcdatt",
         "gcbpl",
         "gcatt",
         "gcusr",

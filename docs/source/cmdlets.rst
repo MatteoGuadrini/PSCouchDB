@@ -492,6 +492,14 @@ Design documents
 
     Get-CouchDBDesignDocument [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [-Info] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
 
+**Get-CouchDBDesignDocumentAttachment**
+
+.. code-block:: powershell
+
+    Get-CouchDBDesignDocumentAttachment [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-Revision <String>] [-Attachment <String>] [-OutFile <String>] [-Authorization <String>] [-Ssl] [<CommonParameters>]
+
+    Get-CouchDBDesignDocumentAttachment [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-Revision <String>] [-Info] [-Attachment <String>] [-Authorization <String>] [-Ssl] [<CommonParameters>]
+
 **New-CouchDBDesignDocument**
 
 .. code-block:: powershell
@@ -560,7 +568,8 @@ _______
     gcdbsh -> Get-CouchDBDatabaseShards            
     gcdbu -> Get-CouchDBDatabaseUpdates            
     gcddd -> Get-CouchDBDatabaseDesignDocument     
-    gcddoc -> Get-CouchDBDesignDocument            
+    gcddoc -> Get-CouchDBDesignDocument
+    gcdatt -> Get-CouchDBDesignDocumentAttachment            
     gcdoc -> Get-CouchDBDocument                   
     gcidx -> Get-CouchDBIndex                      
     gcmr -> Get-CouchDBMissingRevision             

@@ -37,6 +37,15 @@ To get all the Design Documents in a database.
 
     Get-CouchDBDatabaseDesignDocument -Database test
 
+Design document attachment
+**************************
+
+To retrieve or save an attachment in a design document.
+
+.. code-block:: powershell
+
+    Get-CouchDBDesignDocumentAttachment -Database test2 -Document space -Attachment test.txt -OutFile
+
 Creates a design document
 _________________________
 

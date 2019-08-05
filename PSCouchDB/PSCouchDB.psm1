@@ -10,6 +10,7 @@ New-Alias -Name "gcdbsh" -Value Get-CouchDBDatabaseShards -Option ReadOnly
 New-Alias -Name "gcdoc" -Value Get-CouchDBDocument -Option ReadOnly
 New-Alias -Name "gcbdoc" -Value Get-CouchDBBulkDocument -Option ReadOnly
 New-Alias -Name "gcddoc" -Value Get-CouchDBDesignDocument -Option ReadOnly
+New-Alias -Name "gcdatt" -Value Get-CouchDBDesignDocumentAttachment -Option ReadOnly
 New-Alias -Name "gcatt" -Value Get-CouchDBAttachment -Option ReadOnly
 New-Alias -Name "gcusr" -Value Get-CouchDBUser -Option ReadOnly
 New-Alias -Name "gcadm" -Value Get-CouchDBAdmin -Option ReadOnly
@@ -1702,6 +1703,94 @@ function Get-CouchDBDesignDocument () {
     Send-CouchDBRequest -Server $Server -Port $Port -Method $Method -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
 }
 
+function Get-CouchDBDesignDocumentAttachment () {
+    <#
+    .SYNOPSIS
+    Get or save attachment.
+    .DESCRIPTION
+    It’s possible to retrieve document with all attached files content.
+    .NOTES
+    CouchDB API:
+        GET /{db}/_design/{ddoc}/{attname}
+        HEAD /{db}/_design/{ddoc}/{attname}
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Document
+    The CouchDB document.
+    .PARAMETER Revision
+    The CouchDB revision document.
+    .PARAMETER Attachment
+    The CouchDB attachment document.
+    .PARAMETER Info
+    The CouchDB attachment document infos.
+    .PARAMETER OutFile
+    The full path where save attachment document.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
+    .EXAMPLE
+    Get-CouchDBDesignDocumentAttachment -Database test -Document space -Attachment test.txt
+    This example get attachment "test.txt" on "space" document on database "test".
+    .EXAMPLE
+    Get-CouchDBDesignDocumentAttachment -Database test -Document space -Attachment test.txt -OutFile C:\test.txt
+    This example save attachment "test.txt" to C:\test.txt on "space" document on database "test".
+    .EXAMPLE
+    Get-CouchDBDesignDocumentAttachment -Database test -Document space -Attachment test.txt -Info
+    This example get attachment "test.txt" infos on "space" document on database "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/documents.html#get-an-attachment
+    #>
+    [CmdletBinding(DefaultParameterSetName = "Attachment")]
+    param(
+        [Parameter(ParameterSetName = "Attachment")]
+        [Parameter(ParameterSetName = "Info")]
+        [string] $Server,
+        [Parameter(ParameterSetName = "Attachment")]
+        [Parameter(ParameterSetName = "Info")]
+        [int] $Port,
+        [Parameter(ParameterSetName = "Attachment")]
+        [Parameter(ParameterSetName = "Info")]
+        [Parameter(mandatory = $true)]
+        [string] $Database,
+        [Parameter(ParameterSetName = "Attachment")]
+        [Parameter(ParameterSetName = "Info")]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
+        [string] $Document,
+        [Parameter(ParameterSetName = "Attachment")]
+        [Parameter(ParameterSetName = "Info")]
+        [string] $Revision,
+        [Parameter(ParameterSetName = "Info")]
+        [switch] $Info,
+        [Parameter(ParameterSetName = "Attachment")]
+        [Parameter(ParameterSetName = "Info")]
+        [Parameter(mandatory = $true)]
+        [string] $Attachment,
+        [Parameter(ParameterSetName = "Attachment")]
+        [string] $OutFile,
+        [Parameter(ParameterSetName = "Attachment")]
+        [Parameter(ParameterSetName = "Info")]
+        [string] $Authorization,
+        [Parameter(ParameterSetName = "Attachment")]
+        [Parameter(ParameterSetName = "Info")]
+        [switch] $Ssl
+    )
+    if ($Info.IsPresent) {
+        $Method = "HEAD"
+    } else {
+        $Method = "GET"
+    }
+    $Document = "_design/$Document"
+    Send-CouchDBRequest -Server $Server -Port $Port -Method $Method -Database $Database -Document $Document -Revision $Revision -Attachment $Attachment -OutFile $OutFile -Authorization $Authorization -Ssl:$Ssl
+}
+
 function Get-CouchDBDatabaseDesignDocument () {
     <#
     .SYNOPSIS
@@ -1783,7 +1872,7 @@ function Get-CouchDBAttachment () {
     Get-CouchDBAttachment -Database test -Document "Hitchhikers" -Attachment test.txt -OutFile C:\test.txt
     This example save attachment "test.txt" to C:\test.txt on "Hitchhikers" document on database "test".
     .EXAMPLE
-    Get-CouchDBAttachment -Database test -Document "Hitchhikers" -Attachment test.txt -info
+    Get-CouchDBAttachment -Database test -Document "Hitchhikers" -Attachment test.txt -Info
     This example get attachment "test.txt" infos on "Hitchhikers" document on database "test".
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/documents.html#get-an-attachment
