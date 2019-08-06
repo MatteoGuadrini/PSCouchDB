@@ -168,6 +168,15 @@ It is also possible to define a custom Design Document, creating a here string t
     '@
     New-CouchDBDesignDocument -Database test -Document space -Data $ddoc -Authorization "admin:password"
 
+Create design document attachment
+*********************************
+
+To create an attachment in a design document.
+
+.. code-block:: powershell
+
+    New-CouchDBDesignDocumentAttachment -Database test -Document space -Attachment "C:\test.txt" -Revision 3-cfae968df80635ad15a9709e0264a988 -Authorization "admin:password"
+
 Compress design document
 ________________________
 

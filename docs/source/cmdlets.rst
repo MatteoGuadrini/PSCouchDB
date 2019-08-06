@@ -500,6 +500,12 @@ Design documents
 
     Get-CouchDBDesignDocumentAttachment [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-Revision <String>] [-Info] [-Attachment <String>] [-Authorization <String>] [-Ssl] [<CommonParameters>]
 
+**New-CouchDBDesignDocumentAttachment**
+
+.. code-block:: powershell
+
+    New-CouchDBDesignDocumentAttachment [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [-Attachment] <String> [-Revision] <String> [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+
 **New-CouchDBDesignDocument**
 
 .. code-block:: powershell

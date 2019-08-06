@@ -56,6 +56,7 @@ New-Alias -Name "rcdbr" -Value Request-CouchDBReplication -Option ReadOnly
 New-Alias -Name "ncdb" -Value New-CouchDBDatabase -Option ReadOnly
 New-Alias -Name "ncdoc" -Value New-CouchDBDocument -Option ReadOnly
 New-Alias -Name "ncddoc" -Value New-CouchDBDesignDocument -Option ReadOnly
+New-Alias -Name "ndatt" -Value New-CouchDBDesignDocumentAttachment -Option ReadOnly
 New-Alias -Name "ncatt" -Value New-CouchDBAttachment -Option ReadOnly
 New-Alias -Name "ncusr" -Value New-CouchDBUser -Option ReadOnly
 New-Alias -Name "ncadm" -Value New-CouchDBAdmin -Option ReadOnly
@@ -1746,7 +1747,7 @@ function Get-CouchDBDesignDocumentAttachment () {
     Get-CouchDBDesignDocumentAttachment -Database test -Document space -Attachment test.txt -Info
     This example get attachment "test.txt" infos on "space" document on database "test".
     .LINK
-    https://pscouchdb.readthedocs.io/en/latest/documents.html#get-an-attachment
+    https://pscouchdb.readthedocs.io/en/latest/ddoc.html#design-document-attachment
     #>
     [CmdletBinding(DefaultParameterSetName = "Attachment")]
     param(
@@ -4437,6 +4438,59 @@ function New-CouchDBDesignDocument () {
         }
     }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+}
+
+function New-CouchDBDesignDocumentAttachment () {
+    <#
+    .SYNOPSIS
+    Create a new attachment document.
+    .DESCRIPTION
+    Create a new CouchDB attachment document.
+    .NOTES
+    CouchDB API:
+        PUT /{db}/{docid}/{attname}
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Document
+    The CouchDB document.
+    .PARAMETER Attachment
+    The CouchDB attachment document.
+    .PARAMETER Revision
+    The CouchDB revision document.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
+    .EXAMPLE
+    New-CouchDBDesignDocumentAttachment -Database test -Document "Hitchhikers" -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Attachment test.txt
+    This example add attachment "test.txt" on "Hitchhikers" document from database "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/ddoc.html#create-design-document-attachment
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server,
+        [int] $Port,
+        [Parameter(mandatory = $true)]
+        [string] $Database,
+        [Parameter(mandatory = $true)]
+        [string] $Document,
+        [Parameter(mandatory = $true)]
+        [string] $Attachment,
+        [Parameter(mandatory = $true)]
+        [string] $Revision,
+        [string] $Authorization,
+        [switch] $Ssl
+    )
+    $Document = "_design/$Document"
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Attachment $Attachment -Revision $Revision -Authorization $Authorization -Ssl:$Ssl
 }
 
 function New-CouchDBAttachment () {
