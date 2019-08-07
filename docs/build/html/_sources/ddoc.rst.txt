@@ -37,8 +37,8 @@ To get all the Design Documents in a database.
 
     Get-CouchDBDatabaseDesignDocument -Database test
 
-Design document attachment
-**************************
+Get design document attachment
+******************************
 
 To retrieve or save an attachment in a design document.
 
@@ -204,3 +204,12 @@ To remove a design document.
 .. code-block:: powershell
 
     Remove-CouchDBDesignDocument -Database test -Document "mydesigndoc" -Revision "1-85a961d0d9b235b7b4f07baed1a38fda" -Authorization "admin:password"
+
+Remove design document attachment
+*********************************
+
+To modify or add an attachment in a design document.
+
+.. code-block:: powershell
+
+    Remove-CouchDBDesignDocumentAttachment -Database test -Document space -Attachment "C:\test2.txt" -Revision 5-cfae778df80635ad15daa09e0264a988 -Authorization "admin:password"

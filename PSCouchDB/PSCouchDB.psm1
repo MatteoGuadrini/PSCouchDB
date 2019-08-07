@@ -67,6 +67,7 @@ New-Alias -Name "ncidx" -Value New-CouchDBIndex -Option ReadOnly
 New-Alias -Name "rcdb" -Value Remove-CouchDBDatabase -Option ReadOnly
 New-Alias -Name "rcdoc" -Value Remove-CouchDBDocument -Option ReadOnly
 New-Alias -Name "rcddoc" -Value Remove-CouchDBDesignDocument -Option ReadOnly
+New-Alias -Name "rdatt" -Value Remove-CouchDBDesignDocumentAttachment -Option ReadOnly
 New-Alias -Name "rcatt" -Value Remove-CouchDBAttachment -Option ReadOnly
 New-Alias -Name "rcusr" -Value Remove-CouchDBUser -Option ReadOnly
 New-Alias -Name "rcadm" -Value Remove-CouchDBAdmin -Option ReadOnly
@@ -3080,7 +3081,7 @@ function Set-CouchDBDocument () {
     # Check BatchMode
     if ($BatchMode.IsPresent) { 
         $Document += "?batch=ok" 
-        # Check NoConflict
+    # Check NoConflict
     } elseif ($NoConflict.IsPresent -and $Revision) { 
         $Document += "?rev=$Revision&new_edits=false"
         $Revision = $null
@@ -5224,9 +5225,66 @@ function Remove-CouchDBAttachment () {
         [Parameter(mandatory = $true)]
         [string] $Revision,
         [string] $Authorization,
+        [switch]$Force,
         [switch] $Ssl
     )
-    if ($PSCmdlet.ShouldContinue("Do you wish remove attachment $Attachment in document $Document on database $Database ?", "Remove attachment $Attachment in document $Document on database $Database")) {
+    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove attachment $Attachment in document $Document on database $Database ?", "Remove attachment $Attachment in document $Document on database $Database")) {
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Attachment $Attachment -Revision $Revision -Authorization $Authorization -Ssl:$Ssl
+    }
+}
+
+function Remove-CouchDBDesignDocumentAttachment () {
+    <#
+    .SYNOPSIS
+    Remove an attachment in a design document.
+    .DESCRIPTION
+    Deletes the attachment of the specified design document.
+    .NOTES
+    CouchDB API:
+        DELETE /{db}/_design/{ddoc}/{attname}
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Document
+    The CouchDB document.
+    .PARAMETER Attachment
+    The CouchDB attachment document.
+    .PARAMETER Revision
+    The CouchDB revision document.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
+    .EXAMPLE
+    Remove-CouchDBDesignDocumentAttachment -Database test -Document "space" -Attachment test.txt -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:password"
+    The example removes an attachment "test.txt" on a design document "space" from database "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/documents.html#delete-an-attachment
+    #>
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param(
+        [string] $Server,
+        [int] $Port,
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
+        [string] $Database,
+        [Parameter(mandatory = $true)]
+        [string] $Document,
+        [Parameter(mandatory = $true)]
+        [string] $Attachment,
+        [Parameter(mandatory = $true)]
+        [string] $Revision,
+        [string] $Authorization,
+        [switch]$Force,
+        [switch] $Ssl
+    )
+    $Document = "_design/$Document"
+    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove attachment $Attachment in design document $Document on database $Database ?", "Remove attachment $Attachment in design document $Document on database $Database")) {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Attachment $Attachment -Revision $Revision -Authorization $Authorization -Ssl:$Ssl
     }
 }

@@ -93,7 +93,7 @@
 <li class="toctree-l1"><a class="reference internal" href="documents.html#query">Query</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Design documents</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#get-a-design-document">Get a design document</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#design-document-attachment">Design document attachment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#get-design-document-attachment">Get design document attachment</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#creates-a-design-document">Creates a design document</a><ul>
@@ -107,7 +107,10 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#compress-design-document">Compress design document</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#remove-design-document">Remove design document</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#remove-design-document">Remove design document</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#remove-design-document-attachment">Remove design document attachment</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="cmdlets.html">Cmdlets and aliases</a></li>
@@ -195,8 +198,8 @@ Unless you request a specific revision, the latest revision of the document will
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDatabaseDesignDocument</span> <span class="n">-Database</span> <span class="n">test</span>
 </pre></div>
 </div>
-<div class="section" id="design-document-attachment">
-<h3>Design document attachment<a class="headerlink" href="#design-document-attachment" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="get-design-document-attachment">
+<h3>Get design document attachment<a class="headerlink" href="#get-design-document-attachment" title="Permalink to this headline">¶</a></h3>
 <p>To retrieve or save an attachment in a design document.</p>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDesignDocumentAttachment</span> <span class="n">-Database</span> <span class="n">test2</span> <span class="n">-Document</span> <span class="n">space</span> <span class="n">-Attachment</span> <span class="n">test</span><span class="p">.</span><span class="n">txt</span> <span class="n">-OutFile</span>
 </pre></div>
@@ -332,6 +335,13 @@ This operation is very similar to the vacuum (SQLite ex.) operation available fo
 <p>To remove a design document.</p>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Remove-CouchDBDesignDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;mydesigndoc&quot;</span> <span class="n">-Revision</span> <span class="s2">&quot;1-85a961d0d9b235b7b4f07baed1a38fda&quot;</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
+</div>
+<div class="section" id="remove-design-document-attachment">
+<h3>Remove design document attachment<a class="headerlink" href="#remove-design-document-attachment" title="Permalink to this headline">¶</a></h3>
+<p>To modify or add an attachment in a design document.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Remove-CouchDBDesignDocumentAttachment</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="n">space</span> <span class="n">-Attachment</span> <span class="s2">&quot;C:\test2.txt&quot;</span> <span class="n">-Revision</span> <span class="n">5-cfae778df80635ad15daa09e0264a988</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+</pre></div>
+</div>
 </div>
 </div>
 </div>

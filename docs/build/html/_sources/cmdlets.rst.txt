@@ -552,6 +552,12 @@ Design documents
 
     Remove-CouchDBDesignDocument [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [-Revision] <String> [[-Authorization] <String>] [-Force] [-Ssl] [-WhatIf] [-Confirm] [<CommonParameters>]
 
+**Remove-CouchDBDesignDocumentAttachment**
+
+.. code-block:: powershell
+
+    Remove-CouchDBDesignDocumentAttachment [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [-Attachment] <String> [-Revision] <String> [[-Authorization] <String>] [-Ssl] [-WhatIf] [-Confirm] [<CommonParameters>]
+
 Aliases
 _______
 
@@ -611,7 +617,8 @@ _______
     rcdb -> Remove-CouchDBDatabase                 
     rcdbp -> Revoke-CouchDBDatabasePermission      
     rcdbr -> Request-CouchDBReplication            
-    rcddoc -> Remove-CouchDBDesignDocument         
+    rcddoc -> Remove-CouchDBDesignDocument  
+    rdatt -> Remove-CouchDBDesignDocumentAttachment       
     rcdoc -> Remove-CouchDBDocument                
     rcidx -> Remove-CouchDBIndex                   
     rcnode -> Remove-CouchDBNode                   
