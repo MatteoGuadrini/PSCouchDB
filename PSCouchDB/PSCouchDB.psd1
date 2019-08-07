@@ -12,7 +12,7 @@
     RootModule        = 'PSCouchDB.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '1.11.5'
+    ModuleVersion     = '1.11.6'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -113,6 +113,7 @@
         "Set-CouchDBDocument",
         "Set-CouchDBBulkDocument",
         "Set-CouchDBDesignDocument",
+        "Set-CouchDBDesignDocumentAttachment",
         "Set-CouchDBAttachment",
         "Set-CouchDBUser",
         "Set-CouchDBAdmin",
@@ -203,6 +204,7 @@
         "scdbpl",
         "scdoc",
         "scddoc",
+        "sdatt",
         "scatt",
         "scusr",
         "scadm",

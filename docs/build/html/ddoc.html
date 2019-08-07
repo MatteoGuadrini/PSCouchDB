@@ -103,6 +103,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#validation">Validation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#custom-functions">Custom functions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#create-design-document-attachment">Create design document attachment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#modify-design-document-attachment">Modify design document attachment</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#compress-design-document">Compress design document</a></li>
@@ -307,6 +308,13 @@ Only one function is allowed at a time.</p>
 <h3>Create design document attachment<a class="headerlink" href="#create-design-document-attachment" title="Permalink to this headline">¶</a></h3>
 <p>To create an attachment in a design document.</p>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">New-CouchDBDesignDocumentAttachment</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="n">space</span> <span class="n">-Attachment</span> <span class="s2">&quot;C:\test.txt&quot;</span> <span class="n">-Revision</span> <span class="n">3-cfae968df80635ad15a9709e0264a988</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="modify-design-document-attachment">
+<h3>Modify design document attachment<a class="headerlink" href="#modify-design-document-attachment" title="Permalink to this headline">¶</a></h3>
+<p>To modify or add an attachment in a design document.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Set-CouchDBDesignDocumentAttachment</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="n">space</span> <span class="n">-Attachment</span> <span class="s2">&quot;C:\test2.txt&quot;</span> <span class="n">-Revision</span> <span class="n">4-cfae968df80635ad15d5709e0264a988</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>

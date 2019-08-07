@@ -177,6 +177,15 @@ To create an attachment in a design document.
 
     New-CouchDBDesignDocumentAttachment -Database test -Document space -Attachment "C:\test.txt" -Revision 3-cfae968df80635ad15a9709e0264a988 -Authorization "admin:password"
 
+Modify design document attachment
+*********************************
+
+To modify or add an attachment in a design document.
+
+.. code-block:: powershell
+
+    Set-CouchDBDesignDocumentAttachment -Database test -Document space -Attachment "C:\test2.txt" -Revision 4-cfae968df80635ad15d5709e0264a988 -Authorization "admin:password"
+
 Compress design document
 ________________________
 

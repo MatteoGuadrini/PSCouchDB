@@ -534,6 +534,12 @@ Design documents
 
     Set-CouchDBDesignDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-ViewName <String>] [-ViewKey <String>] [-ViewValue <String>] [-GetDoc] [-ListName <String>] [-Replace] [-Authorization <String>] [-Ssl] [<CommonParameters>]
 
+**Set-CouchDBDesignDocumentAttachment**
+
+.. code-block:: powershell
+
+    Set-CouchDBDesignDocumentAttachment [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [-Revision] <String> [-Attachment] <String> [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+
 **Compress-CouchDBDesignDocument**
 
 .. code-block:: powershell
@@ -593,7 +599,8 @@ _______
     ncadm -> New-CouchDBAdmin                      
     ncatt -> New-CouchDBAttachment                 
     ncdb -> New-CouchDBDatabase                    
-    ncddoc -> New-CouchDBDesignDocument            
+    ncddoc -> New-CouchDBDesignDocument
+    ndatt -> New-CouchDBDesignDocumentAttachment           
     ncdoc -> New-CouchDBDocument                   
     ncidx -> New-CouchDBIndex                      
     ncrpl -> New-CouchDBReplication                
@@ -617,7 +624,8 @@ _______
     scbd -> Set-CouchDBBulkDocument                
     scconf -> Set-CouchDBConfiguration             
     scdbpl -> Set-CouchDBDatabasePurgedLimit       
-    scddoc -> Set-CouchDBDesignDocument            
+    scddoc -> Set-CouchDBDesignDocument   
+    sdatt -> Set-CouchDBDesignDocumentAttachment         
     scdoc -> Set-CouchDBDocument                   
     scds -> Sync-CouchDBDatabaseShards
     scft -> Search-CouchDBFullText             
