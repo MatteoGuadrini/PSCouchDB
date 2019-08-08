@@ -208,7 +208,7 @@ To remove a design document.
 Remove design document attachment
 *********************************
 
-To modify or add an attachment in a design document.
+To remove an attachment in a design document.
 
 .. code-block:: powershell
 

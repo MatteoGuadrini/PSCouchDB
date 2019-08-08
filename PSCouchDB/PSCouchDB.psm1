@@ -3733,12 +3733,12 @@ function Set-CouchDBConfiguration () {
     )
     $Database = "_node"
     $Document = "$Node/_config"
-    if ((Get-CouchDBConfiguration -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).$Element) {
+    if ((Get-CouchDBConfiguration -Server $Server -Port $Port -Node $Node -Authorization $Authorization -Ssl:$Ssl).$Element) {
         $Document += "/$Element/$Key"
     } else {
         throw "Element $Element not exist!"
     }
-    $Data = "$Value" | ConvertTo-Json
+    $Data = $Value | ConvertTo-Json
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }
 
