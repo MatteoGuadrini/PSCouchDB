@@ -1289,12 +1289,15 @@ function Get-CouchDBDatabaseShards () {
     .NOTES
     CouchDB API:
         GET /{db}/_shards
+        GET /{db}/_shards/{docid}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
     The CouchDB server port. Default is 5984.
     .PARAMETER Database
     The CouchDB database.
+    .PARAMETER Document
+    The CouchDB document. Default is _all_docs.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -1314,11 +1317,12 @@ function Get-CouchDBDatabaseShards () {
         [int] $Port,
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
+        [string] $Document,
         [string] $Authorization,
         [switch] $Ssl
     )
     $Database = $Database + '/_shards'
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Get-CouchDBDocument () {
