@@ -4870,7 +4870,7 @@ function New-CouchDBIndex () {
     )
     $Document = '_index'
     $index = @{ 'index' = @{ }; 'type' = 'json' }
-    $index.name = "$Name"
+    $index.Add('name', "$Name")
     $index.index.fields = @()
     foreach ($Field in $Fields) {
         $index.index.fields += $Field
