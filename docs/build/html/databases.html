@@ -278,6 +278,10 @@ If an invalid database name is supplied, CouchDB returns response with <code cla
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDatabaseShards</span> <span class="n">-Database</span> <span class="n">test</span>
 </pre></div>
 </div>
+<p>Get the shard document on database.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDatabaseShards</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="n">00000000</span><span class="p">-</span><span class="n">1fffffff</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="sync-shards">
 <h3>Sync shards<a class="headerlink" href="#sync-shards" title="Permalink to this headline">¶</a></h3>

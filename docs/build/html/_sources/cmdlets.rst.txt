@@ -316,7 +316,7 @@ Databases
 
 .. code-block:: powershell
 
-    Get-CouchDBDatabaseShards [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    Get-CouchDBDatabaseShards [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [[-Document] <String>] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
 
 **Sync-CouchDBDatabaseShards**
 

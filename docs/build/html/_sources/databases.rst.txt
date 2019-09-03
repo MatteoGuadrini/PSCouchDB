@@ -120,6 +120,12 @@ Get a list a database shards.
 
     Get-CouchDBDatabaseShards -Database test
 
+Get the shard document on database.
+
+.. code-block:: powershell
+
+    Get-CouchDBDatabaseShards -Database test -Document 00000000-1fffffff
+
 Sync shards
 ***********
 
