@@ -37,6 +37,26 @@ To get all the Design Documents in a database.
 
     Get-CouchDBDatabaseDesignDocument -Database test
 
+In this table you can find all the possible parameters to get the design documents with this cmdlet.
+
+================    ===========
+PARAMETER           DESCRIPTION
+================    ===========
+Descending          Return the design documents in descending by key order. Default is false.
+EndKey              Stop returning records when the specified key is reached.
+EndKeyDocument      Stop returning records when the specified design document ID is reached.
+IncludeDocument     Include the full content of the design documents in the return. Default is false.
+InclusiveEnd        Specifies whether the specified end key should be included in the result. Default is true.
+Key     			Return only design documents that match the specified key.
+Keys    			Return only design documents that match the specified keys.
+Conflict           	Includes conflicts information in response. Ignored if include_docs isn’t true. Default is false.
+Limit    			Limit the number of the returned design documents to the specified number.
+Skip              	Skip this number of records before starting to return the results. Default is 0.
+StartKey       		Return records starting with the specified key.
+StartKeyDocument    Return records starting with the specified design document ID.
+UpdateSequence      Response includes an update_seq value indicating which sequence id of the underlying database the view reflects. Default is false.
+================    ===========
+
 Get design document attachment
 ******************************
 

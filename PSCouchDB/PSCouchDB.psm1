@@ -1297,7 +1297,7 @@ function Get-CouchDBDatabaseShards () {
     .PARAMETER Database
     The CouchDB database.
     .PARAMETER Document
-    The CouchDB document. Default is _all_docs.
+    The CouchDB document.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -1813,6 +1813,32 @@ function Get-CouchDBDatabaseDesignDocument () {
     The CouchDB server port. Default is 5984.
     .PARAMETER Database
     The CouchDB database.
+    .PARAMETER Descending
+    Return the design documents in descending by key order. Default is false.
+    .PARAMETER EndKey
+    Stop returning records when the specified key is reached.
+    .PARAMETER EndKeyDocument
+    Stop returning records when the specified design document ID is reached.
+    .PARAMETER IncludeDocument
+    Include the full content of the design documents in the return. Default is false.
+    .PARAMETER InclusiveEnd
+    Specifies whether the specified end key should be included in the result. Default is true.
+    .PARAMETER Key
+    Return only design documents that match the specified key.
+    .PARAMETER Keys
+    Return only design documents that match the specified keys.
+    .PARAMETER Conflict
+    Includes conflicts information in response. Ignored if include_docs isn’t true. Default is false.
+    .PARAMETER Limit
+    Limit the number of the returned design documents to the specified number.
+    .PARAMETER Skip
+    Skip this number of records before starting to return the results. Default is 0.
+    .PARAMETER StartKey
+    Return records starting with the specified key.
+    .PARAMETER StartKeyDocument
+    Return records starting with the specified design document ID.
+    .PARAMETER UpdateSequence
+    Response includes an update_seq value indicating which sequence id of the underlying database the view reflects. Default is false.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -1832,10 +1858,135 @@ function Get-CouchDBDatabaseDesignDocument () {
         [int] $Port,
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
+        [Alias('Desc')]
+        [switch] $Descending,
+        [Alias('End')]
+        [string] $EndKey,
+        [Alias('EndDoc')]
+        [string] $EndKeyDocument,
+        [Alias('IncDoc')]
+        [switch] $IncludeDocument,
+        [Alias('IncEnd')]
+        [bool] $InclusiveEnd = $true,
+        [string] $Key,
+        [array] $Keys,
+        [switch] $Conflict,
+        [int] $Limit,
+        [int] $Skip,
+        [Alias('Start')]
+        [string] $StartKey,
+        [Alias('StartDoc')]
+        [string] $StartKeyDocument,
+        [Alias('Update')]
+        [switch] $UpdateSequence,
         [string] $Authorization,
         [switch] $Ssl
     )
     $Document = "_design_docs"
+    # Check descending parameter
+    if ($Descending.IsPresent) {
+        if ($Document -match "\?") {
+            $Document += "&descending=true"
+        } else {
+            $Document += "?descending=true"
+        }
+    }
+    # Check endkey parameter
+    if ($EndKey) {
+        if ($Document -match "\?") {
+            $Document += "&endkey=`"$EndKey`""
+        } else {
+            $Document += "?endkey=`"$EndKey`""
+        }
+    }
+    # Check endkey_docid parameter
+    if ($EndKeyDocument) {
+        if ($Document -match "\?") {
+            $Document += "&endkey_docid=`"$EndKeyDocument`""
+        } else {
+            $Document += "?endkey_docid=`"$EndKeyDocument`""
+        }
+    }
+    # Check include_docs parameter
+    if ($IncludeDocument.IsPresent) {
+        if ($Document -match "\?") {
+            $Document += "&include_docs=true"
+        } else {
+            $Document += "?include_docs=true"
+        }
+    }
+    # Check inclusive_end parameter
+    if ($InclusiveEnd -eq $false) {
+        if ($Document -match "\?") {
+            $Document += "&inclusive_end=false"
+        } else {
+            $Document += "?inclusive_end=false"
+        }
+    }
+    # Check key parameter
+    if ($Key) {
+        if ($Document -match "\?") {
+            $Document += "&key=`"$Key`""
+        } else {
+            $Document += "?key=`"$Key`""
+        }
+    }
+    # Check keys parameter
+    if ($Keys) {
+        if ($Document -match "\?") {
+            $Document += "&keys=$($Keys | ConvertTo-Json -Compress)"
+        } else {
+            $Document += "?keys=$($Keys | ConvertTo-Json -Compress)"
+        }
+    }
+    # Check conflicts parameter
+    if ($Conflict.IsPresent) {
+        if ($Document -match "\?") {
+            $Document += "&conflicts=true"
+        } else {
+            $Document += "?conflicts=true"
+        }
+    }
+    # Check limit parameter
+    if ($Limit) {
+        if ($Document -match "\?") {
+            $Document += "&limit=$Limit"
+        } else {
+            $Document += "?limit=$Limit"
+        }
+    }
+    # Check skip parameter
+    if ($Skip) {
+        if ($Document -match "\?") {
+            $Document += "&skip=$Skip"
+        } else {
+            $Document += "?skip=$Skip"
+        }
+    }
+    # Check startkey parameter
+    if ($StartKey) {
+        if ($Document -match "\?") {
+            $Document += "&startkey=`"$StartKey`""
+        } else {
+            $Document += "?startkey=`"$StartKey`""
+        }
+    }
+    # Check startkey_docid parameter
+    if ($StartKeyDocument) {
+        if ($Document -match "\?") {
+            $Document += "&startkey_docid=`"$StartKeyDocument`""
+        } else {
+            $Document += "?startkey_docid=`"$StartKeyDocument`""
+        }
+    }
+    # Check update_seq parameter
+    if ($UpdateSequence.IsPresent) {
+        if ($Document -match "\?") {
+            $Document += "&update_seq=true"
+        } else {
+            $Document += "?update_seq=true"
+        }
+    }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
 }
 
@@ -3182,7 +3333,7 @@ function Set-CouchDBDesignDocument () {
     .PARAMETER Database
     The CouchDB database.
     .PARAMETER Document
-    The CouchDB document. Default is _all_docs.
+    The CouchDB document.
     .PARAMETER ViewName
     The name of function view in the design document.
     .PARAMETER ViewKey
@@ -4329,7 +4480,7 @@ function New-CouchDBDesignDocument () {
     .PARAMETER Database
     The CouchDB database.
     .PARAMETER Document
-    The CouchDB document. Default is _all_docs.
+    The CouchDB document.
     .PARAMETER ViewName
     The name of function view in the design document.
     .PARAMETER ViewKey

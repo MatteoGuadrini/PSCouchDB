@@ -486,6 +486,12 @@ Documents
 Design documents
 ****************
 
+**Get-CouchDBDatabaseDesignDocument**
+
+.. code-block:: powershell
+
+    Get-CouchDBDatabaseDesignDocument [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Descending] [[-EndKey] <String>] [[-EndKeyDocument] <String>] [-IncludeDocument] [[-InclusiveEnd] <Boolean>] [[-Key] <String>] [[-Keys] <Array>] [-Conflict] [[-Limit] <Int32>] [[-Skip] <Int32>] [[-StartKey] <String>] [[-StartKeyDocument] <String>] [-UpdateSequence] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+
 **Get-CouchDBDesignDocument**
 
 .. code-block:: powershell
