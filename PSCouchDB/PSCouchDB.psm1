@@ -1559,9 +1559,9 @@ function Get-CouchDBDocument () {
     if ($LocalSequence.IsPresent) {
         if ($Document -ne '_all_docs') {
             if ($Document -match "\?") {
-                $Document += "&latest=true"
+                $Document += "&local_seq=true"
             } else {
-                $Document += "?latest=true"
+                $Document += "?local_seq=true"
             }
         } else {
             Write-Error -Message "atts_since= parameter is not compatible with _all_docs"
