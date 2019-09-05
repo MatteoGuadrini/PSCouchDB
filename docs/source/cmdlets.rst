@@ -151,7 +151,7 @@ Server
 
 .. code-block:: powershell
 
-    Get-CouchDBDatabaseUpdates [[-Server] <String>] [[-Port] <Int32>] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    Get-CouchDBDatabaseUpdates [[-Server] <String>] [[-Port] <Int32>] [[-Feed] <String>] [[-Timeout] <Int32>] [[-Heartbeat] <Int32>] [[-Since] <String>] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
 
 **Measure-CouchDBStatistics**
 

@@ -1255,6 +1255,19 @@ function Get-CouchDBDatabaseUpdates () {
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
     The CouchDB server port. Default is 5984.
+    .PARAMETER Feed
+    normal: Returns all historical DB changes, then closes the connection. Default.
+    longpoll: Closes the connection after the first event.
+    continuous: Send a line of JSON per event. Keeps the socket open until timeout.
+    eventsource: Like, continuous, but sends the events in EventSource format.
+    .PARAMETER Timeout
+    Number of seconds until CouchDB closes the connection. Default is 60.
+    .PARAMETER Heartbeat
+    Period in milliseconds after which an empty line is sent in the results. 
+    Only applicable for longpoll, continuous, and eventsource feeds. 
+    Overrides any timeout to keep the feed alive indefinitely. Default is 60000.
+    .PARAMETER Since
+    Return only updates since the specified sequence ID. May be the string "now" to begin showing only new updates.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -1263,7 +1276,7 @@ function Get-CouchDBDatabaseUpdates () {
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
     .EXAMPLE
-    Get-CouchDBDatabaseUpdates
+    Get-CouchDBDatabaseUpdates -Authorization admin:password
     This example get list of all database events in the CouchDB instance.
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/server.html#server-operation
@@ -1273,10 +1286,47 @@ function Get-CouchDBDatabaseUpdates () {
         [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
+        [ValidateSet("normal", "longpoll", "continuous", "eventsource")]
+        [string] $Feed,
+        [int] $Timeout,
+        [int] $Heartbeat,
+        [string] $Since,
         [string] $Authorization,
         [switch] $Ssl
     )
     $Database = '_db_updates'
+    # Check Feed parameter
+    if ($Feed) {
+        if ($Database -match "\?") {
+            $Database += "&feed=$Feed"
+        } else {
+            $Database += "?feed=$Feed"
+        }
+    }
+    # Check Timeout parameter
+    if ($Timeout) {
+        if ($Database -match "\?") {
+            $Database += "&timeout=$Timeout"
+        } else {
+            $Database += "?timeout=$Timeout"
+        }
+    }
+    # Check Heartbeat parameter
+    if ($Heartbeat) {
+        if ($Database -match "\?") {
+            $Database += "&heartbeat=$Heartbeat"
+        } else {
+            $Database += "?heartbeat=$Heartbeat"
+        }
+    }
+    # Check Since parameter
+    if ($Since) {
+        if ($Database -match "\?") {
+            $Database += if ($Since -eq "now") { "&since=now" } else { "&since=$Since" }
+        } else {
+            $Database += if ($Since -eq "now") { "?since=now" } else { "?since=$Since" }
+        }
+    }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl
 }
 

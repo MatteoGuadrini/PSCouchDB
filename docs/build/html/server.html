@@ -201,6 +201,40 @@
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDatabaseUpdates</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
+<p>For other parameter see the table below:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="7%" />
+<col width="93%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">PARAMETER</th>
+<th class="head">DESCRIPTION</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Feed</td>
+<td><dl class="first last docutils">
+<dt>Option:</dt>
+<dd><p class="first"><strong>normal</strong>: Returns all historical DB changes, then closes the connection. Default.</p>
+<p><strong>longpoll</strong>: Closes the connection after the first event.</p>
+<p><strong>continuous</strong>: Send a line of JSON per event. Keeps the socket open until timeout.</p>
+<p class="last"><strong>eventsource</strong>: Like, continuous, but sends the events in EventSource format.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="row-odd"><td>Timeout</td>
+<td>Number of seconds until CouchDB closes the connection. Default is 60.</td>
+</tr>
+<tr class="row-even"><td>Heartbeat</td>
+<td>Period in milliseconds after which an empty line is sent in the results. Only applicable for longpoll, continuous, and eventsource feeds. Overrides any timeout to keep the feed alive indefinitely. Default is 60000.</td>
+</tr>
+<tr class="row-odd"><td>Since</td>
+<td>Return only updates since the specified sequence ID. May be the string “now” to begin showing only new updates.</td>
+</tr>
+</tbody>
+</table>
 <p>To displays the nodes that are part of the cluster:</p>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBNode</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>

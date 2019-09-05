@@ -54,6 +54,24 @@ To get a list of all database events in the CouchDB instance:
 
     Get-CouchDBDatabaseUpdates -Authorization "admin:password"
 
+For other parameter see the table below:
+
+================    ===========
+PARAMETER           DESCRIPTION
+================    ===========
+Feed				Option:	            	
+					**normal**: Returns all historical DB changes, then closes the connection. Default.
+					
+					**longpoll**: Closes the connection after the first event.
+					
+					**continuous**: Send a line of JSON per event. Keeps the socket open until timeout.
+					
+					**eventsource**: Like, continuous, but sends the events in EventSource format.
+Timeout             Number of seconds until CouchDB closes the connection. Default is 60.
+Heartbeat           Period in milliseconds after which an empty line is sent in the results. Only applicable for longpoll, continuous, and eventsource feeds. Overrides any timeout to keep the feed alive indefinitely. Default is 60000.
+Since             	Return only updates since the specified sequence ID. May be the string "now" to begin showing only new updates.
+================    ===========
+
 To displays the nodes that are part of the cluster:
 
 .. code-block:: powershell
