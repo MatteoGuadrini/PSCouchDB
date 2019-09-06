@@ -1672,7 +1672,7 @@ function Get-CouchDBDocument () {
         if ($Document -match "\?") {
             $Document += "&atts_since=$(
                 if ($AttachmentsSince.Count -eq 1) {
-                    "[$OpenRevisions]"
+                    "[$($AttachmentsSince | ConvertTo-Json -Compress)]"
                 } else {
                     $AttachmentsSince | ConvertTo-Json -Compress
                 }
@@ -1680,7 +1680,7 @@ function Get-CouchDBDocument () {
         } else {
             $Document += "?atts_since=$(
                 if ($AttachmentsSince.Count -eq 1) {
-                    "[$OpenRevisions]"
+                    "[$($AttachmentsSince | ConvertTo-Json -Compress)]"
                 } else {
                     $AttachmentsSince | ConvertTo-Json -Compress
                 }
@@ -1733,7 +1733,7 @@ function Get-CouchDBDocument () {
             if ($Document -match "\?") {
                 $Document += "&open_revs=$(
                     if ($OpenRevisions.Count -eq 1) {
-                        "[$OpenRevisions]"
+                        "[$($OpenRevisions | ConvertTo-Json -Compress)]"
                     } else {
                         $OpenRevisions | ConvertTo-Json -Compress
                     }
@@ -1741,7 +1741,7 @@ function Get-CouchDBDocument () {
             } else {
                 $Document += "?open_revs=$(
                     if ($OpenRevisions.Count -eq 1) {
-                        "[$OpenRevisions]"
+                        "[$($OpenRevisions | ConvertTo-Json -Compress)]"
                     } else {
                         $OpenRevisions | ConvertTo-Json -Compress
                     }
@@ -1824,7 +1824,7 @@ function Get-CouchDBDocument () {
         if ($Document -match "\?") {
             $Document += "&keys=$(
                 if ($Keys.Count -eq 1) {
-                    "[$Keys]"
+                    "[$($Keys | ConvertTo-Json -Compress)]"
                 } else {
                     $Keys | ConvertTo-Json -Compress
                 }
@@ -1832,7 +1832,7 @@ function Get-CouchDBDocument () {
         } else {
             $Document += "?keys=$(
                 if ($Keys.Count -eq 1) {
-                    "[$Keys]"
+                    "[$($Keys | ConvertTo-Json -Compress)]"
                 } else {
                     $Keys | ConvertTo-Json -Compress
                 }
@@ -2252,9 +2252,21 @@ function Get-CouchDBDatabaseDesignDocument () {
     # Check keys parameter
     if ($Keys) {
         if ($Document -match "\?") {
-            $Document += "&keys=$($Keys | ConvertTo-Json -Compress)"
+            $Document += "&keys=$(
+                if ($Keys.Count -eq 1) {
+                    "[$($Keys | ConvertTo-Json -Compress)]"
+                } else {
+                    $Keys | ConvertTo-Json -Compress
+                }
+            )"
         } else {
-            $Document += "?keys=$($Keys | ConvertTo-Json -Compress)"
+            $Document += "?keys=$(
+                if ($Keys.Count -eq 1) {
+                    "[$($Keys | ConvertTo-Json -Compress)]"
+                } else {
+                    $Keys | ConvertTo-Json -Compress
+                }
+            )"
         }
     }
     # Check conflicts parameter
