@@ -214,7 +214,7 @@
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;Hitchhikers&quot;</span>
 </pre></div>
 </div>
-<p>In this table you can find all the possible parameters to get the documents with this cmdlet.</p>
+<p>In this table you can find all the possible parameters to get the document.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="12%" />
@@ -264,6 +264,77 @@
 </tr>
 <tr class="row-even"><td>OpenRevisions</td>
 <td>Retrieves documents of specified leaf revisions. Additionally, value all id default and  to return all leaf revisions.</td>
+</tr>
+</tbody>
+</table>
+<p>And if use <strong>_all_docs</strong> view, in this table you can find all the possible parameters.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="5%" />
+<col width="95%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">PARAMETER</th>
+<th class="head">DESCRIPTION</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Descending</td>
+<td>Return the design documents in descending by key order. Default is <code class="docutils literal notranslate"><span class="pre">false</span></code>.</td>
+</tr>
+<tr class="row-odd"><td>EndKey</td>
+<td>Stop returning records when the specified key is reached.</td>
+</tr>
+<tr class="row-even"><td>EndKeyDocument</td>
+<td>Stop returning records when the specified document ID is reached.</td>
+</tr>
+<tr class="row-odd"><td>Group</td>
+<td>Group the results using the reduce function to a group or single row. Implies reduce is <code class="docutils literal notranslate"><span class="pre">true</span></code> and the maximum group_level. Default is <code class="docutils literal notranslate"><span class="pre">false</span></code>.</td>
+</tr>
+<tr class="row-even"><td>GroupLevel</td>
+<td>Specify the group level to be used. Implies group is <code class="docutils literal notranslate"><span class="pre">true</span></code>.</td>
+</tr>
+<tr class="row-odd"><td>IncludeDocuments</td>
+<td>Include the associated document with each row. Default is <code class="docutils literal notranslate"><span class="pre">false</span></code>.</td>
+</tr>
+<tr class="row-even"><td>InclusiveEnd</td>
+<td>Specifies whether the specified end key should be included in the result. Default is <code class="docutils literal notranslate"><span class="pre">true</span></code>.</td>
+</tr>
+<tr class="row-odd"><td>Key</td>
+<td>Return only documents that match the specified key. The document must be _all_docs.</td>
+</tr>
+<tr class="row-even"><td>Keys</td>
+<td>Return only documents where the key matches one of the keys specified in the array.</td>
+</tr>
+<tr class="row-odd"><td>Limit</td>
+<td>Limit the number of the returned design documents to the specified number.</td>
+</tr>
+<tr class="row-even"><td>Reduce</td>
+<td>Use the reduction function. Default is true when a reduce function is defined.</td>
+</tr>
+<tr class="row-odd"><td>Skip</td>
+<td>Skip this number of records before starting to return the results.</td>
+</tr>
+<tr class="row-even"><td>Sorted</td>
+<td>Sort returned rows. Setting this to false offers a performance boost. The total_rows and offset fields are not available when this is set to <code class="docutils literal notranslate"><span class="pre">false</span></code>. Default is <code class="docutils literal notranslate"><span class="pre">true</span></code>.</td>
+</tr>
+<tr class="row-odd"><td>Stable</td>
+<td>Whether or not the view results should be returned from a stable set of shards. Default is <code class="docutils literal notranslate"><span class="pre">false</span></code>.</td>
+</tr>
+<tr class="row-even"><td>Stale</td>
+<td>Allow the results from a stale view to be used. Supported values: <code class="docutils literal notranslate"><span class="pre">ok</span></code>, <code class="docutils literal notranslate"><span class="pre">update_after</span> <span class="pre">and</span></code> <code class="docutils literal notranslate"><span class="pre">false</span></code>. <code class="docutils literal notranslate"><span class="pre">ok</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">stable=true&amp;update=false</span></code>. <code class="docutils literal notranslate"><span class="pre">update_after</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">stable=true&amp;update=lazy</span></code>. <code class="docutils literal notranslate"><span class="pre">false</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">stable=false&amp;update=true</span></code>.</td>
+</tr>
+<tr class="row-odd"><td>StartKey</td>
+<td>Return records starting with the specified key.</td>
+</tr>
+<tr class="row-even"><td>StartKeyDocument</td>
+<td>Return records starting with the specified document ID. Ignored if startkey is not set.</td>
+</tr>
+<tr class="row-odd"><td>Update</td>
+<td>Whether or not the view in question should be updated prior to responding to the user. Supported values: <code class="docutils literal notranslate"><span class="pre">true</span></code>, <code class="docutils literal notranslate"><span class="pre">false</span></code>, <code class="docutils literal notranslate"><span class="pre">lazy</span></code>. Default is <code class="docutils literal notranslate"><span class="pre">true</span></code>.</td>
+</tr>
+<tr class="row-even"><td>UpdateSequence</td>
+<td>Whether to include in the response an update_seq value indicating the sequence id of the database the view reflects. Default is <code class="docutils literal notranslate"><span class="pre">false</span></code>.</td>
 </tr>
 </tbody>
 </table>

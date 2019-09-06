@@ -1426,6 +1426,46 @@ function Get-CouchDBDocument () {
     Acts same as specifying all conflicts, deleted_conflicts and revs_info query parameters.
     .PARAMETER OpenRevisions
     Retrieves documents of specified leaf revisions. Additionally, value all id default and  to return all leaf revisions.
+    .PARAMETER Descending
+    Return the design documents in descending by key order. Default is false. The document must be _all_docs.
+    .PARAMETER EndKey
+    Stop returning records when the specified key is reached. The document must be _all_docs.
+    .PARAMETER EndKeyDocument
+    Stop returning records when the specified document ID is reached. Ignored if endkey is not set. The document must be _all_docs.
+    .PARAMETER Group 
+    Group the results using the reduce function to a group or single row. Implies reduce is true and the maximum group_level. Default is false. The document must be _all_docs.
+    .PARAMETER GroupLevel
+    Specify the group level to be used. Implies group is true. The document must be _all_docs.
+    .PARAMETER IncludeDocuments
+    Include the associated document with each row. Default is false. The document must be _all_docs.
+    .PARAMETER InclusiveEnd
+    Specifies whether the specified end key should be included in the result. Default is true. The document must be _all_docs.
+    .PARAMETER Key
+    Return only documents that match the specified key. The document must be _all_docs.
+    .PARAMETER Keys
+    Return only documents where the key matches one of the keys specified in the array. The document must be _all_docs.
+    .PARAMETER Limit
+    Limit the number of the returned design documents to the specified number. The document must be _all_docs.
+    .PARAMETER Reduce
+    Use the reduction function. Default is true when a reduce function is defined. The document must be _all_docs.
+    .PARAMETER Skip
+    Skip this number of records before starting to return the results. Default is 0. The document must be _all_docs.
+    .PARAMETER Sorted
+    Sort returned rows. Setting this to false offers a performance boost. 
+    The total_rows and offset fields are not available when this is set to false. Default is true. The document must be _all_docs.
+    .PARAMETER Stable
+    Whether or not the view results should be returned from a stable set of shards. Default is false. The document must be _all_docs.
+    .PARAMETER Stale
+    Allow the results from a stale view to be used. Supported values: ok, update_after and false. ok is equivalent to stable=true&update=false. 
+    update_after is equivalent to stable=true&update=lazy. false is equivalent to stable=false&update=true. The document must be _all_docs.
+    .PARAMETER StartKey
+    Return records starting with the specified key. The document must be _all_docs.
+    .PARAMETER StartKeyDocument
+    Return records starting with the specified document ID. Ignored if startkey is not set. The document must be _all_docs.
+    .PARAMETER Update
+    Whether or not the view in question should be updated prior to responding to the user. Supported values: true, false, lazy. Default is true. The document must be _all_docs.
+    .PARAMETER UpdateSequence
+    Whether to include in the response an update_seq value indicating the sequence id of the database the view reflects. Default is false. The document must be _all_docs.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -1472,28 +1512,103 @@ function Get-CouchDBDocument () {
         [Parameter(ParameterSetName = "Info")]
         [switch] $Local,
         [Parameter(ParameterSetName = "Document")]
+        [ValidateScript({if ($Document -eq "_all_docs") {$false}})]
         [switch] $Revisions,
         [Parameter(ParameterSetName = "Document")]
+        [ValidateScript({if ($Document -eq "_all_docs") {$false}})]
         [switch] $History,
         [Parameter(ParameterSetName = "Document")]
+        [ValidateScript({if ($Document -eq "_all_docs") {$false}})]
         [switch] $Attachments,
         [Parameter(ParameterSetName = "Document")]
+        [ValidateScript({if ($Document -eq "_all_docs") {$false}})]
         [switch] $AttachmentsInfo,
-        [ValidateCount(2, 10)]
         [Parameter(ParameterSetName = "Document")]
+        [ValidateCount(2, 10)]
+        [ValidateScript({if ($Document -eq "_all_docs") {$false}})]
         [array] $AttachmentsSince,
         [Parameter(ParameterSetName = "Document")]
         [switch] $Conflicts,
         [Parameter(ParameterSetName = "Document")]
+        [ValidateScript({if ($Document -eq "_all_docs") {$false}})]
         [switch] $DeletedConflicts,
         [Parameter(ParameterSetName = "Document")]
+        [ValidateScript({if ($Document -eq "_all_docs") {$false}})]
         [switch] $Latest,
         [Parameter(ParameterSetName = "Document")]
+        [ValidateScript({if ($Document -eq "_all_docs") {$false}})]
         [switch] $LocalSequence,
         [Parameter(ParameterSetName = "Document")]
+        [ValidateScript({if ($Document -eq "_all_docs") {$false}})]
         [switch] $Metadata,
         [Parameter(ParameterSetName = "Document")]
+        [ValidateScript({if ($Document -eq "_all_docs") {$false}})]
         [array] $OpenRevisions,
+        [Parameter(ParameterSetName = "Document")]
+        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [switch] $Descending,
+        [Parameter(ParameterSetName = "Document")]
+        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [Alias('End')]
+        [string] $EndKey,
+        [Parameter(ParameterSetName = "Document")]
+        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [Alias('EndDoc')]
+        [string] $EndKeyDocument,
+        [Parameter(ParameterSetName = "Document")]
+        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [switch] $Group,
+        [Parameter(ParameterSetName = "Document")]
+        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [int] $GroupLevel,
+        [Parameter(ParameterSetName = "Document")]
+        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [Alias('IncDoc')]
+        [switch] $IncludeDocuments,
+        [Parameter(ParameterSetName = "Document")]
+        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [Alias('IncEnd')]
+        [bool] $InclusiveEnd = $true,
+        [Parameter(ParameterSetName = "Document")]
+        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [string] $Key,
+        [Parameter(ParameterSetName = "Document")]
+        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [array] $Keys,
+        [Parameter(ParameterSetName = "Document")]
+        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [int] $Limit,
+        [Parameter(ParameterSetName = "Document")]
+        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [bool] $Reduce = $true,
+        [Parameter(ParameterSetName = "Document")]
+        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [int] $Skip,
+        [Parameter(ParameterSetName = "Document")]
+        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [bool] $Sorted = $true,
+        [Parameter(ParameterSetName = "Document")]
+        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [switch] $Stable,
+        [Parameter(ParameterSetName = "Document")]
+        [ValidateSet("ok", "update_after", "false")]
+        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [string] $Stale,
+        [Parameter(ParameterSetName = "Document")]
+        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [Alias('Start')]
+        [string] $StartKey,
+        [Parameter(ParameterSetName = "Document")]
+        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [Alias('StartDoc')]
+        [string] $StartKeyDocument,
+        [Parameter(ParameterSetName = "Document")]
+        [ValidateSet("true", "false", "lazy")]
+        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [string] $Update,
+        [Parameter(ParameterSetName = "Document")]
+        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [switch] $UpdateSequence,
         [Parameter(ParameterSetName = "Document")]
         [Parameter(ParameterSetName = "Info")]
         [string] $Authorization,
@@ -1503,10 +1618,13 @@ function Get-CouchDBDocument () {
     )
     # Check local docs
     if ($Local.IsPresent) {
-        if ($Document -ne '_all_docs') {
+        if ($Document -eq '_all_docs') {
             Write-Warning -Message "-Document $Document parameter is rewrite in _local_docs because -Local parameter is specified."
+            $Document = "_local_docs"
+        } else {
+            Write-Warning -Message "-Document $Document parameter is rewrite in _local/$Document because -Local parameter is specified."
+            $Document = "_local/$Document"
         }
-        $Document = "_local_docs"
     }
     # Select a revision
     if ($Revision) {
@@ -1517,138 +1635,288 @@ function Get-CouchDBDocument () {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "HEAD" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
         return
     }
-    # Check various parameter
+    # Check Revisions parameter
     if ($Revisions.IsPresent) {
-        if ($Document -ne '_all_docs') {
-            if ($Document -match "\?") {
-                $Document += "&revs=true"
-            } else {
-                $Document += "?revs=true"
-            }
+        if ($Document -match "\?") {
+            $Document += "&revs=true"
         } else {
-            Write-Error -Message "revs= parameter is not compatible with _all_docs"
+            $Document += "?revs=true"
         }
     } 
+    # Check History parameter
     if ($History.IsPresent) {
-        if ($Document -ne '_all_docs') {
-            if ($Document -match "\?") {
-                $Document += "&revs_info=true"
-            } else {
-                $Document += "?revs_info=true"
-            }
+        if ($Document -match "\?") {
+            $Document += "&revs_info=true"
         } else {
-            Write-Error -Message "revs_info= parameter is not compatible with _all_docs"
+            $Document += "?revs_info=true"
         }
-    } 
+    }
+    # Check Attachments parameter
     if ($Attachments.IsPresent) {
-        if ($Document -ne '_all_docs') {
-            if ($Document -match "\?") {
-                $Document += "&attachments=true"
-            } else {
-                $Document += "?attachments=true"
-            }
+        if ($Document -match "\?") {
+            $Document += "&attachments=true"
         } else {
-            Write-Error -Message "attachments= parameter is not compatible with _all_docs"
+            $Document += "?attachments=true"
         }
-    } 
+    }
+    # Check AttachmentsInfo parameter
     if ($AttachmentsInfo.IsPresent) {
-        if ($Document -ne '_all_docs') {
-            if ($Document -match "\?") {
-                $Document += "&att_encoding_info=true"
-            } else {
-                $Document += "?att_encoding_info=true"
-            }
+        if ($Document -match "\?") {
+            $Document += "&att_encoding_info=true"
         } else {
-            Write-Error -Message "att_encoding_info= parameter is not compatible with _all_docs"
+            $Document += "?att_encoding_info=true"
         }
-    } 
+    }
+    # Check AttachmentsSince parameter
     if ($AttachmentsSince) {
-        if ($Document -ne '_all_docs') {
-            if ($Document -match "\?") {
-                $Document += "&atts_since=$($AttachmentsSince | ConvertTo-Json -Compress)"
-            } else {
-                $Document += "?atts_since=$($AttachmentsSince | ConvertTo-Json -Compress)"
-            }
+        if ($Document -match "\?") {
+            $Document += "&atts_since=$(
+                if ($AttachmentsSince.Count -eq 1) {
+                    "[$OpenRevisions]"
+                } else {
+                    $AttachmentsSince | ConvertTo-Json -Compress
+                }
+            )"
         } else {
-            Write-Error -Message "atts_since= parameter is not compatible with _all_docs"
+            $Document += "?atts_since=$(
+                if ($AttachmentsSince.Count -eq 1) {
+                    "[$OpenRevisions]"
+                } else {
+                    $AttachmentsSince | ConvertTo-Json -Compress
+                }
+            )"
         }
-    } 
+    }
+    # Check Conflicts parameter
     if ($Conflicts.IsPresent) {
-        if ($Document -ne '_all_docs') {
-            if ($Document -match "\?") {
-                $Document += "&conflicts=true"
-            } else {
-                $Document += "?conflicts=true"
-            }
+        if ($Document -match "\?") {
+            $Document += "&conflicts=true"
         } else {
-            Write-Error -Message "atts_since= parameter is not compatible with _all_docs"
+            $Document += "?conflicts=true"
         }
-    } 
+    }
+    # Check DeletedConflicts parameter
     if ($DeletedConflicts.IsPresent) {
-        if ($Document -ne '_all_docs') {
-            if ($Document -match "\?") {
-                $Document += "&deleted_conflicts=true"
-            } else {
-                $Document += "?deleted_conflicts=true"
-            }
+        if ($Document -match "\?") {
+            $Document += "&deleted_conflicts=true"
         } else {
-            Write-Error -Message "atts_since= parameter is not compatible with _all_docs"
+            $Document += "?deleted_conflicts=true"
         }
     }
+    # Check Latest parameter
     if ($Latest.IsPresent) {
-        if ($Document -ne '_all_docs') {
-            if ($Document -match "\?") {
-                $Document += "&latest=true"
-            } else {
-                $Document += "?latest=true"
-            }
+        if ($Document -match "\?") {
+            $Document += "&latest=true"
         } else {
-            Write-Error -Message "atts_since= parameter is not compatible with _all_docs"
+            $Document += "?latest=true"
         }
     }
+    # Check LocalSequence parameter
     if ($LocalSequence.IsPresent) {
-        if ($Document -ne '_all_docs') {
-            if ($Document -match "\?") {
-                $Document += "&local_seq=true"
-            } else {
-                $Document += "?local_seq=true"
-            }
+        if ($Document -match "\?") {
+            $Document += "&local_seq=true"
         } else {
-            Write-Error -Message "atts_since= parameter is not compatible with _all_docs"
+            $Document += "?local_seq=true"
         }
     }
+    # Check Metadata parameter
     if ($Metadata.IsPresent) {
-        if ($Document -ne '_all_docs') {
-            if ($Document -match "\?") {
-                $Document += "&meta=true"
-            } else {
-                $Document += "?meta=true"
-            }
+        if ($Document -match "\?") {
+            $Document += "&meta=true"
         } else {
-            Write-Error -Message "meta= parameter is not compatible with _all_docs"
+            $Document += "?meta=true"
         }
     }
+    # Check OpenRevisions parameter
     if ($MyInvocation.BoundParameters.Keys -match 'OpenRevisions') {
         if ($OpenRevisions) {
-            if ($Document -ne '_all_docs') {
-                if ($Document -match "\?") {
-                    $Document += "&open_revs=$($OpenRevisions | ConvertTo-Json -Compress)"
-                } else {
-                    $Document += "?open_revs=$($OpenRevisions | ConvertTo-Json -Compress)"
-                }
+            if ($Document -match "\?") {
+                $Document += "&open_revs=$(
+                    if ($OpenRevisions.Count -eq 1) {
+                        "[$OpenRevisions]"
+                    } else {
+                        $OpenRevisions | ConvertTo-Json -Compress
+                    }
+                    )"
             } else {
-                Write-Error -Message "open_revs= parameter is not compatible with _all_docs"
+                $Document += "?open_revs=$(
+                    if ($OpenRevisions.Count -eq 1) {
+                        "[$OpenRevisions]"
+                    } else {
+                        $OpenRevisions | ConvertTo-Json -Compress
+                    }
+                    )"
             }
         } elseif ($OpenRevisions.Length -eq 0) {
-            if ($Document -ne '_all_docs') {
-                if ($Document -match "\?") {
-                    $Document += '&open_revs=all'
-                } else {
-                    $Document += '?open_revs=all'
-                }
+            if ($Document -match "\?") {
+                $Document += '&open_revs=all'
             } else {
-                Write-Error -Message "open_revs= parameter is not compatible with _all_docs"
+                $Document += '?open_revs=all'
             }
+        }
+    }
+    # Check Descending parameter
+    if ($Descending.IsPresent) {
+        if ($Document -match "\?") {
+            $Document += "&descending=true"
+        } else {
+            $Document += "?descending=true"
+        }
+    }
+    # Check EndKey parameter
+    if ($EndKey) {
+        if ($Document -match "\?") {
+            $Document += "&endkey=`"$EndKey`""
+        } else {
+            $Document += "?endkey=`"$EndKey`""
+        }
+    }
+    # Check EndKeyDocument parameter
+    if ($EndKeyDocument) {
+        if ($Document -match "\?") {
+            $Document += "&endkey_docid=`"$EndKeyDocument`""
+        } else {
+            $Document += "?endkey_docid=`"$EndKeyDocument`""
+        }
+    }
+    # Check Group parameter
+    if ($Group.IsPresent) {
+        if ($Document -match "\?") {
+            $Document += "&group=true"
+        } else {
+            $Document += "?group=true"
+        }
+    }
+    # Check GroupLevel parameter
+    if ($GroupLevel) {
+        if ($Document -match "\?") {
+            $Document += "&group_level=$GroupLevel"
+        } else {
+            $Document += "?group_level=$GroupLevel"
+        }
+    }
+    # Check IncludeDocuments parameter
+    if ($IncludeDocuments.IsPresent) {
+        if ($Document -match "\?") {
+            $Document += "&include_docs=true"
+        } else {
+            $Document += "?include_docs=true"
+        }
+    }
+    # Check InclusiveEnd parameter
+    if ($InclusiveEnd -eq $false) {
+        if ($Document -match "\?") {
+            $Document += "&inclusive_end=false"
+        } else {
+            $Document += "?inclusive_end=false"
+        }
+    }
+    # Check Key parameter
+    if ($Key) {
+        if ($Document -match "\?") {
+            $Document += "&key=`"$Key`""
+        } else {
+            $Document += "?key=`"$Key`""
+        }
+    }
+    # Check Keys parameter
+    if ($Keys) {
+        if ($Document -match "\?") {
+            $Document += "&keys=$(
+                if ($Keys.Count -eq 1) {
+                    "[$Keys]"
+                } else {
+                    $Keys | ConvertTo-Json -Compress
+                }
+                )"
+        } else {
+            $Document += "?keys=$(
+                if ($Keys.Count -eq 1) {
+                    "[$Keys]"
+                } else {
+                    $Keys | ConvertTo-Json -Compress
+                }
+                )"
+        }
+    }
+    # Check Limit parameter
+    if ($Limit) {
+        if ($Document -match "\?") {
+            $Document += "&limit=$Limit"
+        } else {
+            $Document += "?limit=$Limit"
+        }
+    }
+    # Check Reduce parameter
+    if ($Reduce -eq $false) {
+        if ($Document -match "\?") {
+            $Document += "&reduce=false"
+        } else {
+            $Document += "?reduce=false"
+        }
+    }
+    # Check Skip parameter
+    if ($Skip) {
+        if ($Document -match "\?") {
+            $Document += "&skip=$Skip"
+        } else {
+            $Document += "?skip=$Skip"
+        }
+    }
+    # Check Sorted parameter
+    if ($Sorted -eq $false) {
+        if ($Document -match "\?") {
+            $Document += "&sorted=false"
+        } else {
+            $Document += "?sorted=false"
+        }
+    }
+    # Check Stable parameter
+    if ($Stable.IsPresent) {
+        if ($Document -match "\?") {
+            $Document += "&stable=true"
+        } else {
+            $Document += "?stable=true"
+        }
+    }
+    # Check Stale parameter
+    if ($Stale) {
+        if ($Document -match "\?") {
+            $Document += "&stale=$Stale"
+        } else {
+            $Document += "?stale=$Stale"
+        }
+    }
+    # Check StartKey parameter
+    if ($StartKey) {
+        if ($Document -match "\?") {
+            $Document += "&startkey=`"$StartKey`""
+        } else {
+            $Document += "?startkey=`"$StartKey`""
+        }
+    }
+    # Check StartKeyDocument parameter
+    if ($StartKeyDocument) {
+        if ($Document -match "\?") {
+            $Document += "&startkey_docid=`"$StartKeyDocument`""
+        } else {
+            $Document += "?startkey_docid=`"$StartKeyDocument`""
+        }
+    }
+    # Check Update parameter
+    if ($Update) {
+        if ($Document -match "\?") {
+            $Document += "&update=$Update"
+        } else {
+            $Document += "?update=$Update"
+        }
+    }
+    # Check UpdateSequence parameter
+    if ($UpdateSequence.IsPresent) {
+        if ($Document -match "\?") {
+            $Document += "&update_seq=true"
+        } else {
+            $Document += "?update_seq=true"
         }
     }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl

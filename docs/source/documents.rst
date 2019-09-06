@@ -27,7 +27,7 @@ To get document by the specified ``Document`` from the specified ``Database``. U
 
     Get-CouchDBDocument -Database test -Document "Hitchhikers"
 
-In this table you can find all the possible parameters to get the documents with this cmdlet.
+In this table you can find all the possible parameters to get the document.
 
 ================    ===========
 PARAMETER           DESCRIPTION
@@ -45,6 +45,32 @@ Latest              Forces retrieving latest “leaf” revision, no matter what
 LocalSequence       Includes last update sequence for the document.
 Metadata            Acts same as specifying all conflicts, deleted_conflicts and revs_info query parameters.
 OpenRevisions       Retrieves documents of specified leaf revisions. Additionally, value all id default and  to return all leaf revisions.
+================    ===========
+
+And if use **_all_docs** view, in this table you can find all the possible parameters.
+
+================    ===========
+PARAMETER           DESCRIPTION
+================    ===========
+Descending          Return the design documents in descending by key order. Default is ``false``.
+EndKey              Stop returning records when the specified key is reached.
+EndKeyDocument      Stop returning records when the specified document ID is reached.
+Group				Group the results using the reduce function to a group or single row. Implies reduce is ``true`` and the maximum group_level. Default is ``false``.
+GroupLevel			Specify the group level to be used. Implies group is ``true``.
+IncludeDocuments	Include the associated document with each row. Default is ``false``.
+InclusiveEnd		Specifies whether the specified end key should be included in the result. Default is ``true``.
+Key					Return only documents that match the specified key. The document must be _all_docs.
+Keys				Return only documents where the key matches one of the keys specified in the array.
+Limit				Limit the number of the returned design documents to the specified number.
+Reduce				Use the reduction function. Default is true when a reduce function is defined.
+Skip				Skip this number of records before starting to return the results.
+Sorted				Sort returned rows. Setting this to false offers a performance boost. The total_rows and offset fields are not available when this is set to ``false``. Default is ``true``.
+Stable				Whether or not the view results should be returned from a stable set of shards. Default is ``false``.
+Stale				Allow the results from a stale view to be used. Supported values: ``ok``, ``update_after and`` ``false``. ``ok`` is equivalent to ``stable=true&update=false``. ``update_after`` is equivalent to ``stable=true&update=lazy``. ``false`` is equivalent to ``stable=false&update=true``.
+StartKey			Return records starting with the specified key.
+StartKeyDocument	Return records starting with the specified document ID. Ignored if startkey is not set.
+Update				Whether or not the view in question should be updated prior to responding to the user. Supported values: ``true``, ``false``, ``lazy``. Default is ``true``.
+UpdateSequence		Whether to include in the response an update_seq value indicating the sequence id of the database the view reflects. Default is ``false``.
 ================    ===========
 
 
