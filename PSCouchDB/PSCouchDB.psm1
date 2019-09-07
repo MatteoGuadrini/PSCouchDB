@@ -296,7 +296,7 @@ class PSCouchDBQuery {
                         continue
                     }
                     $this.selector.Add($selector, @{ })
-                    if ($null -ne ($clone_selector[$selector] -as [int])) {
+                    if ($clone_selector[$selector] -is [int]) {
                         $this.selector.$selector.Add($operator, [int]$clone_selector[$selector])
                     } elseif (($clone_selector[$selector] -eq "true") -or ($clone_selector[$selector] -eq "false")) {
                         $this.selector.$selector.Add($operator, [bool]$clone_selector[$selector])
@@ -312,7 +312,7 @@ class PSCouchDBQuery {
                         continue
                     }
                     $this.selector.Add($selector, @{ })
-                    if ($null -ne ($clone_selector[$selector] -as [int])) {
+                    if ($clone_selector[$selector] -is [int]) {
                         $this.selector.$selector.Add($operator, @([int]$clone_selector[$selector]))
                     } elseif (($clone_selector[$selector] -eq "true") -or ($clone_selector[$selector] -eq "false")) {
                         $this.selector.$selector.Add($operator, @([bool]$clone_selector[$selector]))
@@ -337,7 +337,7 @@ class PSCouchDBQuery {
                     $this.selector.$key = @{ }
                     if (('$lt', '$lte', '$eq', '$ne', '$gte', '$gt', '$exists', '$type', '$mod', '$regex') -contains $operator) {
                         # JSON
-                        if ($null -ne ($value -as [int])) {
+                        if ($value -is [int]) {
                             $this.selector.$key.Add($operator, [int]$value)
                         } elseif (($value -eq "true") -or ($value -eq "false")) {
                             $this.selector.$key.Add($operator, [bool]$value)
@@ -346,7 +346,7 @@ class PSCouchDBQuery {
                         }
                     } elseif (('$in', '$nin', '$size') -contains $operator) {
                         # Array
-                        if ($null -ne ($value -as [int])) {
+                        if ($value -is [int]) {
                             $this.selector.$key.Add($operator, @([int]$value))
                         } elseif (($value -eq "true") -or ($value -eq "false")) {
                             $this.selector.$key.Add($operator, @([bool]$value))
@@ -3541,7 +3541,7 @@ function Set-CouchDBDocument () {
         [string] $Authorization,
         [switch] $Ssl
     )
-    if ($null -eq ($Data -as [hashtable])) {
+    if ($Data -is [hashtable]) {
         # Hashtable Data
         $Json = $Data | ConvertFrom-Json
         $Data = @{ }
@@ -3832,7 +3832,7 @@ function Set-CouchDBDesignDocument () {
     }
     # CustomData
     if ($PsCmdlet.ParameterSetName -eq "CustomData") {
-        if ($null -ne ($Data -as [hashtable])) {
+        if ($Data -is [hashtable]) {
             if (-not($Data.ContainsKey('language'))) { $Data.Add('language', 'javascript') }
             if (-not($Data.ContainsKey('views'))) { $Data.Add('views', @{ }) 
             }
@@ -3841,7 +3841,7 @@ function Set-CouchDBDesignDocument () {
             if (-not($Data.ContainsKey('lists'))) { $Data.Add('lists', @{ }) 
             }
             if (-not($Data.ContainsKey('validate_doc_update'))) { $Data.Add('validate_doc_update', "") }
-        } elseif ($null -ne ($Data -as [string])) {
+        } elseif ($Data -is [string]) {
             $Data = $Data
         } else {
             $Json = $Data | ConvertFrom-Json
@@ -4785,7 +4785,7 @@ function New-CouchDBDocument () {
         [string] $Authorization,
         [switch] $Ssl
     )
-    if ($null -ne ($Data -as [hashtable])) {
+    if ($Data -is [hashtable]) {
         # Json Data
         $Data = $Data | ConvertTo-Json -Depth 99
     }
@@ -4974,7 +4974,7 @@ function New-CouchDBDesignDocument () {
     }
     # CustomData
     if ($PsCmdlet.ParameterSetName -eq "CustomData") {
-        if ($null -ne ($Data -as [hashtable])) {
+        if ($Data -is [hashtable]) {
             $Data = $Data | ConvertTo-Json -Depth 99
         }
     }
@@ -6336,7 +6336,7 @@ function Find-CouchDBDocuments () {
         $Document = '_find'
     }
     if ($Find) {
-        if ($null -ne ($Find -as [hashtable])) {
+        if ($Find -is [hashtable]) {
             # Json Data
             $Data = $Find | ConvertTo-Json -Depth 99
         } else {
@@ -6381,7 +6381,6 @@ function Find-CouchDBDocuments () {
         }
         # Data
         $Data = $Query.GetNativeQuery()
-        Write-Verbose -Message "The JSON data is: $Data"
     }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }
