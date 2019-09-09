@@ -52,7 +52,7 @@ And if use **_all_docs** view, in this table you can find all the possible param
 ================    ===========
 PARAMETER           DESCRIPTION
 ================    ===========
-Descending          Return the design documents in descending by key order. Default is ``false``.
+Descending          Return the documents in descending by key order. Default is ``false``.
 EndKey              Stop returning records when the specified key is reached.
 EndKeyDocument      Stop returning records when the specified document ID is reached.
 Group				Group the results using the reduce function to a group or single row. Implies reduce is ``true`` and the maximum group_level. Default is ``false``.

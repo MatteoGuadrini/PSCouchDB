@@ -42,6 +42,18 @@ To get alist of all databases, run this:
 
     Get-CouchDBDatabase
 
+And if use **_all_dbs** view, in this table you can find all the possible parameters.
+
+================    ===========
+PARAMETER           DESCRIPTION
+================    ===========
+Descending          Return the databases in descending order by key. Default is ``false``.
+EndKey              Stop returning databases when the specified key is reached.
+Limit				Limit the number of the returned databases to the specified number.
+Skip				Skip this number of databases before starting to return the results. Default is ``0``.
+StartKey			Return databases starting with the specified key.
+================    ===========
+
 Create a database
 _________________
 

@@ -1062,6 +1062,16 @@ function Get-CouchDBDatabase () {
     The CouchDB server port. Default is 5984.
     .PARAMETER Database
     The CouchDB database. Default is _all_dbs.
+    .PARAMETER Descending
+    Return the databases in descending order by key. Default is false. The database must be _all_dbs.
+    .PARAMETER EndKey
+    Stop returning databases when the specified key is reached. The database must be _all_dbs.
+    .PARAMETER Limit
+    Limit the number of the returned databases to the specified number. The database must be _all_dbs.
+    .PARAMETER Skip
+    Skip this number of databases before starting to return the results. Default is 0. The database must be _all_dbs.
+    .PARAMETER StartKey
+    Return databases starting with the specified key. The database must be _all_dbs.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -1084,9 +1094,61 @@ function Get-CouchDBDatabase () {
         [string] $Server,
         [int] $Port,
         [string] $Database = "_all_dbs",
+        [ValidateScript( { if (-not($Database) -or ($Database -eq "_all_dbs")) { $true } })]
+        [switch] $Descending,
+        [ValidateScript( { if (-not($Database) -or ($Database -eq "_all_dbs")) { $true } })]
+        [Alias('End')]
+        [string] $EndKey,
+        [ValidateScript( { if (-not($Database) -or ($Database -eq "_all_dbs")) { $true } })]
+        [int] $Limit,
+        [ValidateScript( { if (-not($Database) -or ($Database -eq "_all_dbs")) { $true } })]
+        [int] $Skip,
+        [ValidateScript( { if (-not($Database) -or ($Database -eq "_all_dbs")) { $true } })]
+        [Alias('Start')]
+        [string] $StartKey,
         [string] $Authorization,
         [switch] $Ssl
     )
+    # Check Descending param
+    if ($Descending.IsPresent) {
+        if ($Database -match "\?") {
+            $Database += "&descending=true"
+        } else {
+            $Database += "?descending=true"
+        }
+    }
+    # Check EndKey param
+    if ($EndKey) {
+        if ($Database -match "\?") {
+            $Database += "&endkey=`"$EndKey`""
+        } else {
+            $Database += "?endkey=`"$EndKey`""
+        }
+    }
+    # Check Limit param
+    if ($Limit) {
+        if ($Database -match "\?") {
+            $Database += "&limit=$Limit"
+        } else {
+            $Database += "?limit=$Limit"
+        }
+    }
+    # Check Skip param
+    if ($Skip) {
+        if ($Database -match "\?") {
+            $Database += "&skip=$Skip"
+        } else {
+            $Database += "?skip=$Skip"
+        }
+    }
+    # Check StartKey param
+    if ($StartKey) {
+        if ($Database -match "\?") {
+            $Database += "&startkey=`"$StartKey`""
+        } else {
+            $Database += "?startkey=`"$StartKey`""
+        }
+    }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl
 }
 
@@ -1512,102 +1574,102 @@ function Get-CouchDBDocument () {
         [Parameter(ParameterSetName = "Info")]
         [switch] $Local,
         [Parameter(ParameterSetName = "Document")]
-        [ValidateScript({if ($Document -eq "_all_docs") {$false}})]
+        [ValidateScript( { if ($Document -eq "_all_docs") { $false } })]
         [switch] $Revisions,
         [Parameter(ParameterSetName = "Document")]
-        [ValidateScript({if ($Document -eq "_all_docs") {$false}})]
+        [ValidateScript( { if ($Document -eq "_all_docs") { $false } })]
         [switch] $History,
         [Parameter(ParameterSetName = "Document")]
-        [ValidateScript({if ($Document -eq "_all_docs") {$false}})]
+        [ValidateScript( { if ($Document -eq "_all_docs") { $false } })]
         [switch] $Attachments,
         [Parameter(ParameterSetName = "Document")]
-        [ValidateScript({if ($Document -eq "_all_docs") {$false}})]
+        [ValidateScript( { if ($Document -eq "_all_docs") { $false } })]
         [switch] $AttachmentsInfo,
         [Parameter(ParameterSetName = "Document")]
         [ValidateCount(2, 10)]
-        [ValidateScript({if ($Document -eq "_all_docs") {$false}})]
+        [ValidateScript( { if ($Document -eq "_all_docs") { $false } })]
         [array] $AttachmentsSince,
         [Parameter(ParameterSetName = "Document")]
         [switch] $Conflicts,
         [Parameter(ParameterSetName = "Document")]
-        [ValidateScript({if ($Document -eq "_all_docs") {$false}})]
+        [ValidateScript( { if ($Document -eq "_all_docs") { $false } })]
         [switch] $DeletedConflicts,
         [Parameter(ParameterSetName = "Document")]
-        [ValidateScript({if ($Document -eq "_all_docs") {$false}})]
+        [ValidateScript( { if ($Document -eq "_all_docs") { $false } })]
         [switch] $Latest,
         [Parameter(ParameterSetName = "Document")]
-        [ValidateScript({if ($Document -eq "_all_docs") {$false}})]
+        [ValidateScript( { if ($Document -eq "_all_docs") { $false } })]
         [switch] $LocalSequence,
         [Parameter(ParameterSetName = "Document")]
-        [ValidateScript({if ($Document -eq "_all_docs") {$false}})]
+        [ValidateScript( { if ($Document -eq "_all_docs") { $false } })]
         [switch] $Metadata,
         [Parameter(ParameterSetName = "Document")]
-        [ValidateScript({if ($Document -eq "_all_docs") {$false}})]
+        [ValidateScript( { if ($Document -eq "_all_docs") { $false } })]
         [array] $OpenRevisions,
         [Parameter(ParameterSetName = "Document")]
-        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
         [switch] $Descending,
         [Parameter(ParameterSetName = "Document")]
-        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
         [Alias('End')]
         [string] $EndKey,
         [Parameter(ParameterSetName = "Document")]
-        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
         [Alias('EndDoc')]
         [string] $EndKeyDocument,
         [Parameter(ParameterSetName = "Document")]
-        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
         [switch] $Group,
         [Parameter(ParameterSetName = "Document")]
-        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
         [int] $GroupLevel,
         [Parameter(ParameterSetName = "Document")]
-        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
         [Alias('IncDoc')]
         [switch] $IncludeDocuments,
         [Parameter(ParameterSetName = "Document")]
-        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
         [Alias('IncEnd')]
         [bool] $InclusiveEnd = $true,
         [Parameter(ParameterSetName = "Document")]
-        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
         [string] $Key,
         [Parameter(ParameterSetName = "Document")]
-        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
         [array] $Keys,
         [Parameter(ParameterSetName = "Document")]
-        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
         [int] $Limit,
         [Parameter(ParameterSetName = "Document")]
-        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
         [bool] $Reduce = $true,
         [Parameter(ParameterSetName = "Document")]
-        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
         [int] $Skip,
         [Parameter(ParameterSetName = "Document")]
-        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
         [bool] $Sorted = $true,
         [Parameter(ParameterSetName = "Document")]
-        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
         [switch] $Stable,
         [Parameter(ParameterSetName = "Document")]
         [ValidateSet("ok", "update_after", "false")]
-        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
         [string] $Stale,
         [Parameter(ParameterSetName = "Document")]
-        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
         [Alias('Start')]
         [string] $StartKey,
         [Parameter(ParameterSetName = "Document")]
-        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
         [Alias('StartDoc')]
         [string] $StartKeyDocument,
         [Parameter(ParameterSetName = "Document")]
         [ValidateSet("true", "false", "lazy")]
-        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
         [string] $Update,
         [Parameter(ParameterSetName = "Document")]
-        [ValidateScript({if (-not($Document) -or ($Document -eq '_all_docs')) {$true}})]
+        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
         [switch] $UpdateSequence,
         [Parameter(ParameterSetName = "Document")]
         [Parameter(ParameterSetName = "Info")]
@@ -3566,7 +3628,7 @@ function Set-CouchDBDocument () {
     # Check BatchMode
     if ($BatchMode.IsPresent) { 
         $Document += "?batch=ok" 
-    # Check NoConflict
+        # Check NoConflict
     } elseif ($NoConflict.IsPresent -and $Revision) { 
         $Document += "?rev=$Revision&new_edits=false"
         $Revision = $null
