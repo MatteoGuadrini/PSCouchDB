@@ -145,7 +145,7 @@ Server
 
 .. code-block:: powershell
 
-    Get-CouchDBClusterSetup [[-Server] <String>] [[-Port] <Int32>] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    Get-CouchDBClusterSetup [[-Server] <String>] [[-Port] <Int32>] [[-EnsureDatabaseExist] <Array>] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
 
 **Get-CouchDBDatabaseUpdates**
 

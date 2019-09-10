@@ -2851,6 +2851,8 @@ function Get-CouchDBClusterSetup () {
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
     The CouchDB server port. Default is 5984.
+    .PARAMETER EnsureDatabaseExist
+    List of system databases to ensure exist on the node/cluster. Defaults to ["_users","_replicator","_global_changes"].
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -2869,10 +2871,40 @@ function Get-CouchDBClusterSetup () {
         [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
+        [AllowEmptyCollection()]
+        [array] $EnsureDatabaseExist,
         [string] $Authorization,
         [switch] $Ssl
     )
     $Database = "_cluster_setup"
+    # Check EnsureDatabaseExist parameter
+    if ($PSBoundParameters.ContainsKey('EnsureDatabaseExist')) {
+        if ($EnsureDatabaseExist) {
+            if ($Database -match "\?") {
+                $Database += "&ensure_dbs_exist=$(
+                    if ($EnsureDatabaseExist.Count -eq 1) {
+                        "[$($EnsureDatabaseExist | ConvertTo-Json -Compress)]"
+                    } else {
+                        $EnsureDatabaseExist | ConvertTo-Json -Compress
+                    }
+                )"
+            } else {
+                $Database += "?ensure_dbs_exist=$(
+                    if ($EnsureDatabaseExist.Count -eq 1) {
+                        "[$($EnsureDatabaseExist | ConvertTo-Json -Compress)]"
+                    } else {
+                        $EnsureDatabaseExist | ConvertTo-Json -Compress
+                    }
+                )"
+            }
+        } else {
+            if ($Database -match "\?") {
+                $Database += '&ensure_dbs_exist=["_users","_replicator","_global_changes"]'
+            } else {
+                $Database += '?ensure_dbs_exist=["_users","_replicator","_global_changes"]'
+            }
+        }
+    }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl
 }
 
