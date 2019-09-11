@@ -5512,9 +5512,20 @@ function Enable-CouchDBCluster () {
     .PARAMETER Port
     The CouchDB server port. Default is 5984.
     .PARAMETER NodeCount
-    Enable CouchDB cluster. Default node clustern is 3.
+    Enable CouchDB cluster. Default node cluster is 3.
     .PARAMETER SingleNode
     Enable CouchDB cluster in a single node.
+    .PARAMETER BindAddress
+    The IP address to which to bind the current node. 
+    The special value 0.0.0.0 (default) may be specified to bind to all interfaces on the host. (enable_cluster and enable_single_node only)
+    .PARAMETER BindPort
+    The TCP port to which to bind this node (enable_cluster and enable_single_node only).
+    .PARAMETER RemoteNode
+    The IP address of the remote node to setup as part of this cluster’s list of nodes. (enable_cluster only)
+    .PARAMETER RemoteUser
+    The username of the server-level administrator authorized on the remote node. (enable_cluster only)
+    .PARAMETER RemotePassword
+    The password of the server-level administrator authorized on the remote node. (enable_cluster only)
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -5533,8 +5544,17 @@ function Enable-CouchDBCluster () {
         [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
+        [ValidateRange(1, 3)]
         [int] $NodeCount = 3,
         [switch] $SingleNode,
+        [string] $BindAddress = '0.0.0.0',
+        [int] $BindPort = 5984,
+        [ValidateScript( { if (-not($SingleNode)) { $true } })]
+        [string] $RemoteNode,
+        [ValidateScript( { if (-not($SingleNode)) { $true } })]
+        [string] $RemoteUser,
+        [ValidateScript( { if (-not($SingleNode) -and ($RemoteUser)) { $true } })]
+        [SecureString] $RemotePassword,
         [string] $Authorization,
         [switch] $Ssl
     )
@@ -5542,7 +5562,7 @@ function Enable-CouchDBCluster () {
     $name = & { if ($Authorization) { Write-Output $($Authorization -split ":")[0] } else { Write-Output "___" } }
     $admins = Get-CouchDBAdmin -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue
     if (-not(Get-Member -Inputobject $admins -Name "$name" -ErrorAction SilentlyContinue)) {
-        throw "Create an admin before configure cluster or specify -Authorization parameter!" 
+        throw "Create an admin before configure cluster or specify a valid -Authorization parameter!" 
     }
     $Database = "_cluster_setup"
     $Credential = $Authorization -split ":"
@@ -5555,11 +5575,16 @@ function Enable-CouchDBCluster () {
     $Data = "
         {
             `"action`": `"$Action`",
-            `"bind_address`": `"0.0.0.0`",
+            `"bind_address`": `"$BindAddress`",
+            `"port`": `"$BindPort`",
             `"username`": `"$($Credential[0])`",
             `"password`": `"$($Credential[1])`"
         "
+    # Check if single node cluster or not
     if ($Action -eq "enable_cluster") {
+        if ($RemoteNode) {$Data += ",`"remote_node`": `"$RemoteNode`""}
+        if ($RemoteUser) {$Data += ",`"remote_current_user`": `"$RemoteUser`""}
+        if ($RemotePassword) {$Data += ",`"remote_current_password `": `"$(ConvertTo-CouchDBPassword -SecurePassword $RemotePassword)`""}
         $Data += ",`"node_count`": `"$NodeCount`"}"
     } else {
         $Data += ",`"node_count`": `"1`"}"

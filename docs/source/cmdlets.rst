@@ -37,7 +37,7 @@ Configuration
 
 .. code-block:: powershell
 
-    Enable-CouchDBCluster [[-Server] <String>] [[-Port] <Int32>] [[-NodeCount] <Int32>] [-SingleNode] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    Enable-CouchDBCluster [[-Server] <String>] [[-Port] <Int32>] [[-NodeCount] <Int32>] [-SingleNode] [[-BindAddress] <String>] [[-BindPort] <Int32>] [[-RemoteNode] <String>] [[-RemoteUser] <String>] [[-RemotePassword] <SecureString>] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
 
 **Get-CouchDBNode**
 
