@@ -2735,6 +2735,10 @@ function Get-CouchDBReplicationScheduler () {
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
     The CouchDB server port. Default is 5984.
+    .PARAMETER Limit
+    How many results to return.
+    .PARAMETER Skip
+    How many result to skip starting at the beginning, ordered by replication ID.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -2753,11 +2757,29 @@ function Get-CouchDBReplicationScheduler () {
         [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
+        [int] $Limit,
+        [int] $Skip,
         [string] $Authorization,
         [switch] $Ssl
     )
     $Database = "_scheduler"
     $Document = 'jobs'
+    # Check Limit parameter
+    if ($Limit) {
+        if ($Document -match "\?") {
+            $Document += "&limit=$Limit"
+        } else {
+            $Document += "?limit=$Limit"
+        }
+    }
+    # Check Skip parameter
+    if ($Skip) {
+        if ($Document -match "\?") {
+            $Document += "&skip=$Skip"
+        } else {
+            $Document += "?skip=$Skip"
+        }
+    }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
 }
 

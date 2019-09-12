@@ -196,7 +196,7 @@ Replication
 
 .. code-block:: powershell
 
-    Get-CouchDBReplicationScheduler [[-Server] <String>] [[-Port] <Int32>] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    Get-CouchDBReplicationScheduler [[-Server] <String>] [[-Port] <Int32>] [[-Limit] <Int32>] [[-Skip] <Int32>] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
 
 **Get-CouchDBReplicationDocument**
 
