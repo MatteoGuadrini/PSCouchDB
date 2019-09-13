@@ -2796,6 +2796,14 @@ function Get-CouchDBReplicationDocument () {
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
     The CouchDB server port. Default is 5984.
+    .PARAMETER Limit
+    How many results to return.
+    .PARAMETER Skip
+    How many result to skip starting at the beginning, ordered by replication ID.
+    .PARAMETER ReplicatorDatabase
+    Get information about replication documents from a replicator database.
+    .PARAMETER ReplicatorDocuments
+    Get information about replication document from a replicator database. -ReplicatorDatabase parameter is required.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -2814,11 +2822,40 @@ function Get-CouchDBReplicationDocument () {
         [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
+        [int] $Limit,
+        [int] $Skip,
+        [string] $ReplicatorDatabase,
+        [ValidateScript( { if ($ReplicatorDatabase) { $true } else { $false } })]
+        [string] $ReplicatorDocuments,
         [string] $Authorization,
         [switch] $Ssl
     )
     $Database = "_scheduler"
     $Document = "docs"
+    # Check ReplicatorDatabase parameter
+    if ($ReplicatorDatabase) {
+        $Document += "/$ReplicatorDatabase"
+    }
+    # Check ReplicatorDatabase parameter
+    if ($ReplicatorDocuments) {
+        $Document += "/$ReplicatorDocuments"
+    }
+    # Check Limit parameter
+    if ($Limit) {
+        if ($Document -match "\?") {
+            $Document += "&limit=$Limit"
+        } else {
+            $Document += "?limit=$Limit"
+        }
+    }
+    # Check Skip parameter
+    if ($Skip) {
+        if ($Document -match "\?") {
+            $Document += "&skip=$Skip"
+        } else {
+            $Document += "?skip=$Skip"
+        }
+    }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
 }
 

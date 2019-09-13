@@ -202,7 +202,7 @@ Replication
 
 .. code-block:: powershell
 
-    Get-CouchDBReplicationDocument [[-Server] <String>] [[-Port] <Int32>] [-Replicator] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    Get-CouchDBReplicationDocument [[-Server] <String>] [[-Port] <Int32>] [[-Limit] <Int32>] [[-Skip] <Int32>] [[-ReplicatorDatabase] <String>] [[-ReplicatorDocuments] <String>] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
 
 **New-CouchDBReplication**
 
