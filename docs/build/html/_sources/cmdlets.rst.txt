@@ -61,7 +61,7 @@ Configuration
 
 .. code-block:: powershell
 
-    Get-CouchDBConfiguration [[-Server] <String>] [[-Port] <Int32>] [[-Database] <String>] [[-Node] <String>] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    Get-CouchDBConfiguration [[-Server] <String>] [[-Port] <Int32>] [[-Node] <String>] [[-Session] <String>] [[-Key] <String>] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
 
 **Set-CouchDBConfiguration**
 

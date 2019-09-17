@@ -2603,12 +2603,18 @@ function Get-CouchDBConfiguration () {
     .NOTES
     CouchDB API:
         GET /_node/{node-name}/_config
+        GET /_node/{node-name}/_config/{section}
+        GET /_node/{node-name}/_config/{section}/{key}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
     The CouchDB server port. Default is 5984.
     .PARAMETER Node
     The CouchDB node of cluster. Default is couchdb@localhost.
+    .PARAMETER Session
+    The CouchDB configuration section name.
+    .PARAMETER Key
+    The CouchDB configuration option name.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -2628,11 +2634,21 @@ function Get-CouchDBConfiguration () {
         [string] $Server,
         [int] $Port,
         [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).all_nodes -contains "couchdb@localhost") { "couchdb@localhost" } else { "couchdb@127.0.0.1" }),
+        [string] $Session,
+        [string] $Key,
         [string] $Authorization,
         [switch] $Ssl
     )
     $Database = "_node"
     $Document = "$Node/_config"
+    # Check Session parameter
+    if ($Session) {
+        $Document += "/$Session"
+    }
+    # Check Key parameter
+    if ($Session -and $Key) {
+        $Document += "/$Key"
+    }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
 }
 
