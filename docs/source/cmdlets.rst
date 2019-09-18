@@ -480,7 +480,7 @@ Documents
 
 .. code-block:: powershell
 
-    Find-CouchDBDocuments [-Server <String>] [-Port <Int32>] [-Database <String>] [-Explain] [-Selector <String>] [-Value <String>] [-Limit <Int32>] [-Skip <Int32>] [-Fields <Array>] [-Sort <Array>] [-UseIndex <Array>] [-ReadQuorum <Int32>] [-Bookmark <String>] [-NoUpdate] [-Stable] [-Stale <String>] [-ExecutionStats] [-Operator <String>] [-Authorization <String>] [-Ssl] [<CommonParameters>]
+    Find-CouchDBDocuments [-Server <String>] [-Port <Int32>] [-Database <String>] [-Explain] [-Selector <String>] [-Value <Object>] [-Limit <Int32>] [-Skip <Int32>] [-Fields <Array>] [-Sort <Array>] [-UseIndex <Array>] [-ReadQuorum <Int32>] [-Bookmark <String>] [-NoUpdate] [-Stable] [-Stale <String>] [-ExecutionStats] [-Operator<String>] [-Authorization <String>] [-Ssl] [<CommonParameters>]
 
     Find-CouchDBDocuments [-Server <String>] [-Port <Int32>] [-Database <String>] [-Find <String>] [-Authorization <String>] [-Ssl] [<CommonParameters>]
 

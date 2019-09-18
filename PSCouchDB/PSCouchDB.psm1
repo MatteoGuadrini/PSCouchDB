@@ -6487,7 +6487,7 @@ function Find-CouchDBDocuments () {
         [Parameter(ParameterSetName = "PSCouchDB")]
         [string] $Selector,
         [Parameter(ParameterSetName = "PSCouchDB")]
-        [string] $Value,
+        $Value,
         [Parameter(ParameterSetName = "PSCouchDB")]
         [int] $Limit,
         [Parameter(ParameterSetName = "PSCouchDB")]
