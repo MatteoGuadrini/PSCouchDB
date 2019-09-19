@@ -1633,7 +1633,7 @@ function Get-CouchDBDocument () {
         [bool] $InclusiveEnd = $true,
         [Parameter(ParameterSetName = "Document")]
         [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
-        [string] $Key,
+        $Key,
         [Parameter(ParameterSetName = "Document")]
         [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
         [array] $Keys,
@@ -1875,10 +1875,11 @@ function Get-CouchDBDocument () {
     }
     # Check Key parameter
     if ($Key) {
+        if ($Key -isnot [int]) { $Key = "`"$Key`""}
         if ($Document -match "\?") {
-            $Document += "&key=`"$Key`""
+            $Document += "&key=$Key"
         } else {
-            $Document += "?key=`"$Key`""
+            $Document += "?key=$Key"
         }
     }
     # Check Keys parameter
