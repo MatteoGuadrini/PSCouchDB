@@ -468,7 +468,7 @@ Documents
 
 .. code-block:: powershell
 
-    Clear-CouchDBDocuments [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [[-Authorization] <String>] [-Force] [-Ssl] [-WhatIf] [-Confirm] [<CommonParameters>]
+    Clear-CouchDBDocuments [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <Array> [[-Authorization] <String>] [-Force] [-Ssl] [-WhatIf] [-Confirm] [<CommonParameters>]
 
 **Search-CouchDBFullText**
 

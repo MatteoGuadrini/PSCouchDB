@@ -3444,15 +3444,19 @@ function Clear-CouchDBDocuments () {
         [Parameter(mandatory = $true)]
         [string] $Database,
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [string] $Document,
+        [array] $Document,
         [string] $Authorization,
         [switch] $Force,
         [switch] $Ssl
     )
-    $Data = @{$Document = @((Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl)._rev) }
-    $Data = $Data | ConvertTo-Json
+    $Data = New-Object -TypeName Hashtable
+    $Document | ForEach-Object { 
+        $docid = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $_ -Authorization $Authorization -Ssl:$Ssl 
+        $Data.Add($docid._id, @($docid._rev))
+    }
+    $Data = $Data | ConvertTo-Json -Depth 10
     $Database = $Database + '/_purge'
-    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish to purge permanently document ?", "Purge permanently document")) {
+    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish to purge permanently document $Document ?", "Purge permanently document $Document")) {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
     }
 }
