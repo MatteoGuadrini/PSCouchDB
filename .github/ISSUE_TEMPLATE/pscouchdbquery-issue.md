@@ -1,7 +1,7 @@
 ---
-name: cmdlet bug
-about: PSCouchDB cmdlet bug template
-title: PSCouchDB cmdlet bug
+name: PSCouchDBQuery bug
+about: PSCouchDBQuery class bug template
+title: PSCouchDBQuery class bug
 labels: bug
 assignees: MatteoGuadrini
 ---
@@ -17,6 +17,10 @@ Command launched
 ### Powershell Exception
 
 This is traceback exception:
+
+### Method used
+
+Description of how the method was used
 
 ## Expected Behaviour
 
