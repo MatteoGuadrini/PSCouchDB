@@ -4562,7 +4562,7 @@ function Grant-CouchDBDatabasePermission () {
     .SYNOPSIS
     Grant the security object for the given database.
     .DESCRIPTION
-    Grant the security object for the given CouchDB database. Specify Admins and/or Readers.
+    Grant the security object for the given CouchDB database. Specify Admins and/or Members.
     .NOTES
     CouchDB API:
         PUT /{db}/_security
@@ -4576,9 +4576,9 @@ function Grant-CouchDBDatabasePermission () {
     The CouchDB user_id of admin user.
     .PARAMETER AdminRoles
     The CouchDB user_roles of admin user.
-    .PARAMETER ReaderUser
+    .PARAMETER MemberUser
     The CouchDB user_id of standard user.
-    .PARAMETER UserRoles
+    .PARAMETER MemberRoles
     The CouchDB user_roles of standard user.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
@@ -4588,8 +4588,8 @@ function Grant-CouchDBDatabasePermission () {
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
     .EXAMPLE
-    Grant-CouchDBDatabasePermission -Database test -ReaderUser read_user -Authorization "admin:password"
-    This example grant read_user user on "test" database on CouchDB server.
+    Grant-CouchDBDatabasePermission -Database test -MemberUser member_user -Authorization "admin:password"
+    This example grant member_user user on "test" database on CouchDB server.
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/permission.html#limit-read-access
     #>
@@ -4601,66 +4601,46 @@ function Grant-CouchDBDatabasePermission () {
         [string] $Database,
         [array]$AdminUser,
         [array]$AdminRoles,
-        [array]$ReaderUser,
-        [array]$UserRoles,
+        [array]$MemberUser,
+        [array]$MemberRoles,
         [string] $Authorization,
         [switch] $Ssl
     )
-    [string] $Document = '_security'
+    $Document = '_security'
     # Check if admin user exists
     foreach ($User in $AdminUser) {
-        if (-not((Get-CouchDBUser -Database '_users' -Userid $User -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue).name -eq $User)) {
+        if (-not((Get-CouchDBUser -Userid $User -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue).name -eq $User)) {
             throw "Admin user $User not exists!"
         }
     }
     # Check if reader user exists
-    foreach ($User in $ReaderUser) {
-        if (-not((Get-CouchDBUser -Database '_users' -Userid $User -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue).name -eq $User)) {
-            throw "Reader user $User not exists!"
+    foreach ($User in $MemberUser) {
+        if (-not((Get-CouchDBUser -Userid $User -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue).name -eq $User)) {
+            throw "Member user $User not exists!"
         }
     }
-    # TODO migrate to hashtable and convert to json
-    if ($AdminUser.Count -eq 1) {
-        $AdminUser = "[$($AdminUser | ConvertTo-Json)]"
-    } elseif ($AdminUser.Count -gt 1) {
-        $AdminUser = $AdminUser | ConvertTo-Json
-    } else {
-        $AdminUser = '[]'
+    # Create permission structure
+    $permission = [PSCustomObject] @{
+        admins     = @{ names = @(); roles = @() }
+        members    = @{ names = @(); roles = @() }
     }
-    if ($AdminRoles.Count -eq 1) {
-        $AdminRoles = "[$($AdminRoles | ConvertTo-Json)]"
-    } elseif ($AdminRoles.Count -gt 1) {
-        $AdminRoles = $AdminRoles | ConvertTo-Json
-    } else {
-        $AdminRoles = '[]'
+    # Check if AdminUser has been specified
+    if ($AdminUser) {
+        $permission.admins.names += $AdminUser
     }
-    if ($ReaderUser.Count -eq 1) {
-        $ReaderUser = "[$($ReaderUser | ConvertTo-Json)]"
-    } elseif ($ReaderUser.Count -gt 1) {
-        $ReaderUser = $ReaderUser | ConvertTo-Json
-    } else {
-        $ReaderUser = '[]'
+    # Check if AdminRoles has been specified
+    if ($AdminRoles) {
+        $permission.admins.roles += $AdminRoles
     }
-    if ($UserRoles.Count -eq 1) {
-        $UserRoles = "[$($UserRoles | ConvertTo-Json)]"
-    } elseif ($UserRoles.Count -gt 1) {
-        $UserRoles = $UserRoles | ConvertTo-Json
-    } else {
-        $UserRoles = '[]'
+    # Check if MemberUser has been specified
+    if ($MemberUser) {
+        $permission.members.names += $MemberUser
     }
-    # Create data permission
-    $Data = "
-    {
-        `"admins`": {
-            `"names`": $AdminUser,
-            `"roles`": $AdminRoles
-        },
-        `"members`": {
-            `"names`": $ReaderUser,
-            `"roles`": $UserRoles
-        }
+    # Check if MemberRoles has been specified
+    if ($MemberRoles) {
+        $permission.members.roles += $MemberRoles
     }
-    "
+    $Data = $permission | ConvertTo-Json -Depth 5
     $Document = "_security"
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }
