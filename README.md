@@ -59,7 +59,7 @@ New-CouchDBUser -Userid admin_test -Password $password -Roles admin -Authorizati
 ```
 Apply the correct permissions to the database:
 ```powershell
-Grant-CouchDBDatabasePermission -Database test -admin admin_test -AdminRoles admin -Authorization "admin:password"
+Grant-CouchDBDatabasePermission -Database test -AdminUser admin_test -AdminRoles admin -Authorization "admin:password"
 ```
 Test the new permissions by creating a new document:
 ```powershell
