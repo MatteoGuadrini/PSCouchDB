@@ -4683,19 +4683,13 @@ function Revoke-CouchDBDatabasePermission () {
         if (-not(Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document '_security' -Info -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
             throw "No security object found in database $Database"
         }
-        # Revoke data permission
-        $Data = "
-        {
-            `"admins`": {
-                `"names`": [],
-                `"roles`": []
-            },
-            `"members`": {
-                `"names`": [],
-                `"roles`": []
-            }
+        # Create permission structure
+        $permission = [PSCustomObject] @{
+            admins     = @{ names = @(); roles = @() }
+            members    = @{ names = @(); roles = @() }
         }
-        "
+        # Revoke data permission
+        $Data = $permission | ConvertTo-Json -Depth 5
         $Document = "_security"
         Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
     }
