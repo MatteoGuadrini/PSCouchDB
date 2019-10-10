@@ -6343,7 +6343,11 @@ function Search-CouchDBFullText () {
         {
             "queries": [
                 {
-                    "keys": $($Patterns | ConvertTo-Json -Compress)
+                    "keys": $(if ($Patterns.Count -eq 1) {
+                        "[$($Patterns | ConvertTo-Json -Compress)]"
+                    } else {
+                        $Patterns | ConvertTo-Json -Compress
+                    })
                 }
             ]
         }
