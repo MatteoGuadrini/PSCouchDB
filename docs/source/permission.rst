@@ -71,6 +71,19 @@ Let's check the permissions now.
     Get-CouchDBDatabase -Database test -Authorization "member_user:password"
 
 
+Read only access
+________________
+
+To protect a database from write requests, you need to create a design document that will contain a validation function. See this section: `Classes <classes.html>`_
+
+.. code-block:: powershell
+
+    using module PSCouchDB
+    $ddoc = New-Object -TypeName PSCouchDBDesignDoc
+    $ddoc.AddValidation($true)
+    New-CouchDBDesignDocument -Database test -Document "mydesigndoc" -Data $ddoc.GetDesignDocuments() -Authorization "admin:password"
+
+
 Limit write access
 __________________
 

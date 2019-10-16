@@ -506,6 +506,8 @@ Use *AddValidation* for add one. Only one function is allowed at a time.
     $ddoc.AddValidation("myvalidation")
     #or add also user authorization
     $ddoc.AddValidation("myvalidation",$true)
+    #or create ReadOnly CouchDB database
+    $ddoc.AddValidation($true)
 
 Native design document
 **********************

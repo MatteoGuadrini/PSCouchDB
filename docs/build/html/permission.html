@@ -88,6 +88,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#admin-party">Admin Party</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#create-admin-user">Create Admin user</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#members-access">Members access</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#read-only-access">Read only access</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#limit-write-access">Limit write access</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#revoke-database-permissions">Revoke database permissions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#remove-an-admin">Remove an admin</a></li>
@@ -210,6 +211,16 @@ The password has the format <strong>*</strong>.</p>
 <p>Let’s check the permissions now.</p>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDatabaseSecurity</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Authorization</span> <span class="s2">&quot;member_user:password&quot;</span>
 <span class="nb">Get-CouchDBDatabase</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Authorization</span> <span class="s2">&quot;member_user:password&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="read-only-access">
+<h2>Read only access<a class="headerlink" href="#read-only-access" title="Permalink to this headline">¶</a></h2>
+<p>To protect a database from write requests, you need to create a design document that will contain a validation function. See this section: <a class="reference external" href="classes.html">Classes</a></p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">using</span> <span class="n">module</span> <span class="n">PSCouchDB</span>
+<span class="nv">$ddoc</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">-TypeName</span> <span class="n">PSCouchDBDesignDoc</span>
+<span class="nv">$ddoc</span><span class="p">.</span><span class="n">AddValidation</span><span class="p">(</span><span class="nv">$true</span><span class="p">)</span>
+<span class="nb">New-CouchDBDesignDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;mydesigndoc&quot;</span> <span class="n">-Data</span> <span class="nv">$ddoc</span><span class="p">.</span><span class="n">GetDesignDocuments</span><span class="p">()</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>

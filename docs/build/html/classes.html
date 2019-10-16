@@ -613,6 +613,8 @@ Use <em>AddValidation</em> for add one. Only one function is allowed at a time.<
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$ddoc</span><span class="p">.</span><span class="n">AddValidation</span><span class="p">(</span><span class="s2">&quot;myvalidation&quot;</span><span class="p">)</span>
 <span class="c">#or add also user authorization</span>
 <span class="nv">$ddoc</span><span class="p">.</span><span class="n">AddValidation</span><span class="p">(</span><span class="s2">&quot;myvalidation&quot;</span><span class="p">,</span><span class="nv">$true</span><span class="p">)</span>
+<span class="c">#or create ReadOnly CouchDB database</span>
+<span class="nv">$ddoc</span><span class="p">.</span><span class="n">AddValidation</span><span class="p">(</span><span class="nv">$true</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
