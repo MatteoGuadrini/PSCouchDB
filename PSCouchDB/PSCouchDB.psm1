@@ -646,6 +646,24 @@ function(newDoc, oldDoc, userCtx) {
         }
     }
 
+    # Method for adding new validation update function; AUTHOR IS ADMIN! ReadOnly docs.
+    AddValidation ([bool]$ReadOnly) {
+        if ($ReadOnly) {
+            if (-not($this.validate_doc_update)) {
+                $map = @"
+function(newDoc, oldDoc, userCtx) { 
+    if (userCtx.roles.indexOf('_admin') !== -1) { return; } 
+    else { throw ({ forbidden: 'Only admins may edit the database' }); } 
+}
+"@
+                $this.validate_doc_update = $map
+                $this.Depth++
+            } else {
+                throw "There can be only one validation function in a design document."
+            }
+        }
+    }
+
     # Method for get native json design documents format
     [string] GetDesignDocuments () {
         [hashtable]$json = @{ }
@@ -1875,7 +1893,7 @@ function Get-CouchDBDocument () {
     }
     # Check Key parameter
     if ($Key) {
-        if ($Key -isnot [int]) { $Key = "`"$Key`""}
+        if ($Key -isnot [int]) { $Key = "`"$Key`"" }
         if ($Document -match "\?") {
             $Document += "&key=$Key"
         } else {
@@ -4008,11 +4026,14 @@ function Set-CouchDBDesignDocument () {
     if ($PsCmdlet.ParameterSetName -eq "CustomData") {
         if ($Data -is [hashtable]) {
             if (-not($Data.ContainsKey('language'))) { $Data.Add('language', 'javascript') }
-            if (-not($Data.ContainsKey('views'))) { $Data.Add('views', @{ }) 
+            if (-not($Data.ContainsKey('views'))) {
+                $Data.Add('views', @{ }) 
             }
-            if (-not($Data.ContainsKey('shows'))) { $Data.Add('shows', @{ }) 
+            if (-not($Data.ContainsKey('shows'))) {
+                $Data.Add('shows', @{ }) 
             }
-            if (-not($Data.ContainsKey('lists'))) { $Data.Add('lists', @{ }) 
+            if (-not($Data.ContainsKey('lists'))) {
+                $Data.Add('lists', @{ }) 
             }
             if (-not($Data.ContainsKey('validate_doc_update'))) { $Data.Add('validate_doc_update', "") }
         } elseif ($Data -is [string]) {
@@ -4621,8 +4642,8 @@ function Grant-CouchDBDatabasePermission () {
     }
     # Create permission structure
     $permission = [PSCustomObject] @{
-        admins     = @{ names = @(); roles = @() }
-        members    = @{ names = @(); roles = @() }
+        admins  = @{ names = @(); roles = @() }
+        members = @{ names = @(); roles = @() }
     }
     # Check if AdminUser has been specified
     if ($AdminUser) {
@@ -4685,8 +4706,8 @@ function Revoke-CouchDBDatabasePermission () {
         }
         # Create permission structure
         $permission = [PSCustomObject] @{
-            admins     = @{ names = @(); roles = @() }
-            members    = @{ names = @(); roles = @() }
+            admins  = @{ names = @(); roles = @() }
+            members = @{ names = @(); roles = @() }
         }
         # Revoke data permission
         $Data = $permission | ConvertTo-Json -Depth 5
@@ -5636,9 +5657,9 @@ function Enable-CouchDBCluster () {
         "
     # Check if single node cluster or not
     if ($Action -eq "enable_cluster") {
-        if ($RemoteNode) {$Data += ",`"remote_node`": `"$RemoteNode`""}
-        if ($RemoteUser) {$Data += ",`"remote_current_user`": `"$RemoteUser`""}
-        if ($RemotePassword) {$Data += ",`"remote_current_password `": `"$(ConvertTo-CouchDBPassword -SecurePassword $RemotePassword)`""}
+        if ($RemoteNode) { $Data += ",`"remote_node`": `"$RemoteNode`"" }
+        if ($RemoteUser) { $Data += ",`"remote_current_user`": `"$RemoteUser`"" }
+        if ($RemotePassword) { $Data += ",`"remote_current_password `": `"$(ConvertTo-CouchDBPassword -SecurePassword $RemotePassword)`"" }
         $Data += ",`"node_count`": `"$NodeCount`"}"
     } else {
         $Data += ",`"node_count`": `"1`"}"
