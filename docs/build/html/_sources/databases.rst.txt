@@ -85,6 +85,12 @@ Create a new database *test_copy* by copying it from *test* database.
 
     Copy-CouchDBDatabase -Database test -Destination test_copy -Authorization "admin:password"
 
+Or copying local database *test* to a remote server.
+
+.. code-block:: powershell
+
+    Copy-CouchDBDatabase -RemoteServer remote_srv -Database test -RemoteAuthorization "admin:password"
+
 Index
 _____
 

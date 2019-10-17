@@ -1011,7 +1011,11 @@ function Copy-CouchDBDatabase () {
         PUT /{db}/{doc}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
+    .PARAMETER RemoteServer
+    The CouchDB remote server name.
     .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER RemotePort
     The CouchDB server port. Default is 5984.
     .PARAMETER Database
     The source CouchDB database.
@@ -1021,6 +1025,10 @@ function Copy-CouchDBDatabase () {
     Array of Docids to exclude to copy. 
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
+    .PARAMETER RemoteAuthorization
+    The CouchDB authorization form for remote server; user and password.
     Authorization format like this: user:password
     ATTENTION: if the password is not specified, it will be prompted.
     .PARAMETER Ssl
@@ -1035,19 +1043,39 @@ function Copy-CouchDBDatabase () {
     [CmdletBinding()]
     param(
         [string] $Server,
+        [string] $RemoteServer,
         [int] $Port,
+        [int] $RemotePort,
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
-        [Parameter(mandatory = $true)]
-        [string] $Destination,
+        [string] $Destination = $Database,
         [array] $ExcludeIds,
         [string] $Authorization,
+        [string] $RemoteAuthorization,
         [switch] $Ssl
     )
     $count = 0
     $all_docs = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl
-    if (-not(Test-CouchDBDatabase -Server $Server -Port $Port -Database $Destination -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
-        New-CouchDBDatabase -Server $Server -Port $Port -Database $Destination -Authorization $Authorization -Ssl:$Ssl | Out-Null
+    # Check RemoteServer is defined
+    if ($RemoteServer) {
+        $DestinationServer = $RemoteServer
+    } else {
+        $DestinationServer = $Server
+    }
+    # Check RemotePort is defined
+    if ($RemotePort) {
+        $DestinationPort = $RemotePort
+    } else {
+        $DestinationPort = $Port
+    }
+    # Check RemoteAuthorization is defined
+    if ($RemoteAuthorization) {
+        $DestinationAuthorization = $RemoteAuthorization
+    } else {
+        $DestinationAuthorization = $Authorization
+    }
+    if (-not(Test-CouchDBDatabase -Server $DestinationServer -Port $DestinationPort -Database $Destination -Authorization $DestinationAuthorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
+        New-CouchDBDatabase -Server $DestinationServer -Port $DestinationPort -Database $Destination -Authorization $DestinationAuthorization -Ssl:$Ssl | Out-Null
     } else {
         throw "Database $Destination exists! Choose another name."
     }
@@ -1055,7 +1083,7 @@ function Copy-CouchDBDatabase () {
         if ($ExcludeIds -notcontains $doc.id) {
             $count++
             $Data = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $doc.id -Authorization $Authorization -Ssl:$Ssl | ConvertTo-Json -Depth 99 
-            New-CouchDBDocument -Server $Server -Port $Port -Database $Destination -Document $doc.id -Data $($Data -replace '"_rev":.*,', "") -Authorization $Authorization -Ssl:$Ssl
+            New-CouchDBDocument -Server $DestinationServer -Port $DestinationPort -Database $Destination -Document $doc.id -Data $($Data -replace '"_rev":.*,', "") -Authorization $DestinationAuthorization -Ssl:$Ssl
             Write-Progress -Activity "Copy document $($doc.id) in a new database $Destination in progress" -Status "Progress $count/$($all_docs.total_rows)" -PercentComplete ($count / $all_docs.total_rows * 100)
         } else {
             Write-Host "Skip $($doc.id) because exists in exclude list."

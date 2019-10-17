@@ -271,6 +271,10 @@ If an invalid database name is supplied, CouchDB returns response with <code cla
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Copy-CouchDBDatabase</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Destination</span> <span class="n">test_copy</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
+<p>Or copying local database <em>test</em> to a remote server.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Copy-CouchDBDatabase</span> <span class="n">-RemoteServer</span> <span class="n">remote_srv</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-RemoteAuthorization</span> <span class="s2">&quot;admin:password&quot;</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="index">
 <h2>Index<a class="headerlink" href="#index" title="Permalink to this headline">¶</a></h2>
