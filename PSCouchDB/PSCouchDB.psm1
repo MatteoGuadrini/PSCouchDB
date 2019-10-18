@@ -1262,7 +1262,7 @@ function Get-CouchDBDatabaseInfo () {
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
     .EXAMPLE
-    Get-CouchDBDatabaseInfo -Database test
+    Get-CouchDBDatabaseInfo -Keys test
     This example get info of the database purged documents limit "test".
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/databases.html#get-purged-info-limit
@@ -1271,20 +1271,15 @@ function Get-CouchDBDatabaseInfo () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(ValueFromPipeline = $true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [array] $Keys,
         [string] $Authorization,
         [switch] $Ssl
     )
     $Database = '_dbs_info'
-    $Data = '{ "keys": [ '
-    for ($count = 0; $count -lt $Keys.Count; $count++) {
-        $Data += "`"$($Keys[$count])`""
-        if ($count -ne ($Keys.Count - 1)) {
-            $Data += ','
-        }
-    }
-    $Data += '] }'
+    $Data = @{ keys = @() }
+    if ($Keys) { $Data.keys += $Keys }
+    $Data = $Data | ConvertTo-Json -Depth 3
     Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }
 
