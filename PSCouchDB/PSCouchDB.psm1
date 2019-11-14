@@ -6321,15 +6321,26 @@ function Restart-CouchDBServer () {
     param(
         [switch] $Force
     )
-    $Service = "Apache CouchDB"
-    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish to restart CouchDB server ?", "Restart server")) {
-        try {
-            Restart-Service -Name $Service -Force -ErrorAction Stop
-        } catch [Microsoft.PowerShell.Commands.ServiceCommandException] {
-            throw "Cannot open $Service service on computer"
+    # Windows?
+    $Windows = ([bool](Get-CimInstance -ClassName Win32_OperatingSystem -ErrorAction SilentlyContinue))
+    if ($Windows) {
+        $Service = "Apache CouchDB"
+        if ($Force -or $PSCmdlet.ShouldContinue("Do you wish to restart CouchDB server ?", "Restart server")) {
+            try {
+                Restart-Service -Name $Service -Force -ErrorAction Stop
+            } catch [Microsoft.PowerShell.Commands.ServiceCommandException] {
+                throw "Cannot open $Service service on computer"
+            }
+            Write-Host
+            Write-Host -ForegroundColor Green "Apache CouchDB restarted successfully."
         }
-        Write-Host
-        Write-Host -ForegroundColor Green "Apache CouchDB restarted successfully."
+    } else {
+        if ($Force -or $PSCmdlet.ShouldContinue("Do you wish to restart CouchDB server ?", "Restart server")) {
+            & service couchdb restart
+            if ($(& service couchdb status)[2] -notmatch "(running)") { throw "Cannot open $Service service on computer" }
+            Write-Host
+            Write-Host -ForegroundColor Green "Apache CouchDB restarted successfully."
+        }
     }
 }
 
