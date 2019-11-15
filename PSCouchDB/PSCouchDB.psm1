@@ -6322,7 +6322,11 @@ function Restart-CouchDBServer () {
         [switch] $Force
     )
     # Windows?
-    $Windows = ([bool](Get-CimInstance -ClassName Win32_OperatingSystem -ErrorAction SilentlyContinue))
+    try {
+        $Windows = ([bool](Get-CimInstance -ClassName Win32_OperatingSystem -ErrorAction SilentlyContinue))
+    } catch [System.Management.Automation.CommandNotFoundException] {
+        $Windows = $false
+    }
     if ($Windows) {
         $Service = "Apache CouchDB"
         if ($Force -or $PSCmdlet.ShouldContinue("Do you wish to restart CouchDB server ?", "Restart server")) {
@@ -6842,8 +6846,13 @@ function Read-CouchDBLog () {
     )
     # Check if $Path is empty
     if (-not($Path)) {
+        # Windows?
+        try {
+            $Windows = ([bool](Get-CimInstance -ClassName Win32_OperatingSystem -ErrorAction SilentlyContinue))
+        } catch [System.Management.Automation.CommandNotFoundException] {
+            $Windows = $false
+        }
         # Set default path...
-        $Windows = ([bool](Get-CimInstance -ClassName Win32_OperatingSystem -ErrorAction SilentlyContinue))
         # Windows platform
         if ($Windows) {
             $Path = "C:\CouchDB\couch.log"
@@ -6945,8 +6954,13 @@ function Clear-CouchDBLog () {
     )
     # Check if $Path is empty
     if (-not($Path)) {
+        # Windows?
+        try {
+            $Windows = ([bool](Get-CimInstance -ClassName Win32_OperatingSystem -ErrorAction SilentlyContinue))
+        } catch [System.Management.Automation.CommandNotFoundException] {
+            $Windows = $false
+        }
         # Set default path...
-        $Windows = ([bool](Get-CimInstance -ClassName Win32_OperatingSystem -ErrorAction SilentlyContinue))
         # Windows platform
         if ($Windows) {
             $Path = "C:\CouchDB\couch.log"
