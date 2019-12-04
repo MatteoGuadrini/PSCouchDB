@@ -17,34 +17,36 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Documents" href="documents.html" />
     <link rel="prev" title="Authentication" href="auth.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -217,31 +219,31 @@
 </pre></div>
 </div>
 <p>And if use <strong>_all_dbs</strong> view, in this table you can find all the possible parameters.</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="14%" />
-<col width="86%" />
+<col style="width: 14%" />
+<col style="width: 86%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">PARAMETER</th>
-<th class="head">DESCRIPTION</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>PARAMETER</p></th>
+<th class="head"><p>DESCRIPTION</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>Descending</td>
-<td>Return the databases in descending order by key. Default is <code class="docutils literal notranslate"><span class="pre">false</span></code>.</td>
+<tbody>
+<tr class="row-even"><td><p>Descending</p></td>
+<td><p>Return the databases in descending order by key. Default is <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td>EndKey</td>
-<td>Stop returning databases when the specified key is reached.</td>
+<tr class="row-odd"><td><p>EndKey</p></td>
+<td><p>Stop returning databases when the specified key is reached.</p></td>
 </tr>
-<tr class="row-even"><td>Limit</td>
-<td>Limit the number of the returned databases to the specified number.</td>
+<tr class="row-even"><td><p>Limit</p></td>
+<td><p>Limit the number of the returned databases to the specified number.</p></td>
 </tr>
-<tr class="row-odd"><td>Skip</td>
-<td>Skip this number of databases before starting to return the results. Default is <code class="docutils literal notranslate"><span class="pre">0</span></code>.</td>
+<tr class="row-odd"><td><p>Skip</p></td>
+<td><p>Skip this number of databases before starting to return the results. Default is <code class="docutils literal notranslate"><span class="pre">0</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td>StartKey</td>
-<td>Return databases starting with the specified key.</td>
+<tr class="row-even"><td><p>StartKey</p></td>
+<td><p>Return databases starting with the specified key.</p></td>
 </tr>
 </tbody>
 </table>
@@ -253,8 +255,8 @@
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">If we repeat the same request to CouchDB, it will response with <code class="docutils literal notranslate"><span class="pre">412</span></code> since the database already exists.
+<p class="admonition-title">Note</p>
+<p>If we repeat the same request to CouchDB, it will response with <code class="docutils literal notranslate"><span class="pre">412</span></code> since the database already exists.
 If an invalid database name is supplied, CouchDB returns response with <code class="docutils literal notranslate"><span class="pre">400</span></code></p>
 </div>
 </div>
@@ -319,7 +321,7 @@ If an invalid database name is supplied, CouchDB returns response with <code cla
 <div class="section" id="sync-shards">
 <h3>Sync shards<a class="headerlink" href="#sync-shards" title="Permalink to this headline">¶</a></h3>
 <p>For the given database, force-starts internal shard synchronization for all replicas of all database shards.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">Sync-CouchDBDatabaseShards</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Sync-CouchDBDatabaseShards</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -336,7 +338,7 @@ If an invalid database name is supplied, CouchDB returns response with <code cla
 <p>Request compaction of the specified database.
 Compaction can only be requested on an individual database; you cannot compact all the databases for a CouchDB instance.
 The compaction process runs as a background process.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">Compress-CouchDBDatabase</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Compress-CouchDBDatabase</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -407,8 +409,8 @@ The compaction process runs as a background process.</p>
 <h3>Export<a class="headerlink" href="#export" title="Permalink to this headline">¶</a></h3>
 <p>For export a database in a json file format.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">If you do not specify the path and file name, a JSON file will be saved in UTF8 format in the current path (<code class="docutils literal notranslate"><span class="pre">$pwd</span></code>) with this name: name-of-database_t-i-m-e_s_t_a_m_p.json.</p>
+<p class="admonition-title">Note</p>
+<p>If you do not specify the path and file name, a JSON file will be saved in UTF8 format in the current path (<code class="docutils literal notranslate"><span class="pre">$pwd</span></code>) with this name: name-of-database_t-i-m-e_s_t_a_m_p.json.</p>
 </div>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Export-CouchDBDatabase</span> <span class="n">-Database</span> <span class="n">test</span>
 </pre></div>
@@ -439,7 +441,7 @@ The compaction process runs as a background process.</p>
         <a href="documents.html" class="btn btn-neutral float-right" title="Documents" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="auth.html" class="btn btn-neutral" title="Authentication" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="auth.html" class="btn btn-neutral float-left" title="Authentication" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -465,25 +467,16 @@ The compaction process runs as a background process.</p>
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>  
+  </script>
+
+  
+  
+    
+    
 
 	<style>
 		/* Sidebar header (and topbar for mobile) */

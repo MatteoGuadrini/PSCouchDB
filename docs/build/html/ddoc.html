@@ -17,34 +17,36 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Cmdlets and aliases" href="cmdlets.html" />
     <link rel="prev" title="Documents" href="documents.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -199,55 +201,55 @@ Unless you request a specific revision, the latest revision of the document will
 </pre></div>
 </div>
 <p>In this table you can find all the possible parameters to get the design documents with this cmdlet.</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="11%" />
-<col width="89%" />
+<col style="width: 11%" />
+<col style="width: 89%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">PARAMETER</th>
-<th class="head">DESCRIPTION</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>PARAMETER</p></th>
+<th class="head"><p>DESCRIPTION</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>Descending</td>
-<td>Return the design documents in descending by key order. Default is false.</td>
+<tbody>
+<tr class="row-even"><td><p>Descending</p></td>
+<td><p>Return the design documents in descending by key order. Default is false.</p></td>
 </tr>
-<tr class="row-odd"><td>EndKey</td>
-<td>Stop returning records when the specified key is reached.</td>
+<tr class="row-odd"><td><p>EndKey</p></td>
+<td><p>Stop returning records when the specified key is reached.</p></td>
 </tr>
-<tr class="row-even"><td>EndKeyDocument</td>
-<td>Stop returning records when the specified design document ID is reached.</td>
+<tr class="row-even"><td><p>EndKeyDocument</p></td>
+<td><p>Stop returning records when the specified design document ID is reached.</p></td>
 </tr>
-<tr class="row-odd"><td>IncludeDocument</td>
-<td>Include the full content of the design documents in the return. Default is false.</td>
+<tr class="row-odd"><td><p>IncludeDocument</p></td>
+<td><p>Include the full content of the design documents in the return. Default is false.</p></td>
 </tr>
-<tr class="row-even"><td>InclusiveEnd</td>
-<td>Specifies whether the specified end key should be included in the result. Default is true.</td>
+<tr class="row-even"><td><p>InclusiveEnd</p></td>
+<td><p>Specifies whether the specified end key should be included in the result. Default is true.</p></td>
 </tr>
-<tr class="row-odd"><td>Key</td>
-<td>Return only design documents that match the specified key.</td>
+<tr class="row-odd"><td><p>Key</p></td>
+<td><p>Return only design documents that match the specified key.</p></td>
 </tr>
-<tr class="row-even"><td>Keys</td>
-<td>Return only design documents that match the specified keys.</td>
+<tr class="row-even"><td><p>Keys</p></td>
+<td><p>Return only design documents that match the specified keys.</p></td>
 </tr>
-<tr class="row-odd"><td>Conflict</td>
-<td>Includes conflicts information in response. Ignored if include_docs isn’t true. Default is false.</td>
+<tr class="row-odd"><td><p>Conflict</p></td>
+<td><p>Includes conflicts information in response. Ignored if include_docs isn’t true. Default is false.</p></td>
 </tr>
-<tr class="row-even"><td>Limit</td>
-<td>Limit the number of the returned design documents to the specified number.</td>
+<tr class="row-even"><td><p>Limit</p></td>
+<td><p>Limit the number of the returned design documents to the specified number.</p></td>
 </tr>
-<tr class="row-odd"><td>Skip</td>
-<td>Skip this number of records before starting to return the results. Default is 0.</td>
+<tr class="row-odd"><td><p>Skip</p></td>
+<td><p>Skip this number of records before starting to return the results. Default is 0.</p></td>
 </tr>
-<tr class="row-even"><td>StartKey</td>
-<td>Return records starting with the specified key.</td>
+<tr class="row-even"><td><p>StartKey</p></td>
+<td><p>Return records starting with the specified key.</p></td>
 </tr>
-<tr class="row-odd"><td>StartKeyDocument</td>
-<td>Return records starting with the specified design document ID.</td>
+<tr class="row-odd"><td><p>StartKeyDocument</p></td>
+<td><p>Return records starting with the specified design document ID.</p></td>
 </tr>
-<tr class="row-even"><td>UpdateSequence</td>
-<td>Response includes an update_seq value indicating which sequence id of the underlying database the view reflects. Default is false.</td>
+<tr class="row-even"><td><p>UpdateSequence</p></td>
+<td><p>Response includes an update_seq value indicating which sequence id of the underlying database the view reflects. Default is false.</p></td>
 </tr>
 </tbody>
 </table>
@@ -271,9 +273,9 @@ Unless you request a specific revision, the latest revision of the document will
 However, the index is not updated when new documents are added or modified in the database.
 View indexes are updated incrementally in the following situations:</p>
 <ul class="simple">
-<li>A new document has been added to the database.</li>
-<li>A document has been deleted from the database.</li>
-<li>A document in the database has been updated.</li>
+<li><p>A new document has been added to the database.</p></li>
+<li><p>A document has been deleted from the database.</p></li>
+<li><p>A document in the database has been updated.</p></li>
 </ul>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">New-CouchDBDesignDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="n">space</span> <span class="n">-ViewName</span> <span class="n">planet</span> <span class="n">-ViewKey</span> <span class="n">planet</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 <span class="nb">Set-CouchDBDesignDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="n">space</span> <span class="n">-ViewName</span> <span class="n">planet_heart</span> <span class="n">-ViewKey</span> <span class="n">planet</span> <span class="n">-ViewValue</span> <span class="s2">&quot;Heart&quot;</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
@@ -293,7 +295,7 @@ View indexes are updated incrementally in the following situations:</p>
 </div>
 <p>Now, navigate with your favorite browser to <code class="docutils literal notranslate"><span class="pre">http://localhost:5984/test/_design/space/_list/planet_list/planet</span></code> or</p>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$html</span> <span class="p">=</span> <span class="nb">Get-CouchDBDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;_design/space/_list/planet_list/planet&quot;</span>
-<span class="nv">$html</span><span class="p">.</span><span class="n">html</span><span class="p">.</span><span class="n">body</span><span class="p">.</span><span class="n">table</span><span class="p">.</span><span class="n">tr</span> <span class="p">|</span> <span class="n">fl</span>
+<span class="nv">$html</span><span class="p">.</span><span class="n">html</span><span class="p">.</span><span class="n">body</span><span class="p">.</span><span class="n">table</span><span class="p">.</span><span class="n">tr</span> <span class="p">|</span> <span class="nb">fl</span>
 </pre></div>
 </div>
 </div>
@@ -330,8 +332,8 @@ Only one function is allowed at a time.</p>
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Note that for this type of function, when you want to modify a design document, you need to specify the <code class="docutils literal notranslate"><span class="pre">-Replace</span></code> parameter, otherwise the function will not be changed.</p>
+<p class="admonition-title">Note</p>
+<p>Note that for this type of function, when you want to modify a design document, you need to specify the <code class="docutils literal notranslate"><span class="pre">-Replace</span></code> parameter, otherwise the function will not be changed.</p>
 </div>
 </div>
 <div class="section" id="custom-functions">
@@ -379,7 +381,7 @@ Only one function is allowed at a time.</p>
 <h2>Compress design document<a class="headerlink" href="#compress-design-document" title="Permalink to this headline">¶</a></h2>
 <p>The compaction operation is the way to reduce disk space usage by removing unused and old data from database or view index files.
 This operation is very similar to the vacuum (SQLite ex.) operation available for other database management systems.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">Compress-CouchDBDesignDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-DesignDoc</span> <span class="n">space</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Compress-CouchDBDesignDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-DesignDoc</span> <span class="n">space</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -410,7 +412,7 @@ This operation is very similar to the vacuum (SQLite ex.) operation available fo
         <a href="cmdlets.html" class="btn btn-neutral float-right" title="Cmdlets and aliases" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="documents.html" class="btn btn-neutral" title="Documents" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="documents.html" class="btn btn-neutral float-left" title="Documents" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -436,25 +438,16 @@ This operation is very similar to the vacuum (SQLite ex.) operation available fo
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>  
+  </script>
+
+  
+  
+    
+    
 
 	<style>
 		/* Sidebar header (and topbar for mobile) */

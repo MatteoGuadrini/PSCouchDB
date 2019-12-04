@@ -17,34 +17,36 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Server operation" href="server.html" />
     <link rel="prev" title="Setup" href="config.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -187,8 +189,8 @@
 This could be perfect for application development or on a test machine, but for production it would create many problems.
 To solve this problem, just create an admin user. At this point the admin user can create/modify/delete documents from the database.</p>
 <div class="admonition important">
-<p class="first admonition-title">Important</p>
-<p class="last">If the password is not specified, it will be prompted. For example, <code class="docutils literal notranslate"><span class="pre">-Authorization</span> <span class="pre">admin</span></code> will ask you to write the password at the prompt.
+<p class="admonition-title">Important</p>
+<p>If the password is not specified, it will be prompted. For example, <code class="docutils literal notranslate"><span class="pre">-Authorization</span> <span class="pre">admin</span></code> will ask you to write the password at the prompt.
 The password has the format <strong>*</strong>.</p>
 </div>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$password</span> <span class="p">=</span> <span class="s2">&quot;password&quot;</span> <span class="p">|</span> <span class="nb">ConvertTo-SecureString</span> <span class="n">-AsPlainText</span> <span class="n">-Force</span>
@@ -205,7 +207,7 @@ The password has the format <strong>*</strong>.</p>
 </pre></div>
 </div>
 <p>And then enable it to the server.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">Grant-CouchDBDatabasePermission</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-ReaderUser</span> <span class="n">member_user</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Grant-CouchDBDatabasePermission</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-ReaderUser</span> <span class="n">member_user</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 <p>Let’s check the permissions now.</p>
@@ -229,7 +231,7 @@ The password has the format <strong>*</strong>.</p>
 <p>If you want to limit a single database with different admin user for reading and writing, use this cmdlet:</p>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$password</span> <span class="p">=</span> <span class="s2">&quot;password&quot;</span> <span class="p">|</span> <span class="nb">ConvertTo-SecureString</span> <span class="n">-AsPlainText</span> <span class="n">-Force</span>
 <span class="nb">New-CouchDBUser</span> <span class="n">-Userid</span> <span class="n">other_admin</span> <span class="n">-Password</span> <span class="nv">$password</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
-<span class="n">Grant-CouchDBDatabasePermission</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-AdminUser</span> <span class="n">other_admin</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+<span class="nb">Grant-CouchDBDatabasePermission</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-AdminUser</span> <span class="n">other_admin</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 <span class="nb">Get-CouchDBDatabase</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Authorization</span> <span class="s2">&quot;other_admin:password&quot;</span>
 </pre></div>
 </div>
@@ -237,7 +239,7 @@ The password has the format <strong>*</strong>.</p>
 <div class="section" id="revoke-database-permissions">
 <h2>Revoke database permissions<a class="headerlink" href="#revoke-database-permissions" title="Permalink to this headline">¶</a></h2>
 <p>To remove permissions from one database, run this cmdlet:</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">Revoke-CouchDBDatabasePermission</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Revoke-CouchDBDatabasePermission</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -285,7 +287,7 @@ The password has the format <strong>*</strong>.</p>
         <a href="server.html" class="btn btn-neutral float-right" title="Server operation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="config.html" class="btn btn-neutral" title="Setup" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="config.html" class="btn btn-neutral float-left" title="Setup" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -311,25 +313,16 @@ The password has the format <strong>*</strong>.</p>
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>  
+  </script>
+
+  
+  
+    
+    
 
 	<style>
 		/* Sidebar header (and topbar for mobile) */

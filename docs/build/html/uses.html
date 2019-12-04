@@ -17,34 +17,36 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Support" href="support.html" />
     <link rel="prev" title="Classes" href="classes.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -186,18 +188,18 @@
     <span class="k">if</span> <span class="p">(</span><span class="nb">Test-Connection</span> <span class="nv">$ComputerName</span> <span class="n">-Count</span> <span class="n">1</span> <span class="n">-Quiet</span><span class="p">)</span> <span class="p">{</span>
         <span class="c"># Select various info</span>
         <span class="nv">$info</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="s1">&#39;ComputerHW&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nb">Get-CimInstance</span> <span class="n">-Class</span> <span class="n">Win32_ComputerSystem</span> <span class="n">-ComputerName</span> <span class="nv">$ComputerName</span> <span class="p">|</span>
-        <span class="n">select</span> <span class="n">Manufacturer</span><span class="p">,</span>
+        <span class="nb">select </span><span class="n">Manufacturer</span><span class="p">,</span>
                <span class="n">Model</span><span class="p">,</span>
                <span class="n">NumberOfProcessors</span><span class="p">,</span>
                <span class="p">@{</span><span class="n">Expression</span><span class="p">={</span><span class="nv">$_</span><span class="p">.</span><span class="n">TotalPhysicalMemory</span> <span class="p">/</span> <span class="n">1GB</span><span class="p">};</span><span class="n">Label</span><span class="p">=</span><span class="s2">&quot;TotalPhysicalMemoryGB&quot;</span><span class="p">}))</span>
         <span class="nv">$info</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="s1">&#39;ComputerCPU&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nb">Get-CimInstance</span> <span class="n">win32_processor</span> <span class="n">-ComputerName</span> <span class="nv">$ComputerName</span> <span class="p">|</span>
-        <span class="n">select</span> <span class="n">DeviceID</span><span class="p">,</span>
+        <span class="nb">select </span><span class="n">DeviceID</span><span class="p">,</span>
                <span class="n">Name</span><span class="p">,</span>
                <span class="n">Manufacturer</span><span class="p">,</span>
                <span class="n">NumberOfCores</span><span class="p">,</span>
                <span class="n">NumberOfLogicalProcessors</span><span class="p">))</span>
         <span class="nv">$info</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="s1">&#39;ComputerDisks&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nb">Get-CimInstance</span> <span class="n">-Class</span> <span class="n">Win32_LogicalDisk</span> <span class="n">-Filter</span> <span class="s2">&quot;DriveType=3&quot;</span> <span class="n">-ComputerName</span> <span class="nv">$ComputerName</span> <span class="p">|</span>
-        <span class="n">select</span> <span class="n">DeviceID</span><span class="p">,</span>
+        <span class="nb">select </span><span class="n">DeviceID</span><span class="p">,</span>
                <span class="n">VolumeName</span><span class="p">,</span>
                <span class="p">@{</span><span class="n">Expression</span><span class="p">={</span><span class="nv">$_</span><span class="p">.</span><span class="n">Size</span> <span class="p">/</span> <span class="n">1GB</span><span class="p">};</span><span class="n">Label</span><span class="p">=</span><span class="s2">&quot;SizeGB&quot;</span><span class="p">}))</span>
         <span class="nv">$info</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="s2">&quot;timestamp&quot;</span><span class="p">,</span> <span class="p">(</span><span class="nb">Get-Date</span> <span class="o">-f</span> <span class="n">MM-dd-yyyy_HH_mm_ss</span><span class="p">))</span>
@@ -214,12 +216,12 @@
 </div>
 <p>Third, edit your <em>profile.ps1</em> and put this function:</p>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="c"># Find computer into inventory</span>
-<span class="k">function</span> <span class="n">Find-ComputerInventory</span> <span class="p">()</span> <span class="p">{</span>
+<span class="k">function</span> <span class="nb">Find-ComputerInventory</span> <span class="p">()</span> <span class="p">{</span>
     <span class="k">param</span><span class="p">(</span>
         <span class="p">[</span><span class="k">Parameter</span><span class="p">(</span><span class="k">mandatory</span><span class="p">=</span><span class="nv">$true</span><span class="p">)]</span>
         <span class="no">[string]</span> <span class="nv">$Computername</span>
     <span class="p">)</span>
-    <span class="nv">$docs</span> <span class="p">=</span> <span class="n">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">hw_inventory</span> <span class="n">-Selector</span> <span class="s2">&quot;_id&quot;</span> <span class="n">-Operator</span> <span class="n">regex</span> <span class="n">-Value</span> <span class="s2">&quot;.*$Computername.*&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">ComputerHW</span><span class="p">,</span><span class="n">ComputerCPU</span><span class="p">,</span><span class="n">ComputerDisks</span><span class="p">,</span><span class="n">timestamp</span>
+    <span class="nv">$docs</span> <span class="p">=</span> <span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">hw_inventory</span> <span class="n">-Selector</span> <span class="s2">&quot;_id&quot;</span> <span class="n">-Operator</span> <span class="n">regex</span> <span class="n">-Value</span> <span class="s2">&quot;.*$Computername.*&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">ComputerHW</span><span class="p">,</span><span class="n">ComputerCPU</span><span class="p">,</span><span class="n">ComputerDisks</span><span class="p">,</span><span class="n">timestamp</span>
     <span class="nv">$docs</span><span class="p">.</span><span class="n">docs</span>
 <span class="p">}</span>
 </pre></div>
@@ -263,7 +265,7 @@
 <p>Second, edit again your <em>profile.ps1</em> and put this function:</p>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">using</span> <span class="n">module</span> <span class="n">PSCouchDB</span>
 <span class="c"># Find log with criteria</span>
-<span class="k">function</span> <span class="n">Find-WindowsLog</span> <span class="p">()</span> <span class="p">{</span>
+<span class="k">function</span> <span class="nb">Find-WindowsLog</span> <span class="p">()</span> <span class="p">{</span>
     <span class="k">param</span><span class="p">(</span>
         <span class="p">[</span><span class="k">Parameter</span><span class="p">(</span><span class="k">mandatory</span><span class="p">=</span><span class="nv">$true</span><span class="p">)]</span>
         <span class="no">[string]</span> <span class="nv">$ComputerName</span><span class="p">,</span>
@@ -299,14 +301,14 @@
     <span class="nv">$q</span><span class="p">.</span><span class="n">AddFields</span><span class="p">(</span><span class="s2">&quot;ReplacementStrings&quot;</span><span class="p">)</span>
     <span class="nv">$q</span><span class="p">.</span><span class="n">AddFields</span><span class="p">(</span><span class="s2">&quot;InstanceId&quot;</span><span class="p">)</span>
     <span class="nv">$q</span><span class="p">.</span><span class="n">AddFields</span><span class="p">(</span><span class="s2">&quot;UserName&quot;</span><span class="p">)</span>
-    <span class="nv">$docs</span> <span class="p">=</span> <span class="n">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="s2">&quot;${ComputerName}_</span><span class="p">$(</span><span class="nv">$Log</span><span class="p">.</span><span class="n">ToLower</span><span class="p">())</span><span class="s2">&quot;</span> <span class="n">-Find</span> <span class="nv">$q</span><span class="p">.</span><span class="n">GetNativeQuery</span><span class="p">()</span>
+    <span class="nv">$docs</span> <span class="p">=</span> <span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="s2">&quot;${ComputerName}_</span><span class="p">$(</span><span class="nv">$Log</span><span class="p">.</span><span class="n">ToLower</span><span class="p">())</span><span class="s2">&quot;</span> <span class="n">-Find</span> <span class="nv">$q</span><span class="p">.</span><span class="n">GetNativeQuery</span><span class="p">()</span>
     <span class="nv">$docs</span><span class="p">.</span><span class="n">docs</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last"><strong>With PSCouchDB, with just a few lines of code, you can create simple applications for complex tasks.</strong></p>
+<p class="admonition-title">Note</p>
+<p><strong>With PSCouchDB, with just a few lines of code, you can create simple applications for complex tasks.</strong></p>
 </div>
 </div>
 </div>
@@ -322,7 +324,7 @@
         <a href="support.html" class="btn btn-neutral float-right" title="Support" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="classes.html" class="btn btn-neutral" title="Classes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="classes.html" class="btn btn-neutral float-left" title="Classes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -348,25 +350,16 @@
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>  
+  </script>
+
+  
+  
+    
+    
 
 	<style>
 		/* Sidebar header (and topbar for mobile) */

@@ -17,34 +17,36 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Authentication" href="auth.html" />
     <link rel="prev" title="Permission" href="permission.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -202,36 +204,35 @@
 </pre></div>
 </div>
 <p>For other parameter see the table below:</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="7%" />
-<col width="93%" />
+<col style="width: 7%" />
+<col style="width: 93%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">PARAMETER</th>
-<th class="head">DESCRIPTION</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>PARAMETER</p></th>
+<th class="head"><p>DESCRIPTION</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>Feed</td>
-<td><dl class="first last docutils">
-<dt>Option:</dt>
-<dd><p class="first"><strong>normal</strong>: Returns all historical DB changes, then closes the connection. Default.</p>
+<tbody>
+<tr class="row-even"><td><p>Feed</p></td>
+<td><dl>
+<dt>Option:</dt><dd><p><strong>normal</strong>: Returns all historical DB changes, then closes the connection. Default.</p>
 <p><strong>longpoll</strong>: Closes the connection after the first event.</p>
 <p><strong>continuous</strong>: Send a line of JSON per event. Keeps the socket open until timeout.</p>
-<p class="last"><strong>eventsource</strong>: Like, continuous, but sends the events in EventSource format.</p>
+<p><strong>eventsource</strong>: Like, continuous, but sends the events in EventSource format.</p>
 </dd>
 </dl>
 </td>
 </tr>
-<tr class="row-odd"><td>Timeout</td>
-<td>Number of seconds until CouchDB closes the connection. Default is 60.</td>
+<tr class="row-odd"><td><p>Timeout</p></td>
+<td><p>Number of seconds until CouchDB closes the connection. Default is 60.</p></td>
 </tr>
-<tr class="row-even"><td>Heartbeat</td>
-<td>Period in milliseconds after which an empty line is sent in the results. Only applicable for longpoll, continuous, and eventsource feeds. Overrides any timeout to keep the feed alive indefinitely. Default is 60000.</td>
+<tr class="row-even"><td><p>Heartbeat</p></td>
+<td><p>Period in milliseconds after which an empty line is sent in the results. Only applicable for longpoll, continuous, and eventsource feeds. Overrides any timeout to keep the feed alive indefinitely. Default is 60000.</p></td>
 </tr>
-<tr class="row-odd"><td>Since</td>
-<td>Return only updates since the specified sequence ID. May be the string “now” to begin showing only new updates.</td>
+<tr class="row-odd"><td><p>Since</p></td>
+<td><p>Return only updates since the specified sequence ID. May be the string “now” to begin showing only new updates.</p></td>
 </tr>
 </tbody>
 </table>
@@ -246,8 +247,8 @@
 </div>
 <p>To restart server:</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">This task required privileged access on operating system</p>
+<p class="admonition-title">Note</p>
+<p>This task required privileged access on operating system</p>
 </div>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Restart-CouchDBServer</span>
 </pre></div>
@@ -267,8 +268,8 @@
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The default path on Windows is <code class="docutils literal notranslate"><span class="pre">C:\CouchDB\couch.log</span></code>, while on Unix it is <code class="docutils literal notranslate"><span class="pre">/var/log/couchdb/couch.log</span></code>.
+<p class="admonition-title">Note</p>
+<p>The default path on Windows is <code class="docutils literal notranslate"><span class="pre">C:\CouchDB\couch.log</span></code>, while on Unix it is <code class="docutils literal notranslate"><span class="pre">/var/log/couchdb/couch.log</span></code>.
 Otherwise, if the log is in a custom path, specify the path using the <code class="docutils literal notranslate"><span class="pre">-Path</span></code> parameter.</p>
 </div>
 <p>This example is used to read only the last 15 lines of log.</p>
@@ -334,8 +335,8 @@ Otherwise, if the log is in a custom path, specify the path using the <code clas
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The <code class="docutils literal notranslate"><span class="pre">Authorization</span></code> parameter refers to source database.
+<p class="admonition-title">Note</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">Authorization</span></code> parameter refers to source database.
 It is preferable that the destination database is not password protected, otherwise an inaccessibility error will return.</p>
 </div>
 <p>Now that we have a replicated document, let’s take a look at the change.</p>
@@ -365,7 +366,7 @@ It is preferable that the destination database is not password protected, otherw
 <div class="section" id="replication-request">
 <h2>Replication request<a class="headerlink" href="#replication-request" title="Permalink to this headline">¶</a></h2>
 <p>Request, configure, or stop, a replication operation.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">Request-CouchDBReplication</span> <span class="n">-SourceDatabase</span> <span class="n">test</span> <span class="n">-TargetDatabase</span> <span class="n">test_dump</span> <span class="n">-Documents</span> <span class="s2">&quot;Hitchhikers&quot;</span><span class="p">,</span><span class="s2">&quot;Hitchhikers_Guide&quot;</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Request-CouchDBReplication</span> <span class="n">-SourceDatabase</span> <span class="n">test</span> <span class="n">-TargetDatabase</span> <span class="n">test_dump</span> <span class="n">-Documents</span> <span class="s2">&quot;Hitchhikers&quot;</span><span class="p">,</span><span class="s2">&quot;Hitchhikers_Guide&quot;</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -382,7 +383,7 @@ It is preferable that the destination database is not password protected, otherw
         <a href="auth.html" class="btn btn-neutral float-right" title="Authentication" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="permission.html" class="btn btn-neutral" title="Permission" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="permission.html" class="btn btn-neutral float-left" title="Permission" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -408,25 +409,16 @@ It is preferable that the destination database is not password protected, otherw
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>  
+  </script>
+
+  
+  
+    
+    
 
 	<style>
 		/* Sidebar header (and topbar for mobile) */

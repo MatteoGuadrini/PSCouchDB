@@ -17,34 +17,36 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Classes" href="classes.html" />
     <link rel="prev" title="Design documents" href="ddoc.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -183,7 +185,7 @@
 <div class="section" id="help">
 <h3>Help<a class="headerlink" href="#help" title="Permalink to this headline">¶</a></h3>
 <p><strong>Search-CouchDBHelp</strong></p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">Search-CouchDBHelp</span> <span class="p">[</span><span class="n">-Pattern</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Object</span><span class="p">&gt;</span> <span class="p">[&lt;</span><span class="n">CommonParameters</span><span class="p">&gt;]</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Search-CouchDBHelp</span> <span class="p">[</span><span class="n">-Pattern</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Object</span><span class="p">&gt;</span> <span class="p">[&lt;</span><span class="n">CommonParameters</span><span class="p">&gt;]</span>
 </pre></div>
 </div>
 </div>
@@ -225,7 +227,7 @@
 </pre></div>
 </div>
 <p><strong>Grant-CouchDBDatabasePermission</strong></p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">Grant-CouchDBDatabasePermission</span> <span class="p">[[</span><span class="n">-Server</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Port</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Int32</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Database</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;</span> <span class="p">[[</span><span class="n">-AdminUser</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Array</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-AdminRoles</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Array</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-MemberUser</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Array</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-MemberRoles</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Array</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Authorization</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Ssl</span><span class="p">]</span> <span class="p">[&lt;</span><span class="n">CommonParameters</span><span class="p">&gt;]</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Grant-CouchDBDatabasePermission</span> <span class="p">[[</span><span class="n">-Server</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Port</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Int32</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Database</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;</span> <span class="p">[[</span><span class="n">-AdminUser</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Array</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-AdminRoles</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Array</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-MemberUser</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Array</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-MemberRoles</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Array</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Authorization</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Ssl</span><span class="p">]</span> <span class="p">[&lt;</span><span class="n">CommonParameters</span><span class="p">&gt;]</span>
 </pre></div>
 </div>
 <p><strong>Get-CouchDBDatabaseSecurity</strong></p>
@@ -233,7 +235,7 @@
 </pre></div>
 </div>
 <p><strong>Revoke-CouchDBDatabasePermission</strong></p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">Revoke-CouchDBDatabasePermission</span> <span class="p">[[</span><span class="n">-Server</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Port</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Int32</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Database</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;</span> <span class="p">[[</span><span class="n">-Authorization</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Force</span><span class="p">]</span> <span class="p">[</span><span class="n">-Ssl</span><span class="p">]</span> <span class="p">[</span><span class="n">-WhatIf</span><span class="p">]</span> <span class="p">[</span><span class="n">-Confirm</span><span class="p">]</span> <span class="p">[&lt;</span><span class="n">CommonParameters</span><span class="p">&gt;]</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Revoke-CouchDBDatabasePermission</span> <span class="p">[[</span><span class="n">-Server</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Port</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Int32</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Database</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;</span> <span class="p">[[</span><span class="n">-Authorization</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Force</span><span class="p">]</span> <span class="p">[</span><span class="n">-Ssl</span><span class="p">]</span> <span class="p">[</span><span class="n">-WhatIf</span><span class="p">]</span> <span class="p">[</span><span class="n">-Confirm</span><span class="p">]</span> <span class="p">[&lt;</span><span class="n">CommonParameters</span><span class="p">&gt;]</span>
 </pre></div>
 </div>
 <p><strong>Remove-CouchDBAdmin</strong></p>
@@ -323,7 +325,7 @@
 </pre></div>
 </div>
 <p><strong>Request-CouchDBReplication</strong></p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">Request-CouchDBReplication</span> <span class="p">[[</span><span class="n">-SourceServer</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-TargetServer</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-SourcePort</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Int32</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-TargetPort</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Int32</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-SourceDatabase</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;</span> <span class="p">[</span><span class="n">-TargetDatabase</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;</span> <span class="p">[[</span><span class="n">-Proxy</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Documents</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Array</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Filter</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Continuous</span><span class="p">]</span> <span class="p">[</span><span class="n">-Cancel</span><span class="p">]</span> <span class="p">[</span><span class="n">-CreateTargetDatabase</span><span class="p">]</span> <span class="p">[[</span><span class="n">-Authorization</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Ssl</span><span class="p">]</span> <span class="p">[&lt;</span><span class="n">CommonParameters</span><span class="p">&gt;]</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Request-CouchDBReplication</span> <span class="p">[[</span><span class="n">-SourceServer</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-TargetServer</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-SourcePort</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Int32</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-TargetPort</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Int32</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-SourceDatabase</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;</span> <span class="p">[</span><span class="n">-TargetDatabase</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;</span> <span class="p">[[</span><span class="n">-Proxy</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Documents</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Array</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Filter</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Continuous</span><span class="p">]</span> <span class="p">[</span><span class="n">-Cancel</span><span class="p">]</span> <span class="p">[</span><span class="n">-CreateTargetDatabase</span><span class="p">]</span> <span class="p">[[</span><span class="n">-Authorization</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Ssl</span><span class="p">]</span> <span class="p">[&lt;</span><span class="n">CommonParameters</span><span class="p">&gt;]</span>
 </pre></div>
 </div>
 </div>
@@ -386,11 +388,11 @@
 </pre></div>
 </div>
 <p><strong>Sync-CouchDBDatabaseShards</strong></p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">Sync-CouchDBDatabaseShards</span> <span class="p">[[</span><span class="n">-Server</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Port</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Int32</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Database</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;</span> <span class="p">[[</span><span class="n">-Authorization</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Ssl</span><span class="p">]</span> <span class="p">[&lt;</span><span class="n">CommonParameters</span><span class="p">&gt;]</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Sync-CouchDBDatabaseShards</span> <span class="p">[[</span><span class="n">-Server</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Port</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Int32</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Database</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;</span> <span class="p">[[</span><span class="n">-Authorization</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Ssl</span><span class="p">]</span> <span class="p">[&lt;</span><span class="n">CommonParameters</span><span class="p">&gt;]</span>
 </pre></div>
 </div>
 <p><strong>Compress-CouchDBDatabase</strong></p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">Compress-CouchDBDatabase</span> <span class="p">[[</span><span class="n">-Server</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Port</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Int32</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Database</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;</span> <span class="p">[[</span><span class="n">-Authorization</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Ssl</span><span class="p">]</span> <span class="p">[&lt;</span><span class="n">CommonParameters</span><span class="p">&gt;]</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Compress-CouchDBDatabase</span> <span class="p">[[</span><span class="n">-Server</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Port</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Int32</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Database</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;</span> <span class="p">[[</span><span class="n">-Authorization</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Ssl</span><span class="p">]</span> <span class="p">[&lt;</span><span class="n">CommonParameters</span><span class="p">&gt;]</span>
 </pre></div>
 </div>
 <p><strong>Write-CouchDBFullCommit</strong></p>
@@ -489,13 +491,13 @@
 </pre></div>
 </div>
 <p><strong>Search-CouchDBFullText</strong></p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">Search-CouchDBFullText</span> <span class="p">[[</span><span class="n">-Server</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Port</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Int32</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Database</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;</span> <span class="p">[</span><span class="n">-Patterns</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Array</span><span class="p">&gt;</span> <span class="p">[</span><span class="n">-UseQueries</span><span class="p">]</span> <span class="p">[[</span><span class="n">-Authorization</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Ssl</span><span class="p">]</span> <span class="p">[&lt;</span><span class="n">CommonParameters</span><span class="p">&gt;]</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Search-CouchDBFullText</span> <span class="p">[[</span><span class="n">-Server</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Port</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Int32</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Database</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;</span> <span class="p">[</span><span class="n">-Patterns</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Array</span><span class="p">&gt;</span> <span class="p">[</span><span class="n">-UseQueries</span><span class="p">]</span> <span class="p">[[</span><span class="n">-Authorization</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Ssl</span><span class="p">]</span> <span class="p">[&lt;</span><span class="n">CommonParameters</span><span class="p">&gt;]</span>
 </pre></div>
 </div>
 <p><strong>Find-CouchDBDocuments</strong></p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">Find-CouchDBDocuments</span> <span class="p">[</span><span class="n">-Server</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Port</span> <span class="p">&lt;</span><span class="n">Int32</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Database</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Explain</span><span class="p">]</span> <span class="p">[</span><span class="n">-Selector</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Value</span> <span class="p">&lt;</span><span class="n">Object</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Limit</span> <span class="p">&lt;</span><span class="n">Int32</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Skip</span> <span class="p">&lt;</span><span class="n">Int32</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Fields</span> <span class="p">&lt;</span><span class="n">Array</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Sort</span> <span class="p">&lt;</span><span class="n">Array</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-UseIndex</span> <span class="p">&lt;</span><span class="n">Array</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-ReadQuorum</span> <span class="p">&lt;</span><span class="n">Int32</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Bookmark</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-NoUpdate</span><span class="p">]</span> <span class="p">[</span><span class="n">-Stable</span><span class="p">]</span> <span class="p">[</span><span class="n">-Stale</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-ExecutionStats</span><span class="p">]</span> <span class="p">[</span><span class="n">-Operator</span><span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Authorization</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Ssl</span><span class="p">]</span> <span class="p">[&lt;</span><span class="n">CommonParameters</span><span class="p">&gt;]</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="p">[</span><span class="n">-Server</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Port</span> <span class="p">&lt;</span><span class="n">Int32</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Database</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Explain</span><span class="p">]</span> <span class="p">[</span><span class="n">-Selector</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Value</span> <span class="p">&lt;</span><span class="n">Object</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Limit</span> <span class="p">&lt;</span><span class="n">Int32</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Skip</span> <span class="p">&lt;</span><span class="n">Int32</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Fields</span> <span class="p">&lt;</span><span class="n">Array</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Sort</span> <span class="p">&lt;</span><span class="n">Array</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-UseIndex</span> <span class="p">&lt;</span><span class="n">Array</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-ReadQuorum</span> <span class="p">&lt;</span><span class="n">Int32</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Bookmark</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-NoUpdate</span><span class="p">]</span> <span class="p">[</span><span class="n">-Stable</span><span class="p">]</span> <span class="p">[</span><span class="n">-Stale</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-ExecutionStats</span><span class="p">]</span> <span class="p">[</span><span class="n">-Operator</span><span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Authorization</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Ssl</span><span class="p">]</span> <span class="p">[&lt;</span><span class="n">CommonParameters</span><span class="p">&gt;]</span>
 
-<span class="n">Find-CouchDBDocuments</span> <span class="p">[</span><span class="n">-Server</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Port</span> <span class="p">&lt;</span><span class="n">Int32</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Database</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Find</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Authorization</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Ssl</span><span class="p">]</span> <span class="p">[&lt;</span><span class="n">CommonParameters</span><span class="p">&gt;]</span>
+<span class="nb">Find-CouchDBDocuments</span> <span class="p">[</span><span class="n">-Server</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Port</span> <span class="p">&lt;</span><span class="n">Int32</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Database</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Find</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Authorization</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Ssl</span><span class="p">]</span> <span class="p">[&lt;</span><span class="n">CommonParameters</span><span class="p">&gt;]</span>
 </pre></div>
 </div>
 </div>
@@ -548,7 +550,7 @@
 </pre></div>
 </div>
 <p><strong>Compress-CouchDBDesignDocument</strong></p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">Compress-CouchDBDesignDocument</span> <span class="p">[[</span><span class="n">-Server</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Port</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Int32</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Database</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;</span> <span class="p">[</span><span class="n">-DesignDoc</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;</span> <span class="p">[[</span><span class="n">-Authorization</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Ssl</span><span class="p">]</span> <span class="p">[&lt;</span><span class="n">CommonParameters</span><span class="p">&gt;]</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Compress-CouchDBDesignDocument</span> <span class="p">[[</span><span class="n">-Server</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Port</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Int32</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Database</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;</span> <span class="p">[</span><span class="n">-DesignDoc</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;</span> <span class="p">[[</span><span class="n">-Authorization</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Ssl</span><span class="p">]</span> <span class="p">[&lt;</span><span class="n">CommonParameters</span><span class="p">&gt;]</span>
 </pre></div>
 </div>
 <p><strong>Remove-CouchDBDesignDocument</strong></p>
@@ -564,15 +566,15 @@
 <div class="section" id="aliases">
 <h2>Aliases<a class="headerlink" href="#aliases" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">acnode</span> <span class="p">-&gt;</span> <span class="nb">Add-CouchDBNode</span>
-<span class="n">ccdb</span> <span class="p">-&gt;</span> <span class="n">Compress-CouchDBDatabase</span>
-<span class="n">ccdd</span> <span class="p">-&gt;</span> <span class="n">Compress-CouchDBDesignDocument</span>
+<span class="n">ccdb</span> <span class="p">-&gt;</span> <span class="nb">Compress-CouchDBDatabase</span>
+<span class="n">ccdd</span> <span class="p">-&gt;</span> <span class="nb">Compress-CouchDBDesignDocument</span>
 <span class="n">ccdoc</span> <span class="p">-&gt;</span> <span class="nb">Clear-CouchDBDocuments</span>
 <span class="n">ccview</span> <span class="p">-&gt;</span> <span class="nb">Clear-CouchDBView</span>
 <span class="n">cpdoc</span> <span class="p">-&gt;</span> <span class="nb">Copy-CouchDBDocument</span>
 <span class="n">gcdb</span> <span class="p">-&gt;</span> <span class="nb">Copy-CouchDBDatabase</span>
 <span class="n">eccl</span> <span class="p">-&gt;</span> <span class="nb">Enable-CouchDBCluster</span>
-<span class="n">fcdoc</span> <span class="p">-&gt;</span> <span class="n">Find-CouchDBDocuments</span>
-<span class="n">finddoc</span> <span class="p">-&gt;</span> <span class="n">Find-CouchDBDocuments</span>
+<span class="n">fcdoc</span> <span class="p">-&gt;</span> <span class="nb">Find-CouchDBDocuments</span>
+<span class="n">finddoc</span> <span class="p">-&gt;</span> <span class="nb">Find-CouchDBDocuments</span>
 <span class="n">gcadm</span> <span class="p">-&gt;</span> <span class="nb">Get-CouchDBAdmin</span>
 <span class="n">gcatt</span> <span class="p">-&gt;</span> <span class="nb">Get-CouchDBAttachment</span>
 <span class="n">gcbdoc</span> <span class="p">-&gt;</span> <span class="nb">Get-CouchDBBulkDocument</span>
@@ -581,7 +583,7 @@
 <span class="n">gccs</span> <span class="p">-&gt;</span> <span class="nb">Get-CouchDBClusterSetup</span>
 <span class="n">gcdb</span> <span class="p">-&gt;</span> <span class="nb">Get-CouchDBDatabase</span>
 <span class="n">gcdbc</span> <span class="p">-&gt;</span> <span class="nb">Get-CouchDBDatabaseChanges</span>
-<span class="n">gcdbp</span> <span class="p">-&gt;</span> <span class="n">Grant-CouchDBDatabasePermission</span>
+<span class="n">gcdbp</span> <span class="p">-&gt;</span> <span class="nb">Grant-CouchDBDatabasePermission</span>
 <span class="n">gcdbs</span> <span class="p">-&gt;</span> <span class="nb">Get-CouchDBDatabaseSecurity</span>
 <span class="n">gcdbsh</span> <span class="p">-&gt;</span> <span class="nb">Get-CouchDBDatabaseShards</span>
 <span class="n">gcdbu</span> <span class="p">-&gt;</span> <span class="nb">Get-CouchDBDatabaseUpdates</span>
@@ -600,7 +602,7 @@
 <span class="n">gcsi</span> <span class="p">-&gt;</span> <span class="nb">Get-CouchDBServer</span>
 <span class="n">gctsk</span> <span class="p">-&gt;</span> <span class="nb">Get-CouchDBActiveTask</span>
 <span class="n">gcusr</span> <span class="p">-&gt;</span> <span class="nb">Get-CouchDBUser</span>
-<span class="n">helpc</span> <span class="p">-&gt;</span> <span class="n">Search-CouchDBHelp</span>
+<span class="n">helpc</span> <span class="p">-&gt;</span> <span class="nb">Search-CouchDBHelp</span>
 <span class="n">mcsts</span> <span class="p">-&gt;</span> <span class="nb">Measure-CouchDBStatistics</span>
 <span class="n">ncadm</span> <span class="p">-&gt;</span> <span class="nb">New-CouchDBAdmin</span>
 <span class="n">ncatt</span> <span class="p">-&gt;</span> <span class="nb">New-CouchDBAttachment</span>
@@ -615,8 +617,8 @@
 <span class="n">rcadm</span> <span class="p">-&gt;</span> <span class="nb">Remove-CouchDBAdmin</span>
 <span class="n">rcatt</span> <span class="p">-&gt;</span> <span class="nb">Remove-CouchDBAttachment</span>
 <span class="n">rcdb</span> <span class="p">-&gt;</span> <span class="nb">Remove-CouchDBDatabase</span>
-<span class="n">rcdbp</span> <span class="p">-&gt;</span> <span class="n">Revoke-CouchDBDatabasePermission</span>
-<span class="n">rcdbr</span> <span class="p">-&gt;</span> <span class="n">Request-CouchDBReplication</span>
+<span class="n">rcdbp</span> <span class="p">-&gt;</span> <span class="nb">Revoke-CouchDBDatabasePermission</span>
+<span class="n">rcdbr</span> <span class="p">-&gt;</span> <span class="nb">Request-CouchDBReplication</span>
 <span class="n">rcddoc</span> <span class="p">-&gt;</span> <span class="nb">Remove-CouchDBDesignDocument</span>
 <span class="n">rdatt</span> <span class="p">-&gt;</span> <span class="nb">Remove-CouchDBDesignDocumentAttachment</span>
 <span class="n">rcdoc</span> <span class="p">-&gt;</span> <span class="nb">Remove-CouchDBDocument</span>
@@ -634,13 +636,13 @@
 <span class="n">scddoc</span> <span class="p">-&gt;</span> <span class="nb">Set-CouchDBDesignDocument</span>
 <span class="n">sdatt</span> <span class="p">-&gt;</span> <span class="nb">Set-CouchDBDesignDocumentAttachment</span>
 <span class="n">scdoc</span> <span class="p">-&gt;</span> <span class="nb">Set-CouchDBDocument</span>
-<span class="n">scds</span> <span class="p">-&gt;</span> <span class="n">Sync-CouchDBDatabaseShards</span>
-<span class="n">scft</span> <span class="p">-&gt;</span> <span class="n">Search-CouchDBFullText</span>
+<span class="n">scds</span> <span class="p">-&gt;</span> <span class="nb">Sync-CouchDBDatabaseShards</span>
+<span class="n">scft</span> <span class="p">-&gt;</span> <span class="nb">Search-CouchDBFullText</span>
 <span class="n">scrl</span> <span class="p">-&gt;</span> <span class="nb">Set-CouchDBRevisionLimit</span>
 <span class="n">scrpl</span> <span class="p">-&gt;</span> <span class="nb">Set-CouchDBReplication</span>
 <span class="n">scs</span> <span class="p">-&gt;</span> <span class="nb">Set-CouchDBSession</span>
 <span class="n">scusr</span> <span class="p">-&gt;</span> <span class="nb">Set-CouchDBUser</span>
-<span class="n">src</span> <span class="p">-&gt;</span> <span class="n">Search-CouchDBHelp</span>
+<span class="n">src</span> <span class="p">-&gt;</span> <span class="nb">Search-CouchDBHelp</span>
 <span class="n">tcdb</span> <span class="p">-&gt;</span> <span class="nb">Test-CouchDBDatabase</span>
 <span class="n">wcfc</span> <span class="p">-&gt;</span> <span class="nb">Write-CouchDBFullCommit</span>
 <span class="n">ecdb</span> <span class="p">-&gt;</span> <span class="nb">Export-CouchDBDatabase</span>
@@ -673,7 +675,7 @@
         <a href="classes.html" class="btn btn-neutral float-right" title="Classes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="ddoc.html" class="btn btn-neutral" title="Design documents" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="ddoc.html" class="btn btn-neutral float-left" title="Design documents" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -699,25 +701,16 @@
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>  
+  </script>
+
+  
+  
+    
+    
 
 	<style>
 		/* Sidebar header (and topbar for mobile) */

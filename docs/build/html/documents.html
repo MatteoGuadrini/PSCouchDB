@@ -17,34 +17,36 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Design documents" href="ddoc.html" />
     <link rel="prev" title="Databases" href="databases.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -215,126 +217,126 @@
 </pre></div>
 </div>
 <p>In this table you can find all the possible parameters to get the document.</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="12%" />
-<col width="88%" />
+<col style="width: 12%" />
+<col style="width: 88%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">PARAMETER</th>
-<th class="head">DESCRIPTION</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>PARAMETER</p></th>
+<th class="head"><p>DESCRIPTION</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>Revision</td>
-<td>The CouchDB revision document.</td>
+<tbody>
+<tr class="row-even"><td><p>Revision</p></td>
+<td><p>The CouchDB revision document.</p></td>
 </tr>
-<tr class="row-odd"><td>Local</td>
-<td>Return CouchDB local document.</td>
+<tr class="row-odd"><td><p>Local</p></td>
+<td><p>Return CouchDB local document.</p></td>
 </tr>
-<tr class="row-even"><td>Revisions</td>
-<td>Return all CouchDB db revisions.</td>
+<tr class="row-even"><td><p>Revisions</p></td>
+<td><p>Return all CouchDB db revisions.</p></td>
 </tr>
-<tr class="row-odd"><td>History</td>
-<td>Return all info CouchDB db revisions.</td>
+<tr class="row-odd"><td><p>History</p></td>
+<td><p>Return all info CouchDB db revisions.</p></td>
 </tr>
-<tr class="row-even"><td>Attachments</td>
-<td>Includes attachments bodies in response.</td>
+<tr class="row-even"><td><p>Attachments</p></td>
+<td><p>Includes attachments bodies in response.</p></td>
 </tr>
-<tr class="row-odd"><td>AttachmentsInfo</td>
-<td>Includes encoding information in attachment stubs if the particular attachment is compressed.</td>
+<tr class="row-odd"><td><p>AttachmentsInfo</p></td>
+<td><p>Includes encoding information in attachment stubs if the particular attachment is compressed.</p></td>
 </tr>
-<tr class="row-even"><td>AttachmentsSince</td>
-<td>Includes attachments only since specified revisions. Doesn’t includes attachments for specified revisions.</td>
+<tr class="row-even"><td><p>AttachmentsSince</p></td>
+<td><p>Includes attachments only since specified revisions. Doesn’t includes attachments for specified revisions.</p></td>
 </tr>
-<tr class="row-odd"><td>Conflicts</td>
-<td>Includes information about conflicts in document.</td>
+<tr class="row-odd"><td><p>Conflicts</p></td>
+<td><p>Includes information about conflicts in document.</p></td>
 </tr>
-<tr class="row-even"><td>DeletedConflicts</td>
-<td>Includes information about deleted conflicted revisions.</td>
+<tr class="row-even"><td><p>DeletedConflicts</p></td>
+<td><p>Includes information about deleted conflicted revisions.</p></td>
 </tr>
-<tr class="row-odd"><td>Latest</td>
-<td>Forces retrieving latest “leaf” revision, no matter what rev was requested.</td>
+<tr class="row-odd"><td><p>Latest</p></td>
+<td><p>Forces retrieving latest “leaf” revision, no matter what rev was requested.</p></td>
 </tr>
-<tr class="row-even"><td>LocalSequence</td>
-<td>Includes last update sequence for the document.</td>
+<tr class="row-even"><td><p>LocalSequence</p></td>
+<td><p>Includes last update sequence for the document.</p></td>
 </tr>
-<tr class="row-odd"><td>Metadata</td>
-<td>Acts same as specifying all conflicts, deleted_conflicts and revs_info query parameters.</td>
+<tr class="row-odd"><td><p>Metadata</p></td>
+<td><p>Acts same as specifying all conflicts, deleted_conflicts and revs_info query parameters.</p></td>
 </tr>
-<tr class="row-even"><td>OpenRevisions</td>
-<td>Retrieves documents of specified leaf revisions. Additionally, value all id default and  to return all leaf revisions.</td>
+<tr class="row-even"><td><p>OpenRevisions</p></td>
+<td><p>Retrieves documents of specified leaf revisions. Additionally, value all id default and  to return all leaf revisions.</p></td>
 </tr>
 </tbody>
 </table>
 <p>And if use <strong>_all_docs</strong> view, in this table you can find all the possible parameters.</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="5%" />
-<col width="95%" />
+<col style="width: 5%" />
+<col style="width: 95%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">PARAMETER</th>
-<th class="head">DESCRIPTION</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>PARAMETER</p></th>
+<th class="head"><p>DESCRIPTION</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>Descending</td>
-<td>Return the documents in descending by key order. Default is <code class="docutils literal notranslate"><span class="pre">false</span></code>.</td>
+<tbody>
+<tr class="row-even"><td><p>Descending</p></td>
+<td><p>Return the documents in descending by key order. Default is <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td>EndKey</td>
-<td>Stop returning records when the specified key is reached.</td>
+<tr class="row-odd"><td><p>EndKey</p></td>
+<td><p>Stop returning records when the specified key is reached.</p></td>
 </tr>
-<tr class="row-even"><td>EndKeyDocument</td>
-<td>Stop returning records when the specified document ID is reached.</td>
+<tr class="row-even"><td><p>EndKeyDocument</p></td>
+<td><p>Stop returning records when the specified document ID is reached.</p></td>
 </tr>
-<tr class="row-odd"><td>Group</td>
-<td>Group the results using the reduce function to a group or single row. Implies reduce is <code class="docutils literal notranslate"><span class="pre">true</span></code> and the maximum group_level. Default is <code class="docutils literal notranslate"><span class="pre">false</span></code>.</td>
+<tr class="row-odd"><td><p>Group</p></td>
+<td><p>Group the results using the reduce function to a group or single row. Implies reduce is <code class="docutils literal notranslate"><span class="pre">true</span></code> and the maximum group_level. Default is <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td>GroupLevel</td>
-<td>Specify the group level to be used. Implies group is <code class="docutils literal notranslate"><span class="pre">true</span></code>.</td>
+<tr class="row-even"><td><p>GroupLevel</p></td>
+<td><p>Specify the group level to be used. Implies group is <code class="docutils literal notranslate"><span class="pre">true</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td>IncludeDocuments</td>
-<td>Include the associated document with each row. Default is <code class="docutils literal notranslate"><span class="pre">false</span></code>.</td>
+<tr class="row-odd"><td><p>IncludeDocuments</p></td>
+<td><p>Include the associated document with each row. Default is <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td>InclusiveEnd</td>
-<td>Specifies whether the specified end key should be included in the result. Default is <code class="docutils literal notranslate"><span class="pre">true</span></code>.</td>
+<tr class="row-even"><td><p>InclusiveEnd</p></td>
+<td><p>Specifies whether the specified end key should be included in the result. Default is <code class="docutils literal notranslate"><span class="pre">true</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td>Key</td>
-<td>Return only documents that match the specified key. The document must be _all_docs.</td>
+<tr class="row-odd"><td><p>Key</p></td>
+<td><p>Return only documents that match the specified key. The document must be _all_docs.</p></td>
 </tr>
-<tr class="row-even"><td>Keys</td>
-<td>Return only documents where the key matches one of the keys specified in the array.</td>
+<tr class="row-even"><td><p>Keys</p></td>
+<td><p>Return only documents where the key matches one of the keys specified in the array.</p></td>
 </tr>
-<tr class="row-odd"><td>Limit</td>
-<td>Limit the number of the returned design documents to the specified number.</td>
+<tr class="row-odd"><td><p>Limit</p></td>
+<td><p>Limit the number of the returned design documents to the specified number.</p></td>
 </tr>
-<tr class="row-even"><td>Reduce</td>
-<td>Use the reduction function. Default is true when a reduce function is defined.</td>
+<tr class="row-even"><td><p>Reduce</p></td>
+<td><p>Use the reduction function. Default is true when a reduce function is defined.</p></td>
 </tr>
-<tr class="row-odd"><td>Skip</td>
-<td>Skip this number of records before starting to return the results.</td>
+<tr class="row-odd"><td><p>Skip</p></td>
+<td><p>Skip this number of records before starting to return the results.</p></td>
 </tr>
-<tr class="row-even"><td>Sorted</td>
-<td>Sort returned rows. Setting this to false offers a performance boost. The total_rows and offset fields are not available when this is set to <code class="docutils literal notranslate"><span class="pre">false</span></code>. Default is <code class="docutils literal notranslate"><span class="pre">true</span></code>.</td>
+<tr class="row-even"><td><p>Sorted</p></td>
+<td><p>Sort returned rows. Setting this to false offers a performance boost. The total_rows and offset fields are not available when this is set to <code class="docutils literal notranslate"><span class="pre">false</span></code>. Default is <code class="docutils literal notranslate"><span class="pre">true</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td>Stable</td>
-<td>Whether or not the view results should be returned from a stable set of shards. Default is <code class="docutils literal notranslate"><span class="pre">false</span></code>.</td>
+<tr class="row-odd"><td><p>Stable</p></td>
+<td><p>Whether or not the view results should be returned from a stable set of shards. Default is <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td>Stale</td>
-<td>Allow the results from a stale view to be used. Supported values: <code class="docutils literal notranslate"><span class="pre">ok</span></code>, <code class="docutils literal notranslate"><span class="pre">update_after</span> <span class="pre">and</span></code> <code class="docutils literal notranslate"><span class="pre">false</span></code>. <code class="docutils literal notranslate"><span class="pre">ok</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">stable=true&amp;update=false</span></code>. <code class="docutils literal notranslate"><span class="pre">update_after</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">stable=true&amp;update=lazy</span></code>. <code class="docutils literal notranslate"><span class="pre">false</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">stable=false&amp;update=true</span></code>.</td>
+<tr class="row-even"><td><p>Stale</p></td>
+<td><p>Allow the results from a stale view to be used. Supported values: <code class="docutils literal notranslate"><span class="pre">ok</span></code>, <code class="docutils literal notranslate"><span class="pre">update_after</span> <span class="pre">and</span></code> <code class="docutils literal notranslate"><span class="pre">false</span></code>. <code class="docutils literal notranslate"><span class="pre">ok</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">stable=true&amp;update=false</span></code>. <code class="docutils literal notranslate"><span class="pre">update_after</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">stable=true&amp;update=lazy</span></code>. <code class="docutils literal notranslate"><span class="pre">false</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">stable=false&amp;update=true</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td>StartKey</td>
-<td>Return records starting with the specified key.</td>
+<tr class="row-odd"><td><p>StartKey</p></td>
+<td><p>Return records starting with the specified key.</p></td>
 </tr>
-<tr class="row-even"><td>StartKeyDocument</td>
-<td>Return records starting with the specified document ID. Ignored if startkey is not set.</td>
+<tr class="row-even"><td><p>StartKeyDocument</p></td>
+<td><p>Return records starting with the specified document ID. Ignored if startkey is not set.</p></td>
 </tr>
-<tr class="row-odd"><td>Update</td>
-<td>Whether or not the view in question should be updated prior to responding to the user. Supported values: <code class="docutils literal notranslate"><span class="pre">true</span></code>, <code class="docutils literal notranslate"><span class="pre">false</span></code>, <code class="docutils literal notranslate"><span class="pre">lazy</span></code>. Default is <code class="docutils literal notranslate"><span class="pre">true</span></code>.</td>
+<tr class="row-odd"><td><p>Update</p></td>
+<td><p>Whether or not the view in question should be updated prior to responding to the user. Supported values: <code class="docutils literal notranslate"><span class="pre">true</span></code>, <code class="docutils literal notranslate"><span class="pre">false</span></code>, <code class="docutils literal notranslate"><span class="pre">lazy</span></code>. Default is <code class="docutils literal notranslate"><span class="pre">true</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td>UpdateSequence</td>
-<td>Whether to include in the response an update_seq value indicating the sequence id of the database the view reflects. Default is <code class="docutils literal notranslate"><span class="pre">false</span></code>.</td>
+<tr class="row-even"><td><p>UpdateSequence</p></td>
+<td><p>Whether to include in the response an update_seq value indicating the sequence id of the database the view reflects. Default is <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -353,8 +355,8 @@
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Until you run the <code class="docutils literal notranslate"><span class="pre">Write-CouchDBFullCommit</span></code> cmdlet, the document will not be written to disk but kept only in memory. This can be useful in case of bulk writing.</p>
+<p class="admonition-title">Note</p>
+<p>Until you run the <code class="docutils literal notranslate"><span class="pre">Write-CouchDBFullCommit</span></code> cmdlet, the document will not be written to disk but kept only in memory. This can be useful in case of bulk writing.</p>
 </div>
 </div>
 <div class="section" id="modify-a-document">
@@ -374,8 +376,8 @@
 <h2>Delete a document<a class="headerlink" href="#delete-a-document" title="Permalink to this headline">¶</a></h2>
 <p>To delete a document, specify <code class="docutils literal notranslate"><span class="pre">Revision</span></code> parameter.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">CouchDB doesn’t completely delete the specified document. Instead, it leaves a tombstone with very basic information about the document. The tombstone is required so that the delete action can be replicated across databases.</p>
+<p class="admonition-title">Note</p>
+<p>CouchDB doesn’t completely delete the specified document. Instead, it leaves a tombstone with very basic information about the document. The tombstone is required so that the delete action can be replicated across databases.</p>
 </div>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Remove-CouchDBDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;Hitchhikers&quot;</span> <span class="n">-Revision</span> <span class="s2">&quot;3-399796e5ce019e04311637e8a8a0f402&quot;</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
@@ -496,11 +498,11 @@ This is to ensure that deleted documents can be replicated to other databases as
 <div class="section" id="find-a-document">
 <h2>Find a document<a class="headerlink" href="#find-a-document" title="Permalink to this headline">¶</a></h2>
 <p>To search for documents in a database, use the following cmdlet.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span>
 </pre></div>
 </div>
 <p>or with native Mango query</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Find</span> <span class="s1">&#39;{&quot;selector&quot;: {&quot;name&quot;:{&quot;$eq&quot;:&quot;Arthur Dent&quot;}},&quot;fields&quot;:[&quot;_id&quot;,&quot;name&quot;,&quot;planet&quot;]}&#39;</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Find</span> <span class="s1">&#39;{&quot;selector&quot;: {&quot;name&quot;:{&quot;$eq&quot;:&quot;Arthur Dent&quot;}},&quot;fields&quot;:[&quot;_id&quot;,&quot;name&quot;,&quot;planet&quot;]}&#39;</span>
 </pre></div>
 </div>
 <p>or with class (for complex query)</p>
@@ -511,19 +513,19 @@ This is to ensure that deleted documents can be replicated to other databases as
 <span class="nv">$q</span><span class="p">.</span><span class="n">AddFields</span><span class="p">(</span><span class="s2">&quot;_id&quot;</span><span class="p">)</span>
 <span class="nv">$q</span><span class="p">.</span><span class="n">AddFields</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
 <span class="nv">$q</span><span class="p">.</span><span class="n">AddFields</span><span class="p">(</span><span class="s2">&quot;planet&quot;</span><span class="p">)</span>
-<span class="n">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Find</span> <span class="nv">$q</span><span class="p">.</span><span class="n">GetNativeQuery</span><span class="p">()</span>
+<span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Find</span> <span class="nv">$q</span><span class="p">.</span><span class="n">GetNativeQuery</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>If you want to use Mango queries, follow the next sections. Otherwise you can see more examples in the <a class="reference external" href="classes.html">Classes section</a>.</p>
 <div class="section" id="search-a-document">
 <h3>Search a document<a class="headerlink" href="#search-a-document" title="Permalink to this headline">¶</a></h3>
 <p>To perform a more generic search in a database, without knowing the various selectors, use:</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">Search-CouchDBFullText</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Patterns</span> <span class="s2">&quot;space&quot;</span><span class="p">,</span><span class="s2">&quot;planet&quot;</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Search-CouchDBFullText</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Patterns</span> <span class="s2">&quot;space&quot;</span><span class="p">,</span><span class="s2">&quot;planet&quot;</span>
 </pre></div>
 </div>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">This search is much slower than the <code class="docutils literal notranslate"><span class="pre">Find-CouchdbDocuments</span></code> cmdlet.</p>
+<p class="admonition-title">Warning</p>
+<p>This search is much slower than the <code class="docutils literal notranslate"><span class="pre">Find-CouchdbDocuments</span></code> cmdlet.</p>
 </div>
 </div>
 <div class="section" id="selector">
@@ -557,8 +559,8 @@ This is to ensure that deleted documents can be replicated to other databases as
 <p>Operators are identified by the use of a dollar sign ($) prefix in the name field.
 There are two core types of operators in the selector syntax:</p>
 <ul class="simple">
-<li>Combination operators</li>
-<li>Condition operators</li>
+<li><p>Combination operators</p></li>
+<li><p>Condition operators</p></li>
 </ul>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nt">&quot;selector&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -569,8 +571,8 @@ There are two core types of operators in the selector syntax:</p>
 </div>
 <p>There are two implicit operators:</p>
 <ul class="simple">
-<li>Equality</li>
-<li>And</li>
+<li><p>Equality</p></li>
+<li><p>And</p></li>
 </ul>
 <p>In a selector, any field containing a JSON value, but that has no operators in it, is considered to be an equality condition. The implicit equality test applies also for fields and subfields.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
@@ -591,70 +593,70 @@ There are two core types of operators in the selector syntax:</p>
 </pre></div>
 </div>
 <p>List of available operators:</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="8%" />
-<col width="5%" />
-<col width="86%" />
+<col style="width: 8%" />
+<col style="width: 5%" />
+<col style="width: 86%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Operator type</th>
-<th class="head">Operator</th>
-<th class="head">Purpose</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Operator type</p></th>
+<th class="head"><p>Operator</p></th>
+<th class="head"><p>Purpose</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>(In)equality</td>
-<td>lt</td>
-<td>The field is less than the argument</td>
+<tbody>
+<tr class="row-even"><td><p>(In)equality</p></td>
+<td><p>lt</p></td>
+<td><p>The field is less than the argument</p></td>
 </tr>
-<tr class="row-odd"><td>&#160;</td>
-<td>lte</td>
-<td>The field is less than or equal to the argument</td>
+<tr class="row-odd"><td></td>
+<td><p>lte</p></td>
+<td><p>The field is less than or equal to the argument</p></td>
 </tr>
-<tr class="row-even"><td>&#160;</td>
-<td>eq</td>
-<td>The field is equal to the argument</td>
+<tr class="row-even"><td></td>
+<td><p>eq</p></td>
+<td><p>The field is equal to the argument</p></td>
 </tr>
-<tr class="row-odd"><td>&#160;</td>
-<td>ne</td>
-<td>The field is not equal to the argument</td>
+<tr class="row-odd"><td></td>
+<td><p>ne</p></td>
+<td><p>The field is not equal to the argument</p></td>
 </tr>
-<tr class="row-even"><td>&#160;</td>
-<td>gte</td>
-<td>The field is greater than or equal to the argument</td>
+<tr class="row-even"><td></td>
+<td><p>gte</p></td>
+<td><p>The field is greater than or equal to the argument</p></td>
 </tr>
-<tr class="row-odd"><td>&#160;</td>
-<td>gt</td>
-<td>The field is greater than the to the argument</td>
+<tr class="row-odd"><td></td>
+<td><p>gt</p></td>
+<td><p>The field is greater than the to the argument</p></td>
 </tr>
-<tr class="row-even"><td>Object</td>
-<td>exists</td>
-<td>Check whether the field exists or not, regardless</td>
+<tr class="row-even"><td><p>Object</p></td>
+<td><p>exists</p></td>
+<td><p>Check whether the field exists or not, regardless</p></td>
 </tr>
-<tr class="row-odd"><td>&#160;</td>
-<td>type</td>
-<td>Check the document field’s type. Valid values are “null”, “boolean”, “number”, “string”, “array”, and “object”</td>
+<tr class="row-odd"><td></td>
+<td><p>type</p></td>
+<td><p>Check the document field’s type. Valid values are “null”, “boolean”, “number”, “string”, “array”, and “object”</p></td>
 </tr>
-<tr class="row-even"><td>Array</td>
-<td>in</td>
-<td>The document field must exist in the list provided</td>
+<tr class="row-even"><td><p>Array</p></td>
+<td><p>in</p></td>
+<td><p>The document field must exist in the list provided</p></td>
 </tr>
-<tr class="row-odd"><td>&#160;</td>
-<td>nin</td>
-<td>The document field not must exist in the list provided</td>
+<tr class="row-odd"><td></td>
+<td><p>nin</p></td>
+<td><p>The document field not must exist in the list provided</p></td>
 </tr>
-<tr class="row-even"><td>&#160;</td>
-<td>size</td>
-<td>Special condition to match the length of an array field in a document. Non-array fields cannot match this condition</td>
+<tr class="row-even"><td></td>
+<td><p>size</p></td>
+<td><p>Special condition to match the length of an array field in a document. Non-array fields cannot match this condition</p></td>
 </tr>
-<tr class="row-odd"><td>Miscellaneous</td>
-<td>mod</td>
-<td>Divisor and Remainder are both positive or negative integers. Non-integer values result in a 404.</td>
+<tr class="row-odd"><td><p>Miscellaneous</p></td>
+<td><p>mod</p></td>
+<td><p>Divisor and Remainder are both positive or negative integers. Non-integer values result in a 404.</p></td>
 </tr>
-<tr class="row-even"><td>&#160;</td>
-<td>regex</td>
-<td>A regular expression pattern to match against the document field.The matching algorithms are based on the Perl Compatible Regular Expression (PCRE) library.</td>
+<tr class="row-even"><td></td>
+<td><p>regex</p></td>
+<td><p>A regular expression pattern to match against the document field.The matching algorithms are based on the Perl Compatible Regular Expression (PCRE) library.</p></td>
 </tr>
 </tbody>
 </table>
@@ -666,23 +668,23 @@ There are two core types of operators in the selector syntax:</p>
 <span class="nv">$q</span><span class="p">.</span><span class="n">AddFields</span><span class="p">(</span><span class="s2">&quot;_id&quot;</span><span class="p">)</span>
 <span class="nv">$q</span><span class="p">.</span><span class="n">AddFields</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
 <span class="nv">$q</span><span class="p">.</span><span class="n">AddFields</span><span class="p">(</span><span class="s2">&quot;planet&quot;</span><span class="p">)</span>
-<span class="n">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Find</span> <span class="nv">$q</span><span class="p">.</span><span class="n">GetNativeQuery</span><span class="p">()</span>
+<span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Find</span> <span class="nv">$q</span><span class="p">.</span><span class="n">GetNativeQuery</span><span class="p">()</span>
 </pre></div>
 </div>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span>
 </pre></div>
 </div>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">Pay attention to the <code class="docutils literal notranslate"><span class="pre">$</span></code> (dollar) sign. If you use the PSCouchDBQuery class or a native query, the sign is required.</p>
+<p class="admonition-title">Warning</p>
+<p>Pay attention to the <code class="docutils literal notranslate"><span class="pre">$</span></code> (dollar) sign. If you use the PSCouchDBQuery class or a native query, the sign is required.</p>
 </div>
 </div>
 <div class="section" id="logical-operators">
 <h3>Logical operators<a class="headerlink" href="#logical-operators" title="Permalink to this headline">¶</a></h3>
 <p>Logical operators are used to combine selectors.</p>
 <div class="admonition important">
-<p class="first admonition-title">Important</p>
-<p class="last">Logical operators are only avalaible when creating an object of type <code class="docutils literal notranslate"><span class="pre">PSCouchDBQuery</span></code> or use a native query string.
+<p class="admonition-title">Important</p>
+<p>Logical operators are only avalaible when creating an object of type <code class="docutils literal notranslate"><span class="pre">PSCouchDBQuery</span></code> or use a native query string.
 For more details, see <a class="reference external" href="classes.html">Classes section</a> section.</p>
 </div>
 <p>AND</p>
@@ -724,37 +726,37 @@ For more details, see <a class="reference external" href="classes.html">Classes 
 <span class="p">}</span>
 </pre></div>
 </div>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="8%" />
-<col width="92%" />
+<col style="width: 8%" />
+<col style="width: 92%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Operator</th>
-<th class="head">Purpose</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Operator</p></th>
+<th class="head"><p>Purpose</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>and</td>
-<td>Matches if all the selectors in the array match</td>
+<tbody>
+<tr class="row-even"><td><p>and</p></td>
+<td><p>Matches if all the selectors in the array match</p></td>
 </tr>
-<tr class="row-odd"><td>or</td>
-<td>Matches if any of the selectors in the array match. All selectors must use the same index</td>
+<tr class="row-odd"><td><p>or</p></td>
+<td><p>Matches if any of the selectors in the array match. All selectors must use the same index</p></td>
 </tr>
-<tr class="row-even"><td>not</td>
-<td>Matches if the given selector does not match</td>
+<tr class="row-even"><td><p>not</p></td>
+<td><p>Matches if the given selector does not match</p></td>
 </tr>
-<tr class="row-odd"><td>nor</td>
-<td>Matches if none of the selectors in the array match</td>
+<tr class="row-odd"><td><p>nor</p></td>
+<td><p>Matches if none of the selectors in the array match</p></td>
 </tr>
-<tr class="row-even"><td>all</td>
-<td>Matches an array value if it contains all the elements of the argument array</td>
+<tr class="row-even"><td><p>all</p></td>
+<td><p>Matches an array value if it contains all the elements of the argument array</p></td>
 </tr>
-<tr class="row-odd"><td>elemMatch</td>
-<td>Matches and returns all documents that contain an array field with at least one element that matches all the specified query criteria</td>
+<tr class="row-odd"><td><p>elemMatch</p></td>
+<td><p>Matches and returns all documents that contain an array field with at least one element that matches all the specified query criteria</p></td>
 </tr>
-<tr class="row-even"><td>allMatch</td>
-<td>Matches and returns all documents that contain an array field with all its elements matching all the specified query criteria</td>
+<tr class="row-even"><td><p>allMatch</p></td>
+<td><p>Matches and returns all documents that contain an array field with all its elements matching all the specified query criteria</p></td>
 </tr>
 </tbody>
 </table>
@@ -769,28 +771,28 @@ The direction value is “asc” for ascending, and “desc” for descending. I
 <span class="p">}</span>
 </pre></div>
 </div>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-Sort</span> <span class="n">name</span><span class="p">,</span><span class="n">planet</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-Sort</span> <span class="n">name</span><span class="p">,</span><span class="n">planet</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="limit">
 <h3>Limit<a class="headerlink" href="#limit" title="Permalink to this headline">¶</a></h3>
 <p>Maximum number of results returned. Default is 25.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-Limit</span> <span class="n">100</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-Limit</span> <span class="n">100</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="skip">
 <h3>Skip<a class="headerlink" href="#skip" title="Permalink to this headline">¶</a></h3>
 <p>Skip the first ‘n’ results, where ‘n’ is the value specified.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-Skip</span> <span class="n">10</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-Skip</span> <span class="n">10</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="use-index">
 <h3>Use index<a class="headerlink" href="#use-index" title="Permalink to this headline">¶</a></h3>
 <p>Instruct a query to use a specific index.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-UseIndex</span> <span class="s2">&quot;index_planet&quot;</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-UseIndex</span> <span class="s2">&quot;index_planet&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -798,53 +800,54 @@ The direction value is “asc” for ascending, and “desc” for descending. I
 <h3>Read quorum<a class="headerlink" href="#read-quorum" title="Permalink to this headline">¶</a></h3>
 <p>Read quorum needed for the result. This defaults to 1, in which case the document found in the index is returned.</p>
 <p>If set to a higher value, each document is read from at least that many replicas before it is returned in the results. This is likely to take more time than using only the document stored locally with the index.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-ReadQuorum</span> <span class="n">3</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-ReadQuorum</span> <span class="n">3</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="bookmark">
 <h3>Bookmark<a class="headerlink" href="#bookmark" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div>A string that enables you to specify which page of results you require.
+<div><p>A string that enables you to specify which page of results you require.
 Used for paging through result sets.
 Every query returns an opaque string under the bookmark key that can then be passed back in a query to get the next page of results.
-If any part of the selector query changes between requests, the results are undefined.</div></blockquote>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-Bookmark</span> <span class="s2">&quot;my_bookmark&quot;</span>
+If any part of the selector query changes between requests, the results are undefined.</p>
+</div></blockquote>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-Bookmark</span> <span class="s2">&quot;my_bookmark&quot;</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="no-update">
 <h3>No Update<a class="headerlink" href="#no-update" title="Permalink to this headline">¶</a></h3>
 <p>Whether to update the index prior to returning the result. Default is true.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-NoUpdate</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-NoUpdate</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="stable">
 <h3>Stable<a class="headerlink" href="#stable" title="Permalink to this headline">¶</a></h3>
 <p>Whether or not the view results should be returned from a “stable” set of shards.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-Stable</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-Stable</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="stale">
 <h3>Stale<a class="headerlink" href="#stale" title="Permalink to this headline">¶</a></h3>
 <p>Combination of <code class="docutils literal notranslate"><span class="pre">update=false</span></code> and <code class="docutils literal notranslate"><span class="pre">stable=true</span></code> options. Possible options: <code class="docutils literal notranslate"><span class="pre">&quot;ok&quot;</span></code></p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-Stale</span> <span class="s1">&#39;ok&#39;</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-Stale</span> <span class="s1">&#39;ok&#39;</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="execution-statistics">
 <h3>Execution statistics<a class="headerlink" href="#execution-statistics" title="Permalink to this headline">¶</a></h3>
 <p>Include execution statistics in the query response.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-ExecutionStats</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-ExecutionStats</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="explain">
 <h3>Explain<a class="headerlink" href="#explain" title="Permalink to this headline">¶</a></h3>
 <p>Shows which index is being used by the query.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-Sort</span> <span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-Explain</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-Sort</span> <span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-Explain</span>
 </pre></div>
 </div>
 </div>
@@ -862,7 +865,7 @@ If any part of the selector query changes between requests, the results are unde
         <a href="ddoc.html" class="btn btn-neutral float-right" title="Design documents" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="databases.html" class="btn btn-neutral" title="Databases" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="databases.html" class="btn btn-neutral float-left" title="Databases" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -888,25 +891,16 @@ If any part of the selector query changes between requests, the results are unde
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>  
+  </script>
+
+  
+  
+    
+    
 
 	<style>
 		/* Sidebar header (and topbar for mobile) */
