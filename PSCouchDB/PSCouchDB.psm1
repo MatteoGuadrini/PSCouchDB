@@ -1035,7 +1035,7 @@ function Copy-CouchDBDatabase () {
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
     .EXAMPLE
-    Test-CouchDBDatabase -Database test -Destination test_new -Authorization admin:password
+    Copy-CouchDBDatabase -Database test -Destination test_new -Authorization admin:password
     Copy a test database in a new test_new database.
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/databases.html#copy-a-database
@@ -1048,7 +1048,7 @@ function Copy-CouchDBDatabase () {
         [int] $RemotePort,
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
-        [string] $Destination = $Database,
+        [string] $Destination = $(if ($RemoteServer) {$Database} else {$Database + "_new"}),
         [array] $ExcludeIds,
         [string] $Authorization,
         [string] $RemoteAuthorization,
