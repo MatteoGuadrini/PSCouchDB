@@ -1,5 +1,30 @@
 # Release notes
 
+## 1.14.0
+Mar 03, 2020
+
+Fix *Value* param on **Find-CouchDBDocuments**
+Fix *Key* param on **Get-CouchDBDocument**
+Fix **Clear-CouchDBDocuments**
+Add issue template cmdlet bug
+Add issue template cmdlet enhancement
+Add issue template **PSCouchDBQuery** class bug
+Add issue template **PSCouchDBQuery** class enhancement
+Add issue template **PSCouchDBDesignDoc** class bug
+Add issue template **PSCouchDBDesignDoc** class enhancement
+Improved **Grant-CouchDBDatabasePermission** cmdlet
+Re-adaptation of the **Revoke-CouchDBDatabasePermission** cmdlet
+Add pull request template
+Fix **Search-CouchDBFullText** *UseQueries* param
+Add *ReadOnly* validation function to **PSCouchDBDesignDoc**
+Added remote possibilities for database copying
+Fix **Get-CouchDBDatabaseInfo**
+Fix **Restart-CouchDBServer** on Unix based os
+Fix **Copy-CouchDBDatabase** cmdlet
+Fix issue #1523,#2092,#2336,#2475 for default port
+Add deprecation shows and list in design documents class
+
+
 ## 1.13.0
 Sep 18, 2019
 

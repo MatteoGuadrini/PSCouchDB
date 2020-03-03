@@ -12,7 +12,7 @@
     RootModule        = 'PSCouchDB.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '1.13.9'
+    ModuleVersion     = '1.14.0'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -30,7 +30,7 @@
     Copyright         = '(c) Matteo Guadrini. All rights reserved.'
 
     # Description of the functionality provided by this module
-    Description       = 'Powershell module for CouchDB v2.X'
+    Description       = 'Powershell module for CouchDB v2.X and v3.X'
 
     # Minimum version of the PowerShell engine required by this module
     PowerShellVersion = '5.0'
