@@ -12,7 +12,7 @@ Welcome to PSCouchDB's documentation!
     :align: center
     :target: https://github.com/MatteoGuadrini/PSCouchDB
 
-**The complete and powerful powershell module for CouchDB v2.X**
+**The complete and powerful powershell module for CouchDB v2.X and v3.X**
 
 .. raw:: html
 
