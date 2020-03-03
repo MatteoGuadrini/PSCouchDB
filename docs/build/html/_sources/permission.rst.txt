@@ -27,6 +27,9 @@ CouchDB has the idea of an admin user (for example, an administrator, a super us
 
 To restrict permissions, one or more administrators must be created.
 
+.. note::
+    In CouchDB 3.X you have to set an admin in the installation process. Doing so will not make Admin Party work anymore.
+
 
 Create Admin user
 _________________

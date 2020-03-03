@@ -182,6 +182,10 @@
 <p>This is very nice for testing enviroment, but anyone could delete documents or the whole database. By default, CouchDB, will listen only on your loopback network interface (127.0.0.1 or localhost) and thus only you will be able to make requests to CouchDB, nobody else. But when it is necessary to expose the service on public ip, you will want to think about restricting access.</p>
 <p>CouchDB has the idea of an admin user (for example, an administrator, a super user, or root) that is allowed to do anything to a CouchDB installation. By default, everybody is an admin.</p>
 <p>To restrict permissions, one or more administrators must be created.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In CouchDB 3.X you have to set an admin in the installation process. Doing so will not make Admin Party work anymore.</p>
+</div>
 </div>
 <div class="section" id="create-admin-user">
 <h2>Create Admin user<a class="headerlink" href="#create-admin-user" title="Permalink to this headline">¶</a></h2>
