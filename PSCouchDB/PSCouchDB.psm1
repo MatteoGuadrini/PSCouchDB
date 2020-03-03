@@ -6136,11 +6136,11 @@ function Remove-CouchDBNode () {
     # Set protocol
     if ($Ssl.IsPresent) {
         if (-not($Port)) {
-            $Port = 6986
+            if ((Get-CouchDBServer).version -match '3.*') { $Port = 6984 } elseif ((Get-CouchDBServer).version -match '2.*') { $Port = 6986 }
         }
     } else {
         if (-not($Port)) {
-            $Port = 5986
+            if ((Get-CouchDBServer).version -match '3.*') { $Port = 5984 } elseif ((Get-CouchDBServer).version -match '2.*') { $Port = 5986 }
         }
     }
     if (Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Node -Info -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue) {
