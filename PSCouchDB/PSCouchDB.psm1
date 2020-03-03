@@ -399,9 +399,9 @@ class PSCouchDBDesignDoc {
     $design_doc = New-Object PSCouchDBDesignDoc
     #>
     # Properties of design document
-    [hashtable]$views = @{ }
-    [hashtable]$shows = @{ }
-    [hashtable]$lists = @{ }
+    [hashtable]$views = @{}
+    [hashtable]$shows = @{}
+    [hashtable]$lists = @{}
     [string]$validate_doc_update
 
     # Hidden properties
@@ -495,6 +495,7 @@ function(doc) {
     # Method for adding new show; ALL DOCS
     # GET /_design/{design-doc-id}/_show/{show-function-name}/{document-id}
     AddShow ($name) {
+        Write-Warning -Message "This features are deprecated in CouchDB 3.0 and will be removed in CouchDB 4.0"
         if (-not($this.shows.ContainsKey($name))) {
             $fun = @"
 function(doc, req) {
@@ -515,6 +516,7 @@ function(doc, req) {
     # Method for adding new show; KEY EXISTS
     # GET /_design/{design-doc-id}/_show/{show-function-name}/{document-id}
     AddShow ($name, $key) {
+        Write-Warning -Message "This features are deprecated in CouchDB 3.0 and will be removed in CouchDB 4.0"
         if (-not($this.shows.ContainsKey($name))) {
             $fun = @"
 function(doc, req) {
@@ -538,6 +540,7 @@ function(doc, req) {
     # Method for adding new show; KEY EXISTS AND KEY EQUAL VALUE
     # GET /_design/{design-doc-id}/_show/{show-function-name}/{document-id}
     AddShow ($name, $key, $value) {
+        Write-Warning -Message "This features are deprecated in CouchDB 3.0 and will be removed in CouchDB 4.0"
         if (-not($this.shows.ContainsKey($name))) {
             $fun = @"
 function(doc, req) {
@@ -561,6 +564,7 @@ function(doc, req) {
     # Method for adding new list; ALL DOCS
     # GET /_design/{design-document-id}/_list/{list-name}/{view-name}
     AddList ($name) {
+        Write-Warning -Message "This features are deprecated in CouchDB 3.0 and will be removed in CouchDB 4.0"
         if ($this.views.PSBase.Count -eq 0) {
             throw "First you must add at least one view"
         }
