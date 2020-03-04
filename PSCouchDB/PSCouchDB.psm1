@@ -2707,6 +2707,7 @@ function Get-CouchDBNode () {
     .NOTES
     CouchDB API:
         GET /_membership
+        GET /_node/{node-name}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -2732,7 +2733,7 @@ function Get-CouchDBNode () {
         [string] $Authorization,
         [switch] $Ssl
     )
-    $Database = "_membership"
+    if ((Get-CouchDBServer).version -match '3.*') { $Database = "_node/_local" } elseif ((Get-CouchDBServer).version -match '2.*') { $Database = "_membership" }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
 }
 
