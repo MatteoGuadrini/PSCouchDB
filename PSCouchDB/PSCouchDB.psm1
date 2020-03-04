@@ -6866,8 +6866,13 @@ function Read-CouchDBLog () {
         # Set default path...
         # Windows platform
         if ($Windows) {
-            $Path = "C:\CouchDB\couch.log"
-            $root = "C:\CouchDB"
+            if ((Get-CouchDBServer).version -match '3.*') { 
+                $Path = "C:\Program Files\Apache CouchDB\var\log\couchdb.log"
+                $root = "C:\Program Files\Apache CouchDB"
+            } elseif ((Get-CouchDBServer).version -match '2.*') { 
+                $Path = "C:\CouchDB\couch.log"
+                $root = "C:\CouchDB"
+            }
             # Unix platform
         } else {
             $Path = "/var/log/couchdb/couch.log"
