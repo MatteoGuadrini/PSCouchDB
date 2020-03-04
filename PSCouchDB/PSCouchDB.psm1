@@ -4764,8 +4764,10 @@ function Request-CouchDBReplication () {
     The source CouchDB database.
     .PARAMETER TargetDatabase
     The destination CouchDB database.
-    .PARAMETER Proxy
-    The proxy server.
+    .PARAMETER SourceProxy
+    The source proxy server.
+    .PARAMETER TargetProxy
+    The target proxy server.
     .PARAMETER Document
     Array of CouchDB document.
     .PARAMETER Filter
@@ -4801,7 +4803,8 @@ function Request-CouchDBReplication () {
         [string] $SourceDatabase,
         [Parameter(mandatory = $true)]
         [string] $TargetDatabase,
-        [string] $Proxy,
+        [string] $SourceProxy,
+        [string] $TargetProxy,
         [array] $Documents,
         [string] $Filter,
         [switch] $Continuous,
@@ -4872,8 +4875,11 @@ function Request-CouchDBReplication () {
         $Json.Add("filter", $Filter)
     }
     # Check proxy
-    if ($Proxy) {
-        $Json.Add("proxy", $Proxy)
+    if ($SourceProxy) {
+        $Json.Add("source_proxy", $SourceProxy)
+    }
+    if ($TargetProxy) {
+        $Json.Add("target_proxy", $TargetProxy)
     }
     # Check doc_ids
     if ($Documents.Count -ne 0) {
