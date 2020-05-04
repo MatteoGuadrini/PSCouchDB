@@ -12,8 +12,9 @@
     RootModule        = 'PSCouchDB.psm1'
 
     # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
-    NestedModules = @(
-        '.\functions\CouchDBprivate.psm1'
+    NestedModules     = @(
+        '.\functions\CouchDBprivate.ps1',
+        '.\functions\CouchDBserver.ps1'
     )
 
     # Version number of this module.

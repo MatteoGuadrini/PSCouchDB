@@ -1,3 +1,5 @@
+# Private functions of CouchDB module
+
 function Send-CouchDBRequest {
     <#
     .SYNOPSIS
