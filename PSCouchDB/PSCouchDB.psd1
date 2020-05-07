@@ -16,6 +16,7 @@
         '.\functions\CouchDBprivate.ps1',
         '.\functions\CouchDBserver.ps1',
         '.\functions\CouchDBdatabase.ps1'
+        '.\functions\CouchDBdocument.ps1'
     )
 
     # Version number of this module.
