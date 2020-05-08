@@ -15,6 +15,7 @@
     NestedModules     = @(
         '.\functions\CouchDBprivate.ps1',
         '.\functions\CouchDBconfiguration.ps1',
+        '.\functions\CouchDBpermission.ps1',
         '.\functions\CouchDBserver.ps1',
         '.\functions\CouchDBdatabase.ps1',
         '.\functions\CouchDBdocument.ps1'        
