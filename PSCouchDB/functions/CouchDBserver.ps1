@@ -567,68 +567,6 @@ function Clear-CouchDBLog () {
     }
 }
 
-function Get-CouchDBDatabaseChanges () {
-    <#
-    .SYNOPSIS
-    Get database changelogs.
-    .DESCRIPTION
-    Returns a sorted list of changes made to documents in the database, 
-    in time order of application, can be obtained from the database’s _changes resource.
-    .NOTES
-    CouchDB API:
-        GET /_changes
-        POST /_changes/
-    .PARAMETER Server
-    The CouchDB server name. Default is localhost.
-    .PARAMETER Port
-    The CouchDB server port. Default is 5984.
-    .PARAMETER Database
-    The CouchDB database.
-    .PARAMETER Filter
-    Reference to a filter function from a design document that will filter whole stream emitting only filtered events.
-    .PARAMETER Continuous
-    Sends a line of JSON per event. Keeps the socket open until timeout.
-    .PARAMETER Authorization
-    The CouchDB authorization form; user and password.
-    Authorization format like this: user:password
-    ATTENTION: if the password is not specified, it will be prompted.
-    .PARAMETER Ssl
-    Set ssl connection on CouchDB server.
-    This modify protocol to https and port to 6984.
-    .EXAMPLE
-    Get-CouchDBDatabaseChanges -Database test
-    This example get list of changes made to documents in the database "test".
-    .LINK
-    https://pscouchdb.readthedocs.io/en/latest/databases.html#changes
-    #>
-    [CmdletBinding()]
-    param(
-        [string] $Server,
-        [int] $Port,
-        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [string] $Database,
-        [array] $Filter,
-        [switch] $Continuous ,
-        [string] $Authorization,
-        [switch] $Ssl
-    )
-    if (-not(Test-CouchDBDatabase -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
-        throw "Database $Database is not exists."
-    }
-    $Document = '_changes'
-    if ($Filter) {
-        $Document += '?filter=_doc_ids'
-        $Data = "{ `"doc_ids`": $($Filter | ConvertTo-Json -Compress) }"
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
-    } elseif ($Continuous.IsPresent) { 
-        $Document += '?feed=continuous'
-        $Data = "{}"
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
-    } else {
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
-    }
-}
-
 function Get-CouchDBDatabaseUpdates () {
     <#
     .SYNOPSIS
