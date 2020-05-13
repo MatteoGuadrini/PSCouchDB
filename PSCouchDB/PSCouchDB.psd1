@@ -20,7 +20,8 @@
         '.\functions\CouchDBreplication.ps1',
         '.\functions\CouchDBauthentication.ps1',
         '.\functions\CouchDBdatabase.ps1',
-        '.\functions\CouchDBdocument.ps1'  
+        '.\functions\CouchDBdocument.ps1',
+        '.\functions\CouchDBdesigndocument.ps1'
     )
 
     # Version number of this module.
