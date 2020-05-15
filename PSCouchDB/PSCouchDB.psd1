@@ -11,6 +11,22 @@
     # Script module or binary module file associated with this manifest.
     RootModule        = 'PSCouchDB.psm1'
 
+    # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
+    NestedModules     = @(
+        # PSCouchDB function modules 
+        '.\functions\CouchDBprivate.ps1',
+        '.\functions\CouchDBconfiguration.ps1',
+        '.\functions\CouchDBpermission.ps1',
+        '.\functions\CouchDBserver.ps1',
+        '.\functions\CouchDBreplication.ps1',
+        '.\functions\CouchDBauthentication.ps1',
+        '.\functions\CouchDBdatabase.ps1',
+        '.\functions\CouchDBdocument.ps1',
+        '.\functions\CouchDBdesigndocument.ps1',
+        # PSCouchDB alias modules
+        '.\alias\CouchDBalias.ps1'
+    )
+
     # Version number of this module.
     ModuleVersion     = '1.14.1'
 
