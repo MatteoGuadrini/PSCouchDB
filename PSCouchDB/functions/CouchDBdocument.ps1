@@ -869,7 +869,8 @@ function Get-CouchDBBulkDocument () {
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [array] $Document,
         [string] $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [switch] $AsJob
     )
     $Data = '{"docs": ['
     for ($counter = 0; $counter -lt $Document.Count; $counter++) {
@@ -880,7 +881,14 @@ function Get-CouchDBBulkDocument () {
     }
     $Data += ']}'
     [string] $Document = "_bulk_get"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    if ($AsJob.IsPresent) {
+        $job = Start-Job -Name "Bulk-Get" { Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl }
+        Register-TemporaryEvent $job "StateChanged" -Action {
+            Write-Host -ForegroundColor Green "Bulk get #$($sender.Id) ($($sender.Name)) complete."
+        }
+    } else {
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    }
 }
 
 function Set-CouchDBBulkDocument () {
