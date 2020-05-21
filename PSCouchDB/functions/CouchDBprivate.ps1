@@ -225,3 +225,39 @@ function ConvertTo-CouchDBPassword ([SecureString] $SecurePassword) {
     $UnsecurePassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
     return $UnsecurePassword
 }
+
+function Register-TemporaryEvent () {
+    <#
+    .SYNOPSIS
+    Registers an event action for an object, and automatically unregisters
+    itself afterward. In PowerShell version three, use the -MaxTriggerCount
+    parameter of the Register-*Event cmdlets.
+    .DESCRIPTION
+    Convert to SecureString to simple string.
+    .PARAMETER SecurePassword
+    Password format in [SecureString].
+    .EXAMPLE
+    PS > $timer = New-Object Timers.Timer
+    PS > Register-TemporaryEvent $timer Disposed { [Console]::Beep(100,100) }
+    PS > $timer.Dispose()
+    PS > Get-EventSubscriber
+    PS > Get-Job
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/documents.html#get-a-bulk-documents
+    #>
+    param(
+        $Object,
+        $Event,
+        [ScriptBlock] $Action
+    )
+
+    $actionText = $Action.ToString()
+    $actionText += @'
+    $eventSubscriber | Unregister-Event
+    $eventSubscriber.Action | Remove-Job
+'@
+
+    $eventAction = [ScriptBlock]::Create($actionText)
+    $null = Register-ObjectEvent $Object $Event -Action $eventAction
+
+}
