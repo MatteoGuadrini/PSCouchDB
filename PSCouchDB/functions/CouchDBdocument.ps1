@@ -854,6 +854,8 @@ function Get-CouchDBBulkDocument () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER AsJob
+    Send the command in the background.
     .EXAMPLE
     Get-CouchDBBulkDocument -Database test -Document "Hitchhikers","Hitchhikers Guide", "answer"
     This example get list of three document: "Hitchhikers","Hitchhikers Guide", "answer" on a database "test".
@@ -882,7 +884,10 @@ function Get-CouchDBBulkDocument () {
     $Data += ']}'
     [string] $Document = "_bulk_get"
     if ($AsJob.IsPresent) {
-        $job = Start-Job -Name "Bulk-Get" { Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl }
+        $job = Start-Job -Name "Bulk-Get" { 
+            param($Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl)
+            Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl 
+        } -ArgumentList $Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl
         Register-TemporaryEvent $job "StateChanged" -Action {
             Write-Host -ForegroundColor Green "Bulk get #$($sender.Id) ($($sender.Name)) complete."
         }
@@ -919,6 +924,8 @@ function Set-CouchDBBulkDocument () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER AsJob
+    Send the command in the background.
     .EXAMPLE
     Set-CouchDBBulkDocument -Database test -Document "Hitchhikers","Hitchhikers_new","Hitchhikers Guide" -Revision 4-7051cbe5c8faecd085a3fa619e6e6337,$null,3-399796e5ce019e04311637e8a8a0f402 -Authorization "admin:password"
     This example modify list of three document: "Hitchhikers","Hitchhikers_new","Hitchhikers Guide" on a database "test".
@@ -942,7 +949,8 @@ function Set-CouchDBBulkDocument () {
         [array] $Revision,
         [switch] $IsDeleted,
         [string] $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [switch] $AsJob
     )
     $Data = '{"docs": ['
     for ($counter = 0; $counter -lt $Document.Count; $counter++) {
@@ -960,7 +968,17 @@ function Set-CouchDBBulkDocument () {
     }
     $Data += ']}'
     [string] $Document = "_bulk_docs"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    if ($AsJob.IsPresent) {
+        $job = Start-Job -Name "Bulk-Docs" {
+            param($Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl)
+            Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl 
+        } -ArgumentList $Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl
+        Register-TemporaryEvent $job "StateChanged" -Action {
+            Write-Host -ForegroundColor Green "Bulk docs #$($sender.Id) ($($sender.Name)) complete."
+        }
+    } else {
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    }
 }
 
 
