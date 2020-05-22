@@ -576,6 +576,7 @@ _______
 
 .. code-block:: powershell
 
+    creq -> Send-CouchDBRequest
     acnode -> Add-CouchDBNode                      
     ccdb -> Compress-CouchDBDatabase               
     ccdd -> Compress-CouchDBDesignDocument         

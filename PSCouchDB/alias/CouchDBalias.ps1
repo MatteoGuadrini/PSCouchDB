@@ -1,4 +1,5 @@
 # Alias for all export cmdlets
+New-Alias -Name "creq" -Value Send-CouchDBRequest -Option ReadOnly
 New-Alias -Name "tcdb" -Value Test-CouchDBDatabase -Option ReadOnly
 New-Alias -Name "cpdb" -Value Copy-CouchDBDatabase -Option ReadOnly
 New-Alias -Name "gcdb" -Value Get-CouchDBDatabase -Option ReadOnly
