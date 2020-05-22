@@ -129,6 +129,12 @@ Permission
 Server
 ******
 
+**Send-CouchDBRequest**
+
+.. code-block:: powershell
+
+    Send-CouchDBRequest [[-Method] <String>] [[-Server] <String>] [[-Port] <Int32>] [[-Database] <String>] [[-Document] <String>] [[-Authorization] <String>] [[-Revision] <String>] [[-Attachment] <String>] [[-Data] <String>] [[-OutFile] <String>] [-Ssl] [<CommonParameters>]
+
 **Get-CouchDBServer**
 
 .. code-block:: powershell
@@ -430,13 +436,13 @@ Documents
 
 .. code-block:: powershell
 
-    Get-CouchDBBulkDocument [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <Array> [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    Get-CouchDBBulkDocument [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <Array> [[-Authorization] <String>] [-Ssl] [-AsJob] [<CommonParameters>]
     
 **Set-CouchDBBulkDocument**
 
 .. code-block:: powershell
 
-    Set-CouchDBBulkDocument [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <Array> [[-Revision] <Array>] [-IsDeleted] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    Set-CouchDBBulkDocument [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <Array> [[-Revision] <Array>] [-IsDeleted] [[-Authorization] <String>] [-Ssl] [-AsJob] [<CommonParameters>]
 
 **Get-CouchDBAttachment**
 
