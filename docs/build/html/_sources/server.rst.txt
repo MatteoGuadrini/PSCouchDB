@@ -16,6 +16,13 @@
 Server operation
 ================
 
+Most of the cmdlets in this module are based on the ``Send-CouchDBRequest`` cmdlet.
+
+.. code-block:: powershell
+
+    Send-CouchDBRequest # alias creq
+    Get-Help Send-CouchDBRequest -Full
+
 Below are all the cmdlets needed to get all the information on the CouchDB server.
 
 To get the version and other info on the server, run:
