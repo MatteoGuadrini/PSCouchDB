@@ -1427,6 +1427,8 @@ function Find-CouchDBDocuments () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER AsJob
+    Send the command in the background.
     .EXAMPLE
     Find-CouchDBDocuments -Database test -Selector "name" -Operator eq -Value "Arthur Dent" -Fields _id,name,planet
     The example query a database "test" with manual selector and operator.
@@ -1499,7 +1501,10 @@ function Find-CouchDBDocuments () {
         [string] $Authorization,
         [Parameter(ParameterSetName = "PSCouchDB")]
         [Parameter(ParameterSetName = "Native")]
-        [switch] $Ssl
+        [switch] $Ssl,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [Parameter(ParameterSetName = "Native")]
+        [switch] $AsJob
     )
 
     if ($Explain.IsPresent) {
@@ -1554,5 +1559,15 @@ function Find-CouchDBDocuments () {
         # Data
         $Data = $Query.GetNativeQuery()
     }
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    if ($AsJob.IsPresent) {
+        $job = Start-Job -Name "Find-Docs" {
+            param($Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl)
+            Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+        } -ArgumentList $Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl
+        Register-TemporaryEvent $job "StateChanged" -Action {
+            Write-Host -ForegroundColor Green "Find docs #$($sender.Id) ($($sender.Name)) complete."
+        }
+    } else {
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    }
 }
