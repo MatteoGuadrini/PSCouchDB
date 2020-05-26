@@ -84,6 +84,8 @@ function Copy-CouchDBDatabase () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER AsJob
+    Send the command in the background.
     .EXAMPLE
     Copy-CouchDBDatabase -Database test -Destination test_new -Authorization admin:password
     Copy a test database in a new test_new database.
@@ -102,9 +104,9 @@ function Copy-CouchDBDatabase () {
         [array] $ExcludeIds,
         [string] $Authorization,
         [string] $RemoteAuthorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [switch] $AsJob
     )
-    $count = 0
     $all_docs = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl
     # Check RemoteServer is defined
     if ($RemoteServer) {
@@ -129,15 +131,34 @@ function Copy-CouchDBDatabase () {
     } else {
         throw "Database $Destination exists! Choose another name."
     }
-    foreach ($doc in $all_docs.rows) {
-        if ($ExcludeIds -notcontains $doc.id) {
-            $count++
-            $Data = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $doc.id -Authorization $Authorization -Ssl:$Ssl | ConvertTo-Json -Depth 99 
-            New-CouchDBDocument -Server $DestinationServer -Port $DestinationPort -Database $Destination -Document $doc.id -Data $($Data -replace '"_rev":.*,', "") -Authorization $DestinationAuthorization -Ssl:$Ssl
-            Write-Progress -Activity "Copy document $($doc.id) in a new database $Destination in progress" -Status "Progress $count/$($all_docs.total_rows)" -PercentComplete ($count / $all_docs.total_rows * 100)
-        } else {
-            Write-Host "Skip $($doc.id) because exists in exclude list."
-        }   
+    # Start copy
+    if ($AsJob.IsPresent) {
+        $job = Start-Job -Name "Copy-Database" {
+            param($Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl, $all_docs, $ExcludeIds, $DestinationServer, $DestinationPort, $Destination, $DestinationAuthorization)
+            $count = 0
+            foreach ($doc in $all_docs.rows) {
+                if ($ExcludeIds -notcontains $doc.id) {
+                    $count++
+                    $Data = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $doc.id -Authorization $Authorization -Ssl:$Ssl | ConvertTo-Json -Depth 99 
+                    New-CouchDBDocument -Server $DestinationServer -Port $DestinationPort -Database $Destination -Document $doc.id -Data $($Data -replace '"_rev":.*,?', "") -Authorization $DestinationAuthorization -Ssl:$Ssl
+                }  
+            }
+        } -ArgumentList $Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl, $all_docs, $ExcludeIds, $DestinationServer, $DestinationPort, $Destination, $DestinationAuthorization
+        Register-TemporaryEvent $job "StateChanged" -Action {
+            Write-Host -ForegroundColor Green "Copy database #$($sender.Id) ($($sender.Name)) complete."
+        }
+    } else {
+        $count = 0
+        foreach ($doc in $all_docs.rows) {
+            if ($ExcludeIds -notcontains $doc.id) {
+                $count++
+                $Data = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $doc.id -Authorization $Authorization -Ssl:$Ssl | ConvertTo-Json -Depth 99 
+                New-CouchDBDocument -Server $DestinationServer -Port $DestinationPort -Database $Destination -Document $doc.id -Data $($Data -replace '"_rev":.*,?', "") -Authorization $DestinationAuthorization -Ssl:$Ssl
+                Write-Progress -Activity "Copy document $($doc.id) in a new database $Destination in progress" -Status "Progress $count/$($all_docs.total_rows)" -PercentComplete ($count / $all_docs.total_rows * 100)
+            } else {
+                Write-Host "Skip $($doc.id) because exists in exclude list."
+            }   
+        }
     }
 }
 

@@ -274,7 +274,7 @@ Databases
 
 .. code-block:: powershell
 
-    Copy-CouchDBDatabase [[-Server] <String>] [[-RemoteServer] <String>] [[-Port] <Int32>] [[-RemotePort] <Int32>] [-Database] <String> [[-Destination] <String>] [[-ExcludeIds] <Array>] [[-Authorization] <String>] [[-RemoteAuthorization] <String>] [-Ssl] [<CommonParameters>]
+    Copy-CouchDBDatabase [[-Server] <String>] [[-RemoteServer] <String>] [[-Port] <Int32>] [[-RemotePort] <Int32>] [-Database] <String> [[-Destination] <String>] [[-ExcludeIds] <Array>] [[-Authorization] <String>] [[-RemoteAuthorization] <String>] [-Ssl] [-AsJob] [<CommonParameters>]
 
 **Get-CouchDBDatabase**
 
