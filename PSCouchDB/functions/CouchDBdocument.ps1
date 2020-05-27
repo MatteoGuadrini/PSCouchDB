@@ -1311,6 +1311,8 @@ function Search-CouchDBFullText () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER AsJob
+    Send the command in the background.
     .EXAMPLE
     Search-CouchDBFullText -Database test -Patterns "space","planet"
     This example search the word "space" and "planet" in each document of database test.
@@ -1330,7 +1332,8 @@ function Search-CouchDBFullText () {
         [array] $Patterns,
         [switch] $UseQueries,
         [string] $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [switch] $AsJob
     )
     # Check if UseQueries has been used
     if ($UseQueries.IsPresent) {
@@ -1348,25 +1351,61 @@ function Search-CouchDBFullText () {
         }
 "@
         $Document = "_all_docs/queries"
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
-    } else {
-        $result = [PSCustomObject]@{
-            total_rows = 0
-            rows       = New-Object System.Collections.Generic.List[System.Object]
+        if ($AsJob.IsPresent) {
+            $job = Start-Job -Name "Search-FullText" {
+                param($Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl)
+                Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+            } -ArgumentList $Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl
+            Register-TemporaryEvent $job "StateChanged" -Action {
+                Write-Host -ForegroundColor Green "Search full text docs with queries #$($sender.Id) ($($sender.Name)) complete."
+            }
+        } else {
+            Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
         }
-        foreach ($doc in (Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl).rows) {
-            $json = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $doc.id -Authorization $Authorization -Ssl:$Ssl | ConvertTo-Json -Depth 99
-            foreach ($Pattern in $Patterns) {
-                if ($json -match "$Pattern") {
-                    $convert = $json | ConvertFrom-Json
-                    if ($result.rows -notcontains $convert) {
-                        $result.total_rows += 1
-                        $result.rows.Add($convert)
+    } else {
+        if ($AsJob.IsPresent) {
+            $job = Start-Job -Name "Search-FullText" {
+                param($Server, $Port, $Method, $Database, $Document, $Authorization, $Ssl)
+                $result = [PSCustomObject]@{
+                    total_rows = 0
+                    rows       = New-Object System.Collections.Generic.List[System.Object]
+                }
+                foreach ($doc in (Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl).rows) {
+                    $json = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $doc.id -Authorization $Authorization -Ssl:$Ssl | ConvertTo-Json -Depth 99
+                    foreach ($Pattern in $Patterns) {
+                        if ($json -match "$Pattern") {
+                            $convert = $json | ConvertFrom-Json
+                            if ($result.rows -notcontains $convert) {
+                                $result.total_rows += 1
+                                $result.rows.Add($convert)
+                            }
+                        }
+                    }
+                }
+                return $result
+            } -ArgumentList $Server, $Port, $Method, $Database, $Document, $Authorization, $Ssl
+            Register-TemporaryEvent $job "StateChanged" -Action {
+                Write-Host -ForegroundColor Green "Search full text docs #$($sender.Id) ($($sender.Name)) complete."
+            }
+        } else {
+            $result = [PSCustomObject]@{
+                total_rows = 0
+                rows       = New-Object System.Collections.Generic.List[System.Object]
+            }
+            foreach ($doc in (Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl).rows) {
+                $json = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $doc.id -Authorization $Authorization -Ssl:$Ssl | ConvertTo-Json -Depth 99
+                foreach ($Pattern in $Patterns) {
+                    if ($json -match "$Pattern") {
+                        $convert = $json | ConvertFrom-Json
+                        if ($result.rows -notcontains $convert) {
+                            $result.total_rows += 1
+                            $result.rows.Add($convert)
+                        }
                     }
                 }
             }
+            return $result
         }
-        return $result
     }
 }
 
