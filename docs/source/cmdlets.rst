@@ -389,7 +389,7 @@ Databases
 
 .. code-block:: powershell
 
-    Export-CouchDBDatabase [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [[-Path] <String>] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    Export-CouchDBDatabase [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [[-Path] <String>] [[-Authorization] <String>] [-Ssl] [-AsJob] [<CommonParameters>]
 
 **Import-CouchDBDatabase**
 
