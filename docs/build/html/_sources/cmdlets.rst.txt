@@ -395,7 +395,7 @@ Databases
 
 .. code-block:: powershell
 
-    Import-CouchDBDatabase [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Path] <String> [-RemoveRevision] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    Import-CouchDBDatabase [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Path] <String> [-RemoveRevision] [[-Authorization] <String>] [-Ssl] [-AsJob] [<CommonParameters>]
 
 Documents
 *********

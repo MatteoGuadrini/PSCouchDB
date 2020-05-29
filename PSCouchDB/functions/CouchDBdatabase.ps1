@@ -1159,8 +1159,10 @@ function Import-CouchDBDatabase () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER AsJob
+    Send the command in the background.
     .EXAMPLE
-    Import-CouchDBDatabase -Path test_01-25-2019_00_01_00.json
+    Import-CouchDBDatabase -Path test_01-25-2019_00_01_00.json -Database test_restored
     Import "test" database from a json file.
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/databases.html#import
@@ -1175,7 +1177,8 @@ function Import-CouchDBDatabase () {
         [string] $Path,
         [switch] $RemoveRevision,
         [string] $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [switch] $AsJob
     )
     # Check RemoveRevision parameter
     if ($RemoveRevision.IsPresent) {
@@ -1193,9 +1196,20 @@ function Import-CouchDBDatabase () {
     if (-not(Test-CouchDBDatabase -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
         New-CouchDBDatabase -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl | Out-Null
     }
-    # Import data in bulk
-    [string] $Document = "_bulk_docs"
-    $Data = "{ `"docs`" : $(($docs | ConvertFrom-Json) | ConvertTo-Json -Depth 99)}"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    if ($AsJob.IsPresent) {
+        $job = Start-Job -Name "Import-Database" {
+            param($Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl, $docs)
+            [string] $Document = "_bulk_docs"
+            $Data = "{ `"docs`" : $(($docs | ConvertFrom-Json) | ConvertTo-Json -Depth 99)}"
+            Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+        } -ArgumentList $Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl, $docs
+        Register-TemporaryEvent $job "StateChanged" -Action {
+            Write-Host -ForegroundColor Green "Import database #$($sender.Id) ($($sender.Name)) complete."
+        }
+    } else {
+        # Import data in bulk
+        [string] $Document = "_bulk_docs"
+        $Data = "{ `"docs`" : $(($docs | ConvertFrom-Json) | ConvertTo-Json -Depth 99)}"
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    }
 }
-
