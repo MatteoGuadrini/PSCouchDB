@@ -84,6 +84,8 @@ function Copy-CouchDBDatabase () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER AsJob
+    Send the command in the background.
     .EXAMPLE
     Copy-CouchDBDatabase -Database test -Destination test_new -Authorization admin:password
     Copy a test database in a new test_new database.
@@ -102,9 +104,9 @@ function Copy-CouchDBDatabase () {
         [array] $ExcludeIds,
         [string] $Authorization,
         [string] $RemoteAuthorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [switch] $AsJob
     )
-    $count = 0
     $all_docs = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl
     # Check RemoteServer is defined
     if ($RemoteServer) {
@@ -129,15 +131,34 @@ function Copy-CouchDBDatabase () {
     } else {
         throw "Database $Destination exists! Choose another name."
     }
-    foreach ($doc in $all_docs.rows) {
-        if ($ExcludeIds -notcontains $doc.id) {
-            $count++
-            $Data = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $doc.id -Authorization $Authorization -Ssl:$Ssl | ConvertTo-Json -Depth 99 
-            New-CouchDBDocument -Server $DestinationServer -Port $DestinationPort -Database $Destination -Document $doc.id -Data $($Data -replace '"_rev":.*,', "") -Authorization $DestinationAuthorization -Ssl:$Ssl
-            Write-Progress -Activity "Copy document $($doc.id) in a new database $Destination in progress" -Status "Progress $count/$($all_docs.total_rows)" -PercentComplete ($count / $all_docs.total_rows * 100)
-        } else {
-            Write-Host "Skip $($doc.id) because exists in exclude list."
-        }   
+    # Start copy
+    if ($AsJob.IsPresent) {
+        $job = Start-Job -Name "Copy-Database" {
+            param($Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl, $all_docs, $ExcludeIds, $DestinationServer, $DestinationPort, $Destination, $DestinationAuthorization)
+            $count = 0
+            foreach ($doc in $all_docs.rows) {
+                if ($ExcludeIds -notcontains $doc.id) {
+                    $count++
+                    $Data = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $doc.id -Authorization $Authorization -Ssl:$Ssl | ConvertTo-Json -Depth 99 
+                    New-CouchDBDocument -Server $DestinationServer -Port $DestinationPort -Database $Destination -Document $doc.id -Data $($Data -replace '"_rev":.*,?', "") -Authorization $DestinationAuthorization -Ssl:$Ssl
+                }  
+            }
+        } -ArgumentList $Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl, $all_docs, $ExcludeIds, $DestinationServer, $DestinationPort, $Destination, $DestinationAuthorization
+        Register-TemporaryEvent $job "StateChanged" -Action {
+            Write-Host -ForegroundColor Green "Copy database #$($sender.Id) ($($sender.Name)) complete."
+        }
+    } else {
+        $count = 0
+        foreach ($doc in $all_docs.rows) {
+            if ($ExcludeIds -notcontains $doc.id) {
+                $count++
+                $Data = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $doc.id -Authorization $Authorization -Ssl:$Ssl | ConvertTo-Json -Depth 99 
+                New-CouchDBDocument -Server $DestinationServer -Port $DestinationPort -Database $Destination -Document $doc.id -Data $($Data -replace '"_rev":.*,?', "") -Authorization $DestinationAuthorization -Ssl:$Ssl
+                Write-Progress -Activity "Copy document $($doc.id) in a new database $Destination in progress" -Status "Progress $count/$($all_docs.total_rows)" -PercentComplete ($count / $all_docs.total_rows * 100)
+            } else {
+                Write-Host "Skip $($doc.id) because exists in exclude list."
+            }   
+        }
     }
 }
 
@@ -1053,6 +1074,8 @@ function Export-CouchDBDatabase () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER AsJob
+    Send the command in the background.
     .EXAMPLE
     Export-CouchDBDatabase -Database test
     Export "test" database in a json file.
@@ -1067,7 +1090,8 @@ function Export-CouchDBDatabase () {
         [string] $Database,
         [string] $Path = $(Join-Path -Path "$($PWD.path)" -ChildPath "$($Database)_$(Get-Date -Format 'MM-dd-yyyy_HH_mm_ss').json"),
         [string] $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [switch] $AsJob
     )
     # Create list container
     $list = New-Object System.Collections.Generic.List[System.Object]
@@ -1078,20 +1102,32 @@ function Export-CouchDBDatabase () {
         $list.Add($(Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $doc.id -Authorization $Authorization -Ssl:$Ssl))
         Write-Progress -Activity "Export document $($doc.id) in progress" -Status "Progress $count/$($all_docs.count)" -PercentComplete ($count / $all_docs.count * 100)
     }
-    Write-Host "Export JSON file to $Path."
-    # Export all docs to json file
-    $list | ConvertTo-Json -Depth 99 | Out-File -FilePath $Path -Encoding utf8
-    # Result
-    if (Test-Path -Path $Path -ErrorAction SilentlyContinue) {
-        Write-Host
-        Write-Host "ok"
-        Write-Host "--"
-        Write-Host $true
+    if ($AsJob.IsPresent) {
+        $job = Start-Job -Name "Export-Database" {
+            param($list, $Path)
+            Write-Host "Export JSON file to $Path."
+            # Export all docs to json file
+            $list | ConvertTo-Json -Depth 99 | Out-File -FilePath $Path -Encoding utf8
+        } -ArgumentList $list, $Path
+        Register-TemporaryEvent $job "StateChanged" -Action {
+            Write-Host -ForegroundColor Green "Export database #$($sender.Id) ($($sender.Name)) complete."
+        }
     } else {
-        Write-Host
-        Write-Host "ok"
-        Write-Host "--"
-        Write-Host $false
+        Write-Host "Export JSON file to $Path."
+        # Export all docs to json file
+        $list | ConvertTo-Json -Depth 99 | Out-File -FilePath $Path -Encoding utf8
+        # Result
+        if (Test-Path -Path $Path -ErrorAction SilentlyContinue) {
+            Write-Host
+            Write-Host "ok"
+            Write-Host "--"
+            Write-Host $true
+        } else {
+            Write-Host
+            Write-Host "ok"
+            Write-Host "--"
+            Write-Host $false
+        }
     }
 }
 
@@ -1123,8 +1159,10 @@ function Import-CouchDBDatabase () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER AsJob
+    Send the command in the background.
     .EXAMPLE
-    Import-CouchDBDatabase -Path test_01-25-2019_00_01_00.json
+    Import-CouchDBDatabase -Path test_01-25-2019_00_01_00.json -Database test_restored
     Import "test" database from a json file.
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/databases.html#import
@@ -1139,7 +1177,8 @@ function Import-CouchDBDatabase () {
         [string] $Path,
         [switch] $RemoveRevision,
         [string] $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [switch] $AsJob
     )
     # Check RemoveRevision parameter
     if ($RemoveRevision.IsPresent) {
@@ -1157,9 +1196,20 @@ function Import-CouchDBDatabase () {
     if (-not(Test-CouchDBDatabase -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
         New-CouchDBDatabase -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl | Out-Null
     }
-    # Import data in bulk
-    [string] $Document = "_bulk_docs"
-    $Data = "{ `"docs`" : $(($docs | ConvertFrom-Json) | ConvertTo-Json -Depth 99)}"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    if ($AsJob.IsPresent) {
+        $job = Start-Job -Name "Import-Database" {
+            param($Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl, $docs)
+            [string] $Document = "_bulk_docs"
+            $Data = "{ `"docs`" : $(($docs | ConvertFrom-Json) | ConvertTo-Json -Depth 99)}"
+            Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+        } -ArgumentList $Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl, $docs
+        Register-TemporaryEvent $job "StateChanged" -Action {
+            Write-Host -ForegroundColor Green "Import database #$($sender.Id) ($($sender.Name)) complete."
+        }
+    } else {
+        # Import data in bulk
+        [string] $Document = "_bulk_docs"
+        $Data = "{ `"docs`" : $(($docs | ConvertFrom-Json) | ConvertTo-Json -Depth 99)}"
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    }
 }
-

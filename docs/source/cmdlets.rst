@@ -274,7 +274,7 @@ Databases
 
 .. code-block:: powershell
 
-    Copy-CouchDBDatabase [[-Server] <String>] [[-RemoteServer] <String>] [[-Port] <Int32>] [[-RemotePort] <Int32>] [-Database] <String> [[-Destination] <String>] [[-ExcludeIds] <Array>] [[-Authorization] <String>] [[-RemoteAuthorization] <String>] [-Ssl] [<CommonParameters>]
+    Copy-CouchDBDatabase [[-Server] <String>] [[-RemoteServer] <String>] [[-Port] <Int32>] [[-RemotePort] <Int32>] [-Database] <String> [[-Destination] <String>] [[-ExcludeIds] <Array>] [[-Authorization] <String>] [[-RemoteAuthorization] <String>] [-Ssl] [-AsJob] [<CommonParameters>]
 
 **Get-CouchDBDatabase**
 
@@ -389,13 +389,13 @@ Databases
 
 .. code-block:: powershell
 
-    Export-CouchDBDatabase [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [[-Path] <String>] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    Export-CouchDBDatabase [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [[-Path] <String>] [[-Authorization] <String>] [-Ssl] [-AsJob] [<CommonParameters>]
 
 **Import-CouchDBDatabase**
 
 .. code-block:: powershell
 
-    Import-CouchDBDatabase [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Path] <String> [-RemoveRevision] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    Import-CouchDBDatabase [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Path] <String> [-RemoveRevision] [[-Authorization] <String>] [-Ssl] [-AsJob] [<CommonParameters>]
 
 Documents
 *********
@@ -480,15 +480,15 @@ Documents
 
 .. code-block:: powershell
 
-    Search-CouchDBFullText [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Patterns] <Array> [-UseQueries] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    Search-CouchDBFullText [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Patterns] <Array> [-UseQueries] [[-Authorization] <String>] [-Ssl] [-AsJob] [<CommonParameters>]
     
 **Find-CouchDBDocuments**
 
 .. code-block:: powershell
 
-    Find-CouchDBDocuments [-Server <String>] [-Port <Int32>] [-Database <String>] [-Explain] [-Selector <String>] [-Value <Object>] [-Limit <Int32>] [-Skip <Int32>] [-Fields <Array>] [-Sort <Array>] [-UseIndex <Array>] [-ReadQuorum <Int32>] [-Bookmark <String>] [-NoUpdate] [-Stable] [-Stale <String>] [-ExecutionStats] [-Operator<String>] [-Authorization <String>] [-Ssl] [<CommonParameters>]
+    Find-CouchDBDocuments [-Server <String>] [-Port <Int32>] [-Database <String>] [-Explain] [-Selector <String>] [-Value <Object>] [-Limit <Int32>] [-Skip <Int32>] [-Fields <Array>] [-Sort <Array>] [-UseIndex <Array>] [-ReadQuorum <Int32>] [-Bookmark <String>] [-NoUpdate] [-Stable] [-Stale <String>] [-ExecutionStats] [-Operator <String>] [-Authorization <String>] [-Ssl] [-AsJob] [<CommonParameters>]
 
-    Find-CouchDBDocuments [-Server <String>] [-Port <Int32>] [-Database <String>] [-Find <String>] [-Authorization <String>] [-Ssl] [<CommonParameters>]
+    Find-CouchDBDocuments [-Server <String>] [-Port <Int32>] [-Database <String>] [-Find <String>] [-Authorization <String>] [-Ssl] [-AsJob] [<CommonParameters>]
 
 Design documents
 ****************
