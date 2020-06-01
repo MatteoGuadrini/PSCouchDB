@@ -281,3 +281,12 @@ And this, for create a new database from JSON file.
 .. code-block:: powershell
 
     Import-CouchDBDatabase -Database test_restored -Path test_01-25-2019_00_01_00.json -RemoveRevision
+
+Partition database
+__________________
+
+To create a partitioned database, we simply run:
+
+.. code-block:: powershell
+
+    Set-CouchDBDatabasePartition -Database test -Authorization "admin:password"

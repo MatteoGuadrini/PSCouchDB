@@ -125,6 +125,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#import">Import</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#partition-database">Partition database</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="documents.html">Documents</a></li>
@@ -426,6 +427,13 @@ The compaction process runs as a background process.</p>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Import-CouchDBDatabase</span> <span class="n">-Database</span> <span class="n">test_restored</span> <span class="n">-Path</span> <span class="n">test_01</span><span class="p">-</span><span class="n">25</span><span class="p">-</span><span class="n">2019_00_01_00</span><span class="p">.</span><span class="n">json</span> <span class="n">-RemoveRevision</span>
 </pre></div>
 </div>
+</div>
+</div>
+<div class="section" id="partition-database">
+<h2>Partition database<a class="headerlink" href="#partition-database" title="Permalink to this headline">¶</a></h2>
+<p>To create a partitioned database, we simply run:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Set-CouchDBDatabasePartition</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+</pre></div>
 </div>
 </div>
 </div>
