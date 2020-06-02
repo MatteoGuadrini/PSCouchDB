@@ -559,6 +559,7 @@ function New-CouchDBDocument () {
     .NOTES
     CouchDB API:
         PUT /{db}/{docid}
+        PUT /{db}/{partition:docid}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -567,6 +568,8 @@ function New-CouchDBDocument () {
     The CouchDB database.
     .PARAMETER Document
     The CouchDB document.
+    .PARAMETER Partition
+    The CouchDB partition.
     .PARAMETER Data
     The data in Json format or hastable.
     .PARAMETER BatchMode
@@ -582,7 +585,11 @@ function New-CouchDBDocument () {
     .EXAMPLE
     $data = @{"answer"=42; "ask"="Ultimate Question of Life, the Universe and Everything"}
     New-CouchDBDocument -Database test -Document "Hitchhikers"-Data $data -Authorization "admin:password"
-    The example modify document "Hitchhikers" with data $data; if the element of $data exists, overwrite, else adding new element.
+    The example create document "Hitchhikers" with data $data.
+    .EXAMPLE
+    $data = @{"answer"=42; "ask"="Ultimate Question of Life, the Universe and Everything"}
+    New-CouchDBDocument -Database test -Document "Hitchhikers"-Data $data -Partition Guide -Authorization "admin:password"
+    The example create document "Hitchhikers" with data $data and partition "Guide"
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/documents.html#create-a-document
     #>
@@ -594,6 +601,7 @@ function New-CouchDBDocument () {
         [string] $Database,
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Document,
+        [string] $Partition,
         [Parameter(mandatory = $true)]
         $Data,
         [switch] $BatchMode,
@@ -604,6 +612,8 @@ function New-CouchDBDocument () {
         # Json Data
         $Data = $Data | ConvertTo-Json -Depth 99
     }
+    # Check Partition
+    if ($Partition) { $Document = "${Partition}:${Document}" }
     # Check BatchMode
     if ($BatchMode.IsPresent) { $Document += "?batch=ok" }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
