@@ -1620,3 +1620,320 @@ function Find-CouchDBDocuments () {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
     }
 }
+
+function Get-CouchDBPartitionDocuments () {
+    <#
+    .SYNOPSIS
+    Get documents into partitions.
+    .DESCRIPTION
+    Get some info about the partition containing the document.
+    .NOTES
+    CouchDB API:
+        GET /{db}/_partition/{partition}
+        GET /{db}/_partition/{partition}/_all_docs
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Partition
+    The CouchDB partition.
+    .PARAMETER AllDocuments
+    The CouchDB partition.
+    .PARAMETER Descending
+    Return the design documents in descending by key order. Default is false. The document must be _all_docs.
+    .PARAMETER EndKey
+    Stop returning records when the specified key is reached. The document must be _all_docs.
+    .PARAMETER EndKeyDocument
+    Stop returning records when the specified document ID is reached. Ignored if endkey is not set. The document must be _all_docs.
+    .PARAMETER Group 
+    Group the results using the reduce function to a group or single row. Implies reduce is true and the maximum group_level. Default is false. The document must be _all_docs.
+    .PARAMETER GroupLevel
+    Specify the group level to be used. Implies group is true. The document must be _all_docs.
+    .PARAMETER IncludeDocuments
+    Include the associated document with each row. Default is false. The document must be _all_docs.
+    .PARAMETER InclusiveEnd
+    Specifies whether the specified end key should be included in the result. Default is true. The document must be _all_docs.
+    .PARAMETER Key
+    Return only documents that match the specified key. The document must be _all_docs.
+    .PARAMETER Keys
+    Return only documents where the key matches one of the keys specified in the array. The document must be _all_docs.
+    .PARAMETER Limit
+    Limit the number of the returned design documents to the specified number. The document must be _all_docs.
+    .PARAMETER Reduce
+    Use the reduction function. Default is true when a reduce function is defined. The document must be _all_docs.
+    .PARAMETER Skip
+    Skip this number of records before starting to return the results. Default is 0. The document must be _all_docs.
+    .PARAMETER Sorted
+    Sort returned rows. Setting this to false offers a performance boost. 
+    The total_rows and offset fields are not available when this is set to false. Default is true. The document must be _all_docs.
+    .PARAMETER Stable
+    Whether or not the view results should be returned from a stable set of shards. Default is false. The document must be _all_docs.
+    .PARAMETER Stale
+    Allow the results from a stale view to be used. Supported values: ok, update_after and false. ok is equivalent to stable=true&update=false. 
+    update_after is equivalent to stable=true&update=lazy. false is equivalent to stable=false&update=true. The document must be _all_docs.
+    .PARAMETER StartKey
+    Return records starting with the specified key. The document must be _all_docs.
+    .PARAMETER StartKeyDocument
+    Return records starting with the specified document ID. Ignored if startkey is not set. The document must be _all_docs.
+    .PARAMETER Update
+    Whether or not the view in question should be updated prior to responding to the user. Supported values: true, false, lazy. Default is true. The document must be _all_docs.
+    .PARAMETER UpdateSequence
+    Whether to include in the response an update_seq value indicating the sequence id of the database the view reflects. Default is false. The document must be _all_docs.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
+    .EXAMPLE
+    Get-CouchDBPartitionDocuments -Database test -Partition testing -Authorization "admin:password"
+    Get info for "testing" partition.
+    .EXAMPLE
+    Get-CouchDBPartitionDocuments -Database test -Partition testing -AllDocuments -Authorization "admin:password"
+    Get all documents on "testing" partition.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/documents.html#get-partitioned-documents
+    #>
+    [CmdletBinding(DefaultParameterSetName = "Info")]
+    param(
+        [Parameter(ParameterSetName = "Info")]
+        [Parameter(ParameterSetName = "AllDocs")]
+        [string] $Server,
+        [Parameter(ParameterSetName = "Info")]
+        [Parameter(ParameterSetName = "AllDocs")]
+        [int] $Port,
+        [Parameter(ParameterSetName = "Info")]
+        [Parameter(ParameterSetName = "AllDocs")]
+        [Parameter(mandatory = $true)]
+        [string] $Database,
+        [Parameter(ParameterSetName = "Info")]
+        [Parameter(ParameterSetName = "AllDocs")]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
+        [string] $Partition,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [switch] $AllDocuments,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [switch] $Descending,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [Alias('End')]
+        [string] $EndKey,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [Alias('EndDoc')]
+        [string] $EndKeyDocument,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [switch] $Group,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [int] $GroupLevel,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [Alias('IncDoc')]
+        [switch] $IncludeDocuments,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [Alias('IncEnd')]
+        [bool] $InclusiveEnd = $true,
+        [Parameter(ParameterSetName = "AllDocs")]
+        $Key,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [array] $Keys,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [int] $Limit,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [bool] $Reduce = $true,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [int] $Skip,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [bool] $Sorted = $true,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [switch] $Stable,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [ValidateSet("ok", "update_after", "false")]
+        [string] $Stale,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [Alias('Start')]
+        [string] $StartKey,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [Alias('StartDoc')]
+        [string] $StartKeyDocument,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [ValidateSet("true", "false", "lazy")]
+        [string] $Update,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [switch] $UpdateSequence,
+        [string] $Authorization,
+        [switch] $Ssl
+    )
+    # Check _all_docs
+    if ($AllDocuments.IsPresent) {
+        $Document = "_partition/$Partition/_all_docs"
+    } else {
+        $Document = "_partition/$Partition"
+    }
+    # Check Descending parameter
+    if ($Descending.IsPresent) {
+        if ($Document -match "\?") {
+            $Document += "&descending=true"
+        } else {
+            $Document += "?descending=true"
+        }
+    }
+    # Check EndKey parameter
+    if ($EndKey) {
+        if ($Document -match "\?") {
+            $Document += "&endkey=`"$EndKey`""
+        } else {
+            $Document += "?endkey=`"$EndKey`""
+        }
+    }
+    # Check EndKeyDocument parameter
+    if ($EndKeyDocument) {
+        if ($Document -match "\?") {
+            $Document += "&endkey_docid=`"$EndKeyDocument`""
+        } else {
+            $Document += "?endkey_docid=`"$EndKeyDocument`""
+        }
+    }
+    # Check Group parameter
+    if ($Group.IsPresent) {
+        if ($Document -match "\?") {
+            $Document += "&group=true"
+        } else {
+            $Document += "?group=true"
+        }
+    }
+    # Check GroupLevel parameter
+    if ($GroupLevel) {
+        if ($Document -match "\?") {
+            $Document += "&group_level=$GroupLevel"
+        } else {
+            $Document += "?group_level=$GroupLevel"
+        }
+    }
+    # Check IncludeDocuments parameter
+    if ($IncludeDocuments.IsPresent) {
+        if ($Document -match "\?") {
+            $Document += "&include_docs=true"
+        } else {
+            $Document += "?include_docs=true"
+        }
+    }
+    # Check InclusiveEnd parameter
+    if ($InclusiveEnd -eq $false) {
+        if ($Document -match "\?") {
+            $Document += "&inclusive_end=false"
+        } else {
+            $Document += "?inclusive_end=false"
+        }
+    }
+    # Check Key parameter
+    if ($Key) {
+        if ($Key -isnot [int]) { $Key = "`"$Key`"" }
+        if ($Document -match "\?") {
+            $Document += "&key=$Key"
+        } else {
+            $Document += "?key=$Key"
+        }
+    }
+    # Check Keys parameter
+    if ($Keys) {
+        if ($Document -match "\?") {
+            $Document += "&keys=$(
+                if ($Keys.Count -eq 1) {
+                    "[$($Keys | ConvertTo-Json -Compress)]"
+                } else {
+                    $Keys | ConvertTo-Json -Compress
+                }
+                )"
+        } else {
+            $Document += "?keys=$(
+                if ($Keys.Count -eq 1) {
+                    "[$($Keys | ConvertTo-Json -Compress)]"
+                } else {
+                    $Keys | ConvertTo-Json -Compress
+                }
+                )"
+        }
+    }
+    # Check Limit parameter
+    if ($Limit) {
+        if ($Document -match "\?") {
+            $Document += "&limit=$Limit"
+        } else {
+            $Document += "?limit=$Limit"
+        }
+    }
+    # Check Reduce parameter
+    if ($Reduce -eq $false) {
+        if ($Document -match "\?") {
+            $Document += "&reduce=false"
+        } else {
+            $Document += "?reduce=false"
+        }
+    }
+    # Check Skip parameter
+    if ($Skip) {
+        if ($Document -match "\?") {
+            $Document += "&skip=$Skip"
+        } else {
+            $Document += "?skip=$Skip"
+        }
+    }
+    # Check Sorted parameter
+    if ($Sorted -eq $false) {
+        if ($Document -match "\?") {
+            $Document += "&sorted=false"
+        } else {
+            $Document += "?sorted=false"
+        }
+    }
+    # Check Stable parameter
+    if ($Stable.IsPresent) {
+        if ($Document -match "\?") {
+            $Document += "&stable=true"
+        } else {
+            $Document += "?stable=true"
+        }
+    }
+    # Check Stale parameter
+    if ($Stale) {
+        if ($Document -match "\?") {
+            $Document += "&stale=$Stale"
+        } else {
+            $Document += "?stale=$Stale"
+        }
+    }
+    # Check StartKey parameter
+    if ($StartKey) {
+        if ($Document -match "\?") {
+            $Document += "&startkey=`"$StartKey`""
+        } else {
+            $Document += "?startkey=`"$StartKey`""
+        }
+    }
+    # Check StartKeyDocument parameter
+    if ($StartKeyDocument) {
+        if ($Document -match "\?") {
+            $Document += "&startkey_docid=`"$StartKeyDocument`""
+        } else {
+            $Document += "?startkey_docid=`"$StartKeyDocument`""
+        }
+    }
+    # Check Update parameter
+    if ($Update) {
+        if ($Document -match "\?") {
+            $Document += "&update=$Update"
+        } else {
+            $Document += "?update=$Update"
+        }
+    }
+    # Check UpdateSequence parameter
+    if ($UpdateSequence.IsPresent) {
+        if ($Document -match "\?") {
+            $Document += "&update_seq=true"
+        } else {
+            $Document += "?update_seq=true"
+        }
+    }
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+}

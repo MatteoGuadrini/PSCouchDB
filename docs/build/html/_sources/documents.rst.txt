@@ -27,7 +27,14 @@ To get document by the specified ``Document`` from the specified ``Database``. U
 
     Get-CouchDBDocument -Database test -Document "Hitchhikers"
 
+Get partitioned documents
+_________________________
+
 In this table you can find all the possible parameters to get the document.
+
+.. code-block:: powershell
+
+    Get-CouchDBPartitionDocuments -Database test -Partition testing -Authorization "admin:password"
 
 ================    ===========
 PARAMETER           DESCRIPTION
