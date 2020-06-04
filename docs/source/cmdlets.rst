@@ -500,9 +500,9 @@ Documents
 
 .. code-block:: powershell
 
-    Get-CouchDBPartitionDocuments [-Server <String>] [-Port <Int32>] [-Database <String>] [-Partition <String>] [-Authorization <String>] [-Ssl] [<CommonParameters>]
+    Get-CouchDBPartitionDocuments [-Server <String>] [-Port <Int32>] [-Database <String>] [-Partition <String>] [-Authorization <String>] [-Ssl] [-AsJob] [<CommonParameters>]
 
-    Get-CouchDBPartitionDocuments [-Server <String>] [-Port <Int32>] [-Database <String>] [-Partition <String>] [-AllDocuments] [-Descending] [-EndKey <String>] [-EndKeyDocument <String>] [-Group] [-GroupLevel <Int32>] [-IncludeDocuments] [-InclusiveEnd <Boolean>] [-Key <Object>] [-Keys <Array>] [-Limit <Int32>] [-Reduce <Boolean>] [-Skip <Int32>] [-Sorted <Boolean>] [-Stable] [-Stale <String>] [-StartKey <String>] [-StartKeyDocument <String>] [-Update <String>] [-UpdateSequence] [-Authorization <String>] [-Ssl] [<CommonParameters>]
+    Get-CouchDBPartitionDocuments [-Server <String>] [-Port <Int32>] [-Database <String>] [-Partition <String>] [-AllDocuments] [-Descending] [-EndKey <String>] [-EndKeyDocument <String>] [-Group] [-GroupLevel <Int32>] [-IncludeDocuments] [-InclusiveEnd <Boolean>] [-Key <Object>] [-Keys <Array>] [-Limit <Int32>] [-Reduce <Boolean>] [-Skip <Int32>] [-Sorted <Boolean>] [-Stable] [-Stale <String>] [-StartKey <String>] [-StartKeyDocument <String>] [-Update <String>] [-UpdateSequence] [-Authorization <String>] [-Ssl] [-AsJob] [<CommonParameters>]
 
 Design documents
 ****************

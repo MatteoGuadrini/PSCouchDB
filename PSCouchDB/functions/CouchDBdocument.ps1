@@ -1688,6 +1688,8 @@ function Get-CouchDBPartitionDocuments () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER AsJob
+    Send the command in the background.
     .EXAMPLE
     Get-CouchDBPartitionDocuments -Database test -Partition testing -Authorization "admin:password"
     Get info for "testing" partition.
@@ -1761,8 +1763,15 @@ function Get-CouchDBPartitionDocuments () {
         [string] $Update,
         [Parameter(ParameterSetName = "AllDocs")]
         [switch] $UpdateSequence,
+        [Parameter(ParameterSetName = "Info")]
+        [Parameter(ParameterSetName = "AllDocs")]
         [string] $Authorization,
-        [switch] $Ssl
+        [Parameter(ParameterSetName = "Info")]
+        [Parameter(ParameterSetName = "AllDocs")]
+        [switch] $Ssl,
+        [Parameter(ParameterSetName = "Info")]
+        [Parameter(ParameterSetName = "AllDocs")]
+        [switch] $AsJob
     )
     # Check _all_docs
     if ($AllDocuments.IsPresent) {
@@ -1935,5 +1944,15 @@ function Get-CouchDBPartitionDocuments () {
             $Document += "?update_seq=true"
         }
     }
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+    if ($AsJob.IsPresent) {
+        $job = Start-Job -Name "Get-Partition" {
+            param($Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl)
+            Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+        } -ArgumentList $Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl
+        Register-TemporaryEvent $job "StateChanged" -Action {
+            Write-Host -ForegroundColor Green "Get partitioned documents #$($sender.Id) ($($sender.Name)) complete."
+        }
+    } else {
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+    }
 }
