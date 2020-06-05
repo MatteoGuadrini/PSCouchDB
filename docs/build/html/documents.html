@@ -533,6 +533,10 @@ This is to ensure that deleted documents can be replicated to other databases as
 <span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Find</span> <span class="nv">$q</span><span class="p">.</span><span class="n">GetNativeQuery</span><span class="p">()</span>
 </pre></div>
 </div>
+<p>or search partitioned documents in a database, use the following cmdlet.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBPartitionDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Partition</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span>
+</pre></div>
+</div>
 <p>If you want to use Mango queries, follow the next sections. Otherwise you can see more examples in the <a class="reference external" href="classes.html">Classes section</a>.</p>
 <div class="section" id="search-a-document">
 <h3>Search a document<a class="headerlink" href="#search-a-document" title="Permalink to this headline">¶</a></h3>

@@ -1956,3 +1956,212 @@ function Get-CouchDBPartitionDocuments () {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
     }
 }
+
+function Find-CouchDBPartitionDocuments () {
+    <#
+    .SYNOPSIS
+    Find document data in a partitioned database.
+    .DESCRIPTION
+    Find documents using a declarative JSON querying syntax. Queries can use the built-in _all_docs index or custom indexes, specified using the _index endpoint.
+    .NOTES
+    CouchDB API:
+        POST /{db}/_partition/{partition_id}/_find
+        POST /{db}/_partition/{partition_id}/_explain
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Partition
+    The CouchDB partition.
+    .PARAMETER Explain
+    The CouchDB database _explain.
+    .PARAMETER Selector
+    The selector of Mango query.
+    .PARAMETER Value
+    The value of selector of Mango query.
+    .PARAMETER Limit
+    The limit number of documents that come back.
+    .PARAMETER Skip
+    The skip number of documents that come back.
+    .PARAMETER Fields
+    Array of fields that can return.
+    .PARAMETER Sort
+    Array of sort fields that can return.
+    .PARAMETER Sort
+    Array of index that can use.
+    .PARAMETER ReadQuorum
+    The ReadQuorum number.
+    .PARAMETER Bookmark
+    The Bookmark that can use.
+    .PARAMETER NoUpdate
+    Disable document update.
+    .PARAMETER Stable
+    Whether or not the view results should be returned from a “stable” set of shards.
+    .PARAMETER Stale
+    Combination of update=false and stable=true options. Possible options: "ok".
+    .PARAMETER ExecutionStats
+    Include execution statistics in the query response.
+    .PARAMETER Operator
+    The comparison operator.
+    .PARAMETER Find
+    The Json query structure.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
+    .PARAMETER Force
+    No confirmation prompt.
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
+    .PARAMETER AsJob
+    Send the command in the background.
+    .EXAMPLE
+    Find-CouchDBPartitionDocuments -Database test -Partition test -Selector "name" -Operator eq -Value "Arthur Dent" -Fields _id,name,planet
+    The example query a database "test" with manual selector and operator.
+    .EXAMPLE
+    Find-CouchDBPartitionDocuments -Database test -Partition test -Find '{"selector": {"name":{"$eq":"Arthur Dent"}},"fields":["_id","name","planet"]}'
+    The example query a database "test" with native Mango query.
+    .EXAMPLE
+    using module PSCouchDB
+    $q = New-Object -TypeName PSCouchDBQuery
+    $q.AddSelector("name","Arthur Dent")
+    $q.AddSelectorOperator('$eq')
+    $q.AddFields("_id")
+    $q.AddFields("name")
+    $q.AddFields("planet")
+    Find-CouchDBPartitionDocuments -Database test -Partition test -Find $q.GetNativeQuery()
+    The example query a database "test" with PSCouchDBQuery object.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/documents.html#query
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/classes.html#pscouchdbquery-class
+    #>
+    [CmdletBinding(DefaultParameterSetName = "PSCouchDB")]
+    param (
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [Parameter(ParameterSetName = "Native")]
+        [string] $Server,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [Parameter(ParameterSetName = "Native")]
+        [int] $Port,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [Parameter(ParameterSetName = "Native")]
+        [Parameter(mandatory = $true)]
+        [string] $Database,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [Parameter(ParameterSetName = "Native")]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
+        [string] $Partition,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [switch] $Explain,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [string] $Selector,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        $Value,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [int] $Limit,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [int] $Skip,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [array] $Fields,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [array] $Sort,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [array] $UseIndex,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [int] $ReadQuorum,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [string] $Bookmark,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [switch] $NoUpdate,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [switch] $Stable,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [ValidateSet('ok')]
+        [string] $Stale,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [switch] $ExecutionStats,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [ValidateSet('lt', 'lte', 'eq', 'ne', 'gte', 'gt', 'exists', 'type', 'in', 'nin', 'size', 'mod', 'regex')]
+        [string] $Operator,
+        [Parameter(ParameterSetName = "Native")]
+        [string] $Find,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [Parameter(ParameterSetName = "Native")]
+        [string] $Authorization,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [Parameter(ParameterSetName = "Native")]
+        [switch] $Ssl,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [Parameter(ParameterSetName = "Native")]
+        [switch] $AsJob
+    )
+
+    $Document = "_partition/$Partition"
+    if ($Explain.IsPresent) {
+        $Document += '/_explain'
+    } else {
+        $Document += '/_find'
+    }
+    if ($Find) {
+        if ($Find -is [hashtable]) {
+            # Json Data
+            $Data = $Find | ConvertTo-Json -Depth 99
+        } else {
+            # Json Data
+            $Data = $Find
+        }
+    } else {
+        # Compose JSON data
+        $Query = New-Object -TypeName PSCouchDBQuery
+        # boolean
+        if ($NoUpdate.IsPresent) { $Query.DisableUpdate() }
+        if ($Stable.IsPresent) { $Query.SetStable($true) }
+        if ($ExecutionStats.IsPresent) { $Query.SetExecutionStat($true) }
+        if ($Stale -eq 'ok') { $Query.SetStale() }
+        # int
+        if ($Limit -gt 0) { $Query.SetLimit($Limit) }
+        if ($Skip -gt 0) { $Query.SetSkip($Skip) }
+        if ($ReadQuorum -gt 0) { $Query.SetReadQuorum($ReadQuorum) }
+        # array
+        foreach ($f in $Fields) { $Query.AddFields($f) }
+        foreach ($s in $Sort) { $Query.AddSortAsc($s) }
+        foreach ($i in $UseIndex) { $Query.AddIndexies($i) }
+        # selector
+        if ($Selector -and $Value) {
+            $Query.AddSelector($Selector, $Value)
+        }
+        # operator
+        switch ($Operator) {
+            'lt' { $Query.AddSelectorOperator('$lt') }
+            'lte' { $Query.AddSelectorOperator('$lte') }
+            'eq' { $Query.AddSelectorOperator('$eq') }
+            'ne' { $Query.AddSelectorOperator('$ne') }
+            'gte' { $Query.AddSelectorOperator('$gte') }
+            'gt' { $Query.AddSelectorOperator('$gt') }
+            'exists' { $Query.AddSelectorOperator('$exists') }
+            'type' { $Query.AddSelectorOperator('$type') }
+            'in' { $Query.AddSelectorOperator('$in') }
+            'nin' { $Query.AddSelectorOperator('$nin') }
+            'size' { $Query.AddSelectorOperator('$size') }
+            'mod' { $Query.AddSelectorOperator('$mod') }
+            'regex' { $Query.AddSelectorOperator('$regex') }
+        }
+        # Data
+        $Data = $Query.GetNativeQuery()
+    }
+    if ($AsJob.IsPresent) {
+        $job = Start-Job -Name "Find-PartitionDocs" {
+            param($Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl)
+            Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+        } -ArgumentList $Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl
+        Register-TemporaryEvent $job "StateChanged" -Action {
+            Write-Host -ForegroundColor Green "Find partitioned documents #$($sender.Id) ($($sender.Name)) complete."
+        }
+    } else {
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    }
+}
