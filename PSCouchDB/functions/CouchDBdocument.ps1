@@ -559,6 +559,7 @@ function New-CouchDBDocument () {
     .NOTES
     CouchDB API:
         PUT /{db}/{docid}
+        PUT /{db}/{partition:docid}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -567,6 +568,8 @@ function New-CouchDBDocument () {
     The CouchDB database.
     .PARAMETER Document
     The CouchDB document.
+    .PARAMETER Partition
+    The CouchDB partition.
     .PARAMETER Data
     The data in Json format or hastable.
     .PARAMETER BatchMode
@@ -582,7 +585,11 @@ function New-CouchDBDocument () {
     .EXAMPLE
     $data = @{"answer"=42; "ask"="Ultimate Question of Life, the Universe and Everything"}
     New-CouchDBDocument -Database test -Document "Hitchhikers"-Data $data -Authorization "admin:password"
-    The example modify document "Hitchhikers" with data $data; if the element of $data exists, overwrite, else adding new element.
+    The example create document "Hitchhikers" with data $data.
+    .EXAMPLE
+    $data = @{"answer"=42; "ask"="Ultimate Question of Life, the Universe and Everything"}
+    New-CouchDBDocument -Database test -Document "Hitchhikers"-Data $data -Partition Guide -Authorization "admin:password"
+    The example create document "Hitchhikers" with data $data and partition "Guide"
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/documents.html#create-a-document
     #>
@@ -594,6 +601,7 @@ function New-CouchDBDocument () {
         [string] $Database,
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Document,
+        [string] $Partition,
         [Parameter(mandatory = $true)]
         $Data,
         [switch] $BatchMode,
@@ -604,6 +612,8 @@ function New-CouchDBDocument () {
         # Json Data
         $Data = $Data | ConvertTo-Json -Depth 99
     }
+    # Check Partition
+    if ($Partition) { $Document = "${Partition}:${Document}" }
     # Check BatchMode
     if ($BatchMode.IsPresent) { $Document += "?batch=ok" }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
@@ -1605,6 +1615,551 @@ function Find-CouchDBDocuments () {
         } -ArgumentList $Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl
         Register-TemporaryEvent $job "StateChanged" -Action {
             Write-Host -ForegroundColor Green "Find docs #$($sender.Id) ($($sender.Name)) complete."
+        }
+    } else {
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    }
+}
+
+function Get-CouchDBPartitionDocuments () {
+    <#
+    .SYNOPSIS
+    Get documents into partitions.
+    .DESCRIPTION
+    Get some info about the partition containing the document.
+    .NOTES
+    CouchDB API:
+        GET /{db}/_partition/{partition}
+        GET /{db}/_partition/{partition}/_all_docs
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Partition
+    The CouchDB partition.
+    .PARAMETER AllDocuments
+    The CouchDB partition.
+    .PARAMETER Descending
+    Return the design documents in descending by key order. Default is false. The document must be _all_docs.
+    .PARAMETER EndKey
+    Stop returning records when the specified key is reached. The document must be _all_docs.
+    .PARAMETER EndKeyDocument
+    Stop returning records when the specified document ID is reached. Ignored if endkey is not set. The document must be _all_docs.
+    .PARAMETER Group 
+    Group the results using the reduce function to a group or single row. Implies reduce is true and the maximum group_level. Default is false. The document must be _all_docs.
+    .PARAMETER GroupLevel
+    Specify the group level to be used. Implies group is true. The document must be _all_docs.
+    .PARAMETER IncludeDocuments
+    Include the associated document with each row. Default is false. The document must be _all_docs.
+    .PARAMETER InclusiveEnd
+    Specifies whether the specified end key should be included in the result. Default is true. The document must be _all_docs.
+    .PARAMETER Key
+    Return only documents that match the specified key. The document must be _all_docs.
+    .PARAMETER Keys
+    Return only documents where the key matches one of the keys specified in the array. The document must be _all_docs.
+    .PARAMETER Limit
+    Limit the number of the returned design documents to the specified number. The document must be _all_docs.
+    .PARAMETER Reduce
+    Use the reduction function. Default is true when a reduce function is defined. The document must be _all_docs.
+    .PARAMETER Skip
+    Skip this number of records before starting to return the results. Default is 0. The document must be _all_docs.
+    .PARAMETER Sorted
+    Sort returned rows. Setting this to false offers a performance boost. 
+    The total_rows and offset fields are not available when this is set to false. Default is true. The document must be _all_docs.
+    .PARAMETER Stable
+    Whether or not the view results should be returned from a stable set of shards. Default is false. The document must be _all_docs.
+    .PARAMETER Stale
+    Allow the results from a stale view to be used. Supported values: ok, update_after and false. ok is equivalent to stable=true&update=false. 
+    update_after is equivalent to stable=true&update=lazy. false is equivalent to stable=false&update=true. The document must be _all_docs.
+    .PARAMETER StartKey
+    Return records starting with the specified key. The document must be _all_docs.
+    .PARAMETER StartKeyDocument
+    Return records starting with the specified document ID. Ignored if startkey is not set. The document must be _all_docs.
+    .PARAMETER Update
+    Whether or not the view in question should be updated prior to responding to the user. Supported values: true, false, lazy. Default is true. The document must be _all_docs.
+    .PARAMETER UpdateSequence
+    Whether to include in the response an update_seq value indicating the sequence id of the database the view reflects. Default is false. The document must be _all_docs.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
+    .PARAMETER AsJob
+    Send the command in the background.
+    .EXAMPLE
+    Get-CouchDBPartitionDocuments -Database test -Partition testing -Authorization "admin:password"
+    Get info for "testing" partition.
+    .EXAMPLE
+    Get-CouchDBPartitionDocuments -Database test -Partition testing -AllDocuments -Authorization "admin:password"
+    Get all documents on "testing" partition.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/documents.html#get-partitioned-documents
+    #>
+    [CmdletBinding(DefaultParameterSetName = "Info")]
+    param(
+        [Parameter(ParameterSetName = "Info")]
+        [Parameter(ParameterSetName = "AllDocs")]
+        [string] $Server,
+        [Parameter(ParameterSetName = "Info")]
+        [Parameter(ParameterSetName = "AllDocs")]
+        [int] $Port,
+        [Parameter(ParameterSetName = "Info")]
+        [Parameter(ParameterSetName = "AllDocs")]
+        [Parameter(mandatory = $true)]
+        [string] $Database,
+        [Parameter(ParameterSetName = "Info")]
+        [Parameter(ParameterSetName = "AllDocs")]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
+        [string] $Partition,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [switch] $AllDocuments,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [switch] $Descending,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [Alias('End')]
+        [string] $EndKey,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [Alias('EndDoc')]
+        [string] $EndKeyDocument,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [switch] $Group,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [int] $GroupLevel,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [Alias('IncDoc')]
+        [switch] $IncludeDocuments,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [Alias('IncEnd')]
+        [bool] $InclusiveEnd = $true,
+        [Parameter(ParameterSetName = "AllDocs")]
+        $Key,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [array] $Keys,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [int] $Limit,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [bool] $Reduce = $true,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [int] $Skip,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [bool] $Sorted = $true,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [switch] $Stable,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [ValidateSet("ok", "update_after", "false")]
+        [string] $Stale,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [Alias('Start')]
+        [string] $StartKey,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [Alias('StartDoc')]
+        [string] $StartKeyDocument,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [ValidateSet("true", "false", "lazy")]
+        [string] $Update,
+        [Parameter(ParameterSetName = "AllDocs")]
+        [switch] $UpdateSequence,
+        [Parameter(ParameterSetName = "Info")]
+        [Parameter(ParameterSetName = "AllDocs")]
+        [string] $Authorization,
+        [Parameter(ParameterSetName = "Info")]
+        [Parameter(ParameterSetName = "AllDocs")]
+        [switch] $Ssl,
+        [Parameter(ParameterSetName = "Info")]
+        [Parameter(ParameterSetName = "AllDocs")]
+        [switch] $AsJob
+    )
+    # Check _all_docs
+    if ($AllDocuments.IsPresent) {
+        $Document = "_partition/$Partition/_all_docs"
+    } else {
+        $Document = "_partition/$Partition"
+    }
+    # Check Descending parameter
+    if ($Descending.IsPresent) {
+        if ($Document -match "\?") {
+            $Document += "&descending=true"
+        } else {
+            $Document += "?descending=true"
+        }
+    }
+    # Check EndKey parameter
+    if ($EndKey) {
+        if ($Document -match "\?") {
+            $Document += "&endkey=`"$EndKey`""
+        } else {
+            $Document += "?endkey=`"$EndKey`""
+        }
+    }
+    # Check EndKeyDocument parameter
+    if ($EndKeyDocument) {
+        if ($Document -match "\?") {
+            $Document += "&endkey_docid=`"$EndKeyDocument`""
+        } else {
+            $Document += "?endkey_docid=`"$EndKeyDocument`""
+        }
+    }
+    # Check Group parameter
+    if ($Group.IsPresent) {
+        if ($Document -match "\?") {
+            $Document += "&group=true"
+        } else {
+            $Document += "?group=true"
+        }
+    }
+    # Check GroupLevel parameter
+    if ($GroupLevel) {
+        if ($Document -match "\?") {
+            $Document += "&group_level=$GroupLevel"
+        } else {
+            $Document += "?group_level=$GroupLevel"
+        }
+    }
+    # Check IncludeDocuments parameter
+    if ($IncludeDocuments.IsPresent) {
+        if ($Document -match "\?") {
+            $Document += "&include_docs=true"
+        } else {
+            $Document += "?include_docs=true"
+        }
+    }
+    # Check InclusiveEnd parameter
+    if ($InclusiveEnd -eq $false) {
+        if ($Document -match "\?") {
+            $Document += "&inclusive_end=false"
+        } else {
+            $Document += "?inclusive_end=false"
+        }
+    }
+    # Check Key parameter
+    if ($Key) {
+        if ($Key -isnot [int]) { $Key = "`"$Key`"" }
+        if ($Document -match "\?") {
+            $Document += "&key=$Key"
+        } else {
+            $Document += "?key=$Key"
+        }
+    }
+    # Check Keys parameter
+    if ($Keys) {
+        if ($Document -match "\?") {
+            $Document += "&keys=$(
+                if ($Keys.Count -eq 1) {
+                    "[$($Keys | ConvertTo-Json -Compress)]"
+                } else {
+                    $Keys | ConvertTo-Json -Compress
+                }
+                )"
+        } else {
+            $Document += "?keys=$(
+                if ($Keys.Count -eq 1) {
+                    "[$($Keys | ConvertTo-Json -Compress)]"
+                } else {
+                    $Keys | ConvertTo-Json -Compress
+                }
+                )"
+        }
+    }
+    # Check Limit parameter
+    if ($Limit) {
+        if ($Document -match "\?") {
+            $Document += "&limit=$Limit"
+        } else {
+            $Document += "?limit=$Limit"
+        }
+    }
+    # Check Reduce parameter
+    if ($Reduce -eq $false) {
+        if ($Document -match "\?") {
+            $Document += "&reduce=false"
+        } else {
+            $Document += "?reduce=false"
+        }
+    }
+    # Check Skip parameter
+    if ($Skip) {
+        if ($Document -match "\?") {
+            $Document += "&skip=$Skip"
+        } else {
+            $Document += "?skip=$Skip"
+        }
+    }
+    # Check Sorted parameter
+    if ($Sorted -eq $false) {
+        if ($Document -match "\?") {
+            $Document += "&sorted=false"
+        } else {
+            $Document += "?sorted=false"
+        }
+    }
+    # Check Stable parameter
+    if ($Stable.IsPresent) {
+        if ($Document -match "\?") {
+            $Document += "&stable=true"
+        } else {
+            $Document += "?stable=true"
+        }
+    }
+    # Check Stale parameter
+    if ($Stale) {
+        if ($Document -match "\?") {
+            $Document += "&stale=$Stale"
+        } else {
+            $Document += "?stale=$Stale"
+        }
+    }
+    # Check StartKey parameter
+    if ($StartKey) {
+        if ($Document -match "\?") {
+            $Document += "&startkey=`"$StartKey`""
+        } else {
+            $Document += "?startkey=`"$StartKey`""
+        }
+    }
+    # Check StartKeyDocument parameter
+    if ($StartKeyDocument) {
+        if ($Document -match "\?") {
+            $Document += "&startkey_docid=`"$StartKeyDocument`""
+        } else {
+            $Document += "?startkey_docid=`"$StartKeyDocument`""
+        }
+    }
+    # Check Update parameter
+    if ($Update) {
+        if ($Document -match "\?") {
+            $Document += "&update=$Update"
+        } else {
+            $Document += "?update=$Update"
+        }
+    }
+    # Check UpdateSequence parameter
+    if ($UpdateSequence.IsPresent) {
+        if ($Document -match "\?") {
+            $Document += "&update_seq=true"
+        } else {
+            $Document += "?update_seq=true"
+        }
+    }
+    if ($AsJob.IsPresent) {
+        $job = Start-Job -Name "Get-Partition" {
+            param($Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl)
+            Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+        } -ArgumentList $Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl
+        Register-TemporaryEvent $job "StateChanged" -Action {
+            Write-Host -ForegroundColor Green "Get partitioned documents #$($sender.Id) ($($sender.Name)) complete."
+        }
+    } else {
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+    }
+}
+
+function Find-CouchDBPartitionDocuments () {
+    <#
+    .SYNOPSIS
+    Find document data in a partitioned database.
+    .DESCRIPTION
+    Find documents using a declarative JSON querying syntax. Queries can use the built-in _all_docs index or custom indexes, specified using the _index endpoint.
+    .NOTES
+    CouchDB API:
+        POST /{db}/_partition/{partition_id}/_find
+        POST /{db}/_partition/{partition_id}/_explain
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Partition
+    The CouchDB partition.
+    .PARAMETER Explain
+    The CouchDB database _explain.
+    .PARAMETER Selector
+    The selector of Mango query.
+    .PARAMETER Value
+    The value of selector of Mango query.
+    .PARAMETER Limit
+    The limit number of documents that come back.
+    .PARAMETER Skip
+    The skip number of documents that come back.
+    .PARAMETER Fields
+    Array of fields that can return.
+    .PARAMETER Sort
+    Array of sort fields that can return.
+    .PARAMETER Sort
+    Array of index that can use.
+    .PARAMETER ReadQuorum
+    The ReadQuorum number.
+    .PARAMETER Bookmark
+    The Bookmark that can use.
+    .PARAMETER NoUpdate
+    Disable document update.
+    .PARAMETER Stable
+    Whether or not the view results should be returned from a “stable” set of shards.
+    .PARAMETER Stale
+    Combination of update=false and stable=true options. Possible options: "ok".
+    .PARAMETER ExecutionStats
+    Include execution statistics in the query response.
+    .PARAMETER Operator
+    The comparison operator.
+    .PARAMETER Find
+    The Json query structure.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
+    .PARAMETER Force
+    No confirmation prompt.
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
+    .PARAMETER AsJob
+    Send the command in the background.
+    .EXAMPLE
+    Find-CouchDBPartitionDocuments -Database test -Partition test -Selector "name" -Operator eq -Value "Arthur Dent" -Fields _id,name,planet
+    The example query a database "test" with manual selector and operator.
+    .EXAMPLE
+    Find-CouchDBPartitionDocuments -Database test -Partition test -Find '{"selector": {"name":{"$eq":"Arthur Dent"}},"fields":["_id","name","planet"]}'
+    The example query a database "test" with native Mango query.
+    .EXAMPLE
+    using module PSCouchDB
+    $q = New-Object -TypeName PSCouchDBQuery
+    $q.AddSelector("name","Arthur Dent")
+    $q.AddSelectorOperator('$eq')
+    $q.AddFields("_id")
+    $q.AddFields("name")
+    $q.AddFields("planet")
+    Find-CouchDBPartitionDocuments -Database test -Partition test -Find $q.GetNativeQuery()
+    The example query a database "test" with PSCouchDBQuery object.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/documents.html#query
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/classes.html#pscouchdbquery-class
+    #>
+    [CmdletBinding(DefaultParameterSetName = "PSCouchDB")]
+    param (
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [Parameter(ParameterSetName = "Native")]
+        [string] $Server,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [Parameter(ParameterSetName = "Native")]
+        [int] $Port,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [Parameter(ParameterSetName = "Native")]
+        [Parameter(mandatory = $true)]
+        [string] $Database,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [Parameter(ParameterSetName = "Native")]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
+        [string] $Partition,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [switch] $Explain,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [string] $Selector,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        $Value,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [int] $Limit,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [int] $Skip,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [array] $Fields,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [array] $Sort,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [array] $UseIndex,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [int] $ReadQuorum,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [string] $Bookmark,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [switch] $NoUpdate,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [switch] $Stable,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [ValidateSet('ok')]
+        [string] $Stale,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [switch] $ExecutionStats,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [ValidateSet('lt', 'lte', 'eq', 'ne', 'gte', 'gt', 'exists', 'type', 'in', 'nin', 'size', 'mod', 'regex')]
+        [string] $Operator,
+        [Parameter(ParameterSetName = "Native")]
+        [string] $Find,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [Parameter(ParameterSetName = "Native")]
+        [string] $Authorization,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [Parameter(ParameterSetName = "Native")]
+        [switch] $Ssl,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [Parameter(ParameterSetName = "Native")]
+        [switch] $AsJob
+    )
+
+    $Document = "_partition/$Partition"
+    if ($Explain.IsPresent) {
+        $Document += '/_explain'
+    } else {
+        $Document += '/_find'
+    }
+    if ($Find) {
+        if ($Find -is [hashtable]) {
+            # Json Data
+            $Data = $Find | ConvertTo-Json -Depth 99
+        } else {
+            # Json Data
+            $Data = $Find
+        }
+    } else {
+        # Compose JSON data
+        $Query = New-Object -TypeName PSCouchDBQuery
+        # boolean
+        if ($NoUpdate.IsPresent) { $Query.DisableUpdate() }
+        if ($Stable.IsPresent) { $Query.SetStable($true) }
+        if ($ExecutionStats.IsPresent) { $Query.SetExecutionStat($true) }
+        if ($Stale -eq 'ok') { $Query.SetStale() }
+        # int
+        if ($Limit -gt 0) { $Query.SetLimit($Limit) }
+        if ($Skip -gt 0) { $Query.SetSkip($Skip) }
+        if ($ReadQuorum -gt 0) { $Query.SetReadQuorum($ReadQuorum) }
+        # array
+        foreach ($f in $Fields) { $Query.AddFields($f) }
+        foreach ($s in $Sort) { $Query.AddSortAsc($s) }
+        foreach ($i in $UseIndex) { $Query.AddIndexies($i) }
+        # selector
+        if ($Selector -and $Value) {
+            $Query.AddSelector($Selector, $Value)
+        }
+        # operator
+        switch ($Operator) {
+            'lt' { $Query.AddSelectorOperator('$lt') }
+            'lte' { $Query.AddSelectorOperator('$lte') }
+            'eq' { $Query.AddSelectorOperator('$eq') }
+            'ne' { $Query.AddSelectorOperator('$ne') }
+            'gte' { $Query.AddSelectorOperator('$gte') }
+            'gt' { $Query.AddSelectorOperator('$gt') }
+            'exists' { $Query.AddSelectorOperator('$exists') }
+            'type' { $Query.AddSelectorOperator('$type') }
+            'in' { $Query.AddSelectorOperator('$in') }
+            'nin' { $Query.AddSelectorOperator('$nin') }
+            'size' { $Query.AddSelectorOperator('$size') }
+            'mod' { $Query.AddSelectorOperator('$mod') }
+            'regex' { $Query.AddSelectorOperator('$regex') }
+        }
+        # Data
+        $Data = $Query.GetNativeQuery()
+    }
+    if ($AsJob.IsPresent) {
+        $job = Start-Job -Name "Find-PartitionDocs" {
+            param($Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl)
+            Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+        } -ArgumentList $Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl
+        Register-TemporaryEvent $job "StateChanged" -Action {
+            Write-Host -ForegroundColor Green "Find partitioned documents #$($sender.Id) ($($sender.Name)) complete."
         }
     } else {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl

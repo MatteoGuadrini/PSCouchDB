@@ -27,7 +27,14 @@ To get document by the specified ``Document`` from the specified ``Database``. U
 
     Get-CouchDBDocument -Database test -Document "Hitchhikers"
 
+Get partitioned documents
+_________________________
+
 In this table you can find all the possible parameters to get the document.
+
+.. code-block:: powershell
+
+    Get-CouchDBPartitionDocuments -Database test -Partition testing -Authorization "admin:password"
 
 ================    ===========
 PARAMETER           DESCRIPTION
@@ -309,6 +316,12 @@ or with class (for complex query)
     $q.AddFields("name")
     $q.AddFields("planet")
     Find-CouchDBDocuments -Database test -Find $q.GetNativeQuery()
+
+or search partitioned documents in a database, use the following cmdlet.
+
+.. code-block:: powershell
+
+    Find-CouchDBPartitionDocuments -Database test -Partition test -Selector "name" -Operator eq -Value "Arthur Dent" -Fields _id,name,planet
 
 If you want to use Mango queries, follow the next sections. Otherwise you can see more examples in the `Classes section <classes.html>`_.
 

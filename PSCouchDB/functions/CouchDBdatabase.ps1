@@ -1213,3 +1213,44 @@ function Import-CouchDBDatabase () {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
     }
 }
+
+function Set-CouchDBDatabasePartition () {
+    <#
+    .SYNOPSIS
+    Create a partitioned database.
+    .DESCRIPTION
+    Create a partitioned database, than forms documents into logical partitions by using a partition key.
+    .NOTES
+    CouchDB API:
+        PUT /{db}?partitioned=true
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
+    .EXAMPLE
+    Set-CouchDBDatabasePartition -Database test -Authorization admin:password
+    Create a partitioned database.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/databases.html#partition-database
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server,
+        [int] $Port,
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
+        [string] $Database,
+        [string] $Authorization,
+        [switch] $Ssl
+    )
+    $Database += "?partitioned=true"
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Authorization $Authorization -Ssl:$Ssl
+}
