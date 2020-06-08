@@ -1,4 +1,36 @@
 # Native Powershell CouchDB class
+class PSCouchDBDocument {
+    <#
+    .SYNOPSIS
+    CouchDB documents
+    .DESCRIPTION
+    Class than representing the CouchDB documents
+    .EXAMPLE
+    using module PSCouchDB
+    $doc = New-Object PSCouchDBDocument
+    #>
+    # Propetries
+    [string] $_id
+    [string] $_rev
+    hidden [hashtable] $doc = @{}
+
+    # Constructors
+    PSCouchDBDocument () { 
+        $this._id = (New-CouchDBUuids -Count 1).uuids[0]
+        $this.doc.Add('_id', $this._id)
+    }
+
+    PSCouchDBDocument ([string]$_id) {
+        $this._id = $_id
+        $this.doc.Add('_id', $this._id)
+    }
+
+    # Methods
+    [hashtable] GetDocument () {
+        return $this.doc
+    }
+}
+
 class PSCouchDBQuery {
     <#
     .SYNOPSIS
