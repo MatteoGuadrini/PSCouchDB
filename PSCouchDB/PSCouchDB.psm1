@@ -45,6 +45,26 @@ class PSCouchDBDocument {
             Write-Error -Message "Body element `"$key`" doesn't exists."
         }
     }
+
+    [string] ToJson () {
+        return $this.doc | ConvertTo-Json -Depth 10 -Compress:$false
+    }
+
+    [string] ToJson ([int]$depth) {
+        return $this.doc | ConvertTo-Json -Depth $depth -Compress:$false
+    }
+
+    [string] ToJson ([int]$depth, [bool]$compress) {
+        return $this.doc | ConvertTo-Json -Depth $depth -Compress:$compress
+    }
+
+    [hashtable] FromJson ([string]$json) {
+        $body = ConvertFrom-Json -InputObject $json
+        $body.psobject.properties | ForEach-Object { $this.SetElement($_.Name, $_.Value) }
+        $this._id = $this.doc._id
+        $this._rev = $this.doc._rev
+        return $this.doc
+    }
 }
 
 class PSCouchDBQuery {
