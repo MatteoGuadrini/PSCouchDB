@@ -29,6 +29,22 @@ class PSCouchDBDocument {
     [hashtable] GetDocument () {
         return $this.doc
     }
+
+    SetElement ($key) {
+        $this.doc[$key] = $null
+    }
+
+    SetElement ($key, $value) {
+        $this.doc[$key] = $value
+    }
+
+    RemoveElement ($key) {
+        if ($this.doc.ContainsKey($key)) {
+            $this.doc.Remove($key)
+        } else {
+            Write-Error -Message "Body element `"$key`" doesn't exists."
+        }
+    }
 }
 
 class PSCouchDBQuery {
