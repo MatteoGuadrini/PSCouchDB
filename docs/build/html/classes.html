@@ -128,9 +128,22 @@
 <li class="toctree-l3"><a class="reference internal" href="#native-query-format-mango">Native query format (Mango)</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#pscouchdbdesigndoc-class">PSCouchDBDesignDoc class</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#pscouchdbdocument-class">PSCouchDBDocument class</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#id1">Properties</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id2">Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#build-a-document">Build a document</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#add-element-to-document">Add element to document</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#modify-element-to-document">Modify element to document</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#remove-element-to-document">Remove element to document</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#view-document">View document</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#get-json-document">Get json document</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#pscouchdbdesigndoc-class">PSCouchDBDesignDoc class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">Properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">Methods</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#build-a-design-document">Build a design document</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#work-with-views">Work with views</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#simple-view">Simple view</a></li>
@@ -511,11 +524,81 @@ by specifying the selector and the value that you want to associate.</p>
 </div></blockquote>
 </div>
 </div>
+<div class="section" id="pscouchdbdocument-class">
+<h2>PSCouchDBDocument class<a class="headerlink" href="#pscouchdbdocument-class" title="Permalink to this headline">¶</a></h2>
+<p>This class is used to construct a documents.</p>
+<div class="section" id="id1">
+<h3>Properties<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">_id</span>           <span class="n">Property</span>   <span class="n">string</span> <span class="n">_id</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+<span class="n">_rev</span>          <span class="n">Property</span>   <span class="n">string</span> <span class="n">_rev</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id2">
+<h3>Methods<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">Equals</span>        <span class="n">Method</span>     <span class="n">bool</span> <span class="n">Equals</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">obj</span><span class="p">)</span>
+<span class="n">FromJson</span>      <span class="n">Method</span>     <span class="n">hashtable</span> <span class="n">FromJson</span><span class="p">(</span><span class="n">string</span> <span class="n">json</span><span class="p">)</span>
+<span class="n">GetDocument</span>   <span class="n">Method</span>     <span class="n">hashtable</span> <span class="n">GetDocument</span><span class="p">()</span>
+<span class="n">GetHashCode</span>   <span class="n">Method</span>     <span class="n">int</span> <span class="n">GetHashCode</span><span class="p">()</span>
+<span class="n">GetType</span>       <span class="n">Method</span>     <span class="nb">type </span><span class="n">GetType</span><span class="p">()</span>
+<span class="n">RemoveElement</span> <span class="n">Method</span>     <span class="n">void</span> <span class="n">RemoveElement</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">key</span><span class="p">)</span>
+<span class="n">SetElement</span>    <span class="n">Method</span>     <span class="n">void</span> <span class="n">SetElement</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">key</span><span class="p">),</span> <span class="n">void</span> <span class="n">SetElement</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">key</span><span class="p">,</span> <span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">value</span><span class="p">)</span>
+<span class="n">ToJson</span>        <span class="n">Method</span>     <span class="n">string</span> <span class="n">ToJson</span><span class="p">(),</span> <span class="n">string</span> <span class="n">ToJson</span><span class="p">(</span><span class="n">int</span> <span class="n">depth</span><span class="p">),</span> <span class="n">string</span> <span class="n">ToJson</span><span class="p">(</span><span class="n">int</span> <span class="n">depth</span><span class="p">,</span> <span class="n">bool</span> <span class="n">compress</span><span class="p">)</span>
+<span class="n">ToString</span>      <span class="n">Method</span>     <span class="n">string</span> <span class="n">ToString</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="build-a-document">
+<h3>Build a document<a class="headerlink" href="#build-a-document" title="Permalink to this headline">¶</a></h3>
+<p>To create a <code class="docutils literal notranslate"><span class="pre">PSCouchDBDocument</span></code> object, just do the following.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">using</span> <span class="n">module</span> <span class="n">PSCouchDB</span>
+<span class="nv">$doc</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">-TypeName</span> <span class="n">PSCouchDBDocument</span>
+<span class="nv">$doc</span><span class="p">.</span><span class="n">GetType</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="section" id="add-element-to-document">
+<h4>Add element to document<a class="headerlink" href="#add-element-to-document" title="Permalink to this headline">¶</a></h4>
+<p>Add one element to our document object.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$doc</span><span class="p">.</span><span class="n">SetElement</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>             <span class="c"># New key &quot;test&quot; with empty value</span>
+<span class="nv">$doc</span><span class="p">.</span><span class="n">SetElement</span><span class="p">(</span><span class="s2">&quot;test1&quot;</span><span class="p">,</span> <span class="s2">&quot;value1&quot;</span><span class="p">)</span>   <span class="c"># New key &quot;test1&quot; with value &quot;value1&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="modify-element-to-document">
+<h4>Modify element to document<a class="headerlink" href="#modify-element-to-document" title="Permalink to this headline">¶</a></h4>
+<p>Modify or add an exists element on document object.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$doc</span><span class="p">.</span><span class="n">SetElement</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="s2">&quot;newvalue&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="remove-element-to-document">
+<h4>Remove element to document<a class="headerlink" href="#remove-element-to-document" title="Permalink to this headline">¶</a></h4>
+<p>Delete an exists element on document object.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$doc</span><span class="p">.</span><span class="n">RemoveElement</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="view-document">
+<h4>View document<a class="headerlink" href="#view-document" title="Permalink to this headline">¶</a></h4>
+<p>To view entire element of document object.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$doc</span><span class="p">.</span><span class="n">GetDocument</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-json-document">
+<h4>Get json document<a class="headerlink" href="#get-json-document" title="Permalink to this headline">¶</a></h4>
+<p>To get json representation of document object.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$doc</span><span class="p">.</span><span class="n">ToJson</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
 <div class="section" id="pscouchdbdesigndoc-class">
 <h2>PSCouchDBDesignDoc class<a class="headerlink" href="#pscouchdbdesigndoc-class" title="Permalink to this headline">¶</a></h2>
 <p>This class is used to construct a design documents, simple or complex.</p>
-<div class="section" id="id1">
-<h3>Properties<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id3">
+<h3>Properties<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">lists</span>               <span class="n">Property</span>   <span class="n">hashtable</span> <span class="n">lists</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
 <span class="n">shows</span>               <span class="n">Property</span>   <span class="n">hashtable</span> <span class="n">shows</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
 <span class="n">validate_doc_update</span> <span class="n">Property</span>   <span class="n">string</span> <span class="n">validate_doc_update</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
@@ -523,8 +606,8 @@ by specifying the selector and the value that you want to associate.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="id2">
-<h3>Methods<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id4">
+<h3>Methods<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">AddList</span>             <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddList</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">name</span><span class="p">)</span>
 <span class="n">AddShow</span>             <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddShow</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">name</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddShow</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">name</span><span class="p">,</span> <span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">key</span><span class="p">)...</span>
 <span class="n">AddValidation</span>       <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddValidation</span><span class="p">(</span><span class="n">array</span> <span class="n">requirements</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddValidation</span><span class="p">(</span><span class="n">array</span> <span class="n">requirements</span><span class="p">,</span> <span class="n">System</span><span class="p">...</span>

@@ -378,6 +378,93 @@ To receive the object in native format (Mango query) use the *GetNativeQuery* me
 
     $query.GetNativeQuery()
 
+PSCouchDBDocument class
+_______________________
+
+This class is used to construct a documents.
+
+Properties
+**********
+
+.. code-block:: powershell
+
+    _id           Property   string _id {get;set;}
+    _rev          Property   string _rev {get;set;}
+
+
+Methods
+*******
+
+.. code-block:: powershell
+
+    Equals        Method     bool Equals(System.Object obj)
+    FromJson      Method     hashtable FromJson(string json)
+    GetDocument   Method     hashtable GetDocument()
+    GetHashCode   Method     int GetHashCode()
+    GetType       Method     type GetType()
+    RemoveElement Method     void RemoveElement(System.Object key)
+    SetElement    Method     void SetElement(System.Object key), void SetElement(System.Object key, System.Object value)
+    ToJson        Method     string ToJson(), string ToJson(int depth), string ToJson(int depth, bool compress)
+    ToString      Method     string ToString()
+
+Build a document
+****************
+
+To create a ``PSCouchDBDocument`` object, just do the following.
+
+.. code-block:: powershell
+
+    using module PSCouchDB
+    $doc = New-Object -TypeName PSCouchDBDocument
+    $doc.GetType()
+
+Add element to document
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Add one element to our document object.
+
+.. code-block:: powershell
+
+    $doc.SetElement("test")             # New key "test" with empty value
+    $doc.SetElement("test1", "value1")   # New key "test1" with value "value1"
+
+Modify element to document
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Modify or add an exists element on document object.
+
+.. code-block:: powershell
+
+    $doc.SetElement("test", "newvalue")
+
+Remove element to document
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Delete an exists element on document object.
+
+.. code-block:: powershell
+
+    $doc.RemoveElement("test")
+
+View document
+^^^^^^^^^^^^^
+
+To view entire element of document object.
+
+.. code-block:: powershell
+
+    $doc.GetDocument()
+
+Get json document
+^^^^^^^^^^^^^^^^^
+
+To get json representation of document object.
+
+.. code-block:: powershell
+
+    $doc.ToJson()
+
+
 PSCouchDBDesignDoc class
 ________________________
 
