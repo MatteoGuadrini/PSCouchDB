@@ -583,12 +583,19 @@ function New-CouchDBDocument () {
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
     .EXAMPLE
-    $data = @{"answer"=42; "ask"="Ultimate Question of Life, the Universe and Everything"}
-    New-CouchDBDocument -Database test -Document "Hitchhikers"-Data $data -Authorization "admin:password"
+    $data = '{"ask":"Ultimate Question of Life, the Universe and Everything","answer":42}'
+    New-CouchDBDocument -Database test -Document "Hitchhikers" -Data $data -Authorization "admin:password"
     The example create document "Hitchhikers" with data $data.
     .EXAMPLE
     $data = @{"answer"=42; "ask"="Ultimate Question of Life, the Universe and Everything"}
-    New-CouchDBDocument -Database test -Document "Hitchhikers"-Data $data -Partition Guide -Authorization "admin:password"
+    New-CouchDBDocument -Database test -Document "Hitchhikers" -Data $data -Partition Guide -Authorization "admin:password"
+    The example create document "Hitchhikers" with data $data and partition "Guide"
+    .EXAMPLE
+    using module PSCouchDB
+    $data = New-Object PSCouchDBDocument
+    $data.SetElement('answer', 42)
+    $data.SetElement('ask', "Ultimate Question of Life, the Universe and Everything")
+    New-CouchDBDocument -Database test -Document "Hitchhikers" -Data $data -Authorization "admin:password"
     The example create document "Hitchhikers" with data $data and partition "Guide"
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/documents.html#create-a-document
@@ -611,6 +618,10 @@ function New-CouchDBDocument () {
     if ($Data -is [hashtable]) {
         # Json Data
         $Data = $Data | ConvertTo-Json -Depth 99
+    } elseif ($Data -is [PSCouchDBDocument]) {
+        # Json Data
+        $Document = $Data._id
+        $Data = $Data.ToJson(99)
     }
     # Check Partition
     if ($Partition) { $Document = "${Partition}:${Document}" }
