@@ -31,10 +31,18 @@ class PSCouchDBDocument {
     }
 
     SetElement ($key) {
-        $this.doc[$key] = $null
+        # Check key isn't _id
+        if (-not($key -eq "_id")) { 
+            $this.doc[$key] = $null
+        } else {
+            Write-Warning -Message "_id must have a value"
+        }
     }
 
     SetElement ($key, $value) {
+        if ($key -eq "_id") {
+            $this._id = $value
+        }
         $this.doc[$key] = $value
     }
 
@@ -42,7 +50,7 @@ class PSCouchDBDocument {
         if ($this.doc.ContainsKey($key)) {
             $this.doc.Remove($key)
         } else {
-            Write-Error -Message "Body element `"$key`" doesn't exists."
+            Write-Error -Message "Document element `"$key`" doesn't exists."
         }
     }
 
