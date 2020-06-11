@@ -554,7 +554,7 @@ function New-CouchDBDocument () {
     Create a new document.
     .DESCRIPTION
     Creates a new document in the specified database, using the supplied JSON document structure or [hashtable] object.
-    If the JSON structure or [hashtable] object includes the _id field, then the document will be created with the specified document ID.
+    If the JSON structure, [hashtable] or [PSCouchDBDocument] object includes the _id field, then the document will be created with the specified document ID.
     If the _id field is not specified, a new unique ID will be generated, following whatever UUID algorithm is configured for that server (Get-Help New-CouchDBUuids).
     .NOTES
     CouchDB API:
@@ -695,11 +695,17 @@ function Set-CouchDBDocument () {
     )
     if ($Data -is [hashtable]) {
         # Hashtable Data
-        $Json = $Data | ConvertFrom-Json
+        $Json = $Data | ConvertTo-Json -Depth 99 | ConvertFrom-Json
         $Data = @{ }
         $Json.psobject.properties | ForEach-Object {
             $Data.Add($_.Name, $_.Value)
         }
+        $Data = $Data | ConvertTo-Json -Depth 99
+    } elseif ($Data -is [PSCouchDBDocument]) {
+        # PSCouchDBDocument Data
+        $Data._id = $Document
+        $Data._rev = $Revision
+        $Data = $Data.ToJson(99)
     }
     if (-not($Replace.IsPresent)) {
         $OldDoc = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue
@@ -712,7 +718,7 @@ function Set-CouchDBDocument () {
                 }
             }
         } else {
-            throw "Document $Document not found!"
+            throw "Document $Document not found!"	
         }
     }
     # Check BatchMode
@@ -723,7 +729,6 @@ function Set-CouchDBDocument () {
         $Document += "?rev=$Revision&new_edits=false"
         $Revision = $null
     }
-    $Data = $Data | ConvertTo-Json -Depth 99
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Revision $Revision -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }
 
