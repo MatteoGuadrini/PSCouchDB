@@ -673,6 +673,12 @@ function Set-CouchDBDocument () {
     $data = @{"answer"=42; "ask"="Ultimate Question of Life, the Universe and Everything"}
     Set-CouchDBDocument -Database test -Document "Hitchhikers" -Revision 1-2c903913030efb4d711db085b1f44107 -Data $data -Replace -Authorization "admin:password"
     The example overwrite document "Hitchhikers" with data $data.
+    .EXAMPLE
+    using module PSCouchDB
+    $data = New-Object -TypeName PSCouchDBDocument
+    $data.SetElement('test',1)
+    Set-CouchDBDocument -Database test -Document "Hitchhikers" -Revision 1-2c903913030efb4d711db085b1f44107 -Data $data -Replace -Authorization "admin:password"
+    The example overwrite document "Hitchhikers" with data $data.
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/documents.html#modify-a-document
     #>
