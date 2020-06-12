@@ -666,7 +666,7 @@ function Set-CouchDBDocument () {
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
     .EXAMPLE
-    $data = @{"answer"=42; "ask"="Ultimate Question of Life, the Universe and Everything"}
+    $data = '{"answer":42, "ask":"Ultimate Question of Life, the Universe and Everything"}'
     Set-CouchDBDocument -Database test -Document "Hitchhikers" -Revision 1-2c903913030efb4d711db085b1f44107 -Data $data -Authorization "admin:password"
     The example modify document "Hitchhikers" with data $data; if the element of $data exists, overwrite, else adding new element.
     .EXAMPLE
@@ -701,30 +701,29 @@ function Set-CouchDBDocument () {
     )
     if ($Data -is [hashtable]) {
         # Hashtable Data
-        $Json = $Data | ConvertTo-Json -Depth 99 | ConvertFrom-Json
-        $Data = @{ }
-        $Json.psobject.properties | ForEach-Object {
-            $Data.Add($_.Name, $_.Value)
-        }
-        $Data = $Data | ConvertTo-Json -Depth 99
+        $NewData = New-Object -TypeName PSCouchDBDocument
+        [void] $NewData.FromJson(($Data | ConvertTo-Json -Depth 99))
+        $Data = $NewData
+        $Data._id = $Document
+        $Data._rev = $Revision
     } elseif ($Data -is [PSCouchDBDocument]) {
         # PSCouchDBDocument Data
         $Data._id = $Document
         $Data._rev = $Revision
-        $Data = $Data.ToJson(99)
+    } else {
+        # String Data
+        $NewData = New-Object -TypeName PSCouchDBDocument
+        [void] $NewData.FromJson($Data)
+        $Data = $NewData
+        $Data._id = $Document
+        $Data._rev = $Revision
     }
     if (-not($Replace.IsPresent)) {
         $OldDoc = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue
-        if ($null -ne $OldDoc.psobject.properties) {
-            $OldDoc.psobject.properties | ForEach-Object {
-                if (-not($Data)) {
-                    $Data.Add($_.Name, $_.Value)
-                } else {
-                    $Data.$($_.Name) = $_.Value
-                }
-            }
-        } else {
-            throw "Document $Document not found!"	
+        $OldData = New-Object -TypeName PSCouchDBDocument -ArgumentList $OldDoc._id
+        [void] $OldData.FromJson(($OldDoc | ConvertTo-Json -Depth 99))
+        foreach ($entry in $OldData.GetDocument().Keys) {
+            $Data.SetElement($entry, $OldData.doc[$entry])
         }
     }
     # Check BatchMode
@@ -735,6 +734,8 @@ function Set-CouchDBDocument () {
         $Document += "?rev=$Revision&new_edits=false"
         $Revision = $null
     }
+    # Convert doc object to json
+    $Data = $Data.ToJson(99)
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Revision $Revision -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }
 
