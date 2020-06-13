@@ -1,4 +1,80 @@
 # Native Powershell CouchDB class
+class PSCouchDBDocument {
+    <#
+    .SYNOPSIS
+    CouchDB documents
+    .DESCRIPTION
+    Class than representing the CouchDB documents
+    .EXAMPLE
+    using module PSCouchDB
+    $doc = New-Object PSCouchDBDocument
+    #>
+    # Propetries
+    [string] $_id
+    [string] $_rev
+    hidden [hashtable] $doc = @{}
+
+    # Constructors
+    PSCouchDBDocument () { 
+        $this._id = (New-CouchDBUuids -Count 1).uuids[0]
+        $this.doc.Add('_id', $this._id)
+    }
+
+    PSCouchDBDocument ([string]$_id) {
+        $this._id = $_id
+        $this.doc.Add('_id', $this._id)
+    }
+
+    # Methods
+    [hashtable] GetDocument () {
+        return $this.doc
+    }
+
+    SetElement ($key) {
+        # Check key isn't _id
+        if (-not($key -eq "_id")) { 
+            $this.doc[$key] = $null
+        } else {
+            Write-Warning -Message "_id must have a value"
+        }
+    }
+
+    SetElement ($key, $value) {
+        if ($key -eq "_id") {
+            $this._id = $value
+        }
+        $this.doc[$key] = $value
+    }
+
+    RemoveElement ($key) {
+        if ($this.doc.ContainsKey($key)) {
+            $this.doc.Remove($key)
+        } else {
+            Write-Error -Message "Document element `"$key`" doesn't exists."
+        }
+    }
+
+    [string] ToJson () {
+        return $this.doc | ConvertTo-Json -Depth 10 -Compress:$false
+    }
+
+    [string] ToJson ([int]$depth) {
+        return $this.doc | ConvertTo-Json -Depth $depth -Compress:$false
+    }
+
+    [string] ToJson ([int]$depth, [bool]$compress) {
+        return $this.doc | ConvertTo-Json -Depth $depth -Compress:$compress
+    }
+
+    [hashtable] FromJson ([string]$json) {
+        $body = ConvertFrom-Json -InputObject $json
+        $body.psobject.properties | ForEach-Object { $this.SetElement($_.Name, $_.Value) }
+        $this._id = $this.doc._id
+        $this._rev = $this.doc._rev
+        return $this.doc
+    }
+}
+
 class PSCouchDBQuery {
     <#
     .SYNOPSIS
