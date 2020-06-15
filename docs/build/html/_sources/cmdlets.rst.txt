@@ -496,14 +496,6 @@ Documents
 
     Find-CouchDBDocuments [-Server <String>] [-Port <Int32>] [-Database <String>] [-Find <String>] [-Authorization <String>] [-Ssl] [-AsJob] [<CommonParameters>]
 
-**Find-CouchDBPartitionDocuments**
-
-.. code-block:: powershell
-
-    Find-CouchDBPartitionDocuments [-Server <String>] [-Port <Int32>] [-Database <String>] [-Partition <String>] [-Explain] [-Selector <String>] [-Value <Object>] [-Limit <Int32>] [-Skip <Int32>] [-Fields <Array>] [-Sort <Array>] [-UseIndex <Array>] [-ReadQuorum <Int32>] [-Bookmark <String>] [-NoUpdate] [-Stable] [-Stale <String>] [-ExecutionStats] [-Operator <String>] [-Authorization <String>] [-Ssl] [-AsJob] [<CommonParameters>]
-
-    Find-CouchDBPartitionDocuments [-Server <String>] [-Port <Int32>] [-Database <String>] [-Partition <String>] [-Find <String>] [-Authorization <String>] [-Ssl] [-AsJob] [<CommonParameters>]
-
 **Get-CouchDBPartitionDocuments**
 
 .. code-block:: powershell
