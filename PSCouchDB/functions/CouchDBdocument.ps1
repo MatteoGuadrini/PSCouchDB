@@ -24,7 +24,9 @@ function Get-CouchDBDocument () {
     .PARAMETER Database
     The CouchDB database.
     .PARAMETER Document
-    The CouchDB document. Default is _all_docs.
+    The CouchDB document.
+    .PARAMETER AllDocuments
+    The CouchDB document is _all_docs.
     .PARAMETER Partition
     The CouchDB partition.
     .PARAMETER Revision
@@ -106,7 +108,7 @@ function Get-CouchDBDocument () {
     Get-CouchDBDocument -Database test -Document "Hitchhikers"
     This example get document "Hitchhikers" on database "test".
     .EXAMPLE
-    Get-CouchDBDocument -Database test
+    Get-CouchDBDocument -Database test -AllDocuments
     This example get all documents on database "test".
     .EXAMPLE
     Get-CouchDBDocument -Database test -Revisions
@@ -119,19 +121,25 @@ function Get-CouchDBDocument () {
     #>
     [CmdletBinding(DefaultParameterSetName = "Document")]
     param(
+        [Parameter(ParameterSetName = "AllDocuments")]
         [Parameter(ParameterSetName = "Document")]
         [Parameter(ParameterSetName = "Info")]
         [string] $Server,
+        [Parameter(ParameterSetName = "AllDocuments")]
         [Parameter(ParameterSetName = "Document")]
         [Parameter(ParameterSetName = "Info")]
         [int] $Port,
+        [Parameter(ParameterSetName = "AllDocuments")]
         [Parameter(ParameterSetName = "Document")]
         [Parameter(ParameterSetName = "Info")]
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
         [Parameter(ParameterSetName = "Document")]
         [Parameter(ParameterSetName = "Info")]
-        [string] $Document = "_all_docs",
+        [string] $Document,
+        [Parameter(ParameterSetName = "AllDocuments")]
+        [switch] $AllDocument,
+        [Parameter(ParameterSetName = "AllDocuments")]
         [Parameter(ParameterSetName = "Document")]
         [Parameter(ParameterSetName = "Info")]
         [string] $Partition,
@@ -140,122 +148,110 @@ function Get-CouchDBDocument () {
         [string] $Revision,
         [Parameter(ParameterSetName = "Info")]
         [switch] $Info,
+        [Parameter(ParameterSetName = "AllDocuments")]
         [Parameter(ParameterSetName = "Document")]
         [Parameter(ParameterSetName = "Info")]
         [switch] $Local,
         [Parameter(ParameterSetName = "Document")]
-        [ValidateScript( { if ($Document -eq "_all_docs") { $false } })]
         [switch] $Revisions,
         [Parameter(ParameterSetName = "Document")]
-        [ValidateScript( { if ($Document -eq "_all_docs") { $false } })]
         [switch] $History,
         [Parameter(ParameterSetName = "Document")]
-        [ValidateScript( { if ($Document -eq "_all_docs") { $false } })]
         [switch] $Attachments,
         [Parameter(ParameterSetName = "Document")]
-        [ValidateScript( { if ($Document -eq "_all_docs") { $false } })]
         [switch] $AttachmentsInfo,
         [Parameter(ParameterSetName = "Document")]
         [ValidateCount(2, 10)]
-        [ValidateScript( { if ($Document -eq "_all_docs") { $false } })]
         [array] $AttachmentsSince,
         [Parameter(ParameterSetName = "Document")]
         [switch] $Conflicts,
         [Parameter(ParameterSetName = "Document")]
-        [ValidateScript( { if ($Document -eq "_all_docs") { $false } })]
         [switch] $DeletedConflicts,
         [Parameter(ParameterSetName = "Document")]
-        [ValidateScript( { if ($Document -eq "_all_docs") { $false } })]
         [switch] $Latest,
         [Parameter(ParameterSetName = "Document")]
-        [ValidateScript( { if ($Document -eq "_all_docs") { $false } })]
         [switch] $LocalSequence,
         [Parameter(ParameterSetName = "Document")]
-        [ValidateScript( { if ($Document -eq "_all_docs") { $false } })]
         [switch] $Metadata,
         [Parameter(ParameterSetName = "Document")]
-        [ValidateScript( { if ($Document -eq "_all_docs") { $false } })]
         [array] $OpenRevisions,
-        [Parameter(ParameterSetName = "Document")]
-        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
+        [Parameter(ParameterSetName = "AllDocuments")]
         [switch] $Descending,
-        [Parameter(ParameterSetName = "Document")]
-        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
+        [Parameter(ParameterSetName = "AllDocuments")]
         [Alias('End')]
         [string] $EndKey,
-        [Parameter(ParameterSetName = "Document")]
-        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
+        [Parameter(ParameterSetName = "AllDocuments")]
         [Alias('EndDoc')]
         [string] $EndKeyDocument,
-        [Parameter(ParameterSetName = "Document")]
-        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
+        [Parameter(ParameterSetName = "AllDocuments")]
         [switch] $Group,
-        [Parameter(ParameterSetName = "Document")]
-        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
+        [Parameter(ParameterSetName = "AllDocuments")]
         [int] $GroupLevel,
-        [Parameter(ParameterSetName = "Document")]
-        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
+        [Parameter(ParameterSetName = "AllDocuments")]
         [Alias('IncDoc')]
         [switch] $IncludeDocuments,
-        [Parameter(ParameterSetName = "Document")]
-        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
+        [Parameter(ParameterSetName = "AllDocuments")]
         [Alias('IncEnd')]
         [bool] $InclusiveEnd = $true,
-        [Parameter(ParameterSetName = "Document")]
-        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
+        [Parameter(ParameterSetName = "AllDocuments")]
         $Key,
-        [Parameter(ParameterSetName = "Document")]
-        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
+        [Parameter(ParameterSetName = "AllDocuments")]
         [array] $Keys,
-        [Parameter(ParameterSetName = "Document")]
-        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
+        [Parameter(ParameterSetName = "AllDocuments")]
         [int] $Limit,
-        [Parameter(ParameterSetName = "Document")]
-        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
+        [Parameter(ParameterSetName = "AllDocuments")]
         [bool] $Reduce = $true,
-        [Parameter(ParameterSetName = "Document")]
-        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
+        [Parameter(ParameterSetName = "AllDocuments")]
         [int] $Skip,
-        [Parameter(ParameterSetName = "Document")]
-        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
+        [Parameter(ParameterSetName = "AllDocuments")]
         [bool] $Sorted = $true,
-        [Parameter(ParameterSetName = "Document")]
-        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
+        [Parameter(ParameterSetName = "AllDocuments")]
         [switch] $Stable,
-        [Parameter(ParameterSetName = "Document")]
+        [Parameter(ParameterSetName = "AllDocuments")]
         [ValidateSet("ok", "update_after", "false")]
-        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
         [string] $Stale,
-        [Parameter(ParameterSetName = "Document")]
-        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
+        [Parameter(ParameterSetName = "AllDocuments")]
         [Alias('Start')]
         [string] $StartKey,
-        [Parameter(ParameterSetName = "Document")]
-        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
+        [Parameter(ParameterSetName = "AllDocuments")]
         [Alias('StartDoc')]
         [string] $StartKeyDocument,
-        [Parameter(ParameterSetName = "Document")]
+        [Parameter(ParameterSetName = "AllDocuments")]
         [ValidateSet("true", "false", "lazy")]
-        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
         [string] $Update,
-        [Parameter(ParameterSetName = "Document")]
-        [ValidateScript( { if (-not($Document) -or ($Document -eq '_all_docs')) { $true } })]
+        [Parameter(ParameterSetName = "AllDocuments")]
         [switch] $UpdateSequence,
+        [Parameter(ParameterSetName = "AllDocuments")]
         [Parameter(ParameterSetName = "Document")]
         [Parameter(ParameterSetName = "Info")]
         [string] $Authorization,
+        [Parameter(ParameterSetName = "AllDocuments")]
         [Parameter(ParameterSetName = "Document")]
         [Parameter(ParameterSetName = "Info")]
         [switch] $Ssl
     )
+    # Check all docs 
+    if ($AllDocuments.IsPresent) {
+        $Document = '_all_docs'
+    } elseif (-not($Document)) {
+        $Document = '_all_docs'
+    }
     # Check local docs
     if ($Local.IsPresent) {
-        if ($Document -eq '_all_docs') {
+        if ($AllDocuments.IsPresent) {
             Write-Warning -Message "-Document $Document parameter is rewrite in _local_docs because -Local parameter is specified."
             $Document = "_local_docs"
         } else {
             Write-Warning -Message "-Document $Document parameter is rewrite in _local/$Document because -Local parameter is specified."
             $Document = "_local/$Document"
+        }
+    }
+    # Check partition
+    if ($Partition) {
+        if ($AllDocuments.IsPresent) {
+            $Document = "_partition/$Partition/_all_docs"
+        } else {
+            $Document = "_partition/$Partition"
         }
     }
     # Select a revision
@@ -266,14 +262,6 @@ function Get-CouchDBDocument () {
     if ($Info.IsPresent) {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "HEAD" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
         return
-    }
-    # Check partition
-    if ($Partition) {
-        if ($Document -eq '_all_docs') {
-            $Document = "_partition/$Partition/_all_docs"
-        } else {
-            $Document = "_partition/$Partition"
-        }
     }
     # Check Revisions parameter
     if ($Revisions.IsPresent) {
