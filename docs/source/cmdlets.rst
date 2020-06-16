@@ -410,11 +410,11 @@ Documents
 
 .. code-block:: powershell
 
-    Get-CouchDBDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-Partition <String>] [-Revision <String>] [-Local] [-Revisions] [-History] [-Attachments] [-AttachmentsInfo] [-AttachmentsSince <Array>] [-Conflicts] [-DeletedConflicts] [-Latest] [-LocalSequence] [-Metadata] [-OpenRevisions <Array>] [-Authorization <String>] [-Ssl] [<CommonParameters>]
+    Get-CouchDBDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-Partition <String>] [-Revision <String>] [-Local] [-Revisions] [-History] [-Attachments] [-AttachmentsInfo] [-AttachmentsSince <Array>] [-Conflicts] [-DeletedConflicts] [-Latest] [-LocalSequence] [-Metadata] [-OpenRevisions <Array>] [-Authorization <String>] [-Ssl] [-AsJob] [<CommonParameters>]
 
     Get-CouchDBDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-Partition <String>] [-Revision <String>] [-Info] [-Local] [-Authorization <String>] [-Ssl] [<CommonParameters>]
 
-    Get-CouchDBDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-AllDocuments] [-Partition <String>] [-Local] [-Descending] [-EndKey <String>] [-EndKeyDocument <String>] [-Group] [-GroupLevel <Int32>] [-IncludeDocuments] [-InclusiveEnd <Boolean>] [-Key <Object>] [-Keys <Array>] [-Limit <Int32>] [-Reduce <Boolean>] [-Skip <Int32>] [-Sorted <Boolean>] [-Stable] [-Stale <String>] [-StartKey <String>] [-StartKeyDocument <String>] [-Update <String>] [-UpdateSequence] [-Authorization <String>] [-Ssl] [<CommonParameters>]
+    Get-CouchDBDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-AllDocuments] [-Partition <String>] [-Local] [-Descending] [-EndKey <String>] [-EndKeyDocument <String>] [-Group] [-GroupLevel <Int32>] [-IncludeDocuments] [-InclusiveEnd <Boolean>] [-Key <Object>] [-Keys <Array>] [-Limit <Int32>] [-Reduce <Boolean>] [-Skip <Int32>] [-Sorted <Boolean>] [-Stable] [-Stale <String>] [-StartKey <String>] [-StartKeyDocument <String>] [-Update <String>] [-UpdateSequence] [-Authorization <String>] [-Ssl] [-AsJob] [<CommonParameters>]
 
 **New-CouchDBDocument**
 

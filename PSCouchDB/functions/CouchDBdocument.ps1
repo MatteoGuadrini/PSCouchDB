@@ -104,6 +104,8 @@ function Get-CouchDBDocument () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER AsJob
+    Send the command in the background.
     .EXAMPLE
     Get-CouchDBDocument -Database test -Document "Hitchhikers"
     This example get document "Hitchhikers" on database "test".
@@ -228,7 +230,10 @@ function Get-CouchDBDocument () {
         [Parameter(ParameterSetName = "AllDocuments")]
         [Parameter(ParameterSetName = "Document")]
         [Parameter(ParameterSetName = "Info")]
-        [switch] $Ssl
+        [switch] $Ssl,
+        [Parameter(ParameterSetName = "AllDocuments")]
+        [Parameter(ParameterSetName = "Document")]
+        [switch] $AsJob
     )
     # Check all docs 
     if ($AllDocuments.IsPresent) {
@@ -548,7 +553,17 @@ function Get-CouchDBDocument () {
             $Document += "?update_seq=true"
         }
     }
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+    if ($AsJob.IsPresent) {
+        $job = Start-Job -Name "Get-Docs" {
+            param($Server, $Port, $Method, $Database, $Document, $Authorization, $Ssl)
+            Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+        } -ArgumentList $Server, $Port, $Method, $Database, $Document, $Authorization, $Ssl
+        Register-TemporaryEvent $job "StateChanged" -Action {
+            Write-Host -ForegroundColor Green "Get docs #$($sender.Id) ($($sender.Name)) complete."
+        }
+    } else {
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+    }
 }
 
 function New-CouchDBDocument () {
