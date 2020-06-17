@@ -410,7 +410,7 @@ Documents
 
 .. code-block:: powershell
 
-    Get-CouchDBDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-Partition <String>] [-Revision <String>] [-Local] [-Revisions] [-History] [-Attachments] [-AttachmentsInfo] [-AttachmentsSince <Array>] [-Conflicts] [-DeletedConflicts] [-Latest] [-LocalSequence] [-Metadata] [-OpenRevisions <Array>] [-Authorization <String>] [-Ssl] [-AsJob] [<CommonParameters>]
+    Get-CouchDBDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-Partition <String>] [-Revision <String>] [-Local] [-Revisions] [-History] [-Attachments] [-AttachmentsInfo] [-AttachmentsSince <Array>] [-Conflicts] [-DeletedConflicts] [-Latest] [-LocalSequence] [-Metadata] [-OpenRevisions <Array>] [-Authorization <String>] [-Ssl] [-AsJob] [-Variable] [<CommonParameters>]
 
     Get-CouchDBDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-Partition <String>] [-Revision <String>] [-Info] [-Local] [-Authorization <String>] [-Ssl] [<CommonParameters>]
 

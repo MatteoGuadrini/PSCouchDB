@@ -106,6 +106,8 @@ function Get-CouchDBDocument () {
     This modify protocol to https and port to 6984.
     .PARAMETER AsJob
     Send the command in the background.
+    .PARAMETER Variable
+    Export into a PSCouchDBDocument variable object.
     .EXAMPLE
     Get-CouchDBDocument -Database test -Document "Hitchhikers"
     This example get document "Hitchhikers" on database "test".
@@ -118,6 +120,9 @@ function Get-CouchDBDocument () {
     .EXAMPLE
     if (Get-CouchDBDocument -Database test -Document "Hitchhikers" -Info) { echo "doc exists!" }
     Test if document "Hitchhikers" on database "test" exists.
+    .EXAMPLE
+    Get-CouchDBDocument -Database test -Document "Hitchhikers" -Variable test
+    This example export into variable $test the document "Hitchhikers".
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/documents.html#get-a-document
     #>
@@ -233,7 +238,9 @@ function Get-CouchDBDocument () {
         [switch] $Ssl,
         [Parameter(ParameterSetName = "AllDocuments")]
         [Parameter(ParameterSetName = "Document")]
-        [switch] $AsJob
+        [switch] $AsJob,
+        [Parameter(ParameterSetName = "Document")]
+        [string] $Variable
     )
     # Check all docs 
     if ($AllDocuments.IsPresent) {
@@ -552,6 +559,14 @@ function Get-CouchDBDocument () {
         } else {
             $Document += "?update_seq=true"
         }
+    }
+    # Export document in a variable
+    if ($Variable) {
+        $doc = Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+        $exportDoc = New-Object -TypeName PSCouchDBDocument
+        [void] $exportDoc.FromJson(($doc | ConvertTo-Json -Depth 99))
+        Set-Variable -Name $Variable -Value $exportDoc -Scope Global
+        return $null
     }
     if ($AsJob.IsPresent) {
         $job = Start-Job -Name "Get-Docs" {
