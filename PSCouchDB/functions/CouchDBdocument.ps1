@@ -806,7 +806,7 @@ function Remove-CouchDBDocument () {
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/documents.html#delete-a-document
     #>
-    [CmdletBinding(SupportsShouldProcess = $true)]
+    [CmdletBinding()]
     param(
         [string] $Server,
         [int] $Port,
@@ -1273,7 +1273,7 @@ function Remove-CouchDBAttachment () {
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/documents.html#delete-an-attachment
     #>
-    [CmdletBinding(SupportsShouldProcess = $true)]
+    [CmdletBinding()]
     param(
         [string] $Server,
         [int] $Port,
@@ -1326,7 +1326,7 @@ function Clear-CouchDBDocuments () {
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/documents.html#purge-document
     #>
-    [CmdletBinding(SupportsShouldProcess = $true)]
+    [CmdletBinding()]
     param(
         [string] $Server,
         [int] $Port,

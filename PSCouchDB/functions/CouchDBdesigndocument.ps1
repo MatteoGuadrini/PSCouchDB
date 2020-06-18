@@ -1015,7 +1015,7 @@ function Remove-CouchDBDesignDocument () {
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/ddoc.html#remove-design-document
     #>
-    [CmdletBinding(SupportsShouldProcess = $true)]
+    [CmdletBinding()]
     param(
         [string] $Server,
         [int] $Port,
@@ -1069,7 +1069,7 @@ function Remove-CouchDBDesignDocumentAttachment () {
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/documents.html#delete-an-attachment
     #>
-    [CmdletBinding(SupportsShouldProcess = $true)]
+    [CmdletBinding()]
     param(
         [string] $Server,
         [int] $Port,
