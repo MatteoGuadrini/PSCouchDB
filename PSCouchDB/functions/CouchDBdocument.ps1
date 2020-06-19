@@ -882,10 +882,12 @@ function Copy-CouchDBDocument () {
     if (-not(Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Document -Revision $Revision -Info -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
         throw "The specific document $Document does not exists."
     } else {
-        $Data = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization -Ssl:$Ssl
-        $Data._id = $Destination
-        $Data.PSObject.Properties.Remove("_rev")
-        $Data = ConvertTo-Json -InputObject $Data -Depth 99
+        $Doc = New-Object -TypeName PSCouchDBDocument
+        [void] $Doc.FromJson((Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization -Ssl:$Ssl | ConvertTo-Json -Depth 99))
+        $Doc._id = $Destination
+        # Remove _rev
+        $Doc.RemoveElement('_rev')
+        $Data = $Doc.ToJson(99)
     }
     # Check if document and destination are different
     if ($Document -eq $Destination) {
