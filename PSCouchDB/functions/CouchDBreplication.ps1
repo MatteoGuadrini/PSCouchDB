@@ -437,7 +437,7 @@ function Remove-CouchDBReplication () {
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/server.html#remove-replica
     #>
-    [CmdletBinding(SupportsShouldProcess = $true)]
+    [CmdletBinding()]
     param(
         [Parameter(ValueFromPipeline = $true)]
         [string] $Server,

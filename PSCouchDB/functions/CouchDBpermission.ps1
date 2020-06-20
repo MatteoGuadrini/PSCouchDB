@@ -271,7 +271,7 @@ function Revoke-CouchDBDatabasePermission () {
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/permission.html#revoke-database-permissions
     #>
-    [CmdletBinding(SupportsShouldProcess = $true)]
+    [CmdletBinding()]
     param(
         [string] $Server,
         [int] $Port,
@@ -328,7 +328,7 @@ function Remove-CouchDBAdmin () {
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/permission.html#remove-an-admin
     #>
-    [CmdletBinding(SupportsShouldProcess = $true)]
+    [CmdletBinding()]
     param(
         [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
@@ -379,7 +379,7 @@ function Remove-CouchDBUser () {
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/permission.html#remove-a-user
     #>
-    [CmdletBinding(SupportsShouldProcess = $true)]
+    [CmdletBinding()]
     param(
         [Parameter(ValueFromPipeline = $true)]
         [string] $Server,

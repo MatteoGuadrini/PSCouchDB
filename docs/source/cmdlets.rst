@@ -410,9 +410,11 @@ Documents
 
 .. code-block:: powershell
 
-    Get-CouchDBDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-Revision <String>] [-Local] [-Revisions] [-History] [-Attachments] [-AttachmentsInfo] [-AttachmentsSince <Array>] [-Conflicts] [-DeletedConflicts] [-Latest] [-LocalSequence] [-Metadata] [-OpenRevisions <Array>] [-Descending] [-EndKey <String>] [-EndKeyDocument <String>] [-Group] [-GroupLevel <Int32>] [-IncludeDocuments] [-InclusiveEnd <Boolean>] [-Key <Object>] [-Keys <Array>] [-Limit <Int32>] [-Reduce <Boolean>] [-Skip <Int32>] [-Sorted <Boolean>] [-Stable] [-Stale <String>] [-StartKey <String>] [-StartKeyDocument <String>] [-Update <String>] [-UpdateSequence] [-Authorization <String>] [-Ssl] [<CommonParameters>]
+    Get-CouchDBDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-Partition <String>] [-Revision <String>] [-Local] [-Revisions] [-History] [-Attachments] [-AttachmentsInfo] [-AttachmentsSince <Array>] [-Conflicts] [-DeletedConflicts] [-Latest] [-LocalSequence] [-Metadata] [-OpenRevisions <Array>] [-Authorization <String>] [-Ssl] [-AsJob] [-Variable] [<CommonParameters>]
 
-    Get-CouchDBDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-Revision <String>] [-Info] [-Local] [-Authorization <String>] [-Ssl] [<CommonParameters>]
+    Get-CouchDBDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-Partition <String>] [-Revision <String>] [-Info] [-Local] [-Authorization <String>] [-Ssl] [<CommonParameters>]
+
+    Get-CouchDBDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-AllDocuments] [-Partition <String>] [-Local] [-Descending] [-EndKey <String>] [-EndKeyDocument <String>] [-Group] [-GroupLevel <Int32>] [-IncludeDocuments] [-InclusiveEnd <Boolean>] [-Key <Object>] [-Keys <Array>] [-Limit <Int32>] [-Reduce <Boolean>] [-Skip <Int32>] [-Sorted <Boolean>] [-Stable] [-Stale <String>] [-StartKey <String>] [-StartKeyDocument <String>] [-Update <String>] [-UpdateSequence] [-Authorization <String>] [-Ssl] [-AsJob] [<CommonParameters>]
 
 **New-CouchDBDocument**
 
@@ -492,25 +494,9 @@ Documents
 
 .. code-block:: powershell
 
-    Find-CouchDBDocuments [-Server <String>] [-Port <Int32>] [-Database <String>] [-Explain] [-Selector <String>] [-Value <Object>] [-Limit <Int32>] [-Skip <Int32>] [-Fields <Array>] [-Sort <Array>] [-UseIndex <Array>] [-ReadQuorum <Int32>] [-Bookmark <String>] [-NoUpdate] [-Stable] [-Stale <String>] [-ExecutionStats] [-Operator <String>] [-Authorization <String>] [-Ssl] [-AsJob] [<CommonParameters>]
+    Find-CouchDBDocuments [-Server <String>] [-Port <Int32>] [-Database <String>] [-Partition <String>] [-Explain] [-Selector <String>] [-Value <Object>] [-Limit <Int32>] [-Skip <Int32>] [-Fields <Array>] [-Sort <Array>] [-UseIndex <Array>] [-ReadQuorum <Int32>] [-Bookmark <String>] [-NoUpdate] [-Stable] [-Stale <String>] [-ExecutionStats] [-Operator <String>] [-Authorization <String>] [-Ssl] [-AsJob] [<CommonParameters>]
 
-    Find-CouchDBDocuments [-Server <String>] [-Port <Int32>] [-Database <String>] [-Find <String>] [-Authorization <String>] [-Ssl] [-AsJob] [<CommonParameters>]
-
-**Find-CouchDBPartitionDocuments**
-
-.. code-block:: powershell
-
-    Find-CouchDBPartitionDocuments [-Server <String>] [-Port <Int32>] [-Database <String>] [-Partition <String>] [-Explain] [-Selector <String>] [-Value <Object>] [-Limit <Int32>] [-Skip <Int32>] [-Fields <Array>] [-Sort <Array>] [-UseIndex <Array>] [-ReadQuorum <Int32>] [-Bookmark <String>] [-NoUpdate] [-Stable] [-Stale <String>] [-ExecutionStats] [-Operator <String>] [-Authorization <String>] [-Ssl] [-AsJob] [<CommonParameters>]
-
-    Find-CouchDBPartitionDocuments [-Server <String>] [-Port <Int32>] [-Database <String>] [-Partition <String>] [-Find <String>] [-Authorization <String>] [-Ssl] [-AsJob] [<CommonParameters>]
-
-**Get-CouchDBPartitionDocuments**
-
-.. code-block:: powershell
-
-    Get-CouchDBPartitionDocuments [-Server <String>] [-Port <Int32>] [-Database <String>] [-Partition <String>] [-Authorization <String>] [-Ssl] [-AsJob] [<CommonParameters>]
-
-    Get-CouchDBPartitionDocuments [-Server <String>] [-Port <Int32>] [-Database <String>] [-Partition <String>] [-AllDocuments] [-Descending] [-EndKey <String>] [-EndKeyDocument <String>] [-Group] [-GroupLevel <Int32>] [-IncludeDocuments] [-InclusiveEnd <Boolean>] [-Key <Object>] [-Keys <Array>] [-Limit <Int32>] [-Reduce <Boolean>] [-Skip <Int32>] [-Sorted <Boolean>] [-Stable] [-Stale <String>] [-StartKey <String>] [-StartKeyDocument <String>] [-Update <String>] [-UpdateSequence] [-Authorization <String>] [-Ssl] [-AsJob] [<CommonParameters>]
+    Find-CouchDBDocuments [-Server <String>] [-Port <Int32>] [-Database <String>] [-Partition <String>] [-Explain] [-Find <String>] [-Authorization <String>] [-Ssl] [-AsJob] [<CommonParameters>]
 
 Design documents
 ****************

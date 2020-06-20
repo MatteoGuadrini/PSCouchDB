@@ -344,7 +344,7 @@ function Remove-CouchDBDatabase () {
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/databases.html#remove-a-database
     #>
-    [CmdletBinding(SupportsShouldProcess = $true)]
+    [CmdletBinding()]
     param(
         [string] $Server,
         [int] $Port,
@@ -495,7 +495,7 @@ function Remove-CouchDBIndex () {
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/databases.html#remove-a-index
     #>
-    [CmdletBinding(SupportsShouldProcess = $true)]
+    [CmdletBinding()]
     param(
         [string] $Server,
         [int] $Port,
@@ -721,7 +721,7 @@ function Write-CouchDBFullCommit () {
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/databases.html#write-a-commit
     #>
-    [CmdletBinding(SupportsShouldProcess = $true)]
+    [CmdletBinding()]
     param(
         [string] $Server,
         [int] $Port,

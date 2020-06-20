@@ -225,7 +225,7 @@ function Remove-CouchDBNode () {
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/config.html#remove-a-node
     #>
-    [CmdletBinding(SupportsShouldProcess = $true)]
+    [CmdletBinding()]
     param(
         [string] $Server,
         [int] $Port,

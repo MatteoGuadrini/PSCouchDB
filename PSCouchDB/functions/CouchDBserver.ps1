@@ -300,7 +300,7 @@ function Restart-CouchDBServer () {
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/server.html
     #>
-    [CmdletBinding(SupportsShouldProcess = $true)]
+    [CmdletBinding()]
     param(
         [switch] $Force
     )

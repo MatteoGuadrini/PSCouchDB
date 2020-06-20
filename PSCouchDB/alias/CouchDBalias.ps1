@@ -29,7 +29,6 @@ New-Alias -Name "gcmr" -Value Get-CouchDBMissingRevision -Option ReadOnly
 New-Alias -Name "gcrd" -Value Get-CouchDBRevisionDifference -Option ReadOnly
 New-Alias -Name "gcrl" -Value Get-CouchDBRevisionLimit -Option ReadOnly
 New-Alias -Name "gcss" -Value Get-CouchDBSession -Option ReadOnly
-New-Alias -Name "gcpd" -Value Get-CouchDBPartitionDocuments -Option ReadOnly
 New-Alias -Name "scds" -Value Sync-CouchDBDatabaseShards -Option ReadOnly
 New-Alias -Name "cpdoc" -Value Copy-CouchDBDocument -Option ReadOnly
 New-Alias -Name "mcsts" -Value Measure-CouchDBStatistics -Option ReadOnly
@@ -81,7 +80,6 @@ New-Alias -Name "rcs" -Value Remove-CouchDBSession -Option ReadOnly
 New-Alias -Name "rcsrv" -Value Restart-CouchDBServer -Option ReadOnly
 New-Alias -Name "scft" -Value Search-CouchDBFullText -Option ReadOnly
 New-Alias -Name "fcdoc" -Value Find-CouchDBDocuments -Option ReadOnly
-New-Alias -Name "fcpdoc" -Value Find-CouchDBPartitionDocuments -Option ReadOnly
 New-Alias -Name "wcfc" -Value Write-CouchDBFullCommit -Option ReadOnly
 New-Alias -Name "ecdb" -Value Export-CouchDBDatabase -Option ReadOnly
 New-Alias -Name "icdb" -Value Import-CouchDBDatabase -Option ReadOnly

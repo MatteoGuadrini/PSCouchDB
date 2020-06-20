@@ -25,12 +25,19 @@ class PSCouchDBDocument {
         $this.doc.Add('_id', $this._id)
     }
 
+    PSCouchDBDocument ([string]$_id, [string]$_rev) {
+        $this._id = $_id
+        $this._rev = $_rev
+        $this.doc.Add('_id', $this._id)
+        $this.doc.Add('_rev', $this._rev)
+    }
+
     # Methods
     [hashtable] GetDocument () {
         return $this.doc
     }
 
-    SetElement ($key) {
+    SetElement ([string]$key) {
         # Check key isn't _id
         if (-not($key -eq "_id")) { 
             $this.doc[$key] = $null
@@ -39,14 +46,16 @@ class PSCouchDBDocument {
         }
     }
 
-    SetElement ($key, $value) {
+    SetElement ([string]$key, [string]$value) {
         if ($key -eq "_id") {
             $this._id = $value
+        } elseif ($key -eq "_rev") {
+            $this._rev = $value
         }
         $this.doc[$key] = $value
     }
 
-    RemoveElement ($key) {
+    RemoveElement ([string]$key) {
         if ($this.doc.ContainsKey($key)) {
             $this.doc.Remove($key)
         } else {
