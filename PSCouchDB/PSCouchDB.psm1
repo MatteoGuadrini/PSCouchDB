@@ -12,24 +12,50 @@ class PSCouchDBDocument {
     # Propetries
     [string] $_id
     [string] $_rev
+    [hashtable] $_attachments = @{}
     hidden [hashtable] $doc = @{}
 
     # Constructors
+    # No specified _id
     PSCouchDBDocument () { 
         $this._id = (New-CouchDBUuids -Count 1).uuids[0]
         $this.doc.Add('_id', $this._id)
     }
 
+    # Specified _id
     PSCouchDBDocument ([string]$_id) {
         $this._id = $_id
         $this.doc.Add('_id', $this._id)
     }
 
+    # Specified _id and _rev
     PSCouchDBDocument ([string]$_id, [string]$_rev) {
         $this._id = $_id
         $this._rev = $_rev
         $this.doc.Add('_id', $this._id)
         $this.doc.Add('_rev', $this._rev)
+    }
+
+    # Specified _id, _rev and _attachments
+    PSCouchDBDocument ([string]$_id, [string]$_rev, [PSCouchDBAttachment]$attachment) {
+        $this._id = $_id
+        $this._rev = $_rev
+        $this._attachments.Add($attachment.filename, $attachment)
+        $this.doc.Add('_id', $this._id)
+        $this.doc.Add('_rev', $this._rev)
+        $this.doc.Add('_attachments', @{})
+        $this.doc._attachments.Add($attachment.filename, @{'content_type' = $attachment.content_type; 'data' = $attachment.data})
+    }
+
+    PSCouchDBDocument ([string]$_id, [string]$_rev, [string]$attachment) {
+        $this._id = $_id
+        $this._rev = $_rev
+        $attach = New-Object -TypeName PSCouchDBAttachment -ArgumentList $attachment
+        $this._attachments.Add($attach.filename, $attach)
+        $this.doc.Add('_id', $this._id)
+        $this.doc.Add('_rev', $this._rev)
+        $this.doc.Add('_attachments', @{})
+        $this.doc._attachments.Add($attach.filename, @{'content_type' = $attach.content_type; 'data' = $attach.data})
     }
 
     # Methods

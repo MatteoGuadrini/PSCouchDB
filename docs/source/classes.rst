@@ -390,6 +390,7 @@ Properties
 
     _id           Property   string _id {get;set;}
     _rev          Property   string _rev {get;set;}
+    _attachments  Property   hashtable _attachments {get;set;}
 
 
 Methods
@@ -464,6 +465,64 @@ To get json representation of document object.
 
     $doc.ToJson()
 
+
+PSCouchDBAttachment class
+_________________________
+
+This class is used to construct an attachment documents.
+
+Properties
+**********
+
+.. code-block:: powershell
+
+    content_type Property   string content_type {get;set;}
+    filename     Property   string filename {get;set;}
+
+
+Methods
+*******
+
+.. code-block:: powershell
+
+    Equals       Method     bool Equals(System.Object obj)
+    GetData      Method     string GetData()
+    GetHashCode  Method     int GetHashCode()
+    GetType      Method     type GetType()
+    ToString     Method     string ToString()
+
+Build an attachment
+*******************
+
+To create a ``PSCouchDBAttachment`` object, just do the following.
+
+.. code-block:: powershell
+
+    using module PSCouchDB
+    $attachment = New-Object PSCouchDBAttachment -ArgumentList "C:\test\test.log"
+    $doc.GetType()
+
+Get content of an attachment
+****************************
+
+Get content of an attachment of a documents
+
+.. code-block:: powershell
+
+    $attachment.GetData()
+
+Attach a file to document
+*************************
+
+Create document object ``PSCouchDBDocument`` with attachment
+
+.. code-block:: powershell
+
+    $attach = New-Object PSCouchDBAttachment -ArgumentList "C:\test\test.log"
+    $doc1 = New-Object PSCouchDBDocument -ArgumentList '122', 'rev_1111', "C:\test\test.log"
+    $doc2 = New-Object PSCouchDBDocument -ArgumentList '122', 'rev_1111', $attach
+    $doc1.GetDocument()
+    $doc2.GetDocument()
 
 PSCouchDBDesignDoc class
 ________________________

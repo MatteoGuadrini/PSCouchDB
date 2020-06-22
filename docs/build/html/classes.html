@@ -141,9 +141,17 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#pscouchdbdesigndoc-class">PSCouchDBDesignDoc class</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#pscouchdbattachment-class">PSCouchDBAttachment class</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#id3">Properties</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id4">Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#build-an-attachment">Build an attachment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#get-content-of-an-attachment">Get content of an attachment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#attach-a-file-to-document">Attach a file to document</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#pscouchdbdesigndoc-class">PSCouchDBDesignDoc class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id5">Properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">Methods</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#build-a-design-document">Build a design document</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#work-with-views">Work with views</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#simple-view">Simple view</a></li>
@@ -531,6 +539,7 @@ by specifying the selector and the value that you want to associate.</p>
 <h3>Properties<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">_id</span>           <span class="n">Property</span>   <span class="n">string</span> <span class="n">_id</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
 <span class="n">_rev</span>          <span class="n">Property</span>   <span class="n">string</span> <span class="n">_rev</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+<span class="n">_attachments</span>  <span class="n">Property</span>   <span class="n">hashtable</span> <span class="n">_attachments</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
 </pre></div>
 </div>
 </div>
@@ -594,11 +603,59 @@ by specifying the selector and the value that you want to associate.</p>
 </div>
 </div>
 </div>
+<div class="section" id="pscouchdbattachment-class">
+<h2>PSCouchDBAttachment class<a class="headerlink" href="#pscouchdbattachment-class" title="Permalink to this headline">¶</a></h2>
+<p>This class is used to construct an attachment documents.</p>
+<div class="section" id="id3">
+<h3>Properties<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">content_type</span> <span class="n">Property</span>   <span class="n">string</span> <span class="n">content_type</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+<span class="n">filename</span>     <span class="n">Property</span>   <span class="n">string</span> <span class="n">filename</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id4">
+<h3>Methods<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">Equals</span>       <span class="n">Method</span>     <span class="n">bool</span> <span class="n">Equals</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">obj</span><span class="p">)</span>
+<span class="n">GetData</span>      <span class="n">Method</span>     <span class="n">string</span> <span class="n">GetData</span><span class="p">()</span>
+<span class="n">GetHashCode</span>  <span class="n">Method</span>     <span class="n">int</span> <span class="n">GetHashCode</span><span class="p">()</span>
+<span class="n">GetType</span>      <span class="n">Method</span>     <span class="nb">type </span><span class="n">GetType</span><span class="p">()</span>
+<span class="n">ToString</span>     <span class="n">Method</span>     <span class="n">string</span> <span class="n">ToString</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="build-an-attachment">
+<h3>Build an attachment<a class="headerlink" href="#build-an-attachment" title="Permalink to this headline">¶</a></h3>
+<p>To create a <code class="docutils literal notranslate"><span class="pre">PSCouchDBAttachment</span></code> object, just do the following.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">using</span> <span class="n">module</span> <span class="n">PSCouchDB</span>
+<span class="nv">$attachment</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">PSCouchDBAttachment</span> <span class="n">-ArgumentList</span> <span class="s2">&quot;C:\test\test.log&quot;</span>
+<span class="nv">$doc</span><span class="p">.</span><span class="n">GetType</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-content-of-an-attachment">
+<h3>Get content of an attachment<a class="headerlink" href="#get-content-of-an-attachment" title="Permalink to this headline">¶</a></h3>
+<p>Get content of an attachment of a documents</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$attachment</span><span class="p">.</span><span class="n">GetData</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="attach-a-file-to-document">
+<h3>Attach a file to document<a class="headerlink" href="#attach-a-file-to-document" title="Permalink to this headline">¶</a></h3>
+<p>Create document object <code class="docutils literal notranslate"><span class="pre">PSCouchDBDocument</span></code> with attachment</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$attach</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">PSCouchDBAttachment</span> <span class="n">-ArgumentList</span> <span class="s2">&quot;C:\test\test.log&quot;</span>
+<span class="nv">$doc1</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">PSCouchDBDocument</span> <span class="n">-ArgumentList</span> <span class="s1">&#39;122&#39;</span><span class="p">,</span> <span class="s1">&#39;rev_1111&#39;</span><span class="p">,</span> <span class="s2">&quot;C:\test\test.log&quot;</span>
+<span class="nv">$doc2</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">PSCouchDBDocument</span> <span class="n">-ArgumentList</span> <span class="s1">&#39;122&#39;</span><span class="p">,</span> <span class="s1">&#39;rev_1111&#39;</span><span class="p">,</span> <span class="nv">$attach</span>
+<span class="nv">$doc1</span><span class="p">.</span><span class="n">GetDocument</span><span class="p">()</span>
+<span class="nv">$doc2</span><span class="p">.</span><span class="n">GetDocument</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
 <div class="section" id="pscouchdbdesigndoc-class">
 <h2>PSCouchDBDesignDoc class<a class="headerlink" href="#pscouchdbdesigndoc-class" title="Permalink to this headline">¶</a></h2>
 <p>This class is used to construct a design documents, simple or complex.</p>
-<div class="section" id="id3">
-<h3>Properties<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id5">
+<h3>Properties<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">lists</span>               <span class="n">Property</span>   <span class="n">hashtable</span> <span class="n">lists</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
 <span class="n">shows</span>               <span class="n">Property</span>   <span class="n">hashtable</span> <span class="n">shows</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
 <span class="n">validate_doc_update</span> <span class="n">Property</span>   <span class="n">string</span> <span class="n">validate_doc_update</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
@@ -606,8 +663,8 @@ by specifying the selector and the value that you want to associate.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="id4">
-<h3>Methods<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id6">
+<h3>Methods<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">AddList</span>             <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddList</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">name</span><span class="p">)</span>
 <span class="n">AddShow</span>             <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddShow</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">name</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddShow</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">name</span><span class="p">,</span> <span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">key</span><span class="p">)...</span>
 <span class="n">AddValidation</span>       <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddValidation</span><span class="p">(</span><span class="n">array</span> <span class="n">requirements</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddValidation</span><span class="p">(</span><span class="n">array</span> <span class="n">requirements</span><span class="p">,</span> <span class="n">System</span><span class="p">...</span>
