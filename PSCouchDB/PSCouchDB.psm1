@@ -2,9 +2,9 @@
 class PSCouchDBDocument {
     <#
     .SYNOPSIS
-    CouchDB documents
+    CouchDB document
     .DESCRIPTION
-    Class than representing the CouchDB documents
+    Class than representing the CouchDB document
     .EXAMPLE
     using module PSCouchDB
     $doc = New-Object PSCouchDBDocument
@@ -81,6 +81,41 @@ class PSCouchDBDocument {
         $this._id = $this.doc._id
         $this._rev = $this.doc._rev
         return $this.doc
+    }
+}
+
+class PSCouchDBAttachment {
+    <#
+    .SYNOPSIS
+    CouchDB document attachment
+    .DESCRIPTION
+    Class than representing the CouchDB document attachment
+    .EXAMPLE
+    using module PSCouchDB
+    $attachment = New-Object PSCouchDBAttachment
+    #>
+    # Propetries
+    [string] $filename
+    [string] $content_type
+    hidden $data
+
+    # Constructors
+    PSCouchDBAttachment ([string] $path) {
+        # Get a filename
+        $name = [System.IO.Path]::GetFileNameWithoutExtension($path)
+        $extension = [System.IO.Path]::GetExtension($path)
+        $this.filename = "$name$extension"
+        # Get a content-type
+        $this.content_type = "multipart/form-data"
+        # Get data
+        $bytes = [System.Text.Encoding]::UTF8.GetBytes((Get-Content -Path $path))
+        $this.data = [System.Convert]::ToBase64String($bytes)
+    }
+
+    [string] GetData () {
+        # Get data to string
+        $bytes = [System.Convert]::FromBase64String($this.data)
+        return [System.Text.Encoding]::UTF8.GetString($bytes)
     }
 }
 
