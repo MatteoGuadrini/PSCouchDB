@@ -487,6 +487,7 @@ Methods
 
     Equals       Method     bool Equals(System.Object obj)
     GetData      Method     string GetData()
+    SaveData     Method     void GetData()
     GetHashCode  Method     int GetHashCode()
     GetType      Method     type GetType()
     ToString     Method     string ToString()
@@ -519,8 +520,8 @@ Create document object ``PSCouchDBDocument`` with attachment
 .. code-block:: powershell
 
     $attach = New-Object PSCouchDBAttachment -ArgumentList "C:\test\test.log"
-    $doc1 = New-Object PSCouchDBDocument -ArgumentList '122', 'rev_1111', "C:\test\test.log"
-    $doc2 = New-Object PSCouchDBDocument -ArgumentList '122', 'rev_1111', $attach
+    $doc1 = New-Object PSCouchDBDocument -ArgumentList '122', '1-2c903913030efb4d711db085b1f44107', "C:\test\test.log"
+    $doc2 = New-Object PSCouchDBDocument -ArgumentList '122', '1-2c903913030efb4d711db085b1f44107', $attach
     $doc1.GetDocument()
     $doc2.GetDocument()
 

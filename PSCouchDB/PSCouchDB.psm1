@@ -118,7 +118,7 @@ class PSCouchDBAttachment {
     Class than representing the CouchDB document attachment
     .EXAMPLE
     using module PSCouchDB
-    $attachment = New-Object PSCouchDBAttachment
+    $attachment = New-Object PSCouchDBAttachment -ArgumentList "C:\test.txt"
     #>
     # Propetries
     [string] $filename
@@ -142,6 +142,10 @@ class PSCouchDBAttachment {
         # Get data to string
         $bytes = [System.Convert]::FromBase64String($this.data)
         return [System.Text.Encoding]::UTF8.GetString($bytes)
+    }
+
+    SaveData ($file) {
+        $this.GetData() | Out-File -FilePath $file -Encoding utf8
     }
 }
 
