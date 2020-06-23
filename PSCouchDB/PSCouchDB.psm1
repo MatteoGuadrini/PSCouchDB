@@ -68,7 +68,7 @@ class PSCouchDBDocument {
         if (-not($key -eq "_id")) { 
             $this.doc[$key] = $null
         } else {
-            Write-Warning -Message "_id must have a value"
+            Write-Warning -Message "_id must have a value. _id unchanged."
         }
     }
 
@@ -107,6 +107,17 @@ class PSCouchDBDocument {
         $this._id = $this.doc._id
         $this._rev = $this.doc._rev
         return $this.doc
+    }
+
+    AddAttachment ([PSCouchDBAttachment]$attachment) {
+        $this._attachments.Add($attachment.filename, $attachment)
+        $this.doc._attachments.Add($attachment.filename, @{'content_type' = $attachment.content_type; 'data' = $attachment.data})
+    }
+
+    AddAttachment ([string]$attachment) {
+        $attach = New-Object -TypeName PSCouchDBAttachment -ArgumentList $attachment
+        $this._attachments.Add($attach.filename, $attach)
+        $this.doc._attachments.Add($attach.filename, @{'content_type' = $attach.content_type; 'data' = $attach.data})
     }
 }
 
