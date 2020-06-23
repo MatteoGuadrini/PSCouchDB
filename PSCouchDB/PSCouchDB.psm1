@@ -127,15 +127,19 @@ class PSCouchDBAttachment {
 
     # Constructors
     PSCouchDBAttachment ([string] $path) {
-        # Get a filename
-        $name = [System.IO.Path]::GetFileNameWithoutExtension($path)
-        $extension = [System.IO.Path]::GetExtension($path)
-        $this.filename = "$name$extension"
-        # Get a content-type
-        $this.content_type = "multipart/form-data"
-        # Get data
-        $bytes = [System.Text.Encoding]::UTF8.GetBytes((Get-Content -Path $path))
-        $this.data = [System.Convert]::ToBase64String($bytes)
+        if (Test-Path -Path $path) {
+            # Get a filename
+            $name = [System.IO.Path]::GetFileNameWithoutExtension($path)
+            $extension = [System.IO.Path]::GetExtension($path)
+            $this.filename = "$name$extension"
+            # Get a content-type
+            $this.content_type = "multipart/form-data"
+            # Get data
+            $bytes = [System.Text.Encoding]::UTF8.GetBytes((Get-Content -Path $path))
+            $this.data = [System.Convert]::ToBase64String($bytes)
+        } else {
+            throw [System.IO.FileNotFoundException] "$path attachment not found."
+        }
     }
 
     [string] GetData () {
