@@ -135,8 +135,12 @@ class PSCouchDBAttachment {
             # Get a content-type
             $this.content_type = "multipart/form-data"
             # Get data
-            $bytes = [System.Text.Encoding]::UTF8.GetBytes((Get-Content -Path $path))
-            $this.data = [System.Convert]::ToBase64String($bytes)
+            if ((Get-Item -Path $path).length -gt 0) {
+                $bytes = [System.Text.Encoding]::UTF8.GetBytes((Get-Content -Path $path))
+                $this.data = [System.Convert]::ToBase64String($bytes)
+            } else {
+                throw [System.IO.InvalidDataException] "$path attachment is empty."
+            }
         } else {
             throw [System.IO.FileNotFoundException] "$path attachment not found."
         }
