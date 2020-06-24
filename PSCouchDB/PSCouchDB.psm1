@@ -119,6 +119,13 @@ class PSCouchDBDocument {
         $this._attachments.Add($attach.filename, $attach)
         $this.doc._attachments.Add($attach.filename, @{'content_type' = $attach.content_type; 'data' = $attach.data})
     }
+
+    RemoveAttachment ([string]$attachment) {
+        if ($this._attachments.ContainsKey($attachment)) {
+            $this._attachments.Remove($attachment)
+            $this.doc._attachments.Remove($attachment)
+        }
+    }
 }
 
 class PSCouchDBAttachment {

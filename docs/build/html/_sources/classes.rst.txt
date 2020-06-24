@@ -398,16 +398,17 @@ Methods
 
 .. code-block:: powershell
 
-    AddAttachment Method     void AddAttachment(PSCouchDBAttachment attachment), void AddAttachment(string attachment)
-    Equals        Method     bool Equals(System.Object obj)
-    FromJson      Method     hashtable FromJson(string json)
-    GetDocument   Method     hashtable GetDocument()
-    GetHashCode   Method     int GetHashCode()
-    GetType       Method     type GetType()
-    RemoveElement Method     void RemoveElement(string key)
-    SetElement    Method     void SetElement(string key), void SetElement(string key, string value)
-    ToJson        Method     string ToJson(), string ToJson(int depth), string ToJson(int depth, bool compress)
-    ToString      Method     string ToString()
+    AddAttachment    Method     void AddAttachment(PSCouchDBAttachment attachment), void AddAttachment(string attachment)
+    Equals           Method     bool Equals(System.Object obj)
+    FromJson         Method     hashtable FromJson(string json)
+    GetDocument      Method     hashtable GetDocument()
+    GetHashCode      Method     int GetHashCode()
+    GetType          Method     type GetType()
+    RemoveAttachment Method     void RemoveAttachment(string attachment)
+    RemoveElement    Method     void RemoveElement(string key)
+    SetElement       Method     void SetElement(string key), void SetElement(string key, string value)
+    ToJson           Method     string ToJson(), string ToJson(int depth), string ToJson(int depth, bool compress)
+    ToString         Method     string ToString()
 
 Build a document
 ****************
