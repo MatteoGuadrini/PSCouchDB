@@ -428,7 +428,7 @@ Add one element to our document object.
 
 .. code-block:: powershell
 
-    $doc.SetElement("test")             # New key "test" with empty value
+    $doc.SetElement("test")              # New key "test" with empty value
     $doc.SetElement("test1", "value1")   # New key "test1" with value "value1"
 
 Modify element to document
@@ -466,6 +466,26 @@ To get json representation of document object.
 .. code-block:: powershell
 
     $doc.ToJson()
+
+Add one attachment
+^^^^^^^^^^^^^^^^^^
+
+Add an attachment to doc object.
+
+.. code-block:: powershell
+
+    $doc.AddAttachment('C:\test.txt')   # string option
+    $attachment = New-Object PSCouchDBAttachment -ArgumentList 'C:\test.txt'
+    $doc.AddAttachment($attachment)     # PSCouchDBAttachment option
+
+Remove one attachment
+^^^^^^^^^^^^^^^^^^^^^
+
+Remove an attachment to doc object.
+
+.. code-block:: powershell
+
+    $doc.RemoveAttachment('test.txt')
 
 
 PSCouchDBAttachment class

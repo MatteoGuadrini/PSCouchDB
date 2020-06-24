@@ -137,6 +137,8 @@
 <li class="toctree-l4"><a class="reference internal" href="#remove-element-to-document">Remove element to document</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#view-document">View document</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#get-json-document">Get json document</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#add-one-attachment">Add one attachment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#remove-one-attachment">Remove one attachment</a></li>
 </ul>
 </li>
 </ul>
@@ -570,7 +572,7 @@ by specifying the selector and the value that you want to associate.</p>
 <div class="section" id="add-element-to-document">
 <h4>Add element to document<a class="headerlink" href="#add-element-to-document" title="Permalink to this headline">¶</a></h4>
 <p>Add one element to our document object.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$doc</span><span class="p">.</span><span class="n">SetElement</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>             <span class="c"># New key &quot;test&quot; with empty value</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$doc</span><span class="p">.</span><span class="n">SetElement</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>              <span class="c"># New key &quot;test&quot; with empty value</span>
 <span class="nv">$doc</span><span class="p">.</span><span class="n">SetElement</span><span class="p">(</span><span class="s2">&quot;test1&quot;</span><span class="p">,</span> <span class="s2">&quot;value1&quot;</span><span class="p">)</span>   <span class="c"># New key &quot;test1&quot; with value &quot;value1&quot;</span>
 </pre></div>
 </div>
@@ -600,6 +602,22 @@ by specifying the selector and the value that you want to associate.</p>
 <h4>Get json document<a class="headerlink" href="#get-json-document" title="Permalink to this headline">¶</a></h4>
 <p>To get json representation of document object.</p>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$doc</span><span class="p">.</span><span class="n">ToJson</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="add-one-attachment">
+<h4>Add one attachment<a class="headerlink" href="#add-one-attachment" title="Permalink to this headline">¶</a></h4>
+<p>Add an attachment to doc object.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$doc</span><span class="p">.</span><span class="n">AddAttachment</span><span class="p">(</span><span class="s1">&#39;C:\test.txt&#39;</span><span class="p">)</span>   <span class="c"># string option</span>
+<span class="nv">$attachment</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">PSCouchDBAttachment</span> <span class="n">-ArgumentList</span> <span class="s1">&#39;C:\test.txt&#39;</span>
+<span class="nv">$doc</span><span class="p">.</span><span class="n">AddAttachment</span><span class="p">(</span><span class="nv">$attachment</span><span class="p">)</span>     <span class="c"># PSCouchDBAttachment option</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="remove-one-attachment">
+<h4>Remove one attachment<a class="headerlink" href="#remove-one-attachment" title="Permalink to this headline">¶</a></h4>
+<p>Remove an attachment to doc object.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$doc</span><span class="p">.</span><span class="n">RemoveAttachment</span><span class="p">(</span><span class="s1">&#39;test.txt&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
