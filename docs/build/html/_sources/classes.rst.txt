@@ -479,6 +479,17 @@ Add an attachment to doc object.
     $attachment = New-Object PSCouchDBAttachment -ArgumentList 'C:\test.txt'
     $doc.AddAttachment($attachment)     # PSCouchDBAttachment option
 
+Replace one attachment
+^^^^^^^^^^^^^^^^^^^^^^
+
+Replace an attachment to doc object.
+
+.. code-block:: powershell
+
+    $doc.ReplaceAttachment('C:\test.txt')   # string option
+    $attachment = New-Object PSCouchDBAttachment -ArgumentList 'C:\test.txt'
+    $doc.ReplaceAttachment($attachment)     # PSCouchDBAttachment option
+
 Remove one attachment
 ^^^^^^^^^^^^^^^^^^^^^
 
