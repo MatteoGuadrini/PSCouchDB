@@ -120,6 +120,19 @@ class PSCouchDBDocument {
         $this.doc._attachments.Add($attach.filename, @{'content_type' = $attach.content_type; 'data' = $attach.data})
     }
 
+    ReplaceAttachment ([PSCouchDBAttachment]$attachment) {
+        $this.RemoveAttachment($attachment.filename)
+        $this._attachments.Add($attachment.filename, $attachment)
+        $this.doc._attachments.Add($attachment.filename, @{'content_type' = $attachment.content_type; 'data' = $attachment.data})
+    }
+
+    ReplaceAttachment ([string]$attachment) {
+        $attach = New-Object -TypeName PSCouchDBAttachment -ArgumentList $attachment
+        $this.RemoveAttachment($attach.filename)
+        $this._attachments.Add($attach.filename, $attach)
+        $this.doc._attachments.Add($attach.filename, @{'content_type' = $attach.content_type; 'data' = $attach.data})
+    }
+
     RemoveAttachment ([string]$attachment) {
         if ($this._attachments.ContainsKey($attachment)) {
             $this._attachments.Remove($attachment)
