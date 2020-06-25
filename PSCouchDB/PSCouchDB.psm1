@@ -164,7 +164,7 @@ class PSCouchDBAttachment {
             $extension = [System.IO.Path]::GetExtension($path)
             $this.filename = "$name$extension"
             # Get a content-type
-            $this.content_type = "multipart/form-data"
+            $this.content_type = [PSCouchDBAttachment]::ConfirmMime($this.filename)
             # Get data
             if ((Get-Item -Path $path).length -gt 0) {
                 $bytes = [System.Text.Encoding]::UTF8.GetBytes((Get-Content -Path $path))
@@ -185,6 +185,29 @@ class PSCouchDBAttachment {
 
     SaveData ($file) {
         $this.GetData() | Out-File -FilePath $file -Encoding utf8
+    }
+
+    [string] static ConfirmMime ([string]$filename) {
+        $extension = [System.IO.Path]::GetExtension($filename)
+        $mime = switch ($extension) {
+            # application MIME  
+            ".exe" {"application/octet-stream"; break}
+            ".bin" {"application/octet-stream"; break}
+            ".pdf" {"application/pdf"; break}
+            ".crt" {"application/pkcs8"; break}
+            ".cer" {"application/pkcs8"; break}
+            ".p7b" {"application/pkcs8"; break}
+            ".pfx" {"application/pkcs8"; break}
+            ".zip" {"application/zip"; break}
+            ".7z" {"application/zip"; break}
+            ".rar" {"application/zip"; break}
+            ".tar" {"application/zip"; break}
+            ".tar.gz" {"application/zip"; break}
+            default {
+                "multipart/form-data"; break
+            }
+        }
+        return $mime
     }
 }
 
