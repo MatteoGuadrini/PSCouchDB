@@ -111,12 +111,14 @@ class PSCouchDBDocument {
 
     AddAttachment ([PSCouchDBAttachment]$attachment) {
         $this._attachments.Add($attachment.filename, $attachment)
+        $this.doc.Add('_attachments', @{})
         $this.doc._attachments.Add($attachment.filename, @{'content_type' = $attachment.content_type; 'data' = $attachment.data})
     }
 
     AddAttachment ([string]$attachment) {
         $attach = New-Object -TypeName PSCouchDBAttachment -ArgumentList $attachment
         $this._attachments.Add($attach.filename, $attach)
+        $this.doc.Add('_attachments', @{})
         $this.doc._attachments.Add($attach.filename, @{'content_type' = $attach.content_type; 'data' = $attach.data})
     }
 
