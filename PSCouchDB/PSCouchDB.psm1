@@ -191,20 +191,60 @@ class PSCouchDBAttachment {
         $extension = [System.IO.Path]::GetExtension($filename)
         $mime = switch ($extension) {
             # application MIME  
-            ".exe" {"application/octet-stream"; break}
-            ".bin" {"application/octet-stream"; break}
-            ".pdf" {"application/pdf"; break}
-            ".crt" {"application/pkcs8"; break}
-            ".cer" {"application/pkcs8"; break}
-            ".p7b" {"application/pkcs8"; break}
-            ".pfx" {"application/pkcs8"; break}
-            ".zip" {"application/zip"; break}
-            ".7z" {"application/zip"; break}
-            ".rar" {"application/zip"; break}
-            ".tar" {"application/zip"; break}
-            ".tar.gz" {"application/zip"; break}
+            ".exe"      {"application/octet-stream"; break}
+            ".bin"      {"application/octet-stream"; break}
+            ".pdf"      {"application/pdf"; break}
+            ".crt"      {"application/pkcs8"; break}
+            ".cer"      {"application/pkcs8"; break}
+            ".p7b"      {"application/pkcs8"; break}
+            ".pfx"      {"application/pkcs8"; break}
+            ".zip"      {"application/zip"; break}
+            ".7z"       {"application/zip"; break}
+            ".rar"      {"application/zip"; break}
+            ".tar"      {"application/zip"; break}
+            ".tar.gz"   {"application/zip"; break}
+            # audio MIME
+            ".mp3"      {"audio/mpeg"; break}
+            ".mp4"      {"audio/mpeg"; break}
+            ".ogg"      {"audio/vorbis"; break}
+            ".vob"      {"audio/vorbis"; break}
+            # font MIME
+            ".woff"     {"font/woff"; break}
+            ".ttf"      {"font/ttf"; break}
+            ".otf"      {"font/otf"; break}
+            # image MIME
+            ".jpeg"     {"image/jpeg"; break}
+            ".jpg"      {"image/jpeg"; break}
+            ".png"      {"image/png"; break}
+            ".bmp"      {"image/bmp"; break}
+            ".svg"      {"image/svg+xml"; break}
+            ".heic"     {"image/heic"; break}
+            ".tiff"     {"image/tiff"; break}
+            ".wmf"      {"image/wmf"; break}
+            ".gif"      {"image/gif"; break}
+            ".webp"     {"image/webp"; break}
+            # model 3d MIME
+            ".3mf"      {"model/3mf"; break}
+            ".vml"      {"model/vml"; break}
+            ".dwf"      {"model/vnd.dwf"; break}
+            # text MIME
+            ".css"      {"text/css"; break}
+            ".csv"      {"text/csv"; break}
+            ".dns"      {"text/dns"; break}
+            ".html"     {"text/html"; break}
+            ".md"       {"text/markdown"; break}
+            ".rtf"      {"text/rtf"; break}
+            ".vcard"    {"text/vcard"; break}
+            ".xml"      {"text/xml"; break}
+            # video MIME
+            ".3gpp"     {"video/3gpp"; break}
+            ".mpeg"     {"video/mpeg4-generic"; break}
+            ".avi"      {"video/mpeg4-generic"; break}
+            ".xvid"     {"video/mpeg4-generic"; break}
+            ".dvix"     {"video/mpeg4-generic"; break}
+            ".mpg"      {"video/mpeg4-generic"; break}
             default {
-                "multipart/form-data"; break
+                        "multipart/form-data"; break
             }
         }
         return $mime
