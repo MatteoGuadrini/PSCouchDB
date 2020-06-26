@@ -420,7 +420,7 @@ Documents
 
 .. code-block:: powershell
 
-    New-CouchDBDocument [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [[-Partition] <String>] [-Data] <Object> [-BatchMode] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    New-CouchDBDocument [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [[-Partition] <String>] [-Data] <Object> [[-Attachment] <String>] [-BatchMode] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
 
 **Set-CouchDBDocument**
 

@@ -140,6 +140,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#add-one-attachment">Add one attachment</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#replace-one-attachment">Replace one attachment</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#remove-one-attachment">Remove one attachment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#remove-all-attachments">Remove all attachments</a></li>
 </ul>
 </li>
 </ul>
@@ -548,18 +549,19 @@ by specifying the selector and the value that you want to associate.</p>
 </div>
 <div class="section" id="id2">
 <h3>Methods<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">AddAttachment</span>     <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddAttachment</span><span class="p">(</span><span class="n">PSCouchDBAttachment</span> <span class="n">attachment</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddAttachment</span><span class="p">(</span><span class="n">string</span> <span class="n">attachment</span><span class="p">)</span>
-<span class="n">Equals</span>            <span class="n">Method</span>     <span class="n">bool</span> <span class="n">Equals</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">obj</span><span class="p">)</span>
-<span class="n">FromJson</span>          <span class="n">Method</span>     <span class="n">hashtable</span> <span class="n">FromJson</span><span class="p">(</span><span class="n">string</span> <span class="n">json</span><span class="p">)</span>
-<span class="n">GetDocument</span>       <span class="n">Method</span>     <span class="n">hashtable</span> <span class="n">GetDocument</span><span class="p">()</span>
-<span class="n">GetHashCode</span>       <span class="n">Method</span>     <span class="n">int</span> <span class="n">GetHashCode</span><span class="p">()</span>
-<span class="n">GetType</span>           <span class="n">Method</span>     <span class="nb">type </span><span class="n">GetType</span><span class="p">()</span>
-<span class="n">RemoveAttachment</span>  <span class="n">Method</span>     <span class="n">void</span> <span class="n">RemoveAttachment</span><span class="p">(</span><span class="n">string</span> <span class="n">attachment</span><span class="p">)</span>
-<span class="n">RemoveElement</span>     <span class="n">Method</span>     <span class="n">void</span> <span class="n">RemoveElement</span><span class="p">(</span><span class="n">string</span> <span class="n">key</span><span class="p">)</span>
-<span class="n">ReplaceAttachment</span> <span class="n">Method</span>     <span class="n">void</span> <span class="n">ReplaceAttachment</span><span class="p">(</span><span class="n">PSCouchDBAttachment</span> <span class="n">attachment</span><span class="p">),</span> <span class="n">void</span> <span class="n">ReplaceAttachment</span><span class="p">(</span><span class="n">string</span> <span class="n">attachment</span><span class="p">)</span>
-<span class="n">SetElement</span>        <span class="n">Method</span>     <span class="n">void</span> <span class="n">SetElement</span><span class="p">(</span><span class="n">string</span> <span class="n">key</span><span class="p">),</span> <span class="n">void</span> <span class="n">SetElement</span><span class="p">(</span><span class="n">string</span> <span class="n">key</span><span class="p">,</span> <span class="n">string</span> <span class="n">value</span><span class="p">)</span>
-<span class="n">ToJson</span>            <span class="n">Method</span>     <span class="n">string</span> <span class="n">ToJson</span><span class="p">(),</span> <span class="n">string</span> <span class="n">ToJson</span><span class="p">(</span><span class="n">int</span> <span class="n">depth</span><span class="p">),</span> <span class="n">string</span> <span class="n">ToJson</span><span class="p">(</span><span class="n">int</span> <span class="n">depth</span><span class="p">,</span> <span class="n">bool</span> <span class="n">compress</span><span class="p">)</span>
-<span class="n">ToString</span>          <span class="n">Method</span>     <span class="n">string</span> <span class="n">ToString</span><span class="p">()</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">AddAttachment</span>       <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddAttachment</span><span class="p">(</span><span class="n">PSCouchDBAttachment</span> <span class="n">attachment</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddAttachment</span><span class="p">(</span><span class="n">string</span> <span class="n">attachm</span><span class="p">...</span>
+<span class="n">Equals</span>              <span class="n">Method</span>     <span class="n">bool</span> <span class="n">Equals</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">obj</span><span class="p">)</span>
+<span class="n">FromJson</span>            <span class="n">Method</span>     <span class="n">hashtable</span> <span class="n">FromJson</span><span class="p">(</span><span class="n">string</span> <span class="n">json</span><span class="p">)</span>
+<span class="n">GetDocument</span>         <span class="n">Method</span>     <span class="n">hashtable</span> <span class="n">GetDocument</span><span class="p">()</span>
+<span class="n">GetHashCode</span>         <span class="n">Method</span>     <span class="n">int</span> <span class="n">GetHashCode</span><span class="p">()</span>
+<span class="n">GetType</span>             <span class="n">Method</span>     <span class="nb">type </span><span class="n">GetType</span><span class="p">()</span>
+<span class="n">RemoveAllAttachment</span> <span class="n">Method</span>     <span class="n">void</span> <span class="n">RemoveAllAttachment</span><span class="p">()</span>
+<span class="n">RemoveAttachment</span>    <span class="n">Method</span>     <span class="n">void</span> <span class="n">RemoveAttachment</span><span class="p">(</span><span class="n">string</span> <span class="n">attachment</span><span class="p">)</span>
+<span class="n">RemoveElement</span>       <span class="n">Method</span>     <span class="n">void</span> <span class="n">RemoveElement</span><span class="p">(</span><span class="n">string</span> <span class="n">key</span><span class="p">)</span>
+<span class="n">ReplaceAttachment</span>   <span class="n">Method</span>     <span class="n">void</span> <span class="n">ReplaceAttachment</span><span class="p">(</span><span class="n">PSCouchDBAttachment</span> <span class="n">attachment</span><span class="p">),</span> <span class="n">void</span> <span class="n">ReplaceAttachment</span><span class="p">(</span><span class="n">string</span><span class="p">...</span>
+<span class="n">SetElement</span>          <span class="n">Method</span>     <span class="n">void</span> <span class="n">SetElement</span><span class="p">(</span><span class="n">string</span> <span class="n">key</span><span class="p">),</span> <span class="n">void</span> <span class="n">SetElement</span><span class="p">(</span><span class="n">string</span> <span class="n">key</span><span class="p">,</span> <span class="n">string</span> <span class="n">value</span><span class="p">)</span>
+<span class="n">ToJson</span>              <span class="n">Method</span>     <span class="n">string</span> <span class="n">ToJson</span><span class="p">(),</span> <span class="n">string</span> <span class="n">ToJson</span><span class="p">(</span><span class="n">int</span> <span class="n">depth</span><span class="p">),</span> <span class="n">string</span> <span class="n">ToJson</span><span class="p">(</span><span class="n">int</span> <span class="n">depth</span><span class="p">,</span> <span class="n">bool</span> <span class="n">compress</span><span class="p">)</span>
+<span class="n">ToString</span>            <span class="n">Method</span>     <span class="n">string</span> <span class="n">ToString</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -629,6 +631,13 @@ by specifying the selector and the value that you want to associate.</p>
 <h4>Remove one attachment<a class="headerlink" href="#remove-one-attachment" title="Permalink to this headline">¶</a></h4>
 <p>Remove an attachment to doc object.</p>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$doc</span><span class="p">.</span><span class="n">RemoveAttachment</span><span class="p">(</span><span class="s1">&#39;test.txt&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="remove-all-attachments">
+<h4>Remove all attachments<a class="headerlink" href="#remove-all-attachments" title="Permalink to this headline">¶</a></h4>
+<p>Remove all attachments to doc object.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$doc</span><span class="p">.</span><span class="n">RemoveAllAttachments</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
