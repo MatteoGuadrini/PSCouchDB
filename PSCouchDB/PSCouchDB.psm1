@@ -128,15 +128,13 @@ class PSCouchDBDocument {
 
     ReplaceAttachment ([PSCouchDBAttachment]$attachment) {
         $this.RemoveAttachment($attachment.filename)
-        $this._attachments.Add($attachment.filename, $attachment)
-        $this.doc._attachments.Add($attachment.filename, @{'content_type' = $attachment.content_type; 'data' = $attachment.data})
+        $this.AddAttachment($attachment)
     }
 
     ReplaceAttachment ([string]$attachment) {
         $attach = New-Object -TypeName PSCouchDBAttachment -ArgumentList $attachment
         $this.RemoveAttachment($attach.filename)
-        $this._attachments.Add($attach.filename, $attach)
-        $this.doc._attachments.Add($attach.filename, @{'content_type' = $attach.content_type; 'data' = $attach.data})
+        $this.AddAttachment($attach)
     }
 
     RemoveAttachment ([string]$attachment) {
@@ -149,7 +147,9 @@ class PSCouchDBDocument {
     RemoveAllAttachments () {
         if ($this.doc.ContainsKey('_attachments')) {
             $this._attachments = @{}
-            $this.doc.Remove('_attachments')
+            if ($this.doc.ContainsKey('_attachments')) {
+                $this.doc.Remove('_attachments')
+            }
         }
     }
 }

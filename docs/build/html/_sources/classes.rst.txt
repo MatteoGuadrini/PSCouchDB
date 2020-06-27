@@ -374,7 +374,7 @@ Native query format (Mango)
 
 To receive the object in native format (Mango query) use the *GetNativeQuery* method.
 
-. code-block:: powershell
+.. code-block:: powershell
 
     $query.GetNativeQuery()
 

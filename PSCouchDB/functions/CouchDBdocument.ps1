@@ -697,6 +697,8 @@ function Set-CouchDBDocument () {
     The data in Json format or hastable.
     .PARAMETER Replace
     Overwrite data.
+    .PARAMETER Attachment
+    Add attachment file (full path) to CouchDB document.
     .PARAMETER BatchMode
     Write documents to the database at a higher rate by using the batch option.
     Documents in the batch may be manually flushed by using the Write-CouchDBFullCommit cmdlet.
@@ -738,6 +740,7 @@ function Set-CouchDBDocument () {
         [string] $Revision,
         $Data,
         [switch] $Replace,
+        [string] $Attachment,
         [switch] $BatchMode,
         [switch] $NoConflict,
         [string] $Authorization,
@@ -754,7 +757,7 @@ function Set-CouchDBDocument () {
         # PSCouchDBDocument Data
         $Data._id = $Document
         $Data._rev = $Revision
-    } else {
+    } elseif ($Data -is [string]) {
         # String Data
         $NewData = New-Object -TypeName PSCouchDBDocument
         [void] $NewData.FromJson($Data)
@@ -769,6 +772,11 @@ function Set-CouchDBDocument () {
         foreach ($entry in $OldData.GetDocument().Keys) {
             $Data.SetElement($entry, $OldData.doc[$entry])
         }
+        # Add attachment
+        if ($Attachment) { $Data.AddAttachment($Attachment) }
+    } else {
+        # Replace attachment
+        if ($Attachment) { $Data.ReplaceAttachment($Attachment) }
     }
     # Check BatchMode
     if ($BatchMode.IsPresent) { 

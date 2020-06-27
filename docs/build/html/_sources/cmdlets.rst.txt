@@ -426,7 +426,7 @@ Documents
 
 .. code-block:: powershell
 
-    Set-CouchDBDocument [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [-Revision] <String> [[-Data] <Object>] [-Replace] [-BatchMode] [-NoConflict] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    Set-CouchDBDocument [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [-Revision] <String> [[-Data] <Object>] [-Replace] [[-Attachment] <String>] [-BatchMode] [-NoConflict] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
 
 **Remove-CouchDBDocument**
 
