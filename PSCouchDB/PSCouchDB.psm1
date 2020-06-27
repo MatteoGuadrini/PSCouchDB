@@ -2,9 +2,9 @@
 class PSCouchDBDocument {
     <#
     .SYNOPSIS
-    CouchDB documents
+    CouchDB document
     .DESCRIPTION
-    Class than representing the CouchDB documents
+    Class than representing the CouchDB document
     .EXAMPLE
     using module PSCouchDB
     $doc = New-Object PSCouchDBDocument
@@ -12,24 +12,50 @@ class PSCouchDBDocument {
     # Propetries
     [string] $_id
     [string] $_rev
+    [hashtable] $_attachments = @{}
     hidden [hashtable] $doc = @{}
 
     # Constructors
+    # No specified _id
     PSCouchDBDocument () { 
         $this._id = (New-CouchDBUuids -Count 1).uuids[0]
         $this.doc.Add('_id', $this._id)
     }
 
+    # Specified _id
     PSCouchDBDocument ([string]$_id) {
         $this._id = $_id
         $this.doc.Add('_id', $this._id)
     }
 
+    # Specified _id and _rev
     PSCouchDBDocument ([string]$_id, [string]$_rev) {
         $this._id = $_id
         $this._rev = $_rev
         $this.doc.Add('_id', $this._id)
         $this.doc.Add('_rev', $this._rev)
+    }
+
+    # Specified _id, _rev and _attachments
+    PSCouchDBDocument ([string]$_id, [string]$_rev, [PSCouchDBAttachment]$attachment) {
+        $this._id = $_id
+        $this._rev = $_rev
+        $this._attachments.Add($attachment.filename, $attachment)
+        $this.doc.Add('_id', $this._id)
+        $this.doc.Add('_rev', $this._rev)
+        $this.doc.Add('_attachments', @{})
+        $this.doc._attachments.Add($attachment.filename, @{'content_type' = $attachment.content_type; 'data' = $attachment.data})
+    }
+
+    PSCouchDBDocument ([string]$_id, [string]$_rev, [string]$attachment) {
+        $this._id = $_id
+        $this._rev = $_rev
+        $attach = New-Object -TypeName PSCouchDBAttachment -ArgumentList $attachment
+        $this._attachments.Add($attach.filename, $attach)
+        $this.doc.Add('_id', $this._id)
+        $this.doc.Add('_rev', $this._rev)
+        $this.doc.Add('_attachments', @{})
+        $this.doc._attachments.Add($attach.filename, @{'content_type' = $attach.content_type; 'data' = $attach.data})
     }
 
     # Methods
@@ -42,7 +68,7 @@ class PSCouchDBDocument {
         if (-not($key -eq "_id")) { 
             $this.doc[$key] = $null
         } else {
-            Write-Warning -Message "_id must have a value"
+            Write-Warning -Message "_id must have a value. _id unchanged."
         }
     }
 
@@ -81,6 +107,160 @@ class PSCouchDBDocument {
         $this._id = $this.doc._id
         $this._rev = $this.doc._rev
         return $this.doc
+    }
+
+    AddAttachment ([PSCouchDBAttachment]$attachment) {
+        $this._attachments.Add($attachment.filename, $attachment)
+        if (-not($this.doc.ContainsKey('_attachments'))) {
+            $this.doc.Add('_attachments', @{})
+        }
+        $this.doc._attachments.Add($attachment.filename, @{'content_type' = $attachment.content_type; 'data' = $attachment.data})
+    }
+
+    AddAttachment ([string]$attachment) {
+        $attach = New-Object -TypeName PSCouchDBAttachment -ArgumentList $attachment
+        $this._attachments.Add($attach.filename, $attach)
+        if (-not($this.doc.ContainsKey('_attachments'))) {
+            $this.doc.Add('_attachments', @{})
+        }
+        $this.doc._attachments.Add($attach.filename, @{'content_type' = $attach.content_type; 'data' = $attach.data})
+    }
+
+    ReplaceAttachment ([PSCouchDBAttachment]$attachment) {
+        $this.RemoveAttachment($attachment.filename)
+        $this.AddAttachment($attachment)
+    }
+
+    ReplaceAttachment ([string]$attachment) {
+        $attach = New-Object -TypeName PSCouchDBAttachment -ArgumentList $attachment
+        $this.RemoveAttachment($attach.filename)
+        $this.AddAttachment($attach)
+    }
+
+    RemoveAttachment ([string]$attachment) {
+        if ($this._attachments.ContainsKey($attachment)) {
+            $this._attachments.Remove($attachment)
+            $this.doc._attachments.Remove($attachment)
+        }
+    }
+
+    RemoveAllAttachments () {
+        if ($this.doc.ContainsKey('_attachments')) {
+            $this._attachments = @{}
+            if ($this.doc.ContainsKey('_attachments')) {
+                $this.doc.Remove('_attachments')
+            }
+        }
+    }
+}
+
+class PSCouchDBAttachment {
+    <#
+    .SYNOPSIS
+    CouchDB document attachment
+    .DESCRIPTION
+    Class than representing the CouchDB document attachment
+    .EXAMPLE
+    using module PSCouchDB
+    $attachment = New-Object PSCouchDBAttachment -ArgumentList "C:\test.txt"
+    #>
+    # Propetries
+    [string] $filename
+    [string] $content_type
+    hidden $data
+
+    # Constructors
+    PSCouchDBAttachment ([string] $path) {
+        if (Test-Path -Path $path) {
+            # Get a filename
+            $name = [System.IO.Path]::GetFileNameWithoutExtension($path)
+            $extension = [System.IO.Path]::GetExtension($path)
+            $this.filename = "$name$extension"
+            # Get a content-type
+            $this.content_type = [PSCouchDBAttachment]::ConfirmMime($this.filename)
+            # Get data
+            if ((Get-Item -Path $path).length -gt 0) {
+                $bytes = [System.Text.Encoding]::UTF8.GetBytes((Get-Content -Path $path))
+                $this.data = [System.Convert]::ToBase64String($bytes)
+            } else {
+                throw [System.IO.InvalidDataException] "$path attachment is empty."
+            }
+        } else {
+            throw [System.IO.FileNotFoundException] "$path attachment not found."
+        }
+    }
+
+    [string] GetData () {
+        # Get data to string
+        $bytes = [System.Convert]::FromBase64String($this.data)
+        return [System.Text.Encoding]::UTF8.GetString($bytes)
+    }
+
+    SaveData ($file) {
+        $this.GetData() | Out-File -FilePath $file -Encoding utf8
+    }
+
+    [string] static ConfirmMime ([string]$filename) {
+        $extension = [System.IO.Path]::GetExtension($filename)
+        $mime = switch ($extension) {
+            # application MIME  
+            ".exe"      {"application/octet-stream"; break}
+            ".bin"      {"application/octet-stream"; break}
+            ".pdf"      {"application/pdf"; break}
+            ".crt"      {"application/pkcs8"; break}
+            ".cer"      {"application/pkcs8"; break}
+            ".p7b"      {"application/pkcs8"; break}
+            ".pfx"      {"application/pkcs8"; break}
+            ".zip"      {"application/zip"; break}
+            ".7z"       {"application/zip"; break}
+            ".rar"      {"application/zip"; break}
+            ".tar"      {"application/zip"; break}
+            ".tar.gz"   {"application/zip"; break}
+            # audio MIME
+            ".mp3"      {"audio/mpeg"; break}
+            ".mp4"      {"audio/mpeg"; break}
+            ".ogg"      {"audio/vorbis"; break}
+            ".vob"      {"audio/vorbis"; break}
+            # font MIME
+            ".woff"     {"font/woff"; break}
+            ".ttf"      {"font/ttf"; break}
+            ".otf"      {"font/otf"; break}
+            # image MIME
+            ".jpeg"     {"image/jpeg"; break}
+            ".jpg"      {"image/jpeg"; break}
+            ".png"      {"image/png"; break}
+            ".bmp"      {"image/bmp"; break}
+            ".svg"      {"image/svg+xml"; break}
+            ".heic"     {"image/heic"; break}
+            ".tiff"     {"image/tiff"; break}
+            ".wmf"      {"image/wmf"; break}
+            ".gif"      {"image/gif"; break}
+            ".webp"     {"image/webp"; break}
+            # model 3d MIME
+            ".3mf"      {"model/3mf"; break}
+            ".vml"      {"model/vml"; break}
+            ".dwf"      {"model/vnd.dwf"; break}
+            # text MIME
+            ".css"      {"text/css"; break}
+            ".csv"      {"text/csv"; break}
+            ".dns"      {"text/dns"; break}
+            ".html"     {"text/html"; break}
+            ".md"       {"text/markdown"; break}
+            ".rtf"      {"text/rtf"; break}
+            ".vcard"    {"text/vcard"; break}
+            ".xml"      {"text/xml"; break}
+            # video MIME
+            ".3gpp"     {"video/3gpp"; break}
+            ".mpeg"     {"video/mpeg4-generic"; break}
+            ".avi"      {"video/mpeg4-generic"; break}
+            ".xvid"     {"video/mpeg4-generic"; break}
+            ".dvix"     {"video/mpeg4-generic"; break}
+            ".mpg"      {"video/mpeg4-generic"; break}
+            default {
+                        "multipart/form-data"; break
+            }
+        }
+        return $mime
     }
 }
 

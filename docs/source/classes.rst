@@ -374,7 +374,7 @@ Native query format (Mango)
 
 To receive the object in native format (Mango query) use the *GetNativeQuery* method.
 
-. code-block:: powershell
+.. code-block:: powershell
 
     $query.GetNativeQuery()
 
@@ -390,6 +390,7 @@ Properties
 
     _id           Property   string _id {get;set;}
     _rev          Property   string _rev {get;set;}
+    _attachments  Property   hashtable _attachments {get;set;}
 
 
 Methods
@@ -397,15 +398,19 @@ Methods
 
 .. code-block:: powershell
 
-    Equals        Method     bool Equals(System.Object obj)
-    FromJson      Method     hashtable FromJson(string json)
-    GetDocument   Method     hashtable GetDocument()
-    GetHashCode   Method     int GetHashCode()
-    GetType       Method     type GetType()
-    RemoveElement Method     void RemoveElement(System.Object key)
-    SetElement    Method     void SetElement(System.Object key), void SetElement(System.Object key, System.Object value)
-    ToJson        Method     string ToJson(), string ToJson(int depth), string ToJson(int depth, bool compress)
-    ToString      Method     string ToString()
+    AddAttachment       Method     void AddAttachment(PSCouchDBAttachment attachment), void AddAttachment(string attachm...
+    Equals              Method     bool Equals(System.Object obj)
+    FromJson            Method     hashtable FromJson(string json)
+    GetDocument         Method     hashtable GetDocument()
+    GetHashCode         Method     int GetHashCode()
+    GetType             Method     type GetType()
+    RemoveAllAttachment Method     void RemoveAllAttachment()
+    RemoveAttachment    Method     void RemoveAttachment(string attachment)
+    RemoveElement       Method     void RemoveElement(string key)
+    ReplaceAttachment   Method     void ReplaceAttachment(PSCouchDBAttachment attachment), void ReplaceAttachment(string...
+    SetElement          Method     void SetElement(string key), void SetElement(string key, string value)
+    ToJson              Method     string ToJson(), string ToJson(int depth), string ToJson(int depth, bool compress)
+    ToString            Method     string ToString()
 
 Build a document
 ****************
@@ -425,7 +430,7 @@ Add one element to our document object.
 
 .. code-block:: powershell
 
-    $doc.SetElement("test")             # New key "test" with empty value
+    $doc.SetElement("test")              # New key "test" with empty value
     $doc.SetElement("test1", "value1")   # New key "test1" with value "value1"
 
 Modify element to document
@@ -464,6 +469,105 @@ To get json representation of document object.
 
     $doc.ToJson()
 
+Add one attachment
+^^^^^^^^^^^^^^^^^^
+
+Add an attachment to doc object.
+
+.. code-block:: powershell
+
+    $doc.AddAttachment('C:\test.txt')   # string option
+    $attachment = New-Object PSCouchDBAttachment -ArgumentList 'C:\test.txt'
+    $doc.AddAttachment($attachment)     # PSCouchDBAttachment option
+
+Replace one attachment
+^^^^^^^^^^^^^^^^^^^^^^
+
+Replace an attachment to doc object.
+
+.. code-block:: powershell
+
+    $doc.ReplaceAttachment('C:\test.txt')   # string option
+    $attachment = New-Object PSCouchDBAttachment -ArgumentList 'C:\test.txt'
+    $doc.ReplaceAttachment($attachment)     # PSCouchDBAttachment option
+
+Remove one attachment
+^^^^^^^^^^^^^^^^^^^^^
+
+Remove an attachment to doc object.
+
+.. code-block:: powershell
+
+    $doc.RemoveAttachment('test.txt')
+
+Remove all attachments
+^^^^^^^^^^^^^^^^^^^^^^
+
+Remove all attachments to doc object.
+
+.. code-block:: powershell
+
+    $doc.RemoveAllAttachments()
+
+
+PSCouchDBAttachment class
+_________________________
+
+This class is used to construct an attachment documents.
+
+Properties
+**********
+
+.. code-block:: powershell
+
+    content_type Property   string content_type {get;set;}
+    filename     Property   string filename {get;set;}
+
+
+Methods
+*******
+
+.. code-block:: powershell
+
+    Equals       Method     bool Equals(System.Object obj)
+    GetData      Method     string GetData()
+    SaveData     Method     void GetData()
+    GetHashCode  Method     int GetHashCode()
+    GetType      Method     type GetType()
+    ToString     Method     string ToString()
+
+Build an attachment
+*******************
+
+To create a ``PSCouchDBAttachment`` object, just do the following.
+
+.. code-block:: powershell
+
+    using module PSCouchDB
+    $attachment = New-Object PSCouchDBAttachment -ArgumentList "C:\test\test.log"
+    $doc.GetType()
+
+Get content of an attachment
+****************************
+
+Get content of an attachment of a documents
+
+.. code-block:: powershell
+
+    $attachment.GetData()
+
+Attach a file to document
+*************************
+
+Create document object ``PSCouchDBDocument`` with attachment
+
+.. code-block:: powershell
+
+    $attach = New-Object PSCouchDBAttachment -ArgumentList "C:\test\test.log"
+    $doc1 = New-Object PSCouchDBDocument -ArgumentList '122', '1-2c903913030efb4d711db085b1f44107', "C:\test\test.log"
+    $doc2 = New-Object PSCouchDBDocument -ArgumentList '122', '1-2c903913030efb4d711db085b1f44107', $attach
+    $doc1.GetDocument()
+    $doc2.GetDocument()
 
 PSCouchDBDesignDoc class
 ________________________
