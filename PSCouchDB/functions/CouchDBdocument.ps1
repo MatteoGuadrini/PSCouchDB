@@ -1095,6 +1095,8 @@ function Get-CouchDBAttachment () {
     The CouchDB attachment document infos.
     .PARAMETER OutFile
     The full path where save attachment document.
+    .PARAMETER Variable
+    Export into a PSCouchDBAttachment variable object.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -1142,12 +1144,25 @@ function Get-CouchDBAttachment () {
         [Parameter(ParameterSetName = "Attachment")]
         [string] $OutFile,
         [Parameter(ParameterSetName = "Attachment")]
+        [string] $Variable,
+        [Parameter(ParameterSetName = "Attachment")]
         [Parameter(ParameterSetName = "Info")]
         [string] $Authorization,
         [Parameter(ParameterSetName = "Attachment")]
         [Parameter(ParameterSetName = "Info")]
         [switch] $Ssl
     )
+    # Export attachment in a variable
+    if ($Variable) {
+        $tempfile = New-TemporaryFile
+        $attachName = "$($tempfile.DirectoryName)\$Attachment"
+        $attachment = Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Revision $Revision -Attachment $Attachment -OutFile $tempfile.FullName -Authorization $Authorization -Ssl:$Ssl
+        Rename-Item -Path $tempfile.FullName -NewName $attachName -Force
+        $exportAttachment = New-Object -TypeName PSCouchDBAttachment -ArgumentList $attachName
+        Remove-Item -Path $attachName -Force
+        Set-Variable -Name $Variable -Value $exportAttachment -Scope Global
+        return $null
+    }
     if ($Info.IsPresent) {
         $Method = "HEAD"
     } else {

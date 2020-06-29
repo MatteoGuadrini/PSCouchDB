@@ -456,7 +456,7 @@ Documents
 
 .. code-block:: powershell
 
-    Get-CouchDBAttachment [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-Revision <String>] [-Attachment <String>] [-OutFile <String>] [-Authorization <String>] [-Ssl] [<CommonParameters>]
+    Get-CouchDBAttachment [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-Revision <String>] [-Attachment <String>] [-OutFile <String>] [-Variable <String>] [-Authorization <String>] [-Ssl] [<CommonParameters>]
 
     Get-CouchDBAttachment [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-Revision <String>] [-Info] [-Attachment <String>] [-Authorization <String>] [-Ssl] [<CommonParameters>]
 
