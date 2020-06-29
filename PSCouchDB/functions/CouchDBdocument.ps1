@@ -1171,12 +1171,12 @@ function Get-CouchDBAttachment () {
     Send-CouchDBRequest -Server $Server -Port $Port -Method $Method -Database $Database -Document $Document -Revision $Revision -Attachment $Attachment -OutFile $OutFile -Authorization $Authorization -Ssl:$Ssl
 }
 
-function New-CouchDBAttachment () {
+function Add-CouchDBAttachment () {
     <#
     .SYNOPSIS
-    Create a new attachment document.
+    Create or replace a new attachment on document.
     .DESCRIPTION
-    Create a new CouchDB attachment document.
+    Create or replace a new CouchDB attachment on document.
     .NOTES
     CouchDB API:
         PUT /{db}/{docid}/{attname}
@@ -1200,7 +1200,7 @@ function New-CouchDBAttachment () {
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
     .EXAMPLE
-    New-CouchDBAttachment -Database test -Document "Hitchhikers" -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Attachment test.txt
+    Add-CouchDBAttachment -Database test -Document "Hitchhikers" -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Attachment test.txt
     This example add attachment "test.txt" on "Hitchhikers" document from database "test".
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/documents.html#create-an-attachment
@@ -1211,7 +1211,7 @@ function New-CouchDBAttachment () {
         [int] $Port,
         [Parameter(mandatory = $true)]
         [string] $Database,
-        [Parameter(mandatory = $true)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Document,
         [Parameter(mandatory = $true)]
         [string] $Attachment,
@@ -1221,58 +1221,6 @@ function New-CouchDBAttachment () {
         [switch] $Ssl
     )
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Attachment $Attachment -Revision $Revision -Authorization $Authorization -Ssl:$Ssl
-}
-
-function Set-CouchDBAttachment () {
-    <#
-    .SYNOPSIS
-    Modify attachment.
-    .DESCRIPTION
-    Uploads the supplied content as an attachment to the specified document.
-    .NOTES
-    CouchDB API:
-        PUT /{db}/{ddoc}/{attname}
-    .PARAMETER Server
-    The CouchDB server name. Default is localhost.
-    .PARAMETER Port
-    The CouchDB server port. Default is 5984.
-    .PARAMETER Database
-    The CouchDB database.
-    .PARAMETER Document
-    The CouchDB document.
-    .PARAMETER Revision
-    The CouchDB revision document.
-    .PARAMETER Attachment
-    The CouchDB attachment document.
-    .PARAMETER Authorization
-    The CouchDB authorization form; user and password.
-    Authorization format like this: user:password
-    ATTENTION: if the password is not specified, it will be prompted.
-    .PARAMETER Ssl
-    Set ssl connection on CouchDB server.
-    This modify protocol to https and port to 6984.
-    .EXAMPLE
-    Set-CouchDBAttachment -Database test -Document "Hitchhikers" -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Attachment test.txt
-    This example modify attachment "test.txt" on "Hitchhikers" document from database "test".
-    .LINK
-    https://pscouchdb.readthedocs.io/en/latest/documents.html#modify-an-attachment
-    #>
-    [CmdletBinding()]
-    param(
-        [string] $Server,
-        [int] $Port,
-        [Parameter(mandatory = $true)]
-        [string] $Database,
-        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [string] $Document,
-        [Parameter(mandatory = $true)]
-        [string] $Revision,
-        [Parameter(mandatory = $true)]
-        [string] $Attachment,
-        [string] $Authorization,
-        [switch] $Ssl
-    )
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Revision $Revision -Attachment $Attachment -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Remove-CouchDBAttachment () {
