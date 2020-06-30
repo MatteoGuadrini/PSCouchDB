@@ -11,6 +11,7 @@ class PSCouchDBDocument {
     #>
     # Propetries
     [string] $_id
+    [ValidatePattern('(^\d\-\w{32})')]
     [string] $_rev
     [hashtable] $_attachments = @{}
     hidden [hashtable] $doc = @{}
