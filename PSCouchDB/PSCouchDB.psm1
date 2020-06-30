@@ -11,7 +11,7 @@ class PSCouchDBDocument {
     #>
     # Propetries
     [string] $_id
-    [ValidatePattern('(^\d\-\w{32})')]
+    [ValidatePattern('(^\d+\-\w{32})')]
     [string] $_rev
     [hashtable] $_attachments = @{}
     hidden [hashtable] $doc = @{}
@@ -104,9 +104,17 @@ class PSCouchDBDocument {
 
     [hashtable] FromJson ([string]$json) {
         $body = ConvertFrom-Json -InputObject $json
-        $body.psobject.properties | ForEach-Object { $this.SetElement($_.Name, $_.Value) }
-        $this._id = $this.doc._id
-        $this._rev = $this.doc._rev
+        $body.psobject.properties | ForEach-Object {
+            # Skip attachments
+            if ($_.Name -eq '_attachments') { return }
+            if ($_.Name -and $_.Value) {
+                $this.SetElement($_.Name, $_.Value)
+            } else {
+                $this.SetElement($_.Name)
+            }
+        }
+        if ($this.doc._id) { $this._id = $this.doc._id }
+        if ($this.doc._rev) { $this._rev = $this.doc._rev }
         return $this.doc
     }
 
