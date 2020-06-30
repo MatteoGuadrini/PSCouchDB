@@ -772,6 +772,16 @@ function Set-CouchDBDocument () {
         foreach ($entry in $OldData.GetDocument().Keys) {
             $Data.SetElement($entry, $OldData.doc[$entry])
         }
+        # Restore attachment of old document
+        foreach ($att in $($OldDoc)._attachments.psobject.properties) {
+            $tempfile = New-TemporaryFile
+            Get-CouchDBAttachment -Server $Server -Port $Port -Database $Database -Document $Document -Revision $Revision -Attachment $att.Name -Authorization $Authorization -Ssl:$Ssl | Out-File -Encoding utf8 -FilePath $tempfile
+            # Attach file to document
+            $attachName = Join-Path -Path $tempfile.DirectoryName -ChildPath $att.Name
+            Rename-Item -Path $tempfile.FullName -NewName $attachName -Force
+            $Data.AddAttachment($attachName)
+            Remove-Item -Path $attachName -Force
+        }
         # Add attachment
         if ($Attachment) { $Data.AddAttachment($Attachment) }
     } else {
@@ -1155,7 +1165,7 @@ function Get-CouchDBAttachment () {
     # Export attachment in a variable
     if ($Variable) {
         $tempfile = New-TemporaryFile
-        $attachName = "$($tempfile.DirectoryName)\$Attachment"
+        $attachName = Join-Path -Path $tempfile.DirectoryName -ChildPath $(Split-Path -Path $Attachment -Leaf)
         $attachment = Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Revision $Revision -Attachment $Attachment -OutFile $tempfile.FullName -Authorization $Authorization -Ssl:$Ssl
         Rename-Item -Path $tempfile.FullName -NewName $attachName -Force
         $exportAttachment = New-Object -TypeName PSCouchDBAttachment -ArgumentList $attachName
