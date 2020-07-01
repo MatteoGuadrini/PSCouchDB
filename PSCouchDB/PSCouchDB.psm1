@@ -45,7 +45,7 @@ class PSCouchDBDocument {
         $this.doc.Add('_id', $this._id)
         $this.doc.Add('_rev', $this._rev)
         $this.doc.Add('_attachments', @{})
-        $this.doc._attachments.Add($attachment.filename, @{'content_type' = $attachment.content_type; 'data' = $attachment.data})
+        $this.doc._attachments.Add($attachment.filename, @{'content_type' = $attachment.content_type; 'data' = $attachment.data })
     }
 
     PSCouchDBDocument ([string]$_id, [string]$_rev, [string]$attachment) {
@@ -56,7 +56,7 @@ class PSCouchDBDocument {
         $this.doc.Add('_id', $this._id)
         $this.doc.Add('_rev', $this._rev)
         $this.doc.Add('_attachments', @{})
-        $this.doc._attachments.Add($attach.filename, @{'content_type' = $attach.content_type; 'data' = $attach.data})
+        $this.doc._attachments.Add($attach.filename, @{'content_type' = $attach.content_type; 'data' = $attach.data })
     }
 
     # Methods
@@ -123,7 +123,7 @@ class PSCouchDBDocument {
         if (-not($this.doc.ContainsKey('_attachments'))) {
             $this.doc.Add('_attachments', @{})
         }
-        $this.doc._attachments.Add($attachment.filename, @{'content_type' = $attachment.content_type; 'data' = $attachment.data})
+        $this.doc._attachments.Add($attachment.filename, @{'content_type' = $attachment.content_type; 'data' = $attachment.data })
     }
 
     AddAttachment ([string]$attachment) {
@@ -132,7 +132,7 @@ class PSCouchDBDocument {
         if (-not($this.doc.ContainsKey('_attachments'))) {
             $this.doc.Add('_attachments', @{})
         }
-        $this.doc._attachments.Add($attach.filename, @{'content_type' = $attach.content_type; 'data' = $attach.data})
+        $this.doc._attachments.Add($attach.filename, @{'content_type' = $attach.content_type; 'data' = $attach.data })
     }
 
     ReplaceAttachment ([PSCouchDBAttachment]$attachment) {
@@ -213,60 +213,60 @@ class PSCouchDBAttachment {
         $extension = [System.IO.Path]::GetExtension($filename)
         $mime = switch ($extension) {
             # application MIME  
-            ".exe"      {"application/octet-stream"; break}
-            ".bin"      {"application/octet-stream"; break}
-            ".pdf"      {"application/pdf"; break}
-            ".crt"      {"application/pkcs8"; break}
-            ".cer"      {"application/pkcs8"; break}
-            ".p7b"      {"application/pkcs8"; break}
-            ".pfx"      {"application/pkcs8"; break}
-            ".zip"      {"application/zip"; break}
-            ".7z"       {"application/zip"; break}
-            ".rar"      {"application/zip"; break}
-            ".tar"      {"application/zip"; break}
-            ".tar.gz"   {"application/zip"; break}
+            ".exe" { "application/octet-stream"; break }
+            ".bin" { "application/octet-stream"; break }
+            ".pdf" { "application/pdf"; break }
+            ".crt" { "application/pkcs8"; break }
+            ".cer" { "application/pkcs8"; break }
+            ".p7b" { "application/pkcs8"; break }
+            ".pfx" { "application/pkcs8"; break }
+            ".zip" { "application/zip"; break }
+            ".7z" { "application/zip"; break }
+            ".rar" { "application/zip"; break }
+            ".tar" { "application/zip"; break }
+            ".tar.gz" { "application/zip"; break }
             # audio MIME
-            ".mp3"      {"audio/mpeg"; break}
-            ".mp4"      {"audio/mpeg"; break}
-            ".ogg"      {"audio/vorbis"; break}
-            ".vob"      {"audio/vorbis"; break}
+            ".mp3" { "audio/mpeg"; break }
+            ".mp4" { "audio/mpeg"; break }
+            ".ogg" { "audio/vorbis"; break }
+            ".vob" { "audio/vorbis"; break }
             # font MIME
-            ".woff"     {"font/woff"; break}
-            ".ttf"      {"font/ttf"; break}
-            ".otf"      {"font/otf"; break}
+            ".woff" { "font/woff"; break }
+            ".ttf" { "font/ttf"; break }
+            ".otf" { "font/otf"; break }
             # image MIME
-            ".jpeg"     {"image/jpeg"; break}
-            ".jpg"      {"image/jpeg"; break}
-            ".png"      {"image/png"; break}
-            ".bmp"      {"image/bmp"; break}
-            ".svg"      {"image/svg+xml"; break}
-            ".heic"     {"image/heic"; break}
-            ".tiff"     {"image/tiff"; break}
-            ".wmf"      {"image/wmf"; break}
-            ".gif"      {"image/gif"; break}
-            ".webp"     {"image/webp"; break}
+            ".jpeg" { "image/jpeg"; break }
+            ".jpg" { "image/jpeg"; break }
+            ".png" { "image/png"; break }
+            ".bmp" { "image/bmp"; break }
+            ".svg" { "image/svg+xml"; break }
+            ".heic" { "image/heic"; break }
+            ".tiff" { "image/tiff"; break }
+            ".wmf" { "image/wmf"; break }
+            ".gif" { "image/gif"; break }
+            ".webp" { "image/webp"; break }
             # model 3d MIME
-            ".3mf"      {"model/3mf"; break}
-            ".vml"      {"model/vml"; break}
-            ".dwf"      {"model/vnd.dwf"; break}
+            ".3mf" { "model/3mf"; break }
+            ".vml" { "model/vml"; break }
+            ".dwf" { "model/vnd.dwf"; break }
             # text MIME
-            ".css"      {"text/css"; break}
-            ".csv"      {"text/csv"; break}
-            ".dns"      {"text/dns"; break}
-            ".html"     {"text/html"; break}
-            ".md"       {"text/markdown"; break}
-            ".rtf"      {"text/rtf"; break}
-            ".vcard"    {"text/vcard"; break}
-            ".xml"      {"text/xml"; break}
+            ".css" { "text/css"; break }
+            ".csv" { "text/csv"; break }
+            ".dns" { "text/dns"; break }
+            ".html" { "text/html"; break }
+            ".md" { "text/markdown"; break }
+            ".rtf" { "text/rtf"; break }
+            ".vcard" { "text/vcard"; break }
+            ".xml" { "text/xml"; break }
             # video MIME
-            ".3gpp"     {"video/3gpp"; break}
-            ".mpeg"     {"video/mpeg4-generic"; break}
-            ".avi"      {"video/mpeg4-generic"; break}
-            ".xvid"     {"video/mpeg4-generic"; break}
-            ".dvix"     {"video/mpeg4-generic"; break}
-            ".mpg"      {"video/mpeg4-generic"; break}
+            ".3gpp" { "video/3gpp"; break }
+            ".mpeg" { "video/mpeg4-generic"; break }
+            ".avi" { "video/mpeg4-generic"; break }
+            ".xvid" { "video/mpeg4-generic"; break }
+            ".dvix" { "video/mpeg4-generic"; break }
+            ".mpg" { "video/mpeg4-generic"; break }
             default {
-                        "multipart/form-data"; break
+                "multipart/form-data"; break
             }
         }
         return $mime
@@ -563,12 +563,49 @@ class PSCouchDBQuery {
     }
 }
 
-class PSCouchDBDesignDoc {
+class PSCouchDBView {
     <#
     .SYNOPSIS
-    Native design documents of CouchDB
+    View object for CouchDB design document
     .DESCRIPTION
-    Class of documents, are used to build indexes, validate document updates, format query results, and filter replications.
+    Class than representing the CouchDB view; this object contains the view function and reduce.
+    .EXAMPLE
+    using module PSCouchDB
+    $design_doc = New-Object PSCouchDBView -ArgumentList "view_name"
+    #>
+    # Properties
+    [PSCustomObject] $viewname = @{}
+    hidden [string] $map
+    [ValidateSet('_approx_count_distinct', '_count', '_stats', '_sum')]
+    hidden [string] $reduce
+
+    # Constructor
+    PSCouchDBView ([string]$name) {
+        $this.viewname = $name
+    }
+
+    PSCouchDBView ([string]$name, [string]$map) {
+        $this.viewname = $name
+        $this.map = $map
+        Add-Member -InputObject $this.viewname NoteProperty map $map
+    }
+
+    PSCouchDBView ([string]$name, [string]$map, [string]$reduce) {
+        $this.viewname = $name
+        $this.map = $map
+        $this.reduce = $reduce
+        Add-Member -InputObject $this.viewname NoteProperty map $map
+        Add-Member -InputObject $this.viewname NoteProperty reduce $reduce
+    }
+
+}
+
+class PSCouchDBDesignDoc : PSCouchDBDocument {
+    <#
+    .SYNOPSIS
+    Native CouchDB design document
+    .DESCRIPTION
+    Class than representing the CouchDB design documents, are used to build indexes, validate document updates, format query results, and filter replications.
     .EXAMPLE
     using module PSCouchDB
     $design_doc = New-Object PSCouchDBDesignDoc
