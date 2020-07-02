@@ -575,10 +575,10 @@ class PSCouchDBView {
     #>
     # Properties
     [PSCustomObject] $view = @{}
-    hidden [string] $name
-    hidden [string] $map
+    [string] $name
+    [string] $map
     [ValidateSet('_approx_count_distinct', '_count', '_stats', '_sum')]
-    hidden [string] $reduce
+    [string] $reduce
 
     # Constructor
     PSCouchDBView ([string]$name) {
@@ -618,6 +618,7 @@ class PSCouchDBView {
 
     AddMapFunction ([string]$function) {
         if ($null -eq $this.view."$($this.name)".map) {
+            $this.map = $function
             $this.view."$($this.name)".map = $function
         } else {
             throw "Map function already exists! Use ReplaceMapFunction() for substitute it."
@@ -625,14 +626,39 @@ class PSCouchDBView {
     }
 
     ReplaceMapFunction ([string]$function) {
+        $this.map = $function
         $this.view."$($this.name)".map = $function
     }
 
     RemoveMapFunction () {
         if ($null -ne $this.view."$($this.name)".map) {
+            $this.map = $null
             $this.view."$($this.name)".map = $null
         } else {
             throw "Map function doesn't exists!"
+        }
+    }
+
+    AddReduceFunction ([string]$function) {
+        if ($null -eq $this.view."$($this.name)".reduce) {
+            $this.reduce = $function
+            $this.view."$($this.name)".reduce = $function
+        } else {
+            throw "Reduce function already exists! Use ReplaceReduceFunction() for substitute it."
+        }
+    }
+
+    ReplaceReduceFunction ([string]$function) {
+        $this.reduce = $function
+        $this.view."$($this.name)".reduce = $function
+    }
+
+    RemoveReduceFunction () {
+        if ($null -ne $this.view."$($this.name)".reduce) {
+            $this.reduce = $null
+            $this.view."$($this.name)".reduce = $null
+        } else {
+            throw "Reduce function doesn't exists!"
         }
     }
 }
