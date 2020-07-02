@@ -574,30 +574,67 @@ class PSCouchDBView {
     $design_doc = New-Object PSCouchDBView -ArgumentList "view_name"
     #>
     # Properties
-    [PSCustomObject] $viewname = @{}
+    [PSCustomObject] $view = @{}
+    hidden [string] $name
     hidden [string] $map
     [ValidateSet('_approx_count_distinct', '_count', '_stats', '_sum')]
     hidden [string] $reduce
 
     # Constructor
     PSCouchDBView ([string]$name) {
-        $this.viewname = $name
+        $this.name = $name
+        Add-Member -InputObject $this.view NoteProperty $this.name @{}
+        $this.view."$($this.name)".Add('map', $null)
     }
 
     PSCouchDBView ([string]$name, [string]$map) {
-        $this.viewname = $name
+        $this.name = $name
         $this.map = $map
-        Add-Member -InputObject $this.viewname NoteProperty map $map
+        Add-Member -InputObject $this.view NoteProperty $this.name @{}
+        $this.view."$($this.name)".Add('map', $map)
     }
 
     PSCouchDBView ([string]$name, [string]$map, [string]$reduce) {
-        $this.viewname = $name
+        $this.name = $name
         $this.map = $map
         $this.reduce = $reduce
-        Add-Member -InputObject $this.viewname NoteProperty map $map
-        Add-Member -InputObject $this.viewname NoteProperty reduce $reduce
+        Add-Member -InputObject $this.view NoteProperty $this.name @{}
+        $this.view."$($this.name)".Add('map', $map)
+        $this.view."$($this.name)".Add('reduce', $reduce)
     }
 
+    # Methods
+    [string] ToString () {
+        return $this.GetJsonView()
+    }
+
+    [hashtable] GetView () {
+        return $this.view."$($this.name)"
+    }
+
+    [string] GetJsonView () {
+        return $this.view | ConvertTo-Json
+    }
+
+    AddMapFunction ([string]$function) {
+        if ($null -eq $this.view."$($this.name)".map) {
+            $this.view."$($this.name)".map = $function
+        } else {
+            throw "Map function already exists! Use ReplaceMapFunction() for substitute it."
+        }
+    }
+
+    ReplaceMapFunction ([string]$function) {
+        $this.view."$($this.name)".map = $function
+    }
+
+    RemoveMapFunction () {
+        if ($null -ne $this.view."$($this.name)".map) {
+            $this.view."$($this.name)".map = $null
+        } else {
+            throw "Map function doesn't exists!"
+        }
+    }
 }
 
 class PSCouchDBDesignDoc : PSCouchDBDocument {
