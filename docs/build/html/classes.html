@@ -753,7 +753,8 @@ by specifying the selector and the value that you want to associate.</p>
 <span class="nv">$view</span><span class="p">.</span><span class="n">ReplaceMapFunction</span><span class="p">(</span><span class="s2">&quot;function(doc) { emit(doc.name, doc.surname); }&quot;</span><span class="p">)</span>  <span class="c"># replace exists map function</span>
 </pre></div>
 </div>
-<p>Add one reduce function to view object.</p>
+<p>Add one reduce function to view object.
+The sets valid for the reduce functions are: <code class="docutils literal notranslate"><span class="pre">_approx_count_distinct</span></code>,``_count``,``_stats``,``_sum``</p>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$view</span><span class="p">.</span><span class="n">AddReduceFunction</span><span class="p">(</span><span class="s2">&quot;_sum&quot;</span><span class="p">)</span>             <span class="c"># add first reduce function</span>
 <span class="nv">$view</span><span class="p">.</span><span class="n">ReplaceReduceFunction</span><span class="p">(</span><span class="s2">&quot;_count&quot;</span><span class="p">)</span>       <span class="c"># replace exists reduce function</span>
 </pre></div>

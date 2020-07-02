@@ -635,6 +635,7 @@ Add one map function to view object.
     $view.ReplaceMapFunction("function(doc) { emit(doc.name, doc.surname); }")  # replace exists map function
 
 Add one reduce function to view object.
+The sets valid for the reduce functions are: ``_approx_count_distinct``,``_count``,``_stats``,``_sum``
 
 .. code-block:: powershell
 
