@@ -1206,7 +1206,7 @@ function Search-CouchDBHelp () {
     .DESCRIPTION
     Search pattern keyword in a CouchDB help topic.
     .PARAMETER Pattern
-    The pattern of serach criteria. The pattern it can be a verb, a nuoun or a parameter..
+    The pattern of serach criteria. The pattern it can be a verb, a nuoun or a parameter.
     .EXAMPLE
     Search-CouchDBHelp -Pattern "Database"
     .EXAMPLE
@@ -1227,4 +1227,29 @@ function Search-CouchDBHelp () {
             $helpTopic | Select-Object Name, Match
         }
     }
+}
+
+function New-CouchDBObject () {
+    <#
+    .SYNOPSIS
+    Create a PSCouchDB custom object.
+    .DESCRIPTION
+    Create a PSCouchDB custom object. For example create a
+    document object, design document object, attachment object etc...
+    .PARAMETER TypeName
+    The name of the object than you would create.
+    .PARAMETER ArgumentList
+    The argument of constructor of object.
+    .EXAMPLE
+    New-CouchDBObject -TypeName PSCouchDBDocument -ArgumentList '1-0033838372622627'
+    .EXAMPLE
+    New-CouchDBObject -TypeName PSCouchDBDocument -ArgumentList '1-0033838372622627','1-2c903913030efb4d711db085b1f44107'
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/classes.html
+    #>
+    param(
+    [string] $TypeName,
+    [array] $ArgumentList
+    )
+    return New-Object -TypeName $TypeName -ArgumentList $ArgumentList
 }

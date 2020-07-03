@@ -96,6 +96,7 @@
 <li class="toctree-l1"><a class="reference internal" href="ddoc.html">Design documents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cmdlets.html">Cmdlets and aliases</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Classes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#create-an-pscouchdb-object">Create an PSCouchDB object</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#pscouchdbquery-class">PSCouchDBQuery class</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#properties">Properties</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#methods">Methods</a></li>
@@ -257,6 +258,14 @@
   <div class="section" id="classes">
 <h1>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h1>
 <p>PSCouchDB module has powershell classes that can be used to construct certain objects.</p>
+<div class="section" id="create-an-pscouchdb-object">
+<h2>Create an PSCouchDB object<a class="headerlink" href="#create-an-pscouchdb-object" title="Permalink to this headline">¶</a></h2>
+<p>To create every object defined in PSCouchDB module, use this.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$query</span> <span class="p">=</span> <span class="nb">New-CouchDBObject</span> <span class="n">-TypeName</span> <span class="n">PSCouchDBQuery</span>
+<span class="nv">$query</span><span class="p">.</span><span class="n">GetType</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="pscouchdbquery-class">
 <h2>PSCouchDBQuery class<a class="headerlink" href="#pscouchdbquery-class" title="Permalink to this headline">¶</a></h2>
 <p>This class is used to construct a query object that is compatible with Mango core.</p>

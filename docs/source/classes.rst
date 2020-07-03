@@ -18,6 +18,17 @@ Classes
 
 PSCouchDB module has powershell classes that can be used to construct certain objects.
 
+Create an PSCouchDB object
+__________________________
+
+To create every object defined in PSCouchDB module, use this.
+
+.. code-block:: powershell
+
+    $query = New-CouchDBObject -TypeName PSCouchDBQuery
+    $query.GetType()
+
+
 PSCouchDBQuery class
 ____________________
 

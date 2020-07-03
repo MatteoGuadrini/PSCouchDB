@@ -34,6 +34,7 @@ New-Alias -Name "cpdoc" -Value Copy-CouchDBDocument -Option ReadOnly
 New-Alias -Name "mcsts" -Value Measure-CouchDBStatistics -Option ReadOnly
 New-Alias -Name "eccl" -Value Enable-CouchDBCluster -Option ReadOnly
 New-Alias -Name "src" -Value Search-CouchDBHelp -Option ReadOnly
+New-Alias -Name "newcdb" -Value New-CouchDBObject -Option ReadOnly
 New-Alias -Name "helpc" -Value Search-CouchDBHelp -Option ReadOnly
 New-Alias -Name "acnode" -Value Add-CouchDBNode -Option ReadOnly
 New-Alias -Name "ccdb" -Value Compress-CouchDBDatabase -Option ReadOnly

@@ -30,6 +30,12 @@ Help
 
     Search-CouchDBHelp [-Pattern] <Object> [<CommonParameters>]
 
+**New-CouchDBObject**
+
+.. code-block:: powershell
+
+    New-CouchDBObject [[-TypeName] <String>] [[-ArgumentList] <Array>] [<CommonParameters>]
+
 Configuration
 *************
 
