@@ -661,6 +661,41 @@ class PSCouchDBView {
             throw "Reduce function doesn't exists!"
         }
     }
+
+    static [string] BuildMapFunction ([hashtable] $condition) {
+        <#
+        possible CONDITION:
+        @{
+            EQUAL = 'doc.field1 == 0';  # Add if condition to function: if (doc.field1 == 0) {}
+            EQUEMIT = 'doc.field1';     # Add emit function to if equal condition: if (doc.field1 == 0) {emit(doc.field1)}
+            MINIMUM = 'doc.field1 < 0'; # Add if condition to function: if (doc.field1 < 0) {}
+            MINEMIT = 'doc.field2';     # Add emit function to if equal condition: if (doc.field1 < 0) {emit(doc.field1)}
+            MAXIMUM = 'doc.field1 > 0'; # Add if condition to function: if (doc.field1 > 0) {}
+            MAXEMIT = 'doc.field3';     # Add emit function to if equal condition: if (doc.field1 > 0) {emit(doc.field1)}
+            EMITDOC = "doc"             # If other emit is specified, this is null
+        }
+        #>
+        $fun = "function(doc){{"
+        # Substitute variable in hashtable; the pattern is {NAME}
+        $currentIndex = 0
+        $replacementList = @()
+        if (-not($condition.ContainsKey('EMITDOC'))) {$condition.Add('EMITDOC', 'doc')}
+        foreach($key in $condition.Keys){
+            # Build function
+            switch ($key) {
+                'EQUAL' {if ($condition.ContainsKey('EQUEMIT')) {$fun += 'if ({EQUAL}) {{emit({EQUEMIT});}}'} else {$fun += 'if ({EQUAL}) {{emit({EMITDOC});}}'}}
+                'MINIMUM' {if ($condition.ContainsKey('MINEMIT')) {$fun += 'if ({MINIMUM}) {{emit({MINEMIT});}}'} else {$fun += 'if ({MINIMUM}) {{emit({EMITDOC});}}'}}
+                'MAXIMUM' {if ($condition.ContainsKey('MAXEMIT')) {$fun += 'if ({MAXIMUM}) {{emit({MAXEMIT});}}'} else {$fun += 'if ({MAXIMUM}) {{emit({EMITDOC});}}'}}
+            }
+            $inputPattern = '{(.*)' + $key + '(.*)}'
+            $replacementPattern = '{${1}' + $currentIndex + '${2}}'
+            $fun = $fun -replace $inputPattern,$replacementPattern
+            $replacementList += $condition[$key]
+            $currentIndex++
+        }
+        $fun += '}}'
+        return $fun -f $replacementList
+    }
 }
 
 class PSCouchDBDesignDoc : PSCouchDBDocument {

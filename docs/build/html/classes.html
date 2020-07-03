@@ -160,6 +160,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#get-view">Get view</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#add-function">Add function</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#remove-function">Remove function</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#build-a-map-function">Build a map function</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#pscouchdbdesigndoc-class">PSCouchDBDesignDoc class</a><ul>
@@ -716,6 +717,7 @@ by specifying the selector and the value that you want to associate.</p>
 <h3>Methods<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">AddMapFunction</span>        <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddMapFunction</span><span class="p">(</span><span class="n">string</span> <span class="k">function</span><span class="p">)</span>
 <span class="n">AddReduceFunction</span>     <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddReduceFunction</span><span class="p">(</span><span class="n">string</span> <span class="k">function</span><span class="p">)</span>
+<span class="n">BuilMapFunction</span>       <span class="n">Method</span>     <span class="n">string</span> <span class="no">[PSCouchDBView]</span><span class="p">::</span><span class="n">BuilMapFunction</span><span class="p">(</span><span class="n">hashtable</span> <span class="n">condition</span><span class="p">)</span>
 <span class="n">Equals</span>                <span class="n">Method</span>     <span class="n">bool</span> <span class="n">Equals</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">obj</span><span class="p">)</span>
 <span class="n">GetHashCode</span>           <span class="n">Method</span>     <span class="n">int</span> <span class="n">GetHashCode</span><span class="p">()</span>
 <span class="n">GetJsonView</span>           <span class="n">Method</span>     <span class="n">string</span> <span class="n">GetJsonView</span><span class="p">()</span>
@@ -768,6 +770,26 @@ The sets valid for the reduce functions are: <code class="docutils literal notra
 </div>
 <p>Remove exists reduce function to view object.</p>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$view</span><span class="p">.</span><span class="n">RemoveReduceFunction</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="build-a-map-function">
+<h3>Build a map function<a class="headerlink" href="#build-a-map-function" title="Permalink to this headline">¶</a></h3>
+<p>This object have a method than permit to create a simple map function.
+Before, create a condition hashtable.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$condition</span> <span class="p">=</span> <span class="p">@{</span>
+        <span class="n">EQUAL</span> <span class="p">=</span> <span class="s1">&#39;doc.field1 == 0&#39;</span><span class="p">;</span>  <span class="c"># Add if condition to function: if (doc.field1 == 0) {}</span>
+        <span class="n">EQUEMIT</span> <span class="p">=</span> <span class="s1">&#39;doc.field1&#39;</span><span class="p">;</span>     <span class="c"># Add emit function to if equal condition: if (doc.field1 == 0) {emit(doc.field1)}</span>
+        <span class="n">MINIMUM</span> <span class="p">=</span> <span class="s1">&#39;doc.field1 &lt; 0&#39;</span><span class="p">;</span> <span class="c"># Add if condition to function: if (doc.field1 &lt; 0) {}</span>
+        <span class="n">MINEMIT</span> <span class="p">=</span> <span class="s1">&#39;doc.field2&#39;</span><span class="p">;</span>     <span class="c"># Add emit function to if equal condition: if (doc.field1 &lt; 0) {emit(doc.field1)}</span>
+        <span class="n">MAXIMUM</span> <span class="p">=</span> <span class="s1">&#39;doc.field1 &gt; 0&#39;</span><span class="p">;</span> <span class="c"># Add if condition to function: if (doc.field1 &gt; 0) {}</span>
+        <span class="n">MAXEMIT</span> <span class="p">=</span> <span class="s1">&#39;doc.field3&#39;</span><span class="p">;</span>     <span class="c"># Add emit function to if equal condition: if (doc.field1 &gt; 0) {emit(doc.field1)}</span>
+        <span class="n">EMITDOC</span> <span class="p">=</span> <span class="s2">&quot;doc&quot;</span>             <span class="c"># If other emit is specified, this is null</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+<p>Now pass this hashtable like argument to method.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$map</span> <span class="p">=</span> <span class="no">[PSCouchDBView]</span><span class="p">::</span><span class="n">BuildMapFunction</span><span class="p">(</span><span class="nv">$condition</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

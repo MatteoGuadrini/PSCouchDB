@@ -592,6 +592,7 @@ Methods
 
     AddMapFunction        Method     void AddMapFunction(string function)
     AddReduceFunction     Method     void AddReduceFunction(string function)
+    BuilMapFunction       Method     string [PSCouchDBView]::BuilMapFunction(hashtable condition)
     Equals                Method     bool Equals(System.Object obj)
     GetHashCode           Method     int GetHashCode()
     GetJsonView           Method     string GetJsonView()
@@ -656,6 +657,30 @@ Remove exists reduce function to view object.
 .. code-block:: powershell
 
     $view.RemoveReduceFunction()
+
+Build a map function
+********************
+
+This object have a method than permit to create a simple map function.
+Before, create a condition hashtable.
+
+.. code-block:: powershell
+
+    $condition = @{
+            EQUAL = 'doc.field1 == 0';  # Add if condition to function: if (doc.field1 == 0) {}
+            EQUEMIT = 'doc.field1';     # Add emit function to if equal condition: if (doc.field1 == 0) {emit(doc.field1)}
+            MINIMUM = 'doc.field1 < 0'; # Add if condition to function: if (doc.field1 < 0) {}
+            MINEMIT = 'doc.field2';     # Add emit function to if equal condition: if (doc.field1 < 0) {emit(doc.field1)}
+            MAXIMUM = 'doc.field1 > 0'; # Add if condition to function: if (doc.field1 > 0) {}
+            MAXEMIT = 'doc.field3';     # Add emit function to if equal condition: if (doc.field1 > 0) {emit(doc.field1)}
+            EMITDOC = "doc"             # If other emit is specified, this is null
+        }
+
+Now pass this hashtable like argument to method.
+
+.. code-block:: powershell
+
+    $map = [PSCouchDBView]::BuildMapFunction($condition)
 
 PSCouchDBDesignDoc class
 ________________________
