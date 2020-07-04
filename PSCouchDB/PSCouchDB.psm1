@@ -11,6 +11,7 @@ class PSCouchDBDocument {
     #>
     # Propetries
     [string] $_id
+    [ValidatePattern('(^\d+\-\w{32})')]
     [string] $_rev
     [hashtable] $_attachments = @{}
     hidden [hashtable] $doc = @{}
@@ -44,7 +45,7 @@ class PSCouchDBDocument {
         $this.doc.Add('_id', $this._id)
         $this.doc.Add('_rev', $this._rev)
         $this.doc.Add('_attachments', @{})
-        $this.doc._attachments.Add($attachment.filename, @{'content_type' = $attachment.content_type; 'data' = $attachment.data})
+        $this.doc._attachments.Add($attachment.filename, @{'content_type' = $attachment.content_type; 'data' = $attachment.data })
     }
 
     PSCouchDBDocument ([string]$_id, [string]$_rev, [string]$attachment) {
@@ -55,7 +56,7 @@ class PSCouchDBDocument {
         $this.doc.Add('_id', $this._id)
         $this.doc.Add('_rev', $this._rev)
         $this.doc.Add('_attachments', @{})
-        $this.doc._attachments.Add($attach.filename, @{'content_type' = $attach.content_type; 'data' = $attach.data})
+        $this.doc._attachments.Add($attach.filename, @{'content_type' = $attach.content_type; 'data' = $attach.data })
     }
 
     # Methods
@@ -103,9 +104,17 @@ class PSCouchDBDocument {
 
     [hashtable] FromJson ([string]$json) {
         $body = ConvertFrom-Json -InputObject $json
-        $body.psobject.properties | ForEach-Object { $this.SetElement($_.Name, $_.Value) }
-        $this._id = $this.doc._id
-        $this._rev = $this.doc._rev
+        $body.psobject.properties | ForEach-Object {
+            # Skip attachments
+            if ($_.Name -eq '_attachments') { return }
+            if ($_.Name -and $_.Value) {
+                $this.SetElement($_.Name, $_.Value)
+            } else {
+                $this.SetElement($_.Name)
+            }
+        }
+        if ($this.doc._id) { $this._id = $this.doc._id }
+        if ($this.doc._rev) { $this._rev = $this.doc._rev }
         return $this.doc
     }
 
@@ -114,7 +123,7 @@ class PSCouchDBDocument {
         if (-not($this.doc.ContainsKey('_attachments'))) {
             $this.doc.Add('_attachments', @{})
         }
-        $this.doc._attachments.Add($attachment.filename, @{'content_type' = $attachment.content_type; 'data' = $attachment.data})
+        $this.doc._attachments.Add($attachment.filename, @{'content_type' = $attachment.content_type; 'data' = $attachment.data })
     }
 
     AddAttachment ([string]$attachment) {
@@ -123,7 +132,7 @@ class PSCouchDBDocument {
         if (-not($this.doc.ContainsKey('_attachments'))) {
             $this.doc.Add('_attachments', @{})
         }
-        $this.doc._attachments.Add($attach.filename, @{'content_type' = $attach.content_type; 'data' = $attach.data})
+        $this.doc._attachments.Add($attach.filename, @{'content_type' = $attach.content_type; 'data' = $attach.data })
     }
 
     ReplaceAttachment ([PSCouchDBAttachment]$attachment) {
@@ -204,60 +213,60 @@ class PSCouchDBAttachment {
         $extension = [System.IO.Path]::GetExtension($filename)
         $mime = switch ($extension) {
             # application MIME  
-            ".exe"      {"application/octet-stream"; break}
-            ".bin"      {"application/octet-stream"; break}
-            ".pdf"      {"application/pdf"; break}
-            ".crt"      {"application/pkcs8"; break}
-            ".cer"      {"application/pkcs8"; break}
-            ".p7b"      {"application/pkcs8"; break}
-            ".pfx"      {"application/pkcs8"; break}
-            ".zip"      {"application/zip"; break}
-            ".7z"       {"application/zip"; break}
-            ".rar"      {"application/zip"; break}
-            ".tar"      {"application/zip"; break}
-            ".tar.gz"   {"application/zip"; break}
+            ".exe" { "application/octet-stream"; break }
+            ".bin" { "application/octet-stream"; break }
+            ".pdf" { "application/pdf"; break }
+            ".crt" { "application/pkcs8"; break }
+            ".cer" { "application/pkcs8"; break }
+            ".p7b" { "application/pkcs8"; break }
+            ".pfx" { "application/pkcs8"; break }
+            ".zip" { "application/zip"; break }
+            ".7z" { "application/zip"; break }
+            ".rar" { "application/zip"; break }
+            ".tar" { "application/zip"; break }
+            ".tar.gz" { "application/zip"; break }
             # audio MIME
-            ".mp3"      {"audio/mpeg"; break}
-            ".mp4"      {"audio/mpeg"; break}
-            ".ogg"      {"audio/vorbis"; break}
-            ".vob"      {"audio/vorbis"; break}
+            ".mp3" { "audio/mpeg"; break }
+            ".mp4" { "audio/mpeg"; break }
+            ".ogg" { "audio/vorbis"; break }
+            ".vob" { "audio/vorbis"; break }
             # font MIME
-            ".woff"     {"font/woff"; break}
-            ".ttf"      {"font/ttf"; break}
-            ".otf"      {"font/otf"; break}
+            ".woff" { "font/woff"; break }
+            ".ttf" { "font/ttf"; break }
+            ".otf" { "font/otf"; break }
             # image MIME
-            ".jpeg"     {"image/jpeg"; break}
-            ".jpg"      {"image/jpeg"; break}
-            ".png"      {"image/png"; break}
-            ".bmp"      {"image/bmp"; break}
-            ".svg"      {"image/svg+xml"; break}
-            ".heic"     {"image/heic"; break}
-            ".tiff"     {"image/tiff"; break}
-            ".wmf"      {"image/wmf"; break}
-            ".gif"      {"image/gif"; break}
-            ".webp"     {"image/webp"; break}
+            ".jpeg" { "image/jpeg"; break }
+            ".jpg" { "image/jpeg"; break }
+            ".png" { "image/png"; break }
+            ".bmp" { "image/bmp"; break }
+            ".svg" { "image/svg+xml"; break }
+            ".heic" { "image/heic"; break }
+            ".tiff" { "image/tiff"; break }
+            ".wmf" { "image/wmf"; break }
+            ".gif" { "image/gif"; break }
+            ".webp" { "image/webp"; break }
             # model 3d MIME
-            ".3mf"      {"model/3mf"; break}
-            ".vml"      {"model/vml"; break}
-            ".dwf"      {"model/vnd.dwf"; break}
+            ".3mf" { "model/3mf"; break }
+            ".vml" { "model/vml"; break }
+            ".dwf" { "model/vnd.dwf"; break }
             # text MIME
-            ".css"      {"text/css"; break}
-            ".csv"      {"text/csv"; break}
-            ".dns"      {"text/dns"; break}
-            ".html"     {"text/html"; break}
-            ".md"       {"text/markdown"; break}
-            ".rtf"      {"text/rtf"; break}
-            ".vcard"    {"text/vcard"; break}
-            ".xml"      {"text/xml"; break}
+            ".css" { "text/css"; break }
+            ".csv" { "text/csv"; break }
+            ".dns" { "text/dns"; break }
+            ".html" { "text/html"; break }
+            ".md" { "text/markdown"; break }
+            ".rtf" { "text/rtf"; break }
+            ".vcard" { "text/vcard"; break }
+            ".xml" { "text/xml"; break }
             # video MIME
-            ".3gpp"     {"video/3gpp"; break}
-            ".mpeg"     {"video/mpeg4-generic"; break}
-            ".avi"      {"video/mpeg4-generic"; break}
-            ".xvid"     {"video/mpeg4-generic"; break}
-            ".dvix"     {"video/mpeg4-generic"; break}
-            ".mpg"      {"video/mpeg4-generic"; break}
+            ".3gpp" { "video/3gpp"; break }
+            ".mpeg" { "video/mpeg4-generic"; break }
+            ".avi" { "video/mpeg4-generic"; break }
+            ".xvid" { "video/mpeg4-generic"; break }
+            ".dvix" { "video/mpeg4-generic"; break }
+            ".mpg" { "video/mpeg4-generic"; break }
             default {
-                        "multipart/form-data"; break
+                "multipart/form-data"; break
             }
         }
         return $mime
@@ -554,12 +563,147 @@ class PSCouchDBQuery {
     }
 }
 
-class PSCouchDBDesignDoc {
+class PSCouchDBView {
     <#
     .SYNOPSIS
-    Native design documents of CouchDB
+    View object for CouchDB design document
     .DESCRIPTION
-    Class of documents, are used to build indexes, validate document updates, format query results, and filter replications.
+    Class than representing the CouchDB view; this object contains the view function and reduce.
+    .EXAMPLE
+    using module PSCouchDB
+    $design_doc = New-Object PSCouchDBView -ArgumentList "view_name"
+    #>
+    # Properties
+    [PSCustomObject] $view = @{}
+    [string] $name
+    [string] $map
+    [ValidateSet('_approx_count_distinct', '_count', '_stats', '_sum')]
+    [string] $reduce
+
+    # Constructor
+    PSCouchDBView ([string]$name) {
+        $this.name = $name
+        Add-Member -InputObject $this.view NoteProperty $this.name @{}
+        $this.view."$($this.name)".Add('map', $null)
+    }
+
+    PSCouchDBView ([string]$name, [string]$map) {
+        $this.name = $name
+        $this.map = $map
+        Add-Member -InputObject $this.view NoteProperty $this.name @{}
+        $this.view."$($this.name)".Add('map', $map)
+    }
+
+    PSCouchDBView ([string]$name, [string]$map, [string]$reduce) {
+        $this.name = $name
+        $this.map = $map
+        $this.reduce = $reduce
+        Add-Member -InputObject $this.view NoteProperty $this.name @{}
+        $this.view."$($this.name)".Add('map', $map)
+        $this.view."$($this.name)".Add('reduce', $reduce)
+    }
+
+    # Methods
+    [string] ToString () {
+        return $this.GetJsonView()
+    }
+
+    [hashtable] GetView () {
+        return $this.view."$($this.name)"
+    }
+
+    [string] GetJsonView () {
+        return $this.view | ConvertTo-Json
+    }
+
+    AddMapFunction ([string]$function) {
+        if ($null -eq $this.view."$($this.name)".map) {
+            $this.map = $function
+            $this.view."$($this.name)".map = $function
+        } else {
+            throw "Map function already exists! Use ReplaceMapFunction() for substitute it."
+        }
+    }
+
+    ReplaceMapFunction ([string]$function) {
+        $this.map = $function
+        $this.view."$($this.name)".map = $function
+    }
+
+    RemoveMapFunction () {
+        if ($null -ne $this.view."$($this.name)".map) {
+            $this.map = $null
+            $this.view."$($this.name)".map = $null
+        } else {
+            throw "Map function doesn't exists!"
+        }
+    }
+
+    AddReduceFunction ([string]$function) {
+        if ($null -eq $this.view."$($this.name)".reduce) {
+            $this.reduce = $function
+            $this.view."$($this.name)".reduce = $function
+        } else {
+            throw "Reduce function already exists! Use ReplaceReduceFunction() for substitute it."
+        }
+    }
+
+    ReplaceReduceFunction ([string]$function) {
+        $this.reduce = $function
+        $this.view."$($this.name)".reduce = $function
+    }
+
+    RemoveReduceFunction () {
+        if ($null -ne $this.view."$($this.name)".reduce) {
+            $this.reduce = $null
+            $this.view."$($this.name)".reduce = $null
+        } else {
+            throw "Reduce function doesn't exists!"
+        }
+    }
+
+    static [string] BuildMapFunction ([hashtable] $condition) {
+        <#
+        possible CONDITION:
+        @{
+            EQUAL = 'doc.field1 == 0';  # Add if condition to function: if (doc.field1 == 0) {}
+            EQUEMIT = 'doc.field1';     # Add emit function to if equal condition: if (doc.field1 == 0) {emit(doc.field1)}
+            MINIMUM = 'doc.field1 < 0'; # Add if condition to function: if (doc.field1 < 0) {}
+            MINEMIT = 'doc.field2';     # Add emit function to if equal condition: if (doc.field1 < 0) {emit(doc.field1)}
+            MAXIMUM = 'doc.field1 > 0'; # Add if condition to function: if (doc.field1 > 0) {}
+            MAXEMIT = 'doc.field3';     # Add emit function to if equal condition: if (doc.field1 > 0) {emit(doc.field1)}
+            EMITDOC = "doc"             # If other emit is specified, this is null
+        }
+        #>
+        $fun = "function(doc){{"
+        # Substitute variable in hashtable; the pattern is {NAME}
+        $currentIndex = 0
+        $replacementList = @()
+        if (-not($condition.ContainsKey('EMITDOC'))) {$condition.Add('EMITDOC', 'doc')}
+        foreach($key in $condition.Keys){
+            # Build function
+            switch ($key) {
+                'EQUAL' {if ($condition.ContainsKey('EQUEMIT')) {$fun += 'if ({EQUAL}) {{emit({EQUEMIT});}}'} else {$fun += 'if ({EQUAL}) {{emit({EMITDOC});}}'}}
+                'MINIMUM' {if ($condition.ContainsKey('MINEMIT')) {$fun += 'if ({MINIMUM}) {{emit({MINEMIT});}}'} else {$fun += 'if ({MINIMUM}) {{emit({EMITDOC});}}'}}
+                'MAXIMUM' {if ($condition.ContainsKey('MAXEMIT')) {$fun += 'if ({MAXIMUM}) {{emit({MAXEMIT});}}'} else {$fun += 'if ({MAXIMUM}) {{emit({EMITDOC});}}'}}
+            }
+            $inputPattern = '{(.*)' + $key + '(.*)}'
+            $replacementPattern = '{${1}' + $currentIndex + '${2}}'
+            $fun = $fun -replace $inputPattern,$replacementPattern
+            $replacementList += $condition[$key]
+            $currentIndex++
+        }
+        $fun += '}}'
+        return $fun -f $replacementList
+    }
+}
+
+class PSCouchDBDesignDoc : PSCouchDBDocument {
+    <#
+    .SYNOPSIS
+    Native CouchDB design document
+    .DESCRIPTION
+    Class than representing the CouchDB design documents, are used to build indexes, validate document updates, format query results, and filter replications.
     .EXAMPLE
     using module PSCouchDB
     $design_doc = New-Object PSCouchDBDesignDoc
@@ -1062,7 +1206,7 @@ function Search-CouchDBHelp () {
     .DESCRIPTION
     Search pattern keyword in a CouchDB help topic.
     .PARAMETER Pattern
-    The pattern of serach criteria. The pattern it can be a verb, a nuoun or a parameter..
+    The pattern of serach criteria. The pattern it can be a verb, a nuoun or a parameter.
     .EXAMPLE
     Search-CouchDBHelp -Pattern "Database"
     .EXAMPLE
@@ -1083,4 +1227,29 @@ function Search-CouchDBHelp () {
             $helpTopic | Select-Object Name, Match
         }
     }
+}
+
+function New-CouchDBObject () {
+    <#
+    .SYNOPSIS
+    Create a PSCouchDB custom object.
+    .DESCRIPTION
+    Create a PSCouchDB custom object. For example create a
+    document object, design document object, attachment object etc...
+    .PARAMETER TypeName
+    The name of the object than you would create.
+    .PARAMETER ArgumentList
+    The argument of constructor of object.
+    .EXAMPLE
+    New-CouchDBObject -TypeName PSCouchDBDocument -ArgumentList '1-0033838372622627'
+    .EXAMPLE
+    New-CouchDBObject -TypeName PSCouchDBDocument -ArgumentList '1-0033838372622627','1-2c903913030efb4d711db085b1f44107'
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/classes.html
+    #>
+    param(
+    [string] $TypeName,
+    [array] $ArgumentList
+    )
+    return New-Object -TypeName $TypeName -ArgumentList $ArgumentList
 }

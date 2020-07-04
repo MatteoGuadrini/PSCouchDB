@@ -30,6 +30,12 @@ Help
 
     Search-CouchDBHelp [-Pattern] <Object> [<CommonParameters>]
 
+**New-CouchDBObject**
+
+.. code-block:: powershell
+
+    New-CouchDBObject [[-TypeName] <String>] [[-ArgumentList] <Array>] [<CommonParameters>]
+
 Configuration
 *************
 
@@ -456,21 +462,15 @@ Documents
 
 .. code-block:: powershell
 
-    Get-CouchDBAttachment [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-Revision <String>] [-Attachment <String>] [-OutFile <String>] [-Authorization <String>] [-Ssl] [<CommonParameters>]
+    Get-CouchDBAttachment [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-Revision <String>] [-Attachment <String>] [-OutFile <String>] [-Variable <String>] [-Authorization <String>] [-Ssl] [<CommonParameters>]
 
     Get-CouchDBAttachment [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-Revision <String>] [-Info] [-Attachment <String>] [-Authorization <String>] [-Ssl] [<CommonParameters>]
 
-**New-CouchDBAttachment**
+**Add-CouchDBAttachment**
 
 .. code-block:: powershell
 
-    New-CouchDBAttachment [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [-Attachment] <String> [-Revision] <String> [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
-
-**Set-CouchDBAttachment**
-
-.. code-block:: powershell
-
-    Set-CouchDBAttachment [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [-Revision] <String> [[-Attachment] <String>] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    Add-CouchDBAttachment [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [-Attachment] <String> [-Revision] <String> [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
 
 **Remove-CouchDBAttachment**
 

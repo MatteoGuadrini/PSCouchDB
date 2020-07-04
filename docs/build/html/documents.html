@@ -104,7 +104,6 @@
 <li class="toctree-l2"><a class="reference internal" href="#attachments">Attachments</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#get-an-attachment">Get an attachment</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#create-an-attachment">Create an attachment</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#modify-an-attachment">Modify an attachment</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#delete-an-attachment">Delete an attachment</a></li>
 </ul>
 </li>
@@ -449,15 +448,8 @@
 </div>
 <div class="section" id="create-an-attachment">
 <h3>Create an attachment<a class="headerlink" href="#create-an-attachment" title="Permalink to this headline">¶</a></h3>
-<p>It’s possible to retrieve document with all attached files content.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">New-CouchDBAttachment</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;Hitchhikers&quot;</span> <span class="n">-Attachment</span> <span class="s2">&quot;C:\test.txt&quot;</span> <span class="n">-Revision</span> <span class="s2">&quot;4-f6d66c4d70da66cded6bea889468eb14&quot;</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="modify-an-attachment">
-<h3>Modify an attachment<a class="headerlink" href="#modify-an-attachment" title="Permalink to this headline">¶</a></h3>
 <p>To replace or add an attachment.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Set-CouchDBAttachment</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;Hitchhikers&quot;</span> <span class="n">-Attachment</span> <span class="s2">&quot;C:\out.txt&quot;</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Add-CouchDBAttachment</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;Hitchhikers&quot;</span> <span class="n">-Attachment</span> <span class="s2">&quot;C:\test.txt&quot;</span> <span class="n">-Revision</span> <span class="s2">&quot;4-f6d66c4d70da66cded6bea889468eb14&quot;</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>

@@ -18,6 +18,17 @@ Classes
 
 PSCouchDB module has powershell classes that can be used to construct certain objects.
 
+Create an PSCouchDB object
+__________________________
+
+To create every object defined in PSCouchDB module, use this.
+
+.. code-block:: powershell
+
+    $query = New-CouchDBObject -TypeName PSCouchDBQuery
+    $query.GetType()
+
+
 PSCouchDBQuery class
 ____________________
 
@@ -568,6 +579,119 @@ Create document object ``PSCouchDBDocument`` with attachment
     $doc2 = New-Object PSCouchDBDocument -ArgumentList '122', '1-2c903913030efb4d711db085b1f44107', $attach
     $doc1.GetDocument()
     $doc2.GetDocument()
+
+PSCouchDBView class
+___________________
+
+This class is used to construct a view.
+
+Properties
+**********
+
+.. code-block:: powershell
+
+    map                   Property   string map {get;set;}
+    name                  Property   string name {get;set;}
+    reduce                Property   string reduce {get;set;}
+    view                  Property   psobject view {get;set;}
+
+
+Methods
+*******
+
+.. code-block:: powershell
+
+    AddMapFunction        Method     void AddMapFunction(string function)
+    AddReduceFunction     Method     void AddReduceFunction(string function)
+    BuilMapFunction       Method     string [PSCouchDBView]::BuilMapFunction(hashtable condition)
+    Equals                Method     bool Equals(System.Object obj)
+    GetHashCode           Method     int GetHashCode()
+    GetJsonView           Method     string GetJsonView()
+    GetType               Method     type GetType()
+    GetView               Method     hashtable GetView()
+    RemoveMapFunction     Method     void RemoveMapFunction()
+    RemoveReduceFunction  Method     void RemoveReduceFunction()
+    ReplaceMapFunction    Method     void ReplaceMapFunction(string function)
+    ReplaceReduceFunction Method     void ReplaceReduceFunction(string function)
+    ToString              Method     string ToString()
+
+Build a view
+************
+
+To create a ``PSCouchDBView`` object, just do the following.
+
+.. code-block:: powershell
+
+    using module PSCouchDB
+    $view = New-Object PSCouchDBView -ArgumentList "test_view"
+    $doc.GetType()
+
+Get view
+********
+
+Get content of view, in two methods.
+
+.. code-block:: powershell
+
+    $view.GetView()     # hashtable content
+    $view.GetJsonView() # string json content
+
+Add function
+************
+
+Add one map function to view object.
+
+.. code-block:: powershell
+
+    $view.AddMapFunction("function(doc) { emit(doc.name, doc.age); }")          # add first map function
+    $view.ReplaceMapFunction("function(doc) { emit(doc.name, doc.surname); }")  # replace exists map function
+
+Add one reduce function to view object.
+The sets valid for the reduce functions are: ``_approx_count_distinct``,``_count``,``_stats``,``_sum``
+
+.. code-block:: powershell
+
+    $view.AddReduceFunction("_sum")             # add first reduce function
+    $view.ReplaceReduceFunction("_count")       # replace exists reduce function
+
+Remove function
+***************
+
+Remove exists map function to view object.
+
+.. code-block:: powershell
+
+    $view.RemoveMapFunction()
+
+Remove exists reduce function to view object.
+
+.. code-block:: powershell
+
+    $view.RemoveReduceFunction()
+
+Build a map function
+********************
+
+This object have a method than permit to create a simple map function.
+Before, create a condition hashtable.
+
+.. code-block:: powershell
+
+    $condition = @{
+            EQUAL = 'doc.field1 == 0';  # Add if condition to function: if (doc.field1 == 0) {}
+            EQUEMIT = 'doc.field1';     # Add emit function to if equal condition: if (doc.field1 == 0) {emit(doc.field1)}
+            MINIMUM = 'doc.field1 < 0'; # Add if condition to function: if (doc.field1 < 0) {}
+            MINEMIT = 'doc.field2';     # Add emit function to if equal condition: if (doc.field1 < 0) {emit(doc.field1)}
+            MAXIMUM = 'doc.field1 > 0'; # Add if condition to function: if (doc.field1 > 0) {}
+            MAXEMIT = 'doc.field3';     # Add emit function to if equal condition: if (doc.field1 > 0) {emit(doc.field1)}
+            EMITDOC = "doc"             # If other emit is specified, this is null
+        }
+
+Now pass this hashtable like argument to method.
+
+.. code-block:: powershell
+
+    $map = [PSCouchDBView]::BuildMapFunction($condition)
 
 PSCouchDBDesignDoc class
 ________________________

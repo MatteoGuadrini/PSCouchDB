@@ -212,20 +212,11 @@ Or get info of specific attachment.
 Create an attachment
 ********************
 
-It’s possible to retrieve document with all attached files content.
-
-.. code-block:: powershell
-
-    New-CouchDBAttachment -Database test -Document "Hitchhikers" -Attachment "C:\test.txt" -Revision "4-f6d66c4d70da66cded6bea889468eb14" -Authorization "admin:password"
-
-Modify an attachment
-********************
-
 To replace or add an attachment.
 
 .. code-block:: powershell
 
-    Set-CouchDBAttachment -Database test -Document "Hitchhikers" -Attachment "C:\out.txt" -Authorization "admin:password"
+    Add-CouchDBAttachment -Database test -Document "Hitchhikers" -Attachment "C:\test.txt" -Revision "4-f6d66c4d70da66cded6bea889468eb14" -Authorization "admin:password"
 
 Delete an attachment
 ********************
