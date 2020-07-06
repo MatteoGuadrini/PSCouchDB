@@ -770,6 +770,16 @@ class PSCouchDBDesignDoc : PSCouchDBDocument {
             $this.doc.views.Add($view.name, $view.GetView())
         }
     }
+
+    AddView ([string]$name, [string]$map) {
+        $view = New-Object PSCouchDBView -ArgumentList $name, $map
+        $this.AddView($view)
+    }
+
+    AddView ([string]$name, [string]$map, [string]$reduce) {
+        $view = New-Object PSCouchDBView -ArgumentList $name, $map, $reduce
+        $this.AddView($view)
+    }
 }
 
 
