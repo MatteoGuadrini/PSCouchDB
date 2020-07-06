@@ -709,14 +709,16 @@ class PSCouchDBDesignDoc : PSCouchDBDocument {
     $design_doc = New-Object PSCouchDBDesignDoc
     #>
     # Properties
-    [hashtable] $views = @{}
+    $views
     [string] $validate_doc_update
     hidden [string] $language = 'javascript'
 
     # Constructor
     PSCouchDBDesignDoc () {
         $this._id = "_design/$((New-CouchDBUuids -Count 1).uuids[0])"
+        $this.views = New-Object Collections.Generic.List[PSCouchDBView]
         $this.doc['_id'] = $this._id
+        $this.doc.Add('views', @{})
     }
 
     # Specified _id
@@ -726,7 +728,9 @@ class PSCouchDBDesignDoc : PSCouchDBDocument {
         } else {
             $this._id = "_design/$_id"
         }
+        $this.views = New-Object Collections.Generic.List[PSCouchDBView]
         $this.doc['_id'] = $this._id
+        $this.doc.Add('views', @{})
     }
 
     # Specified _id and _rev
@@ -737,8 +741,10 @@ class PSCouchDBDesignDoc : PSCouchDBDocument {
             $this._id = "_design/$_id"
         }
         $this._rev = $_rev
+        $this.views = New-Object Collections.Generic.List[PSCouchDBView]
         $this.doc['_id'] = $this._id
         $this.doc['_rev'] = $this._rev
+        $this.doc.Add('views', @{})
     }
 
     # Specified _id, _rev and _attachments
@@ -749,11 +755,20 @@ class PSCouchDBDesignDoc : PSCouchDBDocument {
             $this._id = "_design/$_id"
         }
         $this._rev = $_rev
-        $this.views.Add($view.name, $view)
+        $this.views = New-Object Collections.Generic.List[PSCouchDBView]
+        $this.views.Add($view)
         $this.doc['_id'] = $this._id
         $this.doc['_rev'] = $this._rev
         $this.doc.Add('views', @{})
         $this.doc.views.Add($view.name, $view.GetView())
+    }
+
+    # Methods
+    AddView ([PSCouchDBView]$view) {
+        if ($this.views -notcontains $view) {
+            [void] $this.views.Add($view)
+            $this.doc.views.Add($view.name, $view.GetView())
+        }
     }
 }
 
