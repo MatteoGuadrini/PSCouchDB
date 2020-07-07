@@ -780,6 +780,18 @@ class PSCouchDBDesignDoc : PSCouchDBDocument {
         $view = New-Object PSCouchDBView -ArgumentList $name, $map, $reduce
         $this.AddView($view)
     }
+
+    RemoveView ([string]$name) {
+        if ($this.views.name -contains $name) {
+            foreach ($view in $this.views) {
+                if ($view.name -eq $name) {
+                    [void] $this.views.Remove($view)
+                    $this.doc.views.Remove($name)
+                    break
+                }
+            }
+        }
+    }
 }
 
 
