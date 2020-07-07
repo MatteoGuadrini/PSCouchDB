@@ -710,6 +710,7 @@ class PSCouchDBDesignDoc : PSCouchDBDocument {
     #>
     # Properties
     $views
+    [ValidatePattern("\(\s?newDoc\s?,\s?oldDoc\s?,\s?userCtx\s?,\s?secObj\s?\)")]
     [string] $validate_doc_update
     hidden [string] $language = 'javascript'
 
@@ -730,7 +731,6 @@ class PSCouchDBDesignDoc : PSCouchDBDocument {
         }
         $this.views = New-Object Collections.Generic.List[PSCouchDBView]
         $this.doc['_id'] = $this._id
-        $this.doc.Add('views', @{})
     }
 
     # Specified _id and _rev
@@ -744,7 +744,6 @@ class PSCouchDBDesignDoc : PSCouchDBDocument {
         $this.views = New-Object Collections.Generic.List[PSCouchDBView]
         $this.doc['_id'] = $this._id
         $this.doc['_rev'] = $this._rev
-        $this.doc.Add('views', @{})
     }
 
     # Specified _id, _rev and _attachments
@@ -767,6 +766,7 @@ class PSCouchDBDesignDoc : PSCouchDBDocument {
     AddView ([PSCouchDBView]$view) {
         if ($this.views -notcontains $view) {
             [void] $this.views.Add($view)
+            if ($this.doc -notcontains 'views') {$this.doc.Add('views', @{})}
             $this.doc.views.Add($view.name, $view.GetView())
         }
     }
@@ -808,6 +808,11 @@ class PSCouchDBDesignDoc : PSCouchDBDocument {
         $view = New-Object PSCouchDBView -ArgumentList $name, $map, $reduce
         $this.RemoveView($view.name)
         $this.AddView($view)
+    }
+
+    SetValidateFunction ([string]$function) {
+        $this.validate_doc_update = $function
+        $this.doc.Add("validate_doc_update", $function)
     }
 }
 
