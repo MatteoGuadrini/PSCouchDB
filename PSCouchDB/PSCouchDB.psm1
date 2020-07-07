@@ -792,6 +792,23 @@ class PSCouchDBDesignDoc : PSCouchDBDocument {
             }
         }
     }
+
+    ReplaceView ([PSCouchDBView]$view) {
+        $this.RemoveView($view.name)
+        $this.AddView($view)
+    }
+
+    ReplaceView ([string]$name, [string]$map) {
+        $view = New-Object PSCouchDBView -ArgumentList $name, $map
+        $this.RemoveView($view.name)
+        $this.AddView($view)
+    }
+
+    ReplaceView ([string]$name, [string]$map, [string]$reduce) {
+        $view = New-Object PSCouchDBView -ArgumentList $name, $map, $reduce
+        $this.RemoveView($view.name)
+        $this.AddView($view)
+    }
 }
 
 
