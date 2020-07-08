@@ -766,7 +766,7 @@ class PSCouchDBDesignDoc : PSCouchDBDocument {
     AddView ([PSCouchDBView]$view) {
         if ($this.views -notcontains $view) {
             [void] $this.views.Add($view)
-            if ($this.doc -notcontains 'views') {$this.doc.Add('views', @{})}
+            if (-not($this.doc.ContainsKey('views'))) {$this.doc.Add('views', @{})}
             $this.doc.views.Add($view.name, $view.GetView())
         }
     }
