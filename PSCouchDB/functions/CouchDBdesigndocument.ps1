@@ -234,6 +234,8 @@ function Get-CouchDBDesignDocument () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER Variable
+    Export into a PSCouchDBDesignDoc variable object.
     .EXAMPLE
     Get-CouchDBDesignDocument -Database test -Document "space"
     This example get "space" design document on database "test".
@@ -250,9 +252,32 @@ function Get-CouchDBDesignDocument () {
         [string] $Document,
         [switch] $Info,
         [string] $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $Variable
     )
     $Document = "_design/$Document"
+    # Export document in a variable
+    if ($Variable) {
+        $ddoc = Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+        $exportDdoc = New-Object -TypeName PSCouchDBDesignDoc -ArgumentList $ddoc._id,$ddoc._rev
+        # Retrieve views function
+        foreach ($v in $ddoc.views.psobject.properties) {
+            $name = $v.name
+            $map = $v.psobject.properties.value.map
+            $reduce = $v.psobject.properties.reduce
+            if ($map) {
+                $exportDdoc.AddView($name, $map)
+            } elseif ($map -and $reduce) {
+                $exportDdoc.AddView($name, $map, $reduce)
+            }
+        }
+        # Retrieve validate_doc_update function
+        if ($ddoc.validate_doc_update) {
+            $exportDdoc.SetValidateFunction($validate)
+        }
+        Set-Variable -Name $Variable -Value $exportDdoc -Scope Global
+        return $null
+    }
     if ($Info.IsPresent) { $Method = "HEAD" } else { $Method = "GET" }
     Send-CouchDBRequest -Server $Server -Port $Port -Method $Method -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
 }
