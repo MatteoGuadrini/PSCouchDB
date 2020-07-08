@@ -315,6 +315,8 @@ function Get-CouchDBDesignDocumentAttachment () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER Variable
+    Export into a PSCouchDBAttachment variable object.
     .EXAMPLE
     Get-CouchDBDesignDocumentAttachment -Database test -Document space -Attachment test.txt
     This example get attachment "test.txt" on "space" design document on database "test".
@@ -359,7 +361,9 @@ function Get-CouchDBDesignDocumentAttachment () {
         [string] $Authorization,
         [Parameter(ParameterSetName = "Attachment")]
         [Parameter(ParameterSetName = "Info")]
-        [switch] $Ssl
+        [switch] $Ssl,
+        [Parameter(ParameterSetName = "Attachment")]
+        [string] $Variable
     )
     if ($Info.IsPresent) {
         $Method = "HEAD"
@@ -367,6 +371,17 @@ function Get-CouchDBDesignDocumentAttachment () {
         $Method = "GET"
     }
     $Document = "_design/$Document"
+    # Export attachment in a variable
+    if ($Variable) {
+        $tempfile = New-TemporaryFile
+        $attachName = Join-Path -Path $tempfile.DirectoryName -ChildPath $(Split-Path -Path $Attachment -Leaf)
+        $attachment = Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Revision $Revision -Attachment $Attachment -OutFile $tempfile.FullName -Authorization $Authorization -Ssl:$Ssl
+        Rename-Item -Path $tempfile.FullName -NewName $attachName -Force
+        $exportAttachment = New-Object -TypeName PSCouchDBAttachment -ArgumentList $attachName
+        Remove-Item -Path $attachName -Force
+        Set-Variable -Name $Variable -Value $exportAttachment -Scope Global
+        return $null
+    }
     Send-CouchDBRequest -Server $Server -Port $Port -Method $Method -Database $Database -Document $Document -Revision $Revision -Attachment $Attachment -OutFile $OutFile -Authorization $Authorization -Ssl:$Ssl
 }
 

@@ -511,13 +511,13 @@ Design documents
 
 .. code-block:: powershell
 
-    Get-CouchDBDesignDocument [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [-Info] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    Get-CouchDBDesignDocument [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [-Info] [[-Authorization] <String>] [-Ssl] [[-Variable] <String>] [<CommonParameters>]
 
 **Get-CouchDBDesignDocumentAttachment**
 
 .. code-block:: powershell
 
-    Get-CouchDBDesignDocumentAttachment [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-Revision <String>] [-Attachment <String>] [-OutFile <String>] [-Authorization <String>] [-Ssl] [<CommonParameters>]
+    Get-CouchDBDesignDocumentAttachment [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-Revision <String>] [-Attachment <String>] [-OutFile <String>] [-Authorization <String>] [-Ssl] [-Variable <String>] [<CommonParameters>]
 
     Get-CouchDBDesignDocumentAttachment [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-Revision <String>] [-Info] [-Attachment <String>] [-Authorization <String>] [-Ssl] [<CommonParameters>]
 
