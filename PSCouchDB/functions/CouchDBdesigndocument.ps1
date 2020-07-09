@@ -385,7 +385,7 @@ function Get-CouchDBDesignDocumentAttachment () {
     Send-CouchDBRequest -Server $Server -Port $Port -Method $Method -Database $Database -Document $Document -Revision $Revision -Attachment $Attachment -OutFile $OutFile -Authorization $Authorization -Ssl:$Ssl
 }
 
-function New-CouchDBDesignDocumentAttachment () {
+function Add-CouchDBDesignDocumentAttachment () {
     <#
     .SYNOPSIS
     Create a new attachment in a design document.
@@ -414,7 +414,7 @@ function New-CouchDBDesignDocumentAttachment () {
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
     .EXAMPLE
-    New-CouchDBDesignDocumentAttachment -Database test -Document space -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Attachment test.txt
+    Add-CouchDBDesignDocumentAttachment -Database test -Document space -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Attachment test.txt
     This example add attachment "test.txt" on "space" design document from database "test".
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/ddoc.html#create-design-document-attachment
@@ -919,59 +919,6 @@ function Set-CouchDBDesignDocument () {
         $Data = $DesignDoc.GetDesignDocuments()
     }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Revision $Revision -Data $Data -Authorization $Authorization -Ssl:$Ssl
-}
-
-function Set-CouchDBDesignDocumentAttachment () {
-    <#
-    .SYNOPSIS
-    Modify attachment of a design document.
-    .DESCRIPTION
-    Uploads the supplied content as an attachment to the specified design document.
-    .NOTES
-    CouchDB API:
-        PUT /{db}/_design/{ddoc}/{attname}
-    .PARAMETER Server
-    The CouchDB server name. Default is localhost.
-    .PARAMETER Port
-    The CouchDB server port. Default is 5984.
-    .PARAMETER Database
-    The CouchDB database.
-    .PARAMETER Document
-    The CouchDB document.
-    .PARAMETER Revision
-    The CouchDB revision document.
-    .PARAMETER Attachment
-    The CouchDB attachment document.
-    .PARAMETER Authorization
-    The CouchDB authorization form; user and password.
-    Authorization format like this: user:password
-    ATTENTION: if the password is not specified, it will be prompted.
-    .PARAMETER Ssl
-    Set ssl connection on CouchDB server.
-    This modify protocol to https and port to 6984.
-    .EXAMPLE
-    Set-CouchDBDesignDocumentAttachment -Database test -Document "space" -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Attachment test.txt
-    This example modify attachment "test.txt" on "space" design document from database "test".
-    .LINK
-    https://pscouchdb.readthedocs.io/en/latest/ddoc.html#modify-design-document-attachment
-    #>
-    [CmdletBinding()]
-    param(
-        [string] $Server,
-        [int] $Port,
-        [Parameter(mandatory = $true)]
-        [string] $Database,
-        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [string] $Document,
-        [Parameter(mandatory = $true)]
-        [string] $Revision,
-        [Parameter(mandatory = $true)]
-        [string] $Attachment,
-        [string] $Authorization,
-        [switch] $Ssl
-    )
-    $Document = "_design/$Document"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Revision $Revision -Attachment $Attachment -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Compress-CouchDBDesignDocument () {
