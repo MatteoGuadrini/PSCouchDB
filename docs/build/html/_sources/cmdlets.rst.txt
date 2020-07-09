@@ -531,15 +531,9 @@ Design documents
 
 .. code-block:: powershell
 
-    New-CouchDBDesignDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-ViewName <String>] [-ViewKey <String>] [-ViewValue <String>] [-GetDoc] [-Authorization <String>] [-Ssl] [<CommonParameters>]
+    New-CouchDBDesignDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-ViewName <String>] [-ViewMapFunction <String>] [-ViewReduceFunction <String>] [-ValidationFunction <String>] [-Authorization <String>] [-Ssl] [<CommonParameters>]
 
     New-CouchDBDesignDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-Data <Object>] [-Authorization <String>] [-Ssl] [<CommonParameters>]
-
-    New-CouchDBDesignDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-ValidationRequirements <Array>] [-ValidationAuthor] [-Authorization <String>] [-Ssl] [<CommonParameters>]
-
-    New-CouchDBDesignDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-ShowName <String>] [-ShowKey <String>] [-ShowValue <String>] [-Authorization <String>] [-Ssl] [<CommonParameters>]
-
-    New-CouchDBDesignDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-ViewName <String>] [-ViewKey <String>] [-ViewValue <String>] [-GetDoc] [-ListName <String>] [-Authorization <String>] [-Ssl] [<CommonParameters>]
 
 **Set-CouchDBDesignDocument**
 

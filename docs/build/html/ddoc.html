@@ -100,8 +100,6 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#creates-a-design-document">Creates a design document</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#views">Views</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#list">List</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#show">Show</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#validation">Validation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#custom-functions">Custom functions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#create-design-document-attachment">Create design document attachment</a></li>
@@ -264,7 +262,7 @@ Unless you request a specific revision, the latest revision of the document will
 <div class="section" id="creates-a-design-document">
 <h2>Creates a design document<a class="headerlink" href="#creates-a-design-document" title="Permalink to this headline">¶</a></h2>
 <p>Creates a new named design document.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">New-CouchDBDesignDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;space&quot;</span> <span class="n">-ViewName</span> <span class="s2">&quot;planet_view&quot;</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">New-CouchDBDesignDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;space&quot;</span> <span class="n">-ViewName</span> <span class="s2">&quot;planet_view&quot;</span> <span class="n">-ViewMapFunction</span> <span class="s2">&quot;function(doc){if(doc.planet &amp;&amp; doc.name) {emit(doc.planet, doc.name);}}&quot;</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 <div class="section" id="views">
@@ -277,39 +275,11 @@ View indexes are updated incrementally in the following situations:</p>
 <li><p>A document has been deleted from the database.</p></li>
 <li><p>A document in the database has been updated.</p></li>
 </ul>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">New-CouchDBDesignDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="n">space</span> <span class="n">-ViewName</span> <span class="n">planet</span> <span class="n">-ViewKey</span> <span class="n">planet</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
-<span class="nb">Set-CouchDBDesignDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="n">space</span> <span class="n">-ViewName</span> <span class="n">planet_heart</span> <span class="n">-ViewKey</span> <span class="n">planet</span> <span class="n">-ViewValue</span> <span class="s2">&quot;Heart&quot;</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
-<span class="nb">Set-CouchDBDesignDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="n">space</span> <span class="n">-ViewName</span> <span class="n">planet_heart</span> <span class="n">-ViewKey</span> <span class="n">planet</span> <span class="n">-ViewValue</span> <span class="s2">&quot;Heart2&quot;</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">New-CouchDBDesignDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;space&quot;</span> <span class="n">-ViewName</span> <span class="s2">&quot;planet_view&quot;</span> <span class="n">-ViewMapFunction</span> <span class="s2">&quot;function(doc){if(doc.planet &amp;&amp; doc.name) {emit(doc.planet, doc.name);}}&quot;</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
-<p>Now, navigate with your favorite browser to <code class="docutils literal notranslate"><span class="pre">http://localhost:5984/test/_design/space/_view/planet</span></code> or</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;_design/space/_view/planet&quot;</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="list">
-<h3>List<a class="headerlink" href="#list" title="Permalink to this headline">¶</a></h3>
-<p>Applies list function for the view function from the same design document.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">New-CouchDBDesignDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="n">space</span> <span class="n">-ViewName</span> <span class="n">planet</span> <span class="n">-ListName</span> <span class="n">planet_list</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
-</pre></div>
-</div>
-<p>Now, navigate with your favorite browser to <code class="docutils literal notranslate"><span class="pre">http://localhost:5984/test/_design/space/_list/planet_list/planet</span></code> or</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$html</span> <span class="p">=</span> <span class="nb">Get-CouchDBDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;_design/space/_list/planet_list/planet&quot;</span>
-<span class="nv">$html</span><span class="p">.</span><span class="n">html</span><span class="p">.</span><span class="n">body</span><span class="p">.</span><span class="n">table</span><span class="p">.</span><span class="n">tr</span> <span class="p">|</span> <span class="nb">fl</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="show">
-<h3>Show<a class="headerlink" href="#show" title="Permalink to this headline">¶</a></h3>
-<p>Show functions are used to represent documents as HTML pages with nice formatting.
-They can also be used to run server-side functions without requiring a pre-existing document.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">New-CouchDBDesignDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="n">space</span> <span class="n">-ShowName</span> <span class="n">planet</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
-<span class="nb">Set-CouchDBDesignDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="n">space</span> <span class="n">-ShowName</span> <span class="n">planet</span> <span class="n">-ShowKey</span> <span class="n">planet</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
-<span class="nb">Set-CouchDBDesignDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="n">space</span> <span class="n">-ShowName</span> <span class="n">planet</span> <span class="n">-ShowKey</span> <span class="n">planet</span> <span class="n">-ShowValue</span> <span class="s2">&quot;Heart&quot;</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
-</pre></div>
-</div>
-<p>Now, navigate with your favorite browser to <code class="docutils literal notranslate"><span class="pre">http://localhost:5984/test/_design/space/_show/planet/Hitchhikers</span></code> or</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;_design/space/_show/planet/Hitchhikers&quot;</span>
+<p>Now, navigate with your favorite browser to <code class="docutils literal notranslate"><span class="pre">http://localhost:5984/test/_design/space/_view/planet_view</span></code> or</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;_design/space/_view/planet_view&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -317,8 +287,7 @@ They can also be used to run server-side functions without requiring a pre-exist
 <h3>Validation<a class="headerlink" href="#validation" title="Permalink to this headline">¶</a></h3>
 <p>A design document may contain a function named <code class="docutils literal notranslate"><span class="pre">validate_doc_update</span></code> which can be used to prevent invalid or unauthorized document update requests from being stored.
 Only one function is allowed at a time.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">New-CouchDBDesignDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="n">space</span> <span class="n">-ValidationRequirements</span> <span class="n">planet</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
-<span class="nb">Set-CouchDBDesignDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="n">space</span> <span class="n">-ValidationRequirements</span> <span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-ValidationAuthor</span> <span class="o">-Replace</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">New-CouchDBDesignDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;space&quot;</span> <span class="n">-ValidationFunction</span> <span class="s2">&quot;function(newDoc, oldDoc, userCtx, secObj){if (!(newDoc.name || newDoc.planet)) {throw({forbidden : &#39;no way&#39;});}&quot;</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 <p>Now try to creates a new document without validation element</p>
@@ -326,7 +295,7 @@ Only one function is allowed at a time.</p>
 <span class="nb">New-CouchDBDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;Test_Validation&quot;</span> <span class="n">-Data</span> <span class="nv">$data</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
-<p>Received an error: <code class="docutils literal notranslate"><span class="pre">Invoke-RestMethod</span> <span class="pre">:</span> <span class="pre">{&quot;error&quot;:&quot;forbidden&quot;,&quot;reason&quot;:&quot;Document</span> <span class="pre">must</span> <span class="pre">have</span> <span class="pre">a</span> <span class="pre">name&quot;}</span></code>. Now retry with this:</p>
+<p>Received an error: <code class="docutils literal notranslate"><span class="pre">Invoke-RestMethod</span> <span class="pre">:</span> <span class="pre">{&quot;error&quot;:&quot;forbidden&quot;,&quot;reason&quot;:&quot;no</span> <span class="pre">way&quot;}</span></code>. Now retry with this:</p>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$data</span> <span class="p">=</span> <span class="s1">&#39;{&quot;planet&quot;:&quot;Magrathea&quot;, &quot;name&quot;:&quot;Slartibartfast&quot;}&#39;</span>
 <span class="nb">New-CouchDBDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;Test_Validation&quot;</span> <span class="n">-Data</span> <span class="nv">$data</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>

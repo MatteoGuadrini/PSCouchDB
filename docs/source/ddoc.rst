@@ -73,7 +73,7 @@ Creates a new named design document.
 
 .. code-block:: powershell
 
-    New-CouchDBDesignDocument -Database test -Document "space" -ViewName "planet_view" -Authorization "admin:password"
+    New-CouchDBDesignDocument -Database test -Document "space" -ViewName "planet_view" -ViewMapFunction "function(doc){if(doc.planet && doc.name) {emit(doc.planet, doc.name);}}" -Authorization "admin:password"
 
 Views
 *****
@@ -88,49 +88,13 @@ View indexes are updated incrementally in the following situations:
 
 .. code-block:: powershell
 
-    New-CouchDBDesignDocument -Database test -Document space -ViewName planet -ViewKey planet -Authorization "admin:password"
-    Set-CouchDBDesignDocument -Database test -Document space -ViewName planet_heart -ViewKey planet -ViewValue "Heart" -Authorization "admin:password"
-    Set-CouchDBDesignDocument -Database test -Document space -ViewName planet_heart -ViewKey planet -ViewValue "Heart2" -Authorization "admin:password"
+    New-CouchDBDesignDocument -Database test -Document "space" -ViewName "planet_view" -ViewMapFunction "function(doc){if(doc.planet && doc.name) {emit(doc.planet, doc.name);}}" -Authorization "admin:password"
 
-Now, navigate with your favorite browser to ``http://localhost:5984/test/_design/space/_view/planet`` or
+Now, navigate with your favorite browser to ``http://localhost:5984/test/_design/space/_view/planet_view`` or
 
 .. code-block:: powershell
 
-    Get-CouchDBDocument -Database test -Document "_design/space/_view/planet"
-
-List
-****
-
-Applies list function for the view function from the same design document.
-
-.. code-block:: powershell
-
-    New-CouchDBDesignDocument -Database test -Document space -ViewName planet -ListName planet_list -Authorization "admin:password"
-
-Now, navigate with your favorite browser to ``http://localhost:5984/test/_design/space/_list/planet_list/planet`` or
-
-.. code-block:: powershell
-
-    $html = Get-CouchDBDocument -Database test -Document "_design/space/_list/planet_list/planet"
-    $html.html.body.table.tr | fl
-
-Show
-****
-
-Show functions are used to represent documents as HTML pages with nice formatting. 
-They can also be used to run server-side functions without requiring a pre-existing document.
-
-.. code-block:: powershell
-
-    New-CouchDBDesignDocument -Database test -Document space -ShowName planet -Authorization "admin:password"
-    Set-CouchDBDesignDocument -Database test -Document space -ShowName planet -ShowKey planet -Authorization "admin:password"
-    Set-CouchDBDesignDocument -Database test -Document space -ShowName planet -ShowKey planet -ShowValue "Heart" -Authorization "admin:password"
-
-Now, navigate with your favorite browser to ``http://localhost:5984/test/_design/space/_show/planet/Hitchhikers`` or
-
-.. code-block:: powershell
-
-    Get-CouchDBDocument -Database test -Document "_design/space/_show/planet/Hitchhikers"
+    Get-CouchDBDocument -Database test -Document "_design/space/_view/planet_view"
 
 Validation
 **********
@@ -140,8 +104,7 @@ Only one function is allowed at a time.
 
 .. code-block:: powershell
 
-    New-CouchDBDesignDocument -Database test -Document space -ValidationRequirements planet -Authorization "admin:password"
-    Set-CouchDBDesignDocument -Database test -Document space -ValidationRequirements name,planet -ValidationAuthor -Replace -Authorization "admin:password"
+    New-CouchDBDesignDocument -Database test -Document "space" -ValidationFunction "function(newDoc, oldDoc, userCtx, secObj){if (!(newDoc.name || newDoc.planet)) {throw({forbidden : 'no way'});}" -Authorization "admin:password"
 
 Now try to creates a new document without validation element
 
@@ -150,7 +113,7 @@ Now try to creates a new document without validation element
     $data = '{"planet":"Magrathea"}'
     New-CouchDBDocument -Database test -Document "Test_Validation" -Data $data -Authorization "admin:password"
 
-Received an error: ``Invoke-RestMethod : {"error":"forbidden","reason":"Document must have a name"}``. Now retry with this:
+Received an error: ``Invoke-RestMethod : {"error":"forbidden","reason":"no way"}``. Now retry with this:
 
 .. code-block:: powershell
 

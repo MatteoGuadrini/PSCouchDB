@@ -224,7 +224,7 @@ function Get-CouchDBDesignDocument () {
     .PARAMETER Database
     The CouchDB database.
     .PARAMETER Document
-    The CouchDB document.
+    The CouchDB design document.
     .PARAMETER Info
     The CouchDB header of document.
     .PARAMETER Authorization
@@ -299,7 +299,7 @@ function Get-CouchDBDesignDocumentAttachment () {
     .PARAMETER Database
     The CouchDB database.
     .PARAMETER Document
-    The CouchDB document.
+    The CouchDB design document.
     .PARAMETER Revision
     The CouchDB revision document.
     .PARAMETER Attachment
@@ -401,7 +401,7 @@ function Add-CouchDBDesignDocumentAttachment () {
     .PARAMETER Database
     The CouchDB database.
     .PARAMETER Document
-    The CouchDB document.
+    The CouchDB design document.
     .PARAMETER Attachment
     The CouchDB attachment document.
     .PARAMETER Revision
@@ -454,29 +454,17 @@ function New-CouchDBDesignDocument () {
     .PARAMETER Database
     The CouchDB database.
     .PARAMETER Document
-    The CouchDB document.
+    The CouchDB design document.
     .PARAMETER ViewName
-    The name of function view in the design document.
-    .PARAMETER ViewKey
-    The key of function view in the design document.
-    .PARAMETER ViewValue
-    The value of key of function view in the design document.
-    .PARAMETER GetDoc
-    Return all element of doc of function view in the design document.
-    .PARAMETER ListName
-    The name of function list in the design document.
-    .PARAMETER ShowName
-    The name of function show in the design document.
-    .PARAMETER ShowKey
-    The key of function show in the design document.
-    .PARAMETER ShowValue
-    The value of key of function show in the design document.
-    .PARAMETER ValidationRequirements
-    Array of key than required validation.
-    .PARAMETER ValidationAuthor
-    Enable validation author.
+    The name of view function in the design document.
+    .PARAMETER ViewMapFunction
+    The function attach to the name of view function.
+    .PARAMETER ViewReduceFunction
+    The function attach to the name of view function.
+    .PARAMETER ValidationFunction
+    A validation function.
     .PARAMETER Data
-    The data in Json format or hastable.
+    The entire design document in json, hashtable or PSCouchDBDesignDoc object.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -485,141 +473,76 @@ function New-CouchDBDesignDocument () {
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
     .EXAMPLE
-    New-CouchDBDesignDocument -Database test -Document "space" -ViewName "planet_view" -Authorization "admin:password"
-    The example create "space" design document with add or modify "planet_view" view.
+    New-CouchDBDesignDocument -Database test -Document "space" -ViewName "planet_view" -ViewMapFunction "function(doc){if(doc.planet && doc.name) {emit(doc.planet, doc.name);}}" -Authorization "admin:password"
+    The example create "space" design document with add "planet_view" view.
     .EXAMPLE
     $data = '{"views":{"data_test":{"map":"function(doc) {emit(doc._id, doc._rev)}"}}}'
     New-CouchDBDesignDocument -Database test -Document "space" -Data $data -Authorization "admin:password"
     The example create "space" design document with custom data.
     .EXAMPLE
-    New-CouchDBDesignDocument -Database test -Document space -ShowName planet -ShowKey planet -ShowValue "Heart" -Authorization "admin:password"
-    The example create "space" design document with add or modify "planet" show, where "planet" key equal "Heart".
+    New-CouchDBDesignDocument -Database test -Document "space" -ViewName "planet_view" -ViewMapFunction "function(doc){if(doc.planet && doc.name) {emit(doc.planet, doc.name);}}" -ViewReduceFunction "_count" -Authorization "admin:password"
+    The example create "space" design document with add "planet_view" view with reduce function. 
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/ddoc.html#creates-a-design-document
     #>
     [CmdletBinding(DefaultParameterSetName = "View")]
     param(
         [Parameter(ParameterSetName = "View")]
-        [Parameter(ParameterSetName = "List")]
-        [Parameter(ParameterSetName = "Show")]
-        [Parameter(ParameterSetName = "Validation")]
         [Parameter(ParameterSetName = "CustomData")]
         [string] $Server,
         [Parameter(ParameterSetName = "View")]
-        [Parameter(ParameterSetName = "List")]
-        [Parameter(ParameterSetName = "Show")]
-        [Parameter(ParameterSetName = "Validation")]
         [Parameter(ParameterSetName = "CustomData")]
         [int] $Port,
         [Parameter(ParameterSetName = "View")]
-        [Parameter(ParameterSetName = "List")]
-        [Parameter(ParameterSetName = "Show")]
-        [Parameter(ParameterSetName = "Validation")]
         [Parameter(ParameterSetName = "CustomData")]
         [Parameter(mandatory = $true)]
         [string] $Database,
         [Parameter(ParameterSetName = "View")]
-        [Parameter(ParameterSetName = "List")]
-        [Parameter(ParameterSetName = "Show")]
-        [Parameter(ParameterSetName = "Validation")]
         [Parameter(ParameterSetName = "CustomData")]
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Document,
         [Parameter(ParameterSetName = "View")]
-        [Parameter(ParameterSetName = "List")]
         [string] $ViewName,
         [Parameter(ParameterSetName = "View")]
-        [Parameter(ParameterSetName = "List")]
-        [string] $ViewKey,
+        [string] $ViewMapFunction,
+        [ValidateSet('_approx_count_distinct', '_count', '_stats', '_sum')]
         [Parameter(ParameterSetName = "View")]
-        [Parameter(ParameterSetName = "List")]
-        [string] $ViewValue,
+        [string] $ViewReduceFunction,
         [Parameter(ParameterSetName = "View")]
-        [Parameter(ParameterSetName = "List")]
-        [switch] $GetDoc,
-        [Parameter(ParameterSetName = "List")]
-        [string] $ListName,
-        [Parameter(ParameterSetName = "Show")]
-        [string] $ShowName,
-        [Parameter(ParameterSetName = "Show")]
-        [string] $ShowKey,
-        [Parameter(ParameterSetName = "Show")]
-        [string] $ShowValue,
-        [Parameter(ParameterSetName = "Validation")]
-        [array] $ValidationRequirements,
-        [Parameter(ParameterSetName = "Validation")]
-        [switch] $ValidationAuthor,
+        [string] $ValidationFunction,
         [Parameter(ParameterSetName = "CustomData")]
         $Data,
         [Parameter(ParameterSetName = "View")]
-        [Parameter(ParameterSetName = "List")]
-        [Parameter(ParameterSetName = "Show")]
-        [Parameter(ParameterSetName = "Validation")]
         [Parameter(ParameterSetName = "CustomData")]
         [string] $Authorization,
         [Parameter(ParameterSetName = "View")]
-        [Parameter(ParameterSetName = "List")]
-        [Parameter(ParameterSetName = "Show")]
-        [Parameter(ParameterSetName = "Validation")]
         [Parameter(ParameterSetName = "CustomData")]
         [switch] $Ssl
     )
     $Document = "_design/$Document"
     # Instance new PSCouchDBDesignDoc object
-    $DesignDoc = New-Object PSCouchDBDesignDoc
+    $ddoc = New-Object PSCouchDBDesignDoc -ArgumentList $Document
     # View
     if ($PsCmdlet.ParameterSetName -eq "View") {
-        if ($ViewName -and $ViewKey -and $ViewValue -and $GetDoc) {
-            $DesignDoc.AddView($ViewName, $ViewKey, $ViewValue, $GetDoc.IsPresent)
-        } elseif ($ViewName -and $ViewKey -and $ViewValue) {
-            $DesignDoc.AddView($ViewName, $ViewKey, $ViewValue)
-        } elseif ($ViewName -and $ViewKey) {
-            $DesignDoc.AddView($ViewName, $ViewKey)
-        } elseif ($ViewName) {
-            $DesignDoc.AddView($ViewName)
+        if (($ViewName -and $ViewMapFunction) -or ($ViewName -and $ViewReduceFunction)) {
+            # Map
+            if ($ViewMapFunction -and $ViewReduceFunction) {
+                $ddoc.AddView($ViewName, $ViewMapFunction, $ViewReduceFunction)
+            } elseif ($ViewMapFunction) {
+                $ddoc.AddView($ViewName, $ViewMapFunction)
+            }
+        } else {
+            throw "View function required a name!"
         }
-        $Data = $DesignDoc.GetDesignDocuments()
-    }
-    # List
-    if ($PsCmdlet.ParameterSetName -eq "List") {
-        if ($ViewName -and $ViewKey -and $ViewValue -and $GetDoc) {
-            $DesignDoc.AddView($ViewName, $ViewKey, $ViewValue, $GetDoc.IsPresent)
-        } elseif ($ViewName -and $ViewKey -and $ViewValue) {
-            $DesignDoc.AddView($ViewName, $ViewKey, $ViewValue)
-        } elseif ($ViewName -and $ViewKey) {
-            $DesignDoc.AddView($ViewName, $ViewKey)
-        } elseif ($ViewName) {
-            $DesignDoc.AddView($ViewName)
-        }
-        if ($ListName) {
-            $DesignDoc.AddList($ListName)
-        }
-        $Data = $DesignDoc.GetDesignDocuments()
-    }
-    # Show
-    if ($PsCmdlet.ParameterSetName -eq "Show") {
-        if ($ShowName -and $ShowKey -and $ShowValue) {
-            $DesignDoc.AddShow($ShowName, $ShowKey, $ShowValue)
-        } elseif ($ShowName -and $ShowKey) {
-            $DesignDoc.AddShow($ShowName, $ShowKey)
-        } elseif ($ShowName) {
-            $DesignDoc.AddShow($ShowName)
-        }
-        $Data = $DesignDoc.GetDesignDocuments()
-    }
-    # Validation
-    if ($PsCmdlet.ParameterSetName -eq "Validation") {
-        if ($ValidationRequirements -and $ValidationAuthor) {
-            $DesignDoc.AddValidation($ValidationRequirements, $ValidationAuthor.IsPresent)
-        } elseif ($ValidationRequirements) {
-            $DesignDoc.AddValidation($ValidationRequirements)
-        }
-        $Data = $DesignDoc.GetDesignDocuments()
+        if ($ValidationFunction) { $ddoc.SetValidateFunction($ValidationFunction) }
+        $Data = $ddoc.ToJson(99)
     }
     # CustomData
     if ($PsCmdlet.ParameterSetName -eq "CustomData") {
         if ($Data -is [hashtable]) {
             $Data = $Data | ConvertTo-Json -Depth 99
+        } elseif ($Data -is [PSCouchDBDesignDoc]) {
+            $Data = $Data.ToJson(99)
         }
     }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
