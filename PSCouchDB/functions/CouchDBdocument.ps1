@@ -1247,9 +1247,7 @@ function Add-CouchDBAttachment () {
             throw "Attachment object doesn't contains any data"
         }
     } elseif ($Attachment -is [string]) {
-        if (Test-Path -Path $Attachment) {
-
-        } else {
+        if (-not(Test-Path -Path $Attachment)) {
             throw "File not found: $Attachment"
         }
     } else {

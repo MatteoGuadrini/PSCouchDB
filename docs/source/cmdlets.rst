@@ -525,7 +525,7 @@ Design documents
 
 .. code-block:: powershell
 
-    Add-CouchDBDesignDocumentAttachment [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [-Attachment] <String> [-Revision] <String> [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    Add-CouchDBDesignDocumentAttachment [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [-Attachment] <Object> [-Revision] <String> [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
 
 **New-CouchDBDesignDocument**
 

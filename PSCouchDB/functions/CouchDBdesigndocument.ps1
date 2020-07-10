@@ -416,6 +416,11 @@ function Add-CouchDBDesignDocumentAttachment () {
     .EXAMPLE
     Add-CouchDBDesignDocumentAttachment -Database test -Document space -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Attachment test.txt
     This example add attachment "test.txt" on "space" design document from database "test".
+    .EXAMPLE
+    using module PSCouchDB
+    $Attachment = New-Object PSCouchDBAttachment -ArgumentList "C:\temp\bin.exe"
+    Add-CouchDBDesignDocumentAttachment -Database test -Document space -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Attachment $Attachment
+    This example add attachment "test.txt" on "space" design document from database "test" with PSCouchDBAttachment object.
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/ddoc.html#create-design-document-attachment
     #>
@@ -428,13 +433,31 @@ function Add-CouchDBDesignDocumentAttachment () {
         [Parameter(mandatory = $true)]
         [string] $Document,
         [Parameter(mandatory = $true)]
-        [string] $Attachment,
+        $Attachment,
         [Parameter(mandatory = $true)]
         [string] $Revision,
         [string] $Authorization,
         [switch] $Ssl
     )
     $Document = "_design/$Document"
+    # Check if Attachment param is string or PSCouchDBAttachment
+    if ($Attachment -is [PSCouchDBAttachment]) {
+        $tempfile = New-TemporaryFile
+        if ($Attachment.GetData()) {
+            $attachName = Join-Path -Path $tempfile.DirectoryName -ChildPath $Attachment.filename
+            Rename-Item -Path $tempfile.FullName -NewName $attachName -Force
+            $Attachment.SaveData($attachName)
+            $Attachment = $attachName
+        } else {
+            throw "Attachment object doesn't contains any data"
+        }
+    } elseif ($Attachment -is [string]) {
+        if (-not(Test-Path -Path $Attachment)) {
+            throw "File not found: $Attachment"
+        }
+    } else {
+        throw "Attachment parameter must be string or PSCouchDBAttachment object"
+    }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Attachment $Attachment -Revision $Revision -Authorization $Authorization -Ssl:$Ssl
 }
 
