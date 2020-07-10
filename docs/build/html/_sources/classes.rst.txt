@@ -703,10 +703,11 @@ Properties
 
 .. code-block:: powershell
 
-    lists               Property   hashtable lists {get;set;}
-    shows               Property   hashtable shows {get;set;}
-    validate_doc_update Property   string validate_doc_update {get;set;}
-    views               Property   hashtable views {get;set;}
+    validate_doc_update  Property   string validate_doc_update {get;set;}
+    views                Property   System.Object views {get;set;}
+    _attachments         Property   hashtable _attachments {get;set;}
+    _id                  Property   string _id {get;set;}
+    _rev                 Property   string _rev {get;set;}
 
 
 Methods
@@ -714,16 +715,23 @@ Methods
 
 .. code-block:: powershell
 
-    AddList             Method     void AddList(System.Object name)
-    AddShow             Method     void AddShow(System.Object name), void AddShow(System.Object name, System.Object key)...
-    AddValidation       Method     void AddValidation(array requirements), void AddValidation(array requirements, System...
-    AddView             Method     void AddView(System.Object name), void AddView(System.Object name, System.Object key)...
-    Equals              Method     bool Equals(System.Object obj)
-    GetDesignDocuments  Method     string GetDesignDocuments()
-    GetHashCode         Method     int GetHashCode()
-    GetType             Method     type GetType()
-    SetName             Method     void SetName(System.Object name)
-    ToString            Method     string ToString()
+    AddAttachment        Method     void AddAttachment(PSCouchDBAttachment attachment), void AddAttachment(string attach...
+    AddView              Method     void AddView(PSCouchDBView view), void AddView(string name, string map), void AddVie...
+    Equals               Method     bool Equals(System.Object obj)
+    FromJson             Method     hashtable FromJson(string json)
+    GetDocument          Method     hashtable GetDocument()
+    GetHashCode          Method     int GetHashCode()
+    GetType              Method     type GetType()
+    RemoveAllAttachments Method     void RemoveAllAttachments()
+    RemoveAttachment     Method     void RemoveAttachment(string attachment)
+    RemoveElement        Method     void RemoveElement(string key)
+    RemoveView           Method     void RemoveView(string name)
+    ReplaceAttachment    Method     void ReplaceAttachment(PSCouchDBAttachment attachment), void ReplaceAttachment(strin...
+    ReplaceView          Method     void ReplaceView(PSCouchDBView view), void ReplaceView(string name, string map), voi...
+    SetElement           Method     void SetElement(string key), void SetElement(string key, string value)
+    SetValidateFunction  Method     void SetValidateFunction(string function)
+    ToJson               Method     string ToJson(), string ToJson(int depth), string ToJson(int depth, bool compress)
+    ToString             Method     string ToString()
 
 Build a design document
 ***********************
@@ -739,76 +747,31 @@ To create a ``PSCouchDBDesignDoc`` object, just do the following.
 Work with views
 ***************
 
-Views are the primary tool used for querying and reporting on CouchDB documents. With *AddView* it is possible to add four types of predefined views.
+Views are the primary tool used for querying and reporting on CouchDB documents. With *AddView* it is possible to add map and reduce function.
 
-Simple view
-^^^^^^^^^^^
+Add map function
+^^^^^^^^^^^^^^^^
 
 .. code-block:: powershell
 
-    $ddoc.AddView('myview')
+    $ddoc.AddView('myview', 'function(doc){emit(doc);}')
     
-View if document key exists
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Add reduce function
+^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: powershell
 
-    $ddoc.AddView('myviewexists','key')
+    $ddoc.AddView('myview', 'function(doc){emit(doc);}', '_count')
 
-View if document key exists and your value is value specified
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. code-block:: powershell
-
-    $ddoc.AddView('myviewvalue','key','value')
-
-View if document key exists and your value is value specified, and return entire doc
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Add view object
+^^^^^^^^^^^^^^^
 
 .. code-block:: powershell
 
-    $ddoc.AddView('myviewdoc','key','value',$true)
-
-
-Work with Lists
-***************
-
-List functions are used to represent documents in various formats, commonly as HTML pages with nice formatting.
-Use *AddList* for add one list or more. List functions they need at least one view.
-
-.. code-block:: powershell
-
-    $ddoc.AddList("mylist")
-
-Work with Shows
-***************
-
-With *AddShow* it is possible to add three types of predefined show function. Only one function is allowed at a time.
-
-Simple show
-^^^^^^^^^^^
-
-.. code-block:: powershell
-
-    $ddoc.AddShow("myshow")
-
-Show if document key exists
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. code-block:: powershell
-
-    # reset object
-    $ddoc = New-Object -TypeName PSCouchDBDesignDoc
-    $ddoc.AddShow("myshow","key")
-
-Show if document key exists and your value is value specified
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. code-block:: powershell
-
-    # reset object
-    $ddoc = New-Object -TypeName PSCouchDBDesignDoc
-    $$ddoc.AddShow("myshow","key","value")
+    $view = New-Object PSCouchDBView -ArgumentList "myview"
+    $view.AddMapFunction("function(doc) { emit(doc.name, doc.age); }")
+    $view.AddReduceFunction("_sum")
+    $ddoc.AddView($view)
 
 Work with validation
 ********************
@@ -818,20 +781,16 @@ Use *AddValidation* for add one. Only one function is allowed at a time.
 
 .. code-block:: powershell
 
-    $ddoc.AddValidation("myvalidation")
-    #or add also user authorization
-    $ddoc.AddValidation("myvalidation",$true)
-    #or create ReadOnly CouchDB database
-    $ddoc.AddValidation($true)
+    $ddoc.SetValidateFunction('function(newDoc, oldDoc, userCtx, secObj) {if (newDoc.type == "post") {// validation logic for posts}}')
 
 Native design document
 **********************
 
-To receive the design document in native format use the *GetDesignDocuments* method.
+To receive the design document in native format use the *ToJson* method.
 
 .. code-block:: powershell
 
-    $ddoc.GetDesignDocuments()
+    $ddoc.ToJson()
 
 Create design document
 **********************
@@ -840,4 +799,4 @@ See `Create design document <ddoc.html#custom-functions>`_.
 
 .. code-block:: powershell
 
-    New-CouchDBDesignDocument -Database test -Document "mydesigndoc" -Data $ddoc.GetDesignDocuments() -Authorization "admin:password"
+    New-CouchDBDesignDocument -Database test -Document "mydesigndoc" -Data $ddoc.ToJson() -Authorization "admin:password"
