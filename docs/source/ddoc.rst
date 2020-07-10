@@ -104,7 +104,7 @@ Only one function is allowed at a time.
 
 .. code-block:: powershell
 
-    New-CouchDBDesignDocument -Database test -Document "space" -ValidationFunction "function(newDoc, oldDoc, userCtx, secObj){if (!(newDoc.name || newDoc.planet)) {throw({forbidden : 'no way'});}" -Authorization "admin:password"
+    Set-CouchDBDesignDocument -Database test -Document "space" -Revision "1-88972423aac3fe5d474dd17d3ee18a8b" -ValidationFunction "function(newDoc, oldDoc, userCtx, secObj){if (!(newDoc.name || newDoc.planet)) {throw({forbidden : 'no way'});}" -Authorization "admin:password"
 
 Now try to creates a new document without validation element
 
@@ -120,8 +120,6 @@ Received an error: ``Invoke-RestMethod : {"error":"forbidden","reason":"no way"}
     $data = '{"planet":"Magrathea", "name":"Slartibartfast"}'
     New-CouchDBDocument -Database test -Document "Test_Validation" -Data $data -Authorization "admin:password"
 
-.. note::
-    Note that for this type of function, when you want to modify a design document, you need to specify the ``-Replace`` parameter, otherwise the function will not be changed.
 
 Custom functions
 ****************

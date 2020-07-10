@@ -287,7 +287,7 @@ View indexes are updated incrementally in the following situations:</p>
 <h3>Validation<a class="headerlink" href="#validation" title="Permalink to this headline">¶</a></h3>
 <p>A design document may contain a function named <code class="docutils literal notranslate"><span class="pre">validate_doc_update</span></code> which can be used to prevent invalid or unauthorized document update requests from being stored.
 Only one function is allowed at a time.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">New-CouchDBDesignDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;space&quot;</span> <span class="n">-ValidationFunction</span> <span class="s2">&quot;function(newDoc, oldDoc, userCtx, secObj){if (!(newDoc.name || newDoc.planet)) {throw({forbidden : &#39;no way&#39;});}&quot;</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Set-CouchDBDesignDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;space&quot;</span> <span class="n">-Revision</span> <span class="s2">&quot;1-88972423aac3fe5d474dd17d3ee18a8b&quot;</span> <span class="n">-ValidationFunction</span> <span class="s2">&quot;function(newDoc, oldDoc, userCtx, secObj){if (!(newDoc.name || newDoc.planet)) {throw({forbidden : &#39;no way&#39;});}&quot;</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 <p>Now try to creates a new document without validation element</p>
@@ -299,10 +299,6 @@ Only one function is allowed at a time.</p>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$data</span> <span class="p">=</span> <span class="s1">&#39;{&quot;planet&quot;:&quot;Magrathea&quot;, &quot;name&quot;:&quot;Slartibartfast&quot;}&#39;</span>
 <span class="nb">New-CouchDBDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;Test_Validation&quot;</span> <span class="n">-Data</span> <span class="nv">$data</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Note that for this type of function, when you want to modify a design document, you need to specify the <code class="docutils literal notranslate"><span class="pre">-Replace</span></code> parameter, otherwise the function will not be changed.</p>
 </div>
 </div>
 <div class="section" id="custom-functions">

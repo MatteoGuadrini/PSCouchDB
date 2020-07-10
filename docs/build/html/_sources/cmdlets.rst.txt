@@ -539,15 +539,9 @@ Design documents
 
 .. code-block:: powershell
 
-    Set-CouchDBDesignDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-ViewName <String>] [-ViewKey <String>] [-ViewValue <String>] [-GetDoc] [-Replace] [-Authorization <String>] [-Ssl] [<CommonParameters>]
+    Set-CouchDBDesignDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-Revision <String>] [-ViewName <String>] [-ViewMapFunction <String>] [-ViewReduceFunction <String>] [-ValidationFunction <String>] [-Authorization <String>] [-Ssl] [<CommonParameters>]
 
-    Set-CouchDBDesignDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-Data <Object>] [-Replace] [-Authorization <String>] [-Ssl] [<CommonParameters>]
-
-    Set-CouchDBDesignDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-ValidationRequirements <Array>] [-ValidationAuthor] [-Replace] [-Authorization <String>] [-Ssl] [<CommonParameters>]
-
-    Set-CouchDBDesignDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-ShowName <String>] [-ShowKey <String>] [-ShowValue <String>] [-Replace] [-Authorization <String>] [-Ssl] [<CommonParameters>]
-
-    Set-CouchDBDesignDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-ViewName <String>] [-ViewKey <String>] [-ViewValue <String>] [-GetDoc] [-ListName <String>] [-Replace] [-Authorization <String>] [-Ssl] [<CommonParameters>]
+    Set-CouchDBDesignDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-Revision <String>] [-Data <Object>] [-Authorization <String>] [-Ssl] [<CommonParameters>]
 
 **Compress-CouchDBDesignDocument**
 
