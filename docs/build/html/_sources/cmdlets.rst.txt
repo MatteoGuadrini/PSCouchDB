@@ -470,7 +470,7 @@ Documents
 
 .. code-block:: powershell
 
-    Add-CouchDBAttachment [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [-Attachment] <String> [-Revision] <String> [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    Add-CouchDBAttachment [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [-Attachment] <Object> [-Revision] <String> [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
 
 **Remove-CouchDBAttachment**
 
