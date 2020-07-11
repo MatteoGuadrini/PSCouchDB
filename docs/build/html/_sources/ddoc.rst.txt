@@ -73,7 +73,7 @@ Creates a new named design document.
 
 .. code-block:: powershell
 
-    New-CouchDBDesignDocument -Database test -Document "space" -ViewName "planet_view" -Authorization "admin:password"
+    New-CouchDBDesignDocument -Database test -Document "space" -ViewName "planet_view" -ViewMapFunction "function(doc){if(doc.planet && doc.name) {emit(doc.planet, doc.name);}}" -Authorization "admin:password"
 
 Views
 *****
@@ -88,49 +88,13 @@ View indexes are updated incrementally in the following situations:
 
 .. code-block:: powershell
 
-    New-CouchDBDesignDocument -Database test -Document space -ViewName planet -ViewKey planet -Authorization "admin:password"
-    Set-CouchDBDesignDocument -Database test -Document space -ViewName planet_heart -ViewKey planet -ViewValue "Heart" -Authorization "admin:password"
-    Set-CouchDBDesignDocument -Database test -Document space -ViewName planet_heart -ViewKey planet -ViewValue "Heart2" -Authorization "admin:password"
+    New-CouchDBDesignDocument -Database test -Document "space" -ViewName "planet_view" -ViewMapFunction "function(doc){if(doc.planet && doc.name) {emit(doc.planet, doc.name);}}" -Authorization "admin:password"
 
-Now, navigate with your favorite browser to ``http://localhost:5984/test/_design/space/_view/planet`` or
+Now, navigate with your favorite browser to ``http://localhost:5984/test/_design/space/_view/planet_view`` or
 
 .. code-block:: powershell
 
-    Get-CouchDBDocument -Database test -Document "_design/space/_view/planet"
-
-List
-****
-
-Applies list function for the view function from the same design document.
-
-.. code-block:: powershell
-
-    New-CouchDBDesignDocument -Database test -Document space -ViewName planet -ListName planet_list -Authorization "admin:password"
-
-Now, navigate with your favorite browser to ``http://localhost:5984/test/_design/space/_list/planet_list/planet`` or
-
-.. code-block:: powershell
-
-    $html = Get-CouchDBDocument -Database test -Document "_design/space/_list/planet_list/planet"
-    $html.html.body.table.tr | fl
-
-Show
-****
-
-Show functions are used to represent documents as HTML pages with nice formatting. 
-They can also be used to run server-side functions without requiring a pre-existing document.
-
-.. code-block:: powershell
-
-    New-CouchDBDesignDocument -Database test -Document space -ShowName planet -Authorization "admin:password"
-    Set-CouchDBDesignDocument -Database test -Document space -ShowName planet -ShowKey planet -Authorization "admin:password"
-    Set-CouchDBDesignDocument -Database test -Document space -ShowName planet -ShowKey planet -ShowValue "Heart" -Authorization "admin:password"
-
-Now, navigate with your favorite browser to ``http://localhost:5984/test/_design/space/_show/planet/Hitchhikers`` or
-
-.. code-block:: powershell
-
-    Get-CouchDBDocument -Database test -Document "_design/space/_show/planet/Hitchhikers"
+    Get-CouchDBDocument -Database test -Document "_design/space/_view/planet_view"
 
 Validation
 **********
@@ -140,8 +104,7 @@ Only one function is allowed at a time.
 
 .. code-block:: powershell
 
-    New-CouchDBDesignDocument -Database test -Document space -ValidationRequirements planet -Authorization "admin:password"
-    Set-CouchDBDesignDocument -Database test -Document space -ValidationRequirements name,planet -ValidationAuthor -Replace -Authorization "admin:password"
+    Set-CouchDBDesignDocument -Database test -Document "space" -Revision "1-88972423aac3fe5d474dd17d3ee18a8b" -ValidationFunction "function(newDoc, oldDoc, userCtx, secObj){if (!(newDoc.name || newDoc.planet)) {throw({forbidden : 'no way'});}" -Authorization "admin:password"
 
 Now try to creates a new document without validation element
 
@@ -150,15 +113,13 @@ Now try to creates a new document without validation element
     $data = '{"planet":"Magrathea"}'
     New-CouchDBDocument -Database test -Document "Test_Validation" -Data $data -Authorization "admin:password"
 
-Received an error: ``Invoke-RestMethod : {"error":"forbidden","reason":"Document must have a name"}``. Now retry with this:
+Received an error: ``Invoke-RestMethod : {"error":"forbidden","reason":"no way"}``. Now retry with this:
 
 .. code-block:: powershell
 
     $data = '{"planet":"Magrathea", "name":"Slartibartfast"}'
     New-CouchDBDocument -Database test -Document "Test_Validation" -Data $data -Authorization "admin:password"
 
-.. note::
-    Note that for this type of function, when you want to modify a design document, you need to specify the ``-Replace`` parameter, otherwise the function will not be changed.
 
 Custom functions
 ****************
@@ -195,7 +156,7 @@ To create an attachment in a design document.
 
 .. code-block:: powershell
 
-    New-CouchDBDesignDocumentAttachment -Database test -Document space -Attachment "C:\test.txt" -Revision 3-cfae968df80635ad15a9709e0264a988 -Authorization "admin:password"
+    Add-CouchDBDesignDocumentAttachment -Database test -Document space -Attachment "C:\test.txt" -Revision 3-cfae968df80635ad15a9709e0264a988 -Authorization "admin:password"
 
 Modify design document attachment
 *********************************
@@ -204,7 +165,7 @@ To modify or add an attachment in a design document.
 
 .. code-block:: powershell
 
-    Set-CouchDBDesignDocumentAttachment -Database test -Document space -Attachment "C:\test2.txt" -Revision 4-cfae968df80635ad15d5709e0264a988 -Authorization "admin:password"
+    Add-CouchDBDesignDocumentAttachment -Database test -Document space -Attachment "C:\test2.txt" -Revision 4-cfae968df80635ad15d5709e0264a988 -Authorization "admin:password"
 
 Compress design document
 ________________________

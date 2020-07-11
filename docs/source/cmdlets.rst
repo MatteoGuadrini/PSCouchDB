@@ -470,7 +470,7 @@ Documents
 
 .. code-block:: powershell
 
-    Add-CouchDBAttachment [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [-Attachment] <String> [-Revision] <String> [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    Add-CouchDBAttachment [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [-Attachment] <Object> [-Revision] <String> [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
 
 **Remove-CouchDBAttachment**
 
@@ -511,55 +511,37 @@ Design documents
 
 .. code-block:: powershell
 
-    Get-CouchDBDesignDocument [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [-Info] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    Get-CouchDBDesignDocument [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [-Info] [[-Authorization] <String>] [-Ssl] [[-Variable] <String>] [<CommonParameters>]
 
 **Get-CouchDBDesignDocumentAttachment**
 
 .. code-block:: powershell
 
-    Get-CouchDBDesignDocumentAttachment [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-Revision <String>] [-Attachment <String>] [-OutFile <String>] [-Authorization <String>] [-Ssl] [<CommonParameters>]
+    Get-CouchDBDesignDocumentAttachment [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-Revision <String>] [-Attachment <String>] [-OutFile <String>] [-Authorization <String>] [-Ssl] [-Variable <String>] [<CommonParameters>]
 
     Get-CouchDBDesignDocumentAttachment [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-Revision <String>] [-Info] [-Attachment <String>] [-Authorization <String>] [-Ssl] [<CommonParameters>]
 
-**New-CouchDBDesignDocumentAttachment**
+**Add-CouchDBDesignDocumentAttachment**
 
 .. code-block:: powershell
 
-    New-CouchDBDesignDocumentAttachment [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [-Attachment] <String> [-Revision] <String> [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    Add-CouchDBDesignDocumentAttachment [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [-Attachment] <Object> [-Revision] <String> [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
 
 **New-CouchDBDesignDocument**
 
 .. code-block:: powershell
 
-    New-CouchDBDesignDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-ViewName <String>] [-ViewKey <String>] [-ViewValue <String>] [-GetDoc] [-Authorization <String>] [-Ssl] [<CommonParameters>]
+    New-CouchDBDesignDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-ViewName <String>] [-ViewMapFunction <String>] [-ViewReduceFunction <String>] [-ValidationFunction <String>] [-Authorization <String>] [-Ssl] [<CommonParameters>]
 
     New-CouchDBDesignDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-Data <Object>] [-Authorization <String>] [-Ssl] [<CommonParameters>]
-
-    New-CouchDBDesignDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-ValidationRequirements <Array>] [-ValidationAuthor] [-Authorization <String>] [-Ssl] [<CommonParameters>]
-
-    New-CouchDBDesignDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-ShowName <String>] [-ShowKey <String>] [-ShowValue <String>] [-Authorization <String>] [-Ssl] [<CommonParameters>]
-
-    New-CouchDBDesignDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-ViewName <String>] [-ViewKey <String>] [-ViewValue <String>] [-GetDoc] [-ListName <String>] [-Authorization <String>] [-Ssl] [<CommonParameters>]
 
 **Set-CouchDBDesignDocument**
 
 .. code-block:: powershell
 
-    Set-CouchDBDesignDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-ViewName <String>] [-ViewKey <String>] [-ViewValue <String>] [-GetDoc] [-Replace] [-Authorization <String>] [-Ssl] [<CommonParameters>]
+    Set-CouchDBDesignDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-Revision <String>] [-ViewName <String>] [-ViewMapFunction <String>] [-ViewReduceFunction <String>] [-ValidationFunction <String>] [-Authorization <String>] [-Ssl] [<CommonParameters>]
 
-    Set-CouchDBDesignDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-Data <Object>] [-Replace] [-Authorization <String>] [-Ssl] [<CommonParameters>]
-
-    Set-CouchDBDesignDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-ValidationRequirements <Array>] [-ValidationAuthor] [-Replace] [-Authorization <String>] [-Ssl] [<CommonParameters>]
-
-    Set-CouchDBDesignDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-ShowName <String>] [-ShowKey <String>] [-ShowValue <String>] [-Replace] [-Authorization <String>] [-Ssl] [<CommonParameters>]
-
-    Set-CouchDBDesignDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-ViewName <String>] [-ViewKey <String>] [-ViewValue <String>] [-GetDoc] [-ListName <String>] [-Replace] [-Authorization <String>] [-Ssl] [<CommonParameters>]
-
-**Set-CouchDBDesignDocumentAttachment**
-
-.. code-block:: powershell
-
-    Set-CouchDBDesignDocumentAttachment [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [-Revision] <String> [-Attachment] <String> [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    Set-CouchDBDesignDocument [-Server <String>] [-Port <Int32>] [-Database <String>] [-Document <String>] [-Revision <String>] [-Data <Object>] [-Authorization <String>] [-Ssl] [<CommonParameters>]
 
 **Compress-CouchDBDesignDocument**
 
@@ -625,10 +607,10 @@ _______
     helpc -> Search-CouchDBHelp                    
     mcsts -> Measure-CouchDBStatistics             
     ncadm -> New-CouchDBAdmin                      
-    ncatt -> New-CouchDBAttachment                 
+    acatt -> Add-CouchDBAttachment                 
     ncdb -> New-CouchDBDatabase                    
     ncddoc -> New-CouchDBDesignDocument
-    ndatt -> New-CouchDBDesignDocumentAttachment           
+    adatt -> Add-CouchDBDesignDocumentAttachment           
     ncdoc -> New-CouchDBDocument                   
     ncidx -> New-CouchDBIndex                      
     ncrpl -> New-CouchDBReplication                
@@ -648,13 +630,11 @@ _______
     rcs -> Remove-CouchDBSession                   
     rcsrv -> Restart-CouchDBServer                 
     rcusr -> Remove-CouchDBUser                    
-    scadm -> Set-CouchDBAdmin                      
-    scatt -> Set-CouchDBAttachment                 
+    scadm -> Set-CouchDBAdmin                
     scbd -> Set-CouchDBBulkDocument                
     scconf -> Set-CouchDBConfiguration             
     scdbpl -> Set-CouchDBDatabasePurgedLimit       
-    scddoc -> Set-CouchDBDesignDocument   
-    sdatt -> Set-CouchDBDesignDocumentAttachment         
+    scddoc -> Set-CouchDBDesignDocument        
     scdoc -> Set-CouchDBDocument                   
     scds -> Sync-CouchDBDatabaseShards
     scft -> Search-CouchDBFullText             

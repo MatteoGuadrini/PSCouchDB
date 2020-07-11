@@ -44,8 +44,6 @@ New-Alias -Name "ccdoc" -Value Clear-CouchDBDocuments -Option ReadOnly
 New-Alias -Name "scdbpl" -Value Set-CouchDBDatabasePurgedLimit -Option ReadOnly
 New-Alias -Name "scdoc" -Value Set-CouchDBDocument -Option ReadOnly
 New-Alias -Name "scddoc" -Value Set-CouchDBDesignDocument -Option ReadOnly
-New-Alias -Name "sdatt" -Value Set-CouchDBDesignDocumentAttachment -Option ReadOnly
-New-Alias -Name "scatt" -Value Set-CouchDBAttachment -Option ReadOnly
 New-Alias -Name "scusr" -Value Set-CouchDBUser -Option ReadOnly
 New-Alias -Name "scadm" -Value Set-CouchDBAdmin -Option ReadOnly
 New-Alias -Name "scconf" -Value Set-CouchDBConfiguration -Option ReadOnly
@@ -60,8 +58,8 @@ New-Alias -Name "rcdbr" -Value Request-CouchDBReplication -Option ReadOnly
 New-Alias -Name "ncdb" -Value New-CouchDBDatabase -Option ReadOnly
 New-Alias -Name "ncdoc" -Value New-CouchDBDocument -Option ReadOnly
 New-Alias -Name "ncddoc" -Value New-CouchDBDesignDocument -Option ReadOnly
-New-Alias -Name "ndatt" -Value New-CouchDBDesignDocumentAttachment -Option ReadOnly
-New-Alias -Name "ncatt" -Value New-CouchDBAttachment -Option ReadOnly
+New-Alias -Name "adatt" -Value Add-CouchDBDesignDocumentAttachment -Option ReadOnly
+New-Alias -Name "acatt" -Value Add-CouchDBAttachment -Option ReadOnly
 New-Alias -Name "ncusr" -Value New-CouchDBUser -Option ReadOnly
 New-Alias -Name "ncadm" -Value New-CouchDBAdmin -Option ReadOnly
 New-Alias -Name "ncrpl" -Value New-CouchDBReplication -Option ReadOnly

@@ -708,285 +708,111 @@ class PSCouchDBDesignDoc : PSCouchDBDocument {
     using module PSCouchDB
     $design_doc = New-Object PSCouchDBDesignDoc
     #>
-    # Properties of design document
-    [hashtable]$views = @{}
-    [hashtable]$shows = @{}
-    [hashtable]$lists = @{}
-    [string]$validate_doc_update
+    # Properties
+    $views
+    [ValidatePattern("\(\s?newDoc\s?,\s?oldDoc\s?,\s?userCtx\s?,\s?secObj\s?\)")]
+    [string] $validate_doc_update
+    hidden [string] $language = 'javascript'
 
-    # Hidden properties
-    hidden [int]$Depth = 1
-    hidden [string]$language = 'javascript'
-
-    # Method for change name of design document
-    SetName ($name) {
-        $this.id = "_design/$name"
+    # Constructor
+    PSCouchDBDesignDoc () {
+        $this._id = "_design/$((New-CouchDBUuids -Count 1).uuids[0])"
+        $this.views = New-Object Collections.Generic.List[PSCouchDBView]
+        $this.doc['_id'] = $this._id
+        $this.doc.Add('views', @{})
     }
 
-    # Method for adding new view; ALL DOCS
-    # GET /_design/{design-doc-id}/_view/{view-function-name}
-    AddView ($name) {
-        if (-not($this.views.ContainsKey($name))) {
-            $map = @"
-function(doc) {
-    emit(doc._id, doc._rev)
-}
-"@
-            $this.views.Add("$name", @{ })
-            $this.views.$name.Add("map", $map)
-            $this.Depth++
+    # Specified _id
+    PSCouchDBDesignDoc ([string]$_id) {
+        if ($_id -match '_design/') {
+            $this._id = $_id
         } else {
-            throw "The view function $name already exists!"
+            $this._id = "_design/$_id"
+        }
+        $this.views = New-Object Collections.Generic.List[PSCouchDBView]
+        $this.doc['_id'] = $this._id
+    }
+
+    # Specified _id and _rev
+    PSCouchDBDesignDoc ([string]$_id, [string]$_rev) {
+        if ($_id -match '_design/') {
+            $this._id = $_id
+        } else {
+            $this._id = "_design/$_id"
+        }
+        $this._rev = $_rev
+        $this.views = New-Object Collections.Generic.List[PSCouchDBView]
+        $this.doc['_id'] = $this._id
+        $this.doc['_rev'] = $this._rev
+    }
+
+    # Specified _id, _rev and _attachments
+    PSCouchDBDesignDoc ([string]$_id, [string]$_rev, [PSCouchDBView]$view) {
+        if ($_id -match '_design/') {
+            $this._id = $_id
+        } else {
+            $this._id = "_design/$_id"
+        }
+        $this._rev = $_rev
+        $this.views = New-Object Collections.Generic.List[PSCouchDBView]
+        $this.views.Add($view)
+        $this.doc['_id'] = $this._id
+        $this.doc['_rev'] = $this._rev
+        $this.doc.Add('views', @{})
+        $this.doc.views.Add($view.name, $view.GetView())
+    }
+
+    # Methods
+    AddView ([PSCouchDBView]$view) {
+        if ($this.views -notcontains $view) {
+            [void] $this.views.Add($view)
+            if (-not($this.doc.ContainsKey('views'))) {$this.doc.Add('views', @{})}
+            $this.doc.views.Add($view.name, $view.GetView())
         }
     }
 
-    # Method for adding new view; KEY EXISTS
-    # GET /_design/{design-doc-id}/_view/{view-function-name}
-    AddView ($name, $key) {
-        if (-not($this.views.ContainsKey($name))) {
-            $map = @"
-function(doc) {
-    if (doc.$key) {
-        emit(doc._id, doc._rev)
-    }
-}
-"@
-            $this.views.Add("$name", @{ })
-            $this.views.$name.Add("map", $map)
-            $this.Depth++
-        } else {
-            throw "The view function $name already exists!"
-        }
+    AddView ([string]$name, [string]$map) {
+        $view = New-Object PSCouchDBView -ArgumentList $name, $map
+        $this.AddView($view)
     }
 
-    # Method for adding new view; KEY EXISTS AND KEY EQUAL VALUE
-    # GET /_design/{design-doc-id}/_view/{view-function-name}
-    AddView ($name, $key, $value) {
-        if (-not($this.views.ContainsKey($name))) {
-            $map = @"
-function(doc) {
-    if (doc.$key && doc.$key == "$value") {
-        emit(doc._id, doc._rev)
-    }
-}
-"@
-            $this.views.Add("$name", @{ })
-            $this.views.$name.Add("map", $map)
-            $this.Depth++
-        } else {
-            throw "The view function $name already exists!"
-        }
+    AddView ([string]$name, [string]$map, [string]$reduce) {
+        $view = New-Object PSCouchDBView -ArgumentList $name, $map, $reduce
+        $this.AddView($view)
     }
 
-    # Method for adding new view; KEY EXISTS AND KEY EQUAL VALUE WITH RETURN DOC
-    # GET /_design/{design-doc-id}/_view/{view-function-name}
-    AddView ($name, $key, $value, $doc) {
-        if ($doc -eq $true) {
-            $doc = 'doc'
-        } else {
-            throw "Parameter $doc not found! This value must be `$true"
-        }
-        if (-not($this.views.ContainsKey($name))) {
-            $map = @"
-function(doc) {
-    if (doc.$key && doc.$key == "$value") {
-        emit(doc._id, $doc)
-    }
-}
-"@
-            $this.views.Add("$name", @{ })
-            $this.views.$name.Add("map", $map)
-            $this.Depth++
-        } else {
-            throw "The view function $name already exists!"
-        }
-    }
-
-    # Method for adding new show; ALL DOCS
-    # GET /_design/{design-doc-id}/_show/{show-function-name}/{document-id}
-    AddShow ($name) {
-        Write-Warning -Message "This features are deprecated in CouchDB 3.0 and will be removed in CouchDB 4.0"
-        if (-not($this.shows.ContainsKey($name))) {
-            $fun = @"
-function(doc, req) {
-    return {
-        body: "<h1>" + doc._id + "</h1>" +
-        "<h2>" + doc._rev + "</h2>" +
-        "<br>"
-    }
-}
-"@
-            $this.shows.Add("$name", $fun)
-            $this.Depth++
-        } else {
-            throw "The show function $name already exists!"
-        }
-    }
-
-    # Method for adding new show; KEY EXISTS
-    # GET /_design/{design-doc-id}/_show/{show-function-name}/{document-id}
-    AddShow ($name, $key) {
-        Write-Warning -Message "This features are deprecated in CouchDB 3.0 and will be removed in CouchDB 4.0"
-        if (-not($this.shows.ContainsKey($name))) {
-            $fun = @"
-function(doc, req) {
-    if (doc.$key) {
-        return {
-            body: "<h1>" + doc._id + "</h1>" +
-            "<h2>" + doc._rev + "</h2>" +
-            "<p>" + "$key" + "</p>" +
-            "<br>"
-        }
-    }
-}
-"@
-            $this.shows.Add("$name", $fun)
-            $this.Depth++
-        } else {
-            throw "The show function $name already exists!"
-        }
-    }
-
-    # Method for adding new show; KEY EXISTS AND KEY EQUAL VALUE
-    # GET /_design/{design-doc-id}/_show/{show-function-name}/{document-id}
-    AddShow ($name, $key, $value) {
-        Write-Warning -Message "This features are deprecated in CouchDB 3.0 and will be removed in CouchDB 4.0"
-        if (-not($this.shows.ContainsKey($name))) {
-            $fun = @"
-function(doc, req) {
-    if (doc.$key && doc.$key == "$value") {
-        return {
-            body: "<h1>" + doc._id + "</h1>" +
-            "<h2>" + doc._rev + "</h2>" +
-            "<p>" + "$key" + ": " + doc.$key + "</p>" +
-            "<br>"
-        }
-    }
-}
-"@
-            $this.shows.Add("$name", $fun)
-            $this.Depth++
-        } else {
-            throw "The show function $name already exists!"
-        }
-    }
-
-    # Method for adding new list; ALL DOCS
-    # GET /_design/{design-document-id}/_list/{list-name}/{view-name}
-    AddList ($name) {
-        Write-Warning -Message "This features are deprecated in CouchDB 3.0 and will be removed in CouchDB 4.0"
-        if ($this.views.PSBase.Count -eq 0) {
-            throw "First you must add at least one view"
-        }
-        if (-not($this.lists.ContainsKey($name))) {
-            $map = @"
-function(head, req) {
-    start({
-        'headers': {
-            'Content-Type': 'text/html'
-        }
-    });
-    send('<html><body><table>');
-    send('<tr><th>ID</th><th>Key</th><th>Value</th></tr>')
-    while(row = getRow()){
-        send(''.concat(
-            '<tr>',
-            '<td>' + toJSON(row.id) + '</td>',
-            '<td>' + toJSON(row.key) + '</td>',
-            '<td>' + toJSON(row.value) + '</td>',
-            '</tr>'
-        ));
-    }
-    send('</table></body></html>');
-}
-"@
-            $this.lists.Add("$name", $map)
-            $this.Depth++
-        } else {
-            throw "The list function $name already exists!"
-        }
-    }
-
-    # Method for adding new validation update function; ALL DOCS WITH REQUIREMENTS
-    AddValidation ([array]$requirements) {
-        if (-not($this.validate_doc_update)) {
-            $map = @"
-function(newDoc, oldDoc, userCtx) {
-    function require(field, message) {
-        message = message || "Document must have a " + field;
-        if (!newDoc[field]) throw({forbidden : message});
-    };
-"@
-            foreach ($requirement in $requirements) {
-                $map += "require(`"$requirement`");"
-            }
-            $map += @"
-            }
-"@
-            $this.validate_doc_update = $map
-            $this.Depth++
-        } else {
-            throw "There can be only one validation function in a design document."
-        }
-    }
-
-    # Method for adding new validation update function; ALL DOCS WITH REQUIREMENTS AND AUTHOR
-    AddValidation ([array]$requirements, $author) {
-        if ($author -ne $true) {
-            throw "Parameter $author not found! This value must be `$true"
-        }
-        if (-not($this.validate_doc_update)) {
-            $map = @"
-function(newDoc, oldDoc, userCtx) {
-    function require(field, message) {
-        message = message || "Document must have a " + field;
-        if (!newDoc[field]) throw({forbidden : message});
-    };
-"@
-            foreach ($requirement in $requirements) {
-                $map += "require(`"$requirement`");"
-            }
-            $map += @"
-    if (newDoc.author) {
-        enforce(newDoc.author == userCtx.name,
-        "You may only update documents with author " + userCtx.name);
-    }
-}
-"@
-            $this.validate_doc_update = $map
-            $this.Depth++
-        } else {
-            throw "There can be only one validation function in a design document."
-        }
-    }
-
-    # Method for adding new validation update function; AUTHOR IS ADMIN! ReadOnly docs.
-    AddValidation ([bool]$ReadOnly) {
-        if ($ReadOnly) {
-            if (-not($this.validate_doc_update)) {
-                $map = @"
-function(newDoc, oldDoc, userCtx) { 
-    if (userCtx.roles.indexOf('_admin') !== -1) { return; } 
-    else { throw ({ forbidden: 'Only admins may edit the database' }); } 
-}
-"@
-                $this.validate_doc_update = $map
-                $this.Depth++
-            } else {
-                throw "There can be only one validation function in a design document."
+    RemoveView ([string]$name) {
+        if ($this.views.name -contains $name) {
+            foreach ($view in $this.views) {
+                if ($view.name -eq $name) {
+                    [void] $this.views.Remove($view)
+                    $this.doc.views.Remove($name)
+                    break
+                }
             }
         }
     }
 
-    # Method for get native json design documents format
-    [string] GetDesignDocuments () {
-        [hashtable]$json = @{ }
-        if ($this.views.PSBase.Count -ne 0) { $json.Add('views', $this.views) }
-        if ($this.shows.PSBase.Count -ne 0) { $json.Add('shows', $this.shows) }
-        if ($this.lists.PSBase.Count -ne 0) { $json.Add('lists', $this.lists) }
-        if ($this.validate_doc_update) { $json.Add('validate_doc_update', $this.validate_doc_update) }
-        $json.Add('language', $this.language)
-        return $json | ConvertTo-Json -Depth ($this.Depth + 1)
+    ReplaceView ([PSCouchDBView]$view) {
+        $this.RemoveView($view.name)
+        $this.AddView($view)
+    }
+
+    ReplaceView ([string]$name, [string]$map) {
+        $view = New-Object PSCouchDBView -ArgumentList $name, $map
+        $this.RemoveView($view.name)
+        $this.AddView($view)
+    }
+
+    ReplaceView ([string]$name, [string]$map, [string]$reduce) {
+        $view = New-Object PSCouchDBView -ArgumentList $name, $map, $reduce
+        $this.RemoveView($view.name)
+        $this.AddView($view)
+    }
+
+    SetValidateFunction ([string]$function) {
+        $this.validate_doc_update = $function
+        $this.doc.Add("validate_doc_update", $function)
     }
 }
 
