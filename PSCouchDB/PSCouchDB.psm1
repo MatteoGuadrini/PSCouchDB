@@ -816,6 +816,46 @@ class PSCouchDBDesignDoc : PSCouchDBDocument {
     }
 }
 
+class PSCouchDBBulkDocument {
+    <#
+    .SYNOPSIS
+    CouchDB bulk document
+    .DESCRIPTION
+    Class than representing the CouchDB bulk document
+    .EXAMPLE
+    using module PSCouchDB
+    $bdocs = New-Object PSCouchDBBulkDocument -ArgumentList '{"_id":"test","name":"test"}'
+    # for multiple docs
+    $doc120 = New-Object PSCouchDBDocument -ArgumentList '120'
+    $doc121 = New-Object PSCouchDBDocument -ArgumentList '121'
+    $doc122 = New-Object PSCouchDBDocument -ArgumentList '122'
+    $bdocs = [PSCouchDBBulkDocument]@{docs=@($doc,$doc1,$doc2)}
+    #>  
+    # Propetries
+    [PSCouchDBDocument[]] $docs
+
+    # Constructor
+    PSCouchDBBulkDocument () {
+        $this.docs = @()
+    }
+
+    PSCouchDBBulkDocument ([PSCouchDBDocument] $doc) {
+        $this.docs = @()
+        $this.docs += $doc
+    }
+
+    PSCouchDBBulkDocument ([string] $doc) {
+        $this.docs = @()
+        $addDoc = New-Object -TypeName PSCouchDBDocument
+        [void] $addDoc.FromJson($doc)
+        $this.docs += $doc
+    }
+
+    PSCouchDBBulkDocument ([PSCouchDBDocument[]] $docs) {
+        $this.docs = $docs
+    }
+}
+
 
 # Functions of CouchDB module
 
