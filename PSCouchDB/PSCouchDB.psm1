@@ -848,11 +848,26 @@ class PSCouchDBBulkDocument {
         $this.docs = @()
         $addDoc = New-Object -TypeName PSCouchDBDocument
         [void] $addDoc.FromJson($doc)
-        $this.docs += $doc
+        $this.docs += $addDoc
     }
 
     PSCouchDBBulkDocument ([PSCouchDBDocument[]] $docs) {
         $this.docs = $docs
+    }
+
+    # Method
+    AddDocument ([string] $doc) {
+        $addDoc = New-Object -TypeName PSCouchDBDocument
+        [void] $addDoc.FromJson($doc)
+        $this.docs += $addDoc
+    }
+
+    AddDocument ([PSCouchDBDocument] $doc) {
+        $this.docs += $doc
+    }
+
+    RemoveDocument ([string] $_id) {
+        $this.docs = $this.docs | Where-Object { $_._id -ne $_id }
     }
 }
 
