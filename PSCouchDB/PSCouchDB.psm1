@@ -869,6 +869,18 @@ class PSCouchDBBulkDocument {
     RemoveDocument ([string] $_id) {
         $this.docs = $this.docs | Where-Object { $_._id -ne $_id }
     }
+
+    [PSCouchDBDocument[]] GetDocuments () {
+        return $this.docs
+    }
+
+    [string] ToString () {
+        [hashtable] $documents = @{docs = @()}
+        foreach ($doc in $this.docs) {
+            $documents.docs += $doc.GetDocument()
+        }
+        return $documents | ConvertTo-Json -Depth 99
+    }
 }
 
 
