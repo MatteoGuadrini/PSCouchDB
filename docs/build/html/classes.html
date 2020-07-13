@@ -154,9 +154,17 @@
 <li class="toctree-l3"><a class="reference internal" href="#attach-a-file-to-document">Attach a file to document</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#pscouchdbview-class">PSCouchDBView class</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#pscouchdbbulkdocument-class">PSCouchDBBulkDocument class</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#id5">Properties</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id6">Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#create-bulk-document">Create bulk document</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#add-document">Add document</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#remove-document">Remove document</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#pscouchdbview-class">PSCouchDBView class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id7">Properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">Methods</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#build-a-view">Build a view</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#get-view">Get view</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#add-function">Add function</a></li>
@@ -165,8 +173,8 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#pscouchdbdesigndoc-class">PSCouchDBDesignDoc class</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id7">Properties</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id8">Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">Properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">Methods</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#build-a-design-document">Build a design document</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#work-with-views">Work with views</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#add-map-function">Add map function</a></li>
@@ -679,7 +687,7 @@ by specifying the selector and the value that you want to associate.</p>
 <p>To create a <code class="docutils literal notranslate"><span class="pre">PSCouchDBAttachment</span></code> object, just do the following.</p>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">using</span> <span class="n">module</span> <span class="n">PSCouchDB</span>
 <span class="nv">$attachment</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">PSCouchDBAttachment</span> <span class="n">-ArgumentList</span> <span class="s2">&quot;C:\test\test.log&quot;</span>
-<span class="nv">$doc</span><span class="p">.</span><span class="n">GetType</span><span class="p">()</span>
+<span class="nv">$attachment</span><span class="p">.</span><span class="n">GetType</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -702,11 +710,69 @@ by specifying the selector and the value that you want to associate.</p>
 </div>
 </div>
 </div>
+<div class="section" id="pscouchdbbulkdocument-class">
+<h2>PSCouchDBBulkDocument class<a class="headerlink" href="#pscouchdbbulkdocument-class" title="Permalink to this headline">¶</a></h2>
+<p>This class is used to construct an bulk documents.</p>
+<div class="section" id="id5">
+<h3>Properties<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">docs</span>           <span class="n">Property</span>   <span class="n">PSCouchDBDocument</span><span class="p">[]</span> <span class="n">docs</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id6">
+<h3>Methods<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">AddDocument</span>    <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddDocument</span><span class="p">(</span><span class="n">string</span> <span class="n">doc</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddDocument</span><span class="p">(</span><span class="n">PSCouchDBDocument</span> <span class="n">doc</span><span class="p">)</span>
+<span class="n">Equals</span>         <span class="n">Method</span>     <span class="n">bool</span> <span class="n">Equals</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">obj</span><span class="p">)</span>
+<span class="n">GetHashCode</span>    <span class="n">Method</span>     <span class="n">int</span> <span class="n">GetHashCode</span><span class="p">()</span>
+<span class="n">GetType</span>        <span class="n">Method</span>     <span class="nb">type </span><span class="n">GetType</span><span class="p">()</span>
+<span class="n">RemoveDocument</span> <span class="n">Method</span>     <span class="n">void</span> <span class="n">RemoveDocument</span><span class="p">(</span><span class="n">string</span> <span class="n">_id</span><span class="p">)</span>
+<span class="n">ToString</span>       <span class="n">Method</span>     <span class="n">string</span> <span class="n">ToString</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="create-bulk-document">
+<h3>Create bulk document<a class="headerlink" href="#create-bulk-document" title="Permalink to this headline">¶</a></h3>
+<p>Create a bulk document.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">using</span> <span class="n">module</span> <span class="n">PSCouchDB</span>
+<span class="nv">$bdocs</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">PSCouchDBBulkDocument</span>
+<span class="nv">$bdocs</span><span class="p">.</span><span class="n">GetType</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>You can create also a bulk document with one or more documents.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">using</span> <span class="n">module</span> <span class="n">PSCouchDB</span>
+<span class="nv">$doc120</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">PSCouchDBDocument</span> <span class="n">-ArgumentList</span> <span class="s1">&#39;120&#39;</span>
+<span class="nv">$doc121</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">PSCouchDBDocument</span> <span class="n">-ArgumentList</span> <span class="s1">&#39;121&#39;</span>
+<span class="nv">$doc122</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">PSCouchDBDocument</span> <span class="n">-ArgumentList</span> <span class="s1">&#39;122&#39;</span>
+<span class="c"># One document</span>
+<span class="nv">$bdocs</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">PSCouchDBBulkDocument</span> <span class="n">-ArgumentList</span> <span class="nv">$doc120</span>                             <span class="c"># PSCouchDBDocument</span>
+<span class="nv">$bdocs</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">PSCouchDBBulkDocument</span> <span class="n">-ArgumentList</span> <span class="s1">&#39;{&quot;_id&quot;:&quot;test&quot;,&quot;name&quot;:&quot;test&quot;}&#39;</span>      <span class="c"># JSON</span>
+<span class="c"># Two or more documents</span>
+<span class="nv">$bdocs</span> <span class="p">=</span> <span class="no">[PSCouchDBBulkDocument]</span><span class="p">@{</span><span class="n">docs</span><span class="p">=@(</span><span class="nv">$doc120</span><span class="p">,</span><span class="nv">$doc121</span><span class="p">,</span><span class="nv">$doc122</span><span class="p">)}</span>
+<span class="nv">$bdocs</span><span class="p">.</span><span class="n">GetType</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="add-document">
+<h3>Add document<a class="headerlink" href="#add-document" title="Permalink to this headline">¶</a></h3>
+<p>To add document to bulk documents.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$bdocs</span><span class="p">.</span><span class="n">AddDocument</span><span class="p">(</span><span class="nv">$doc120</span><span class="p">)</span>                         <span class="c"># PSCouchDBDocument</span>
+<span class="nv">$bdocs</span><span class="p">.</span><span class="n">AddDocument</span><span class="p">(</span><span class="s1">&#39;{&quot;_id&quot;:&quot;test&quot;,&quot;name&quot;:&quot;test&quot;}&#39;</span><span class="p">)</span>  <span class="c"># JSON</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="remove-document">
+<h3>Remove document<a class="headerlink" href="#remove-document" title="Permalink to this headline">¶</a></h3>
+<p>To remove document to bulk documents.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$bdocs</span><span class="p">.</span><span class="n">RemoveDocument</span><span class="p">(</span><span class="s1">&#39;120&#39;</span><span class="p">)</span>      <span class="c"># _id of document</span>
+</pre></div>
+</div>
+</div>
+</div>
 <div class="section" id="pscouchdbview-class">
 <h2>PSCouchDBView class<a class="headerlink" href="#pscouchdbview-class" title="Permalink to this headline">¶</a></h2>
 <p>This class is used to construct a view.</p>
-<div class="section" id="id5">
-<h3>Properties<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id7">
+<h3>Properties<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">map</span>                   <span class="n">Property</span>   <span class="n">string</span> <span class="n">map</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
 <span class="n">name</span>                  <span class="n">Property</span>   <span class="n">string</span> <span class="n">name</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
 <span class="n">reduce</span>                <span class="n">Property</span>   <span class="n">string</span> <span class="n">reduce</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
@@ -714,8 +780,8 @@ by specifying the selector and the value that you want to associate.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="id6">
-<h3>Methods<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id8">
+<h3>Methods<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">AddMapFunction</span>        <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddMapFunction</span><span class="p">(</span><span class="n">string</span> <span class="k">function</span><span class="p">)</span>
 <span class="n">AddReduceFunction</span>     <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddReduceFunction</span><span class="p">(</span><span class="n">string</span> <span class="k">function</span><span class="p">)</span>
 <span class="n">BuilMapFunction</span>       <span class="n">Method</span>     <span class="n">string</span> <span class="no">[PSCouchDBView]</span><span class="p">::</span><span class="n">BuilMapFunction</span><span class="p">(</span><span class="n">hashtable</span> <span class="n">condition</span><span class="p">)</span>
@@ -798,8 +864,8 @@ Before, create a condition hashtable.</p>
 <div class="section" id="pscouchdbdesigndoc-class">
 <h2>PSCouchDBDesignDoc class<a class="headerlink" href="#pscouchdbdesigndoc-class" title="Permalink to this headline">¶</a></h2>
 <p>This class is used to construct a design documents, simple or complex.</p>
-<div class="section" id="id7">
-<h3>Properties<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id9">
+<h3>Properties<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">validate_doc_update</span>  <span class="n">Property</span>   <span class="n">string</span> <span class="n">validate_doc_update</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
 <span class="n">views</span>                <span class="n">Property</span>   <span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">views</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
 <span class="n">_attachments</span>         <span class="n">Property</span>   <span class="n">hashtable</span> <span class="n">_attachments</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
@@ -808,8 +874,8 @@ Before, create a condition hashtable.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="id8">
-<h3>Methods<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id10">
+<h3>Methods<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">AddAttachment</span>        <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddAttachment</span><span class="p">(</span><span class="n">PSCouchDBAttachment</span> <span class="n">attachment</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddAttachment</span><span class="p">(</span><span class="n">string</span> <span class="n">attach</span><span class="p">...</span>
 <span class="n">AddView</span>              <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddView</span><span class="p">(</span><span class="n">PSCouchDBView</span> <span class="n">view</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddView</span><span class="p">(</span><span class="n">string</span> <span class="n">name</span><span class="p">,</span> <span class="n">string</span> <span class="n">map</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddVie</span><span class="p">...</span>
 <span class="n">Equals</span>               <span class="n">Method</span>     <span class="n">bool</span> <span class="n">Equals</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">obj</span><span class="p">)</span>

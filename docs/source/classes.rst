@@ -556,7 +556,7 @@ To create a ``PSCouchDBAttachment`` object, just do the following.
 
     using module PSCouchDB
     $attachment = New-Object PSCouchDBAttachment -ArgumentList "C:\test\test.log"
-    $doc.GetType()
+    $attachment.GetType()
 
 Get content of an attachment
 ****************************
@@ -579,6 +579,75 @@ Create document object ``PSCouchDBDocument`` with attachment
     $doc2 = New-Object PSCouchDBDocument -ArgumentList '122', '1-2c903913030efb4d711db085b1f44107', $attach
     $doc1.GetDocument()
     $doc2.GetDocument()
+
+PSCouchDBBulkDocument class
+___________________________
+
+This class is used to construct an bulk documents.
+
+Properties
+**********
+
+.. code-block:: powershell
+
+    docs           Property   PSCouchDBDocument[] docs {get;set;}
+
+Methods
+*******
+
+.. code-block:: powershell
+
+    AddDocument    Method     void AddDocument(string doc), void AddDocument(PSCouchDBDocument doc)
+    Equals         Method     bool Equals(System.Object obj)
+    GetHashCode    Method     int GetHashCode()
+    GetType        Method     type GetType()
+    RemoveDocument Method     void RemoveDocument(string _id)
+    ToString       Method     string ToString()
+
+Create bulk document
+********************
+
+Create a bulk document.
+
+.. code-block:: powershell
+
+    using module PSCouchDB
+    $bdocs = New-Object PSCouchDBBulkDocument
+    $bdocs.GetType()
+
+You can create also a bulk document with one or more documents.
+
+.. code-block:: powershell
+
+    using module PSCouchDB
+    $doc120 = New-Object PSCouchDBDocument -ArgumentList '120'
+    $doc121 = New-Object PSCouchDBDocument -ArgumentList '121'
+    $doc122 = New-Object PSCouchDBDocument -ArgumentList '122'
+    # One document
+    $bdocs = New-Object PSCouchDBBulkDocument -ArgumentList $doc120                             # PSCouchDBDocument
+    $bdocs = New-Object PSCouchDBBulkDocument -ArgumentList '{"_id":"test","name":"test"}'      # JSON
+    # Two or more documents
+    $bdocs = [PSCouchDBBulkDocument]@{docs=@($doc120,$doc121,$doc122)}
+    $bdocs.GetType()
+
+Add document
+************
+
+To add document to bulk documents.
+
+.. code-block:: powershell
+
+    $bdocs.AddDocument($doc120)                         # PSCouchDBDocument
+    $bdocs.AddDocument('{"_id":"test","name":"test"}')  # JSON
+
+Remove document
+***************
+
+To remove document to bulk documents.
+
+.. code-block:: powershell
+
+    $bdocs.RemoveDocument('120')      # _id of document
 
 PSCouchDBView class
 ___________________

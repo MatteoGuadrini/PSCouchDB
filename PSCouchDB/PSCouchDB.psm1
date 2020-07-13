@@ -829,7 +829,7 @@ class PSCouchDBBulkDocument {
     $doc120 = New-Object PSCouchDBDocument -ArgumentList '120'
     $doc121 = New-Object PSCouchDBDocument -ArgumentList '121'
     $doc122 = New-Object PSCouchDBDocument -ArgumentList '122'
-    $bdocs = [PSCouchDBBulkDocument]@{docs=@($doc,$doc1,$doc2)}
+    $bdocs = [PSCouchDBBulkDocument]@{docs=@($doc120,$doc121,$doc122)}
     #>  
     # Propetries
     [PSCouchDBDocument[]] $docs
