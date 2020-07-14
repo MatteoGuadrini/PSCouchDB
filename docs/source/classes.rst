@@ -599,6 +599,7 @@ Methods
 
     AddDocument    Method     void AddDocument(string doc), void AddDocument(PSCouchDBDocument doc)
     Equals         Method     bool Equals(System.Object obj)
+    GetDocuments   Method     PSCouchDBDocument[] GetDocuments()
     GetHashCode    Method     int GetHashCode()
     GetType        Method     type GetType()
     RemoveDocument Method     void RemoveDocument(string _id)

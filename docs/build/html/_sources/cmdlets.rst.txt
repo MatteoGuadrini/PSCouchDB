@@ -450,7 +450,7 @@ Documents
 
 .. code-block:: powershell
 
-    Get-CouchDBBulkDocument [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <Array> [[-Authorization] <String>] [-Ssl] [-AsJob] [<CommonParameters>]
+    Get-CouchDBBulkDocument [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [[-Data] <Object>] [[-Authorization] <String>] [-Ssl] [-AsJob] [<CommonParameters>]
     
 **New-CouchDBBulkDocument**
 

@@ -942,8 +942,8 @@ function Get-CouchDBBulkDocument () {
     The CouchDB server port. Default is 5984.
     .PARAMETER Database
     The CouchDB database.
-    .PARAMETER Document
-    Array of the CouchDB documents.
+    .PARAMETER Data
+    The data in Json format or PSCouchDBBulkDocument.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -954,8 +954,17 @@ function Get-CouchDBBulkDocument () {
     .PARAMETER AsJob
     Send the command in the background.
     .EXAMPLE
-    Get-CouchDBBulkDocument -Database test -Document "Hitchhikers","Hitchhikers Guide", "answer"
-    This example get list of three document: "Hitchhikers","Hitchhikers Guide", "answer" on a database "test".
+    using module PSCouchDB
+    $bdocs = New-Object PSCouchDBBulkDocument -ArgumentList '{"_id":"test"}'
+    $bdocs.AddDocument('{"_id":"test1"}')
+    Get-CouchDBBulkDocument -Database test -Data $bdocs -Authorization admin:password
+    This example get list of two document: "test","test1" on a database "test".
+    .EXAMPLE
+    using module PSCouchDB
+    $bdocs = New-Object PSCouchDBBulkDocument -ArgumentList '{"_id":"test", "_rev":"1-49ce25e3db701c8cb613c1fd18d99619"}'
+    $bdocs.AddDocument('{"_id":"test1", "_rev":"1-49ce25e3db701c8cb613c1fd18d99619"}')
+    Get-CouchDBBulkDocument -Database test -Data $bdocs -Authorization admin:password
+    This example get list of two document: "test","test1" with _rev on a database "test".
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/documents.html#get-a-bulk-documents
     #>
@@ -965,21 +974,16 @@ function Get-CouchDBBulkDocument () {
         [int] $Port,
         [Parameter(mandatory = $true)]
         [string] $Database,
-        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [array] $Document,
+        $Data,
         [string] $Authorization,
         [switch] $Ssl,
         [switch] $AsJob
     )
-    $Data = '{"docs": ['
-    for ($counter = 0; $counter -lt $Document.Count; $counter++) {
-        $Data += "{`"id`": `"$($Document[$counter])`"}"
-        if ($counter -lt ($Document.Count - 1)) {
-            $Data += ','
-        }
+    # Check data is string or PSCouchDBBulkDocument
+    if ($Data -is [PSCouchDBBulkDocument]) {
+        $Data = $Data.ToString()
     }
-    $Data += ']}'
-    [string] $Document = "_bulk_get"
+    $Document = "_bulk_get"
     if ($AsJob.IsPresent) {
         $job = Start-Job -Name "Bulk-Get" { 
             param($Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl)
