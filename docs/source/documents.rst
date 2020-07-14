@@ -173,13 +173,19 @@ The bulk document API allows you to create and update multiple documents at the 
 
 .. code-block:: powershell
 
-    Set-CouchDBBulkDocument -Database test -Document "Hitchhikers","Hitchhikers_new","Hitchhikers Guide" -Revision 4-7051cbe5c8faecd085a3fa619e6e6337,$null,3-399796e5ce019e04311637e8a8a0f402 -Authorization "admin:password"
+    using module PSCouchDB
+    $bdocs = New-Object PSCouchDBBulkDocument -ArgumentList '{"_id":"test","name":"test"}'
+    $bdocs.AddDocument('{"_id":"test1","name":"test"}')
+    New-CouchDBBulkDocument -Database test -Data $bdocs -Authorization "admin:password"
 
 or run in background:
 
 .. code-block:: powershell
 
-    Set-CouchDBBulkDocument -Database test -Document "Hitchhikers","Hitchhikers Guide _deleted","Hitchhikers Guide" -AsJob
+    using module PSCouchDB
+    $bdocs = New-Object PSCouchDBBulkDocument -ArgumentList '{"_id":"test","name":"test"}'
+    $bdocs.AddDocument('{"_id":"test1","name":"test"}')
+    New-CouchDBBulkDocument -Database test -Data $bdocs -Authorization "admin:password" -AsJob
     Get-Job -Id 1 | Receive-Job -Keep
 
 

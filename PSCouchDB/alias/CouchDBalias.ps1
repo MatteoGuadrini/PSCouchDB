@@ -48,7 +48,6 @@ New-Alias -Name "scusr" -Value Set-CouchDBUser -Option ReadOnly
 New-Alias -Name "scadm" -Value Set-CouchDBAdmin -Option ReadOnly
 New-Alias -Name "scconf" -Value Set-CouchDBConfiguration -Option ReadOnly
 New-Alias -Name "scrpl" -Value Set-CouchDBReplication -Option ReadOnly
-New-Alias -Name "scbd" -Value Set-CouchDBBulkDocument -Option ReadOnly
 New-Alias -Name "scrl" -Value Set-CouchDBRevisionLimit -Option ReadOnly
 New-Alias -Name "scs" -Value Set-CouchDBSession -Option ReadOnly
 New-Alias -Name "scdp" -Value Set-CouchDBDatabasePartition -Option ReadOnly
@@ -64,6 +63,7 @@ New-Alias -Name "ncusr" -Value New-CouchDBUser -Option ReadOnly
 New-Alias -Name "ncadm" -Value New-CouchDBAdmin -Option ReadOnly
 New-Alias -Name "ncrpl" -Value New-CouchDBReplication -Option ReadOnly
 New-Alias -Name "ncuuid" -Value New-CouchDBUuids -Option ReadOnly
+New-Alias -Name "ncbd" -Value New-CouchDBBulkDocument -Option ReadOnly
 New-Alias -Name "ncidx" -Value New-CouchDBIndex -Option ReadOnly
 New-Alias -Name "rcdb" -Value Remove-CouchDBDatabase -Option ReadOnly
 New-Alias -Name "rcdoc" -Value Remove-CouchDBDocument -Option ReadOnly

@@ -419,11 +419,17 @@
 <div class="section" id="create-documents-in-bulk">
 <h2>Create documents in bulk<a class="headerlink" href="#create-documents-in-bulk" title="Permalink to this headline">¶</a></h2>
 <p>The bulk document API allows you to create and update multiple documents at the same time within a single request.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Set-CouchDBBulkDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;Hitchhikers&quot;</span><span class="p">,</span><span class="s2">&quot;Hitchhikers_new&quot;</span><span class="p">,</span><span class="s2">&quot;Hitchhikers Guide&quot;</span> <span class="n">-Revision</span> <span class="n">4</span><span class="p">-</span><span class="n">7051cbe5c8faecd085a3fa619e6e6337</span><span class="p">,</span><span class="nv">$null</span><span class="p">,</span><span class="n">3</span><span class="p">-</span><span class="n">399796e5ce019e04311637e8a8a0f402</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">using</span> <span class="n">module</span> <span class="n">PSCouchDB</span>
+<span class="nv">$bdocs</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">PSCouchDBBulkDocument</span> <span class="n">-ArgumentList</span> <span class="s1">&#39;{&quot;_id&quot;:&quot;test&quot;,&quot;name&quot;:&quot;test&quot;}&#39;</span>
+<span class="nv">$bdocs</span><span class="p">.</span><span class="n">AddDocument</span><span class="p">(</span><span class="s1">&#39;{&quot;_id&quot;:&quot;test1&quot;,&quot;name&quot;:&quot;test&quot;}&#39;</span><span class="p">)</span>
+<span class="nb">New-CouchDBBulkDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Data</span> <span class="nv">$bdocs</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 <p>or run in background:</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Set-CouchDBBulkDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;Hitchhikers&quot;</span><span class="p">,</span><span class="s2">&quot;Hitchhikers Guide _deleted&quot;</span><span class="p">,</span><span class="s2">&quot;Hitchhikers Guide&quot;</span> <span class="n">-AsJob</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">using</span> <span class="n">module</span> <span class="n">PSCouchDB</span>
+<span class="nv">$bdocs</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">PSCouchDBBulkDocument</span> <span class="n">-ArgumentList</span> <span class="s1">&#39;{&quot;_id&quot;:&quot;test&quot;,&quot;name&quot;:&quot;test&quot;}&#39;</span>
+<span class="nv">$bdocs</span><span class="p">.</span><span class="n">AddDocument</span><span class="p">(</span><span class="s1">&#39;{&quot;_id&quot;:&quot;test1&quot;,&quot;name&quot;:&quot;test&quot;}&#39;</span><span class="p">)</span>
+<span class="nb">New-CouchDBBulkDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Data</span> <span class="nv">$bdocs</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span> <span class="n">-AsJob</span>
 <span class="nb">Get-Job</span> <span class="n">-Id</span> <span class="n">1</span> <span class="p">|</span> <span class="nb">Receive-Job</span> <span class="n">-Keep</span>
 </pre></div>
 </div>

@@ -452,11 +452,11 @@ Documents
 
     Get-CouchDBBulkDocument [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <Array> [[-Authorization] <String>] [-Ssl] [-AsJob] [<CommonParameters>]
     
-**Set-CouchDBBulkDocument**
+**New-CouchDBBulkDocument**
 
 .. code-block:: powershell
 
-    Set-CouchDBBulkDocument [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <Array> [[-Revision] <Array>] [-IsDeleted] [[-Authorization] <String>] [-Ssl] [-AsJob] [<CommonParameters>]
+    New-CouchDBBulkDocument [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [[-Data] <Object>] [[-Authorization] <String>] [-Ssl] [-AsJob] [<CommonParameters>]
 
 **Get-CouchDBAttachment**
 
@@ -615,7 +615,8 @@ _______
     ncidx -> New-CouchDBIndex                      
     ncrpl -> New-CouchDBReplication                
     ncusr -> New-CouchDBUser                       
-    ncuuid -> New-CouchDBUuids                     
+    ncuuid -> New-CouchDBUuids
+    ncbd -> New-CouchDBBulkDocument                      
     rcadm -> Remove-CouchDBAdmin                   
     rcatt -> Remove-CouchDBAttachment              
     rcdb -> Remove-CouchDBDatabase                 
@@ -630,8 +631,7 @@ _______
     rcs -> Remove-CouchDBSession                   
     rcsrv -> Restart-CouchDBServer                 
     rcusr -> Remove-CouchDBUser                    
-    scadm -> Set-CouchDBAdmin                
-    scbd -> Set-CouchDBBulkDocument                
+    scadm -> Set-CouchDBAdmin                               
     scconf -> Set-CouchDBConfiguration             
     scdbpl -> Set-CouchDBDatabasePurgedLimit       
     scddoc -> Set-CouchDBDesignDocument        
