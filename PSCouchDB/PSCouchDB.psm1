@@ -73,7 +73,7 @@ class PSCouchDBDocument {
         }
     }
 
-    SetElement ([string]$key, [string]$value) {
+    SetElement ([string]$key, $value) {
         if ($key -eq "_id") {
             $this._id = $value
         } elseif ($key -eq "_rev") {
@@ -868,6 +868,12 @@ class PSCouchDBBulkDocument {
 
     RemoveDocument ([string] $_id) {
         $this.docs = $this.docs | Where-Object { $_._id -ne $_id }
+    }
+
+    SetDeleted () {
+        foreach ($doc in $this.docs) {
+            $doc.SetElement("_deleted", $true)
+        }
     }
 
     [PSCouchDBDocument[]] GetDocuments () {

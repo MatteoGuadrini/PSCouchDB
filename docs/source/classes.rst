@@ -409,19 +409,19 @@ Methods
 
 .. code-block:: powershell
 
-    AddAttachment       Method     void AddAttachment(PSCouchDBAttachment attachment), void AddAttachment(string attachm...
-    Equals              Method     bool Equals(System.Object obj)
-    FromJson            Method     hashtable FromJson(string json)
-    GetDocument         Method     hashtable GetDocument()
-    GetHashCode         Method     int GetHashCode()
-    GetType             Method     type GetType()
-    RemoveAllAttachment Method     void RemoveAllAttachment()
-    RemoveAttachment    Method     void RemoveAttachment(string attachment)
-    RemoveElement       Method     void RemoveElement(string key)
-    ReplaceAttachment   Method     void ReplaceAttachment(PSCouchDBAttachment attachment), void ReplaceAttachment(string...
-    SetElement          Method     void SetElement(string key), void SetElement(string key, string value)
-    ToJson              Method     string ToJson(), string ToJson(int depth), string ToJson(int depth, bool compress)
-    ToString            Method     string ToString()
+    AddAttachment        Method     void AddAttachment(PSCouchDBAttachment attachment), void AddAttachment(string attachment)
+    Equals               Method     bool Equals(System.Object obj)
+    FromJson             Method     hashtable FromJson(string json)
+    GetDocument          Method     hashtable GetDocument()
+    GetHashCode          Method     int GetHashCode()
+    GetType              Method     type GetType()
+    RemoveAllAttachments Method     void RemoveAllAttachments()
+    RemoveAttachment     Method     void RemoveAttachment(string attachment)
+    RemoveElement        Method     void RemoveElement(string key)
+    ReplaceAttachment    Method     void ReplaceAttachment(PSCouchDBAttachment attachment), void ReplaceAttachment(string attachment)
+    SetElement           Method     void SetElement(string key), void SetElement(string key, System.Object value)
+    ToJson               Method     string ToJson(), string ToJson(int depth), string ToJson(int depth, bool compress)
+    ToString             Method     string ToString()
 
 Build a document
 ****************
@@ -603,6 +603,7 @@ Methods
     GetHashCode    Method     int GetHashCode()
     GetType        Method     type GetType()
     RemoveDocument Method     void RemoveDocument(string _id)
+    SetDeleted     Method     void SetDeleted()
     ToString       Method     string ToString()
 
 Create bulk document
