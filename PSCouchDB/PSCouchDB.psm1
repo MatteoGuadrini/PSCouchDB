@@ -982,6 +982,24 @@ class PSCouchDBSecurity {
         $this.admins.names = $this.admins.names + $name
         $this.admins.roles = $this.admins.roles + $role
     }
+
+    AddMembers ([string]$name) {
+        $this.members.names += $name
+    }
+
+    AddMembers ([array]$name) {
+        $this.members.names = $this.admins.names + $name
+    }
+
+    AddMembers ([string]$name, [string]$role) {
+        $this.members.names += $name
+        $this.members.roles += $role
+    }
+
+    AddMembers ([array]$name, [array]$role) {
+        $this.members.names = $this.members.names + $name
+        $this.members.roles = $this.members.roles + $role
+    }
 }
 
 
