@@ -947,6 +947,23 @@ class PSCouchDBSecurity {
         $this.members.names = $membersNames
         $this.members.roles = $membersRoles
     }
+
+    # Method
+    [hashtable] GetAdmins () {
+        return $this.admins
+    }
+
+    [hashtable] GetMembers () {
+        return $this.members
+    }
+
+    [string] ToJson () {
+        return $this | ConvertTo-Json
+    }
+
+    [string] ToString () {
+        return $this.ToJson()
+    }
 }
 
 
