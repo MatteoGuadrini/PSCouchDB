@@ -964,6 +964,24 @@ class PSCouchDBSecurity {
     [string] ToString () {
         return $this.ToJson()
     }
+
+    AddAdmins ([string]$name) {
+        $this.admins.names += $name
+    }
+
+    AddAdmins ([array]$name) {
+        $this.admins.names = $this.admins.names + $name
+    }
+
+    AddAdmins ([string]$name, [string]$role) {
+        $this.admins.names += $name
+        $this.admins.roles += $role
+    }
+
+    AddAdmins ([array]$name, [array]$role) {
+        $this.admins.names = $this.admins.names + $name
+        $this.admins.roles = $this.admins.roles + $role
+    }
 }
 
 
