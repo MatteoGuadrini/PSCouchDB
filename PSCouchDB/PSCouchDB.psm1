@@ -1000,6 +1000,22 @@ class PSCouchDBSecurity {
         $this.members.names = $this.members.names + $name
         $this.members.roles = $this.members.roles + $role
     }
+
+    RemoveAdminName ([string]$name) {
+        [array] $this.admins.names = $this.admins.names | Where-Object { $_ -ne $name }
+    }
+
+    RemoveAdminRole ([string]$role) {
+        [array] $this.admins.roles = $this.admins.roles | Where-Object { $_ -ne $role }
+    }
+
+    RemoveMemberName ([string]$name) {
+        [array] $this.members.names = $this.members.names | Where-Object { $_ -ne $name }
+    }
+
+    RemoveMemberRole ([string]$role) {
+        [array] $this.members.roles = $this.members.roles | Where-Object { $_ -ne $role }
+    }
 }
 
 
