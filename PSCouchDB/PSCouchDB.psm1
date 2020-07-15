@@ -892,9 +892,9 @@ class PSCouchDBBulkDocument {
 class PSCouchDBSecurity {
     <#
     .SYNOPSIS
-    CouchDB security document
+    CouchDB security database document
     .DESCRIPTION
-    Class than representing the CouchDB security document
+    Class than representing the CouchDB security database document
     .EXAMPLE
     using module PSCouchDB
     $sec = New-Object PSCouchDBSecurity -ArgumentList 'myadmin'

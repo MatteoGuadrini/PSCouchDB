@@ -162,9 +162,22 @@
 <li class="toctree-l3"><a class="reference internal" href="#remove-document">Remove document</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#pscouchdbview-class">PSCouchDBView class</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#pscouchdbsecurity-class">PSCouchDBSecurity class</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#id7">Properties</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id8">Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#create-security-document">Create security document</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#get-admins">Get admins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#get-members">Get members</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#add-admins">Add admins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#add-members">Add members</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#remove-admin">Remove admin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">Remove admin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#get-json">Get json</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#pscouchdbview-class">PSCouchDBView class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id10">Properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">Methods</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#build-a-view">Build a view</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#get-view">Get view</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#add-function">Add function</a></li>
@@ -173,8 +186,8 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#pscouchdbdesigndoc-class">PSCouchDBDesignDoc class</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id9">Properties</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id10">Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">Properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13">Methods</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#build-a-design-document">Build a design document</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#work-with-views">Work with views</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#add-map-function">Add map function</a></li>
@@ -770,11 +783,99 @@ by specifying the selector and the value that you want to associate.</p>
 </div>
 </div>
 </div>
+<div class="section" id="pscouchdbsecurity-class">
+<h2>PSCouchDBSecurity class<a class="headerlink" href="#pscouchdbsecurity-class" title="Permalink to this headline">¶</a></h2>
+<p>This class is used to construct a security database documents.</p>
+<div class="section" id="id7">
+<h3>Properties<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">admins</span>           <span class="n">Property</span>   <span class="n">psobject</span> <span class="n">admins</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+<span class="n">members</span>          <span class="n">Property</span>   <span class="n">psobject</span> <span class="n">members</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id8">
+<h3>Methods<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">AddAdmins</span>        <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddAdmins</span><span class="p">(</span><span class="n">string</span> <span class="n">name</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddAdmins</span><span class="p">(</span><span class="n">array</span> <span class="n">name</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddAdmins</span><span class="p">(</span><span class="n">string</span> <span class="n">name</span><span class="p">,</span> <span class="n">str</span><span class="p">...</span>
+<span class="n">AddMembers</span>       <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddMembers</span><span class="p">(</span><span class="n">string</span> <span class="n">name</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddMembers</span><span class="p">(</span><span class="n">array</span> <span class="n">name</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddMembers</span><span class="p">(</span><span class="n">string</span> <span class="n">name</span><span class="p">,</span> <span class="p">...</span>
+<span class="n">Equals</span>           <span class="n">Method</span>     <span class="n">bool</span> <span class="n">Equals</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">obj</span><span class="p">)</span>
+<span class="n">GetAdmins</span>        <span class="n">Method</span>     <span class="n">hashtable</span> <span class="n">GetAdmins</span><span class="p">()</span>
+<span class="n">GetHashCode</span>      <span class="n">Method</span>     <span class="n">int</span> <span class="n">GetHashCode</span><span class="p">()</span>
+<span class="n">GetMembers</span>       <span class="n">Method</span>     <span class="n">hashtable</span> <span class="n">GetMembers</span><span class="p">()</span>
+<span class="n">GetType</span>          <span class="n">Method</span>     <span class="nb">type </span><span class="n">GetType</span><span class="p">()</span>
+<span class="n">RemoveAdminName</span>  <span class="n">Method</span>     <span class="n">void</span> <span class="n">RemoveAdminName</span><span class="p">(</span><span class="n">string</span> <span class="n">name</span><span class="p">)</span>
+<span class="n">RemoveAdminRole</span>  <span class="n">Method</span>     <span class="n">void</span> <span class="n">RemoveAdminRole</span><span class="p">(</span><span class="n">string</span> <span class="n">role</span><span class="p">)</span>
+<span class="n">RemoveMemberName</span> <span class="n">Method</span>     <span class="n">void</span> <span class="n">RemoveMemberName</span><span class="p">(</span><span class="n">string</span> <span class="n">name</span><span class="p">)</span>
+<span class="n">RemoveMemberRole</span> <span class="n">Method</span>     <span class="n">void</span> <span class="n">RemoveMemberRole</span><span class="p">(</span><span class="n">string</span> <span class="n">role</span><span class="p">)</span>
+<span class="n">ToJson</span>           <span class="n">Method</span>     <span class="n">string</span> <span class="n">ToJson</span><span class="p">()</span>
+<span class="n">ToString</span>         <span class="n">Method</span>     <span class="n">string</span> <span class="n">ToString</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="create-security-document">
+<h3>Create security document<a class="headerlink" href="#create-security-document" title="Permalink to this headline">¶</a></h3>
+<p>Create a bulk document.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">using</span> <span class="n">module</span> <span class="n">PSCouchDB</span>
+<span class="nv">$sec</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">PSCouchDBSecurity</span>
+<span class="nv">$bdocs</span><span class="p">.</span><span class="n">GetType</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-admins">
+<h3>Get admins<a class="headerlink" href="#get-admins" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$sec</span><span class="p">.</span><span class="n">GetAdmins</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-members">
+<h3>Get members<a class="headerlink" href="#get-members" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$sec</span><span class="p">.</span><span class="n">GetMembers</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="add-admins">
+<h3>Add admins<a class="headerlink" href="#add-admins" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$sec</span><span class="p">.</span><span class="n">AddAdmins</span><span class="p">(</span><span class="s1">&#39;root&#39;</span><span class="p">)</span>                                      <span class="c"># add admin name</span>
+<span class="nv">$sec</span><span class="p">.</span><span class="n">AddAdmins</span><span class="p">(</span><span class="s1">&#39;root&#39;</span><span class="p">,</span> <span class="s1">&#39;roots&#39;</span><span class="p">)</span>                             <span class="c"># add admin name and role</span>
+<span class="nv">$sec</span><span class="p">.</span><span class="n">AddAdmins</span><span class="p">(@(</span><span class="s1">&#39;root&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">))</span>                          <span class="c"># add admin names</span>
+<span class="nv">$sec</span><span class="p">.</span><span class="n">AddAdmins</span><span class="p">(@(</span><span class="s1">&#39;root&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">),</span> <span class="p">@(</span><span class="s1">&#39;roots&#39;</span><span class="p">,</span> <span class="s1">&#39;admins&#39;</span><span class="p">))</span>    <span class="c"># add admin names and roles</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="add-members">
+<h3>Add members<a class="headerlink" href="#add-members" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$sec</span><span class="p">.</span><span class="n">AddMembers</span><span class="p">(</span><span class="s1">&#39;member1&#39;</span><span class="p">)</span>                                      <span class="c"># add member name</span>
+<span class="nv">$sec</span><span class="p">.</span><span class="n">AddMembers</span><span class="p">(</span><span class="s1">&#39;member1&#39;</span><span class="p">,</span> <span class="s1">&#39;access&#39;</span><span class="p">)</span>                            <span class="c"># add member name and role</span>
+<span class="nv">$sec</span><span class="p">.</span><span class="n">AddMembers</span><span class="p">(@(</span><span class="s1">&#39;member1&#39;</span><span class="p">,</span> <span class="s1">&#39;member2&#39;</span><span class="p">))</span>                        <span class="c"># add member names</span>
+<span class="nv">$sec</span><span class="p">.</span><span class="n">AddMembers</span><span class="p">(@(</span><span class="s1">&#39;member1&#39;</span><span class="p">,</span> <span class="s1">&#39;member2&#39;</span><span class="p">),</span> <span class="p">@(</span><span class="s1">&#39;access&#39;</span><span class="p">,</span> <span class="s1">&#39;read&#39;</span><span class="p">))</span>   <span class="c"># add member names and roles</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="remove-admin">
+<h3>Remove admin<a class="headerlink" href="#remove-admin" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$sec</span><span class="p">.</span><span class="n">RemoveAdminName</span><span class="p">(</span><span class="s1">&#39;root&#39;</span><span class="p">)</span>    <span class="c"># remove member name</span>
+<span class="nv">$sec</span><span class="p">.</span><span class="n">RemoveAdminRole</span><span class="p">(</span><span class="s1">&#39;roots&#39;</span><span class="p">)</span>   <span class="c"># remove member role</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id9">
+<h3>Remove admin<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$sec</span><span class="p">.</span><span class="n">RemoveMemberName</span><span class="p">(</span><span class="s1">&#39;member1&#39;</span><span class="p">)</span>    <span class="c"># remove member name</span>
+<span class="nv">$sec</span><span class="p">.</span><span class="n">RemoveMemberRole</span><span class="p">(</span><span class="s1">&#39;access&#39;</span><span class="p">)</span>     <span class="c"># remove member role</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-json">
+<h3>Get json<a class="headerlink" href="#get-json" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$sec</span><span class="p">.</span><span class="n">ToJson</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
 <div class="section" id="pscouchdbview-class">
 <h2>PSCouchDBView class<a class="headerlink" href="#pscouchdbview-class" title="Permalink to this headline">¶</a></h2>
 <p>This class is used to construct a view.</p>
-<div class="section" id="id7">
-<h3>Properties<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id10">
+<h3>Properties<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">map</span>                   <span class="n">Property</span>   <span class="n">string</span> <span class="n">map</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
 <span class="n">name</span>                  <span class="n">Property</span>   <span class="n">string</span> <span class="n">name</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
 <span class="n">reduce</span>                <span class="n">Property</span>   <span class="n">string</span> <span class="n">reduce</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
@@ -782,8 +883,8 @@ by specifying the selector and the value that you want to associate.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="id8">
-<h3>Methods<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id11">
+<h3>Methods<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">AddMapFunction</span>        <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddMapFunction</span><span class="p">(</span><span class="n">string</span> <span class="k">function</span><span class="p">)</span>
 <span class="n">AddReduceFunction</span>     <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddReduceFunction</span><span class="p">(</span><span class="n">string</span> <span class="k">function</span><span class="p">)</span>
 <span class="n">BuilMapFunction</span>       <span class="n">Method</span>     <span class="n">string</span> <span class="no">[PSCouchDBView]</span><span class="p">::</span><span class="n">BuilMapFunction</span><span class="p">(</span><span class="n">hashtable</span> <span class="n">condition</span><span class="p">)</span>
@@ -866,8 +967,8 @@ Before, create a condition hashtable.</p>
 <div class="section" id="pscouchdbdesigndoc-class">
 <h2>PSCouchDBDesignDoc class<a class="headerlink" href="#pscouchdbdesigndoc-class" title="Permalink to this headline">¶</a></h2>
 <p>This class is used to construct a design documents, simple or complex.</p>
-<div class="section" id="id9">
-<h3>Properties<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id12">
+<h3>Properties<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">validate_doc_update</span>  <span class="n">Property</span>   <span class="n">string</span> <span class="n">validate_doc_update</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
 <span class="n">views</span>                <span class="n">Property</span>   <span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">views</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
 <span class="n">_attachments</span>         <span class="n">Property</span>   <span class="n">hashtable</span> <span class="n">_attachments</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
@@ -876,8 +977,8 @@ Before, create a condition hashtable.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="id10">
-<h3>Methods<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id13">
+<h3>Methods<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">AddAttachment</span>        <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddAttachment</span><span class="p">(</span><span class="n">PSCouchDBAttachment</span> <span class="n">attachment</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddAttachment</span><span class="p">(</span><span class="n">string</span> <span class="n">attach</span><span class="p">...</span>
 <span class="n">AddView</span>              <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddView</span><span class="p">(</span><span class="n">PSCouchDBView</span> <span class="n">view</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddView</span><span class="p">(</span><span class="n">string</span> <span class="n">name</span><span class="p">,</span> <span class="n">string</span> <span class="n">map</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddVie</span><span class="p">...</span>
 <span class="n">Equals</span>               <span class="n">Method</span>     <span class="n">bool</span> <span class="n">Equals</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">obj</span><span class="p">)</span>

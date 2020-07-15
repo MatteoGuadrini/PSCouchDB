@@ -651,6 +651,106 @@ To remove document to bulk documents.
 
     $bdocs.RemoveDocument('120')      # _id of document
 
+PSCouchDBSecurity class
+_______________________
+
+This class is used to construct a security database documents.
+
+Properties
+**********
+
+.. code-block:: powershell
+
+    admins           Property   psobject admins {get;set;}
+    members          Property   psobject members {get;set;}
+
+Methods
+*******
+
+.. code-block:: powershell
+
+    AddAdmins        Method     void AddAdmins(string name), void AddAdmins(array name), void AddAdmins(string name, str...
+    AddMembers       Method     void AddMembers(string name), void AddMembers(array name), void AddMembers(string name, ...
+    Equals           Method     bool Equals(System.Object obj)
+    GetAdmins        Method     hashtable GetAdmins()
+    GetHashCode      Method     int GetHashCode()
+    GetMembers       Method     hashtable GetMembers()
+    GetType          Method     type GetType()
+    RemoveAdminName  Method     void RemoveAdminName(string name)
+    RemoveAdminRole  Method     void RemoveAdminRole(string role)
+    RemoveMemberName Method     void RemoveMemberName(string name)
+    RemoveMemberRole Method     void RemoveMemberRole(string role)
+    ToJson           Method     string ToJson()
+    ToString         Method     string ToString()
+
+Create security document
+************************
+
+Create a bulk document.
+
+.. code-block:: powershell
+
+    using module PSCouchDB
+    $sec = New-Object PSCouchDBSecurity
+    $bdocs.GetType()
+
+Get admins
+**********
+
+.. code-block:: powershell
+
+    $sec.GetAdmins()
+
+Get members
+***********
+
+.. code-block:: powershell
+
+    $sec.GetMembers()
+
+Add admins
+**********
+
+.. code-block:: powershell
+
+    $sec.AddAdmins('root')                                      # add admin name
+    $sec.AddAdmins('root', 'roots')                             # add admin name and role
+    $sec.AddAdmins(@('root', 'admin'))                          # add admin names
+    $sec.AddAdmins(@('root', 'admin'), @('roots', 'admins'))    # add admin names and roles
+
+Add members
+***********
+
+.. code-block:: powershell
+
+    $sec.AddMembers('member1')                                      # add member name
+    $sec.AddMembers('member1', 'access')                            # add member name and role
+    $sec.AddMembers(@('member1', 'member2'))                        # add member names
+    $sec.AddMembers(@('member1', 'member2'), @('access', 'read'))   # add member names and roles
+
+Remove admin
+************
+
+.. code-block:: powershell
+
+    $sec.RemoveAdminName('root')    # remove member name
+    $sec.RemoveAdminRole('roots')   # remove member role
+
+Remove admin
+************
+
+.. code-block:: powershell
+
+    $sec.RemoveMemberName('member1')    # remove member name
+    $sec.RemoveMemberRole('access')     # remove member role
+
+Get json
+********
+
+.. code-block:: powershell
+
+    $sec.ToJson()
+
 PSCouchDBView class
 ___________________
 
