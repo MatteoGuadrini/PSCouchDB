@@ -889,6 +889,66 @@ class PSCouchDBBulkDocument {
     }
 }
 
+class PSCouchDBSecurity {
+    <#
+    .SYNOPSIS
+    CouchDB security document
+    .DESCRIPTION
+    Class than representing the CouchDB security document
+    .EXAMPLE
+    using module PSCouchDB
+    $sec = New-Object PSCouchDBSecurity -ArgumentList 'myadmin'
+    # Multiple names or roles
+    $sec = [PSCouchDBSecurity]@{admins=@{names=@('myadmin','admin'); roles=@('admin')}}
+    $sec = [PSCouchDBSecurity]@{admins=@{names=@('myadmin','admin'); roles=@('admin')}; members=@{names=@('reader','member1'); roles=@('read', 'access')}}
+    #>
+    # Propetries
+    [pscustomobject] $admins = @{
+        roles = @()
+        names = @()
+    }
+
+    [pscustomobject] $members = @{
+        roles = @()
+        names = @()
+    }
+
+    # Constructor
+    PSCouchDBSecurity () {}
+
+    PSCouchDBSecurity ([string]$adminName) { $this.admins.names += $adminName }
+
+    PSCouchDBSecurity ([string]$adminName, [string]$adminRoles) { 
+        $this.admins.names += $adminName
+        $this.admins.roles += $adminRoles
+    }
+
+    PSCouchDBSecurity ([string]$adminName, [string]$adminRole, [string]$memberName) { 
+        $this.admins.names += $adminName
+        $this.admins.roles += $adminRole
+        $this.members.names += $memberName
+    }
+
+    PSCouchDBSecurity ([string]$adminName, [string]$adminRole, [string]$memberName, [string]$memberRole) { 
+        $this.admins.names += $adminName
+        $this.admins.roles += $adminRole
+        $this.members.names += $memberName
+        $this.members.roles += $memberRole
+    }
+
+    PSCouchDBSecurity ([array]$adminsNames, [array]$adminsRoles) { 
+        $this.admins.names = $adminsNames
+        $this.admins.roles = $adminsRoles
+    }
+
+    PSCouchDBSecurity ([array]$adminsNames, [array]$adminsRoles, [array]$membersNames, [array]$membersRoles) { 
+        $this.admins.names = $adminsNames
+        $this.admins.roles = $adminsRoles
+        $this.members.names = $membersNames
+        $this.members.roles = $membersRoles
+    }
+}
+
 
 # Functions of CouchDB module
 
