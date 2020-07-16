@@ -407,11 +407,17 @@
 <div class="section" id="get-a-bulk-documents">
 <h2>Get a bulk documents<a class="headerlink" href="#get-a-bulk-documents" title="Permalink to this headline">¶</a></h2>
 <p>This method can be called to query several documents in bulk.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBBulkDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;Hitchhikers&quot;</span><span class="p">,</span><span class="s2">&quot;Hitchhikers Guide _deleted&quot;</span><span class="p">,</span><span class="s2">&quot;Hitchhikers Guide&quot;</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">using</span> <span class="n">module</span> <span class="n">PSCouchDB</span>
+<span class="nv">$bdocs</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">PSCouchDBBulkDocument</span> <span class="n">-ArgumentList</span> <span class="s1">&#39;{&quot;_id&quot;:&quot;test&quot;}&#39;</span>
+<span class="nv">$bdocs</span><span class="p">.</span><span class="n">AddDocument</span><span class="p">(</span><span class="s1">&#39;{&quot;_id&quot;:&quot;test1&quot;,&quot;_rev&quot;:&quot;2-9a68ee74a8276c7f11146245ba43676f&quot;}&#39;</span><span class="p">)</span>
+<span class="nb">Get-CouchDBBulkDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Data</span> <span class="nv">$bdocs</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 <p>or run in background:</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBBulkDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;Hitchhikers&quot;</span><span class="p">,</span><span class="s2">&quot;Hitchhikers Guide _deleted&quot;</span><span class="p">,</span><span class="s2">&quot;Hitchhikers Guide&quot;</span> <span class="n">-AsJob</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">using</span> <span class="n">module</span> <span class="n">PSCouchDB</span>
+<span class="nv">$bdocs</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">PSCouchDBBulkDocument</span> <span class="n">-ArgumentList</span> <span class="s1">&#39;{&quot;_id&quot;:&quot;test&quot;}&#39;</span>
+<span class="nv">$bdocs</span><span class="p">.</span><span class="n">AddDocument</span><span class="p">(</span><span class="s1">&#39;{&quot;_id&quot;:&quot;test1&quot;,&quot;_rev&quot;:&quot;2-9a68ee74a8276c7f11146245ba43676f&quot;}&#39;</span><span class="p">)</span>
+<span class="nb">Get-CouchDBBulkDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;Hitchhikers&quot;</span><span class="p">,</span><span class="s2">&quot;Hitchhikers Guide _deleted&quot;</span><span class="p">,</span><span class="s2">&quot;Hitchhikers Guide&quot;</span> <span class="n">-AsJob</span>
 <span class="nb">Get-Job</span> <span class="n">-Id</span> <span class="n">1</span> <span class="p">|</span> <span class="nb">Receive-Job</span> <span class="n">-Keep</span>
 </pre></div>
 </div>

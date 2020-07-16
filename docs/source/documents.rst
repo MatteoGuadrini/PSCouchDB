@@ -157,12 +157,18 @@ This method can be called to query several documents in bulk.
 
 .. code-block:: powershell
 
-    Get-CouchDBBulkDocument -Database test -Document "Hitchhikers","Hitchhikers Guide _deleted","Hitchhikers Guide"
+    using module PSCouchDB
+    $bdocs = New-Object PSCouchDBBulkDocument -ArgumentList '{"_id":"test"}'
+    $bdocs.AddDocument('{"_id":"test1","_rev":"2-9a68ee74a8276c7f11146245ba43676f"}')
+    Get-CouchDBBulkDocument -Database test -Data $bdocs -Authorization "admin:password"
 
 or run in background:
 
 .. code-block:: powershell
 
+    using module PSCouchDB
+    $bdocs = New-Object PSCouchDBBulkDocument -ArgumentList '{"_id":"test"}'
+    $bdocs.AddDocument('{"_id":"test1","_rev":"2-9a68ee74a8276c7f11146245ba43676f"}')
     Get-CouchDBBulkDocument -Database test -Document "Hitchhikers","Hitchhikers Guide _deleted","Hitchhikers Guide" -AsJob
     Get-Job -Id 1 | Receive-Job -Keep
 

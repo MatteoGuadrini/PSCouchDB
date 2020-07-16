@@ -94,7 +94,7 @@ Permission
 
 .. code-block:: powershell
 
-    Grant-CouchDBDatabasePermission [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [[-AdminUser] <Array>] [[-AdminRoles] <Array>] [[-MemberUser] <Array>] [[-MemberRoles] <Array>] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    Grant-CouchDBDatabasePermission [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [[-Data] <Object>] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
 
 **Get-CouchDBDatabaseSecurity**
 

@@ -134,14 +134,8 @@ function Grant-CouchDBDatabasePermission () {
     The CouchDB server port. Default is 5984.
     .PARAMETER Database
     The CouchDB database.
-    .PARAMETER AdminUser
-    The CouchDB user_id of admin user.
-    .PARAMETER AdminRoles
-    The CouchDB user_roles of admin user.
-    .PARAMETER MemberUser
-    The CouchDB user_id of standard user.
-    .PARAMETER MemberRoles
-    The CouchDB user_roles of standard user.
+    .PARAMETER Data
+    The data in Json format or PSCouchDBSecurity.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -150,8 +144,25 @@ function Grant-CouchDBDatabasePermission () {
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
     .EXAMPLE
-    Grant-CouchDBDatabasePermission -Database test -MemberUser member_user -Authorization "admin:password"
-    This example grant member_user user on "test" database on CouchDB server.
+    using module PSCouchDB
+    $sec = New-Object PSCouchDBSecurity -ArgumentList 'myadmin'
+    Grant-CouchDBDatabasePermission -Database test -Data $sec -Authorization "admin:password"
+    This example grant "myadmin" admin user on "test" database on CouchDB server.
+    .EXAMPLE
+    $sec = @"
+    {
+        "admins": {
+            "names": [],
+            "roles": []
+        },
+        "members": {
+            "names": ["reader"],
+            "roles": []
+        }
+    }
+    "@
+    Grant-CouchDBDatabasePermission -Database test -Data $sec -Authorization "admin:password"
+    This example grant "reader" member user on "test" database on CouchDB server.
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/permission.html#limit-read-access
     #>
@@ -161,49 +172,15 @@ function Grant-CouchDBDatabasePermission () {
         [int] $Port,
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
-        [array]$AdminUser,
-        [array]$AdminRoles,
-        [array]$MemberUser,
-        [array]$MemberRoles,
+        $Data,
         [string] $Authorization,
         [switch] $Ssl
     )
+    # Check data is string or PSCouchDBSecurity
+    if ($Data -is [PSCouchDBSecurity]) {
+        $Data = $Data.ToString()
+    }
     $Document = '_security'
-    # Check if admin user exists
-    foreach ($User in $AdminUser) {
-        if (-not((Get-CouchDBUser -Userid $User -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue).name -eq $User)) {
-            throw "Admin user $User not exists!"
-        }
-    }
-    # Check if reader user exists
-    foreach ($User in $MemberUser) {
-        if (-not((Get-CouchDBUser -Userid $User -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue).name -eq $User)) {
-            throw "Member user $User not exists!"
-        }
-    }
-    # Create permission structure
-    $permission = [PSCustomObject] @{
-        admins  = @{ names = @(); roles = @() }
-        members = @{ names = @(); roles = @() }
-    }
-    # Check if AdminUser has been specified
-    if ($AdminUser) {
-        $permission.admins.names += $AdminUser
-    }
-    # Check if AdminRoles has been specified
-    if ($AdminRoles) {
-        $permission.admins.roles += $AdminRoles
-    }
-    # Check if MemberUser has been specified
-    if ($MemberUser) {
-        $permission.members.names += $MemberUser
-    }
-    # Check if MemberRoles has been specified
-    if ($MemberRoles) {
-        $permission.members.roles += $MemberRoles
-    }
-    $Data = $permission | ConvertTo-Json -Depth 5
-    $Document = "_security"
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }
 
