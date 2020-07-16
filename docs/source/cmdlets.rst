@@ -100,7 +100,7 @@ Permission
 
 .. code-block:: powershell
 
-    Get-CouchDBDatabaseSecurity [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    Get-CouchDBDatabaseSecurity [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [[-Variable] <String>] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
 
 **Revoke-CouchDBDatabasePermission**
 

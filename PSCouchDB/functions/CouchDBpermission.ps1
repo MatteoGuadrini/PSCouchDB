@@ -199,6 +199,8 @@ function Get-CouchDBDatabaseSecurity () {
     The CouchDB server port. Default is 5984.
     .PARAMETER Database
     The CouchDB database.
+    .PARAMETER Variable
+    Export into a PSCouchDBSecurity variable object.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -218,10 +220,25 @@ function Get-CouchDBDatabaseSecurity () {
         [int] $Port,
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
+        [string] $Variable,
         [string] $Authorization,
         [switch] $Ssl
     )
     $Document = "_security"
+    if ($Variable) {
+        $sec = Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+        $var = New-Object PSCouchDBSecurity
+        # Check admins names
+        if ($sec.admins.names) {$var.AddAdmins($sec.admins.names)}
+        # Check admins name and roles
+        elseif ($sec.admins.names -and $sec.admins.roles) {$var.AddAdmins($sec.admins.names, $sec.admins.roles)}
+        # Check members names
+        if ($sec.members.names) {$var.AddMembers($sec.members.names)}
+        # Check members name and roles
+        elseif ($sec.members.names -and $sec.members.roles) {$var.AddMembers($sec.members.names, $sec.members.roles)}
+        Set-Variable -Name $Variable -Value $var -Scope Global
+        return $null
+    }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
 }
 
