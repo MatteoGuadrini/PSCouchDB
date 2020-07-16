@@ -245,7 +245,7 @@ function Get-CouchDBDatabaseSecurity () {
 function Revoke-CouchDBDatabasePermission () {
     <#
     .SYNOPSIS
-    Revoke permission on database.
+    Revoke all permission on database.
     .DESCRIPTION
     Revoke permission on database. Specify Admins and/or Readers.
     .NOTES
@@ -281,12 +281,9 @@ function Revoke-CouchDBDatabasePermission () {
             throw "No security object found in database $Database"
         }
         # Create permission structure
-        $permission = [PSCustomObject] @{
-            admins  = @{ names = @(); roles = @() }
-            members = @{ names = @(); roles = @() }
-        }
+        $sec = New-Object PSCouchDBSecurity
         # Revoke data permission
-        $Data = $permission | ConvertTo-Json -Depth 5
+        $Data = $sec.ToString()
         $Document = "_security"
         Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
     }
