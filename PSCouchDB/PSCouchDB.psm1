@@ -1037,19 +1037,19 @@ class PSCouchDBReplication {
     [string] $_rev
     [System.UriBuilder] $source
     [System.UriBuilder] $target
-    [bool] $cancel
-    [int] $checkpoint_interval = 0
+    hidden [bool] $cancel
+    hidden [int] $checkpoint_interval = 0
     [bool] $continuous
-    [bool] $create_target
-    [array] $doc_ids = @()
+    hidden [bool] $create_target
+    hidden [array] $doc_ids = @()
     [ValidatePattern('(^\w+\/\w+)')]
-    [string] $filter
-    [string] $source_proxy
-    [string] $target_proxy
-    [hashtable] $query_params
-    [string] $selector
-    [string] $since_seq
-    [bool] $use_checkpoints
+    hidden [string] $filter
+    hidden [string] $source_proxy
+    hidden [string] $target_proxy
+    hidden [hashtable] $query_params
+    hidden [string] $selector
+    hidden [string] $since_seq
+    hidden [bool] $use_checkpoints
     hidden [hashtable] $replicator = @{}
 
     # Constuctor
