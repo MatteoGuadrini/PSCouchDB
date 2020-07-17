@@ -1018,6 +1018,182 @@ class PSCouchDBSecurity {
     }
 }
 
+class PSCouchDBReplication {
+    <#
+    .SYNOPSIS
+    CouchDB replication database document
+    .DESCRIPTION
+    Class than representing the CouchDB replication database document
+    .EXAMPLE
+    using module PSCouchDB
+    # local replication
+    $rep = New-Object PSCouchDBReplication -ArgumentList 'db','repdb'
+    # remote replication
+    $rep = New-Object PSCouchDBReplication -ArgumentList 'db','repdb', 'remoteserver'
+    #>
+    # Propetries
+    [string] $_id
+    [ValidatePattern('(^\d+\-\w{32})')]
+    [string] $_rev
+    [System.UriBuilder] $source
+    [System.UriBuilder] $target
+    [bool] $cancel
+    [int] $checkpoint_interval = 0
+    [bool] $continuous
+    [bool] $create_target
+    [array] $doc_ids = @()
+    [ValidatePattern('(^\w+\/\w+)')]
+    [string] $filter
+    [string] $source_proxy
+    [string] $target_proxy
+    [hashtable] $query_params
+    [string] $selector
+    [string] $since_seq
+    [bool] $use_checkpoints
+    hidden [hashtable] $replicator = @{}
+
+    # Constuctor
+    PSCouchDBReplication ([string]$sourceDb, [string]$targetDb) {
+        $this._id = "${sourceDb}_${targetDb}"
+        $this.source = "http://localhost:5984/$sourceDb"
+        $this.target = "http://localhost:5984/$targetDb"
+        $this.replicator.Add('_id', $this._id)
+        $this.replicator.Add('source', [uri] $this.source.Uri)
+        $this.replicator.Add('target', [uri] $this.target.Uri)
+    }
+
+    PSCouchDBReplication ([string]$sourceDb, [string]$targetDb, [string]$targetServer) {
+        $this._id = "${sourceDb}_${targetDb}"
+        $this.source = "http://localhost:5984/$sourceDb"
+        $this.target = "http://${targetServer}:5984/$targetDb"
+        $this.replicator.Add('_id', $this._id)
+        $this.replicator.Add('source', [uri] $this.source.Uri)
+        $this.replicator.Add('target', [uri] $this.target.Uri)
+    }
+
+    # Method
+    SetRevision ([string]$revision) {
+        $this._rev = $revision
+        $this.replicator.Add('_rev', $this._rev)
+    }
+
+    AddSourceAuthentication ([string]$user, [string]$passwd) {
+        $this.source.UserName = "${user}:${passwd}"
+        $this.replicator['source'] = [uri] $this.source.Uri
+    }
+
+    AddTargetAuthentication ([string]$user, [string]$passwd) {
+        $this.target.UserName = "${user}:${passwd}"
+        $this.replicator['target'] = [uri] $this.target.Uri
+    }
+
+    SetSourceSsl () {
+        $this.source.Scheme = "https"
+        $this.source.Port = 5986
+        $this.replicator['source'] = [uri] $this.source.Uri
+    }
+
+    SetSourceSsl ([int]$port) {
+        $this.source.Scheme = "https"
+        $this.source.Port = $port
+        $this.replicator['source'] = [uri] $this.source.Uri
+    }
+
+    SetTargetSsl () {
+        $this.target.Scheme = "https"
+        $this.target.Port = 5986
+        $this.replicator['target'] = [uri] $this.target.Uri
+    }
+
+    SetTargetSsl ([int]$port) {
+        $this.target.Scheme = "https"
+        $this.target.Port = $port
+        $this.replicator['target'] = [uri] $this.target.Uri
+    }
+
+    SetSourceServer ([string]$server) {
+        $this.source.Host = $server
+        $this.replicator['source'] = [uri] $this.source.Uri
+    }
+
+    SetTargetServer ([string]$server) {
+        $this.target.Host = $server
+        $this.replicator['target'] = [uri] $this.target.Uri
+    }
+
+    SetCancel () { 
+        $this.cancel = $true
+        $this.replicator.Add('cancel', $this.cancel)
+    }
+
+    SetCheckpointInterval ([int]$ms) { 
+        $this.checkpoint_interval = $ms
+        $this.replicator.Add('checkpoint_interval', $this.checkpoint_interval)
+    }
+
+    SetContinuous () { 
+        $this.continuous = $true
+        $this.replicator.Add('continuous', $this.continuous)
+    }
+
+    CreateTarget () { 
+        $this.create_target = $true
+        $this.replicator.Add('create_target', $this.create_target)
+    }
+
+    AddDocIds ([array]$ids) { 
+        $this.doc_ids += $this.doc_ids + $ids
+        $this.replicator.Add('doc_ids', $this.doc_ids)
+    }
+
+    SetFilter ([string]$filter) { 
+        $this.filter = $filter
+        $this.replicator.Add('filter', $this.filter)
+    }
+
+    SetSourceProxy ([string]$proxyUri) { 
+        $this.source_proxy = $proxyUri
+        $this.replicator.Add('source_proxy', [uri] $this.source_proxy)
+    }
+
+    SetTargetProxy ([string]$proxyUri) { 
+        $this.target_proxy = $proxyUri
+        $this.replicator.Add('target_proxy', [uri] $this.target_proxy)
+    }
+
+    SetQueryParams ([hashtable]$paramaters) { 
+        $this.query_params = $paramaters
+        $this.replicator.Add('query_params', $this.query_params)
+    }
+
+    SetSelector ([string]$selector) { 
+        $this.selector = $selector
+        $this.replicator.Add('selector', $this.selector)
+    }
+
+    SetSinceSequence ([string]$sequence) { 
+        $this.since_seq = $sequence
+        $this.replicator.Add('since_seq', $this.since_seq)
+    }
+
+    UseCheckpoints () { 
+        $this.use_checkpoints = $true
+        $this.replicator.Add('use_checkpoints', $this.use_checkpoints)
+    }
+
+    [hashtable] GetDocument () {
+        return $this.replicator
+    }
+
+    [string] ToJson () {
+        return $this.GetDocument() | ConvertTo-Json -Depth 5
+    }
+
+    [string] ToString () {
+        return $this.ToJson()
+    }
+
+}
 
 # Functions of CouchDB module
 
