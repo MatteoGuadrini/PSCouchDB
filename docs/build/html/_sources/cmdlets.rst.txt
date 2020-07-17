@@ -220,7 +220,7 @@ Replication
 
 .. code-block:: powershell
 
-    New-CouchDBReplication [[-SourceServer] <String>] [[-TargetServer] <String>] [[-SourcePort] <Int32>] [[-TargetPort] <Int32>] [[-Database] <String>] [[-SourceDatabase] <String>] [[-TargetDatabase] <String>] [-Continuous] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    New-CouchDBReplication [[-Server] <String>] [[-Port] <Int32>] [[-Data] <Object>] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
 
 **Get-CouchDBDatabaseChanges**
 
@@ -232,7 +232,7 @@ Replication
 
 .. code-block:: powershell
 
-    Set-CouchDBReplication [[-Server] <String>] [[-Port] <Int32>] [[-Database] <String>] [-Document] <String> [-Revision] <String> [-Continuous] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    Set-CouchDBReplication [[-Server] <String>] [[-Port] <Int32>] [-Data] <Object> [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
 
 **Remove-CouchDBReplication**
 
@@ -244,7 +244,7 @@ Replication
 
 .. code-block:: powershell
 
-    Request-CouchDBReplication [[-SourceServer] <String>] [[-TargetServer] <String>] [[-SourcePort] <Int32>] [[-TargetPort] <Int32>] [-SourceDatabase] <String> [-TargetDatabase] <String> [[-Proxy] <String>] [[-Documents] <Array>] [[-Filter] <String>] [-Continuous] [-Cancel] [-CreateTargetDatabase] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    Request-CouchDBReplication [[-Server] <String>] [[-Port] <Int32>] [[-Data] <Object>] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
 
 Authentication
 **************
