@@ -73,7 +73,7 @@ class PSCouchDBDocument {
         }
     }
 
-    SetElement ([string]$key, [string]$value) {
+    SetElement ([string]$key, $value) {
         if ($key -eq "_id") {
             $this._id = $value
         } elseif ($key -eq "_rev") {
@@ -816,6 +816,384 @@ class PSCouchDBDesignDoc : PSCouchDBDocument {
     }
 }
 
+class PSCouchDBBulkDocument {
+    <#
+    .SYNOPSIS
+    CouchDB bulk document
+    .DESCRIPTION
+    Class than representing the CouchDB bulk document
+    .EXAMPLE
+    using module PSCouchDB
+    $bdocs = New-Object PSCouchDBBulkDocument -ArgumentList '{"_id":"test","name":"test"}'
+    # for multiple docs
+    $doc120 = New-Object PSCouchDBDocument -ArgumentList '120'
+    $doc121 = New-Object PSCouchDBDocument -ArgumentList '121'
+    $doc122 = New-Object PSCouchDBDocument -ArgumentList '122'
+    $bdocs = [PSCouchDBBulkDocument]@{docs=@($doc120,$doc121,$doc122)}
+    #>  
+    # Propetries
+    [PSCouchDBDocument[]] $docs
+
+    # Constructor
+    PSCouchDBBulkDocument () {
+        $this.docs = @()
+    }
+
+    PSCouchDBBulkDocument ([PSCouchDBDocument] $doc) {
+        $this.docs = @()
+        $this.docs += $doc
+    }
+
+    PSCouchDBBulkDocument ([string] $doc) {
+        $this.docs = @()
+        $addDoc = New-Object -TypeName PSCouchDBDocument
+        [void] $addDoc.FromJson($doc)
+        $this.docs += $addDoc
+    }
+
+    PSCouchDBBulkDocument ([PSCouchDBDocument[]] $docs) {
+        $this.docs = $docs
+    }
+
+    # Method
+    AddDocument ([string] $doc) {
+        $addDoc = New-Object -TypeName PSCouchDBDocument
+        [void] $addDoc.FromJson($doc)
+        $this.docs += $addDoc
+    }
+
+    AddDocument ([PSCouchDBDocument] $doc) {
+        $this.docs += $doc
+    }
+
+    RemoveDocument ([string] $_id) {
+        $this.docs = $this.docs | Where-Object { $_._id -ne $_id }
+    }
+
+    SetDeleted () {
+        foreach ($doc in $this.docs) {
+            $doc.SetElement("_deleted", $true)
+        }
+    }
+
+    [PSCouchDBDocument[]] GetDocuments () {
+        return $this.docs
+    }
+
+    [string] ToString () {
+        [hashtable] $documents = @{docs = @()}
+        foreach ($doc in $this.docs) {
+            $documents.docs += $doc.GetDocument()
+        }
+        return $documents | ConvertTo-Json -Depth 99
+    }
+}
+
+class PSCouchDBSecurity {
+    <#
+    .SYNOPSIS
+    CouchDB security database document
+    .DESCRIPTION
+    Class than representing the CouchDB security database document
+    .EXAMPLE
+    using module PSCouchDB
+    $sec = New-Object PSCouchDBSecurity -ArgumentList 'myadmin'
+    # Multiple names or roles
+    $sec = [PSCouchDBSecurity]@{admins=@{names=@('myadmin','admin'); roles=@('admin')}}
+    $sec = [PSCouchDBSecurity]@{admins=@{names=@('myadmin','admin'); roles=@('admin')}; members=@{names=@('reader','member1'); roles=@('read', 'access')}}
+    #>
+    # Propetries
+    [pscustomobject] $admins = @{
+        roles = @()
+        names = @()
+    }
+
+    [pscustomobject] $members = @{
+        roles = @()
+        names = @()
+    }
+
+    # Constructor
+    PSCouchDBSecurity () {}
+
+    PSCouchDBSecurity ([string]$adminName) { $this.admins.names += $adminName }
+
+    PSCouchDBSecurity ([string]$adminName, [string]$adminRoles) { 
+        $this.admins.names += $adminName
+        $this.admins.roles += $adminRoles
+    }
+
+    PSCouchDBSecurity ([string]$adminName, [string]$adminRole, [string]$memberName) { 
+        $this.admins.names += $adminName
+        $this.admins.roles += $adminRole
+        $this.members.names += $memberName
+    }
+
+    PSCouchDBSecurity ([string]$adminName, [string]$adminRole, [string]$memberName, [string]$memberRole) { 
+        $this.admins.names += $adminName
+        $this.admins.roles += $adminRole
+        $this.members.names += $memberName
+        $this.members.roles += $memberRole
+    }
+
+    PSCouchDBSecurity ([array]$adminsNames, [array]$adminsRoles) { 
+        $this.admins.names = $adminsNames
+        $this.admins.roles = $adminsRoles
+    }
+
+    PSCouchDBSecurity ([array]$adminsNames, [array]$adminsRoles, [array]$membersNames, [array]$membersRoles) { 
+        $this.admins.names = $adminsNames
+        $this.admins.roles = $adminsRoles
+        $this.members.names = $membersNames
+        $this.members.roles = $membersRoles
+    }
+
+    # Method
+    [hashtable] GetAdmins () {
+        return $this.admins
+    }
+
+    [hashtable] GetMembers () {
+        return $this.members
+    }
+
+    [string] ToJson () {
+        return $this | ConvertTo-Json
+    }
+
+    [string] ToString () {
+        return $this.ToJson()
+    }
+
+    AddAdmins ([string]$name) {
+        $this.admins.names += $name
+    }
+
+    AddAdmins ([array]$name) {
+        $this.admins.names = $this.admins.names + $name
+    }
+
+    AddAdmins ([string]$name, [string]$role) {
+        $this.admins.names += $name
+        $this.admins.roles += $role
+    }
+
+    AddAdmins ([array]$name, [array]$role) {
+        $this.admins.names = $this.admins.names + $name
+        $this.admins.roles = $this.admins.roles + $role
+    }
+
+    AddMembers ([string]$name) {
+        $this.members.names += $name
+    }
+
+    AddMembers ([array]$name) {
+        $this.members.names = $this.admins.names + $name
+    }
+
+    AddMembers ([string]$name, [string]$role) {
+        $this.members.names += $name
+        $this.members.roles += $role
+    }
+
+    AddMembers ([array]$name, [array]$role) {
+        $this.members.names = $this.members.names + $name
+        $this.members.roles = $this.members.roles + $role
+    }
+
+    RemoveAdminName ([string]$name) {
+        [array] $this.admins.names = $this.admins.names | Where-Object { $_ -ne $name }
+    }
+
+    RemoveAdminRole ([string]$role) {
+        [array] $this.admins.roles = $this.admins.roles | Where-Object { $_ -ne $role }
+    }
+
+    RemoveMemberName ([string]$name) {
+        [array] $this.members.names = $this.members.names | Where-Object { $_ -ne $name }
+    }
+
+    RemoveMemberRole ([string]$role) {
+        [array] $this.members.roles = $this.members.roles | Where-Object { $_ -ne $role }
+    }
+}
+
+class PSCouchDBReplication {
+    <#
+    .SYNOPSIS
+    CouchDB replication database document
+    .DESCRIPTION
+    Class than representing the CouchDB replication database document
+    .EXAMPLE
+    using module PSCouchDB
+    # local replication
+    $rep = New-Object PSCouchDBReplication -ArgumentList 'db','repdb'
+    # remote replication
+    $rep = New-Object PSCouchDBReplication -ArgumentList 'db','repdb', 'remoteserver'
+    #>
+    # Propetries
+    [string] $_id
+    [ValidatePattern('(^\d+\-\w{32})')]
+    [string] $_rev
+    [System.UriBuilder] $source
+    [System.UriBuilder] $target
+    hidden [bool] $cancel
+    hidden [int] $checkpoint_interval = 0
+    [bool] $continuous
+    hidden [bool] $create_target
+    hidden [array] $doc_ids = @()
+    [ValidatePattern('(^\w+\/\w+)')]
+    hidden [string] $filter
+    hidden [string] $source_proxy
+    hidden [string] $target_proxy
+    hidden [hashtable] $query_params
+    hidden [string] $selector
+    hidden [string] $since_seq
+    hidden [bool] $use_checkpoints
+    hidden [hashtable] $replicator = @{}
+
+    # Constuctor
+    PSCouchDBReplication ([string]$sourceDb, [string]$targetDb) {
+        $this._id = "${sourceDb}_${targetDb}"
+        $this.source = "http://localhost:5984/$sourceDb"
+        $this.target = "http://localhost:5984/$targetDb"
+        $this.replicator.Add('_id', $this._id)
+        $this.replicator.Add('source', [uri] $this.source.Uri)
+        $this.replicator.Add('target', [uri] $this.target.Uri)
+    }
+
+    PSCouchDBReplication ([string]$sourceDb, [string]$targetDb, [string]$targetServer) {
+        $this._id = "${sourceDb}_${targetDb}"
+        $this.source = "http://localhost:5984/$sourceDb"
+        $this.target = "http://${targetServer}:5984/$targetDb"
+        $this.replicator.Add('_id', $this._id)
+        $this.replicator.Add('source', [uri] $this.source.Uri)
+        $this.replicator.Add('target', [uri] $this.target.Uri)
+    }
+
+    # Method
+    SetRevision ([string]$revision) {
+        $this._rev = $revision
+        $this.replicator.Add('_rev', $this._rev)
+    }
+
+    AddSourceAuthentication ([string]$user, [string]$passwd) {
+        $this.source.UserName = "${user}:${passwd}"
+        $this.replicator['source'] = [uri] $this.source.Uri
+    }
+
+    AddTargetAuthentication ([string]$user, [string]$passwd) {
+        $this.target.UserName = "${user}:${passwd}"
+        $this.replicator['target'] = [uri] $this.target.Uri
+    }
+
+    SetSourceSsl () {
+        $this.source.Scheme = "https"
+        $this.source.Port = 5986
+        $this.replicator['source'] = [uri] $this.source.Uri
+    }
+
+    SetSourceSsl ([int]$port) {
+        $this.source.Scheme = "https"
+        $this.source.Port = $port
+        $this.replicator['source'] = [uri] $this.source.Uri
+    }
+
+    SetTargetSsl () {
+        $this.target.Scheme = "https"
+        $this.target.Port = 5986
+        $this.replicator['target'] = [uri] $this.target.Uri
+    }
+
+    SetTargetSsl ([int]$port) {
+        $this.target.Scheme = "https"
+        $this.target.Port = $port
+        $this.replicator['target'] = [uri] $this.target.Uri
+    }
+
+    SetSourceServer ([string]$server) {
+        $this.source.Host = $server
+        $this.replicator['source'] = [uri] $this.source.Uri
+    }
+
+    SetTargetServer ([string]$server) {
+        $this.target.Host = $server
+        $this.replicator['target'] = [uri] $this.target.Uri
+    }
+
+    SetCancel () { 
+        $this.cancel = $true
+        $this.replicator.Add('cancel', $this.cancel)
+    }
+
+    SetCheckpointInterval ([int]$ms) { 
+        $this.checkpoint_interval = $ms
+        $this.replicator.Add('checkpoint_interval', $this.checkpoint_interval)
+    }
+
+    SetContinuous () { 
+        $this.continuous = $true
+        $this.replicator.Add('continuous', $this.continuous)
+    }
+
+    CreateTarget () { 
+        $this.create_target = $true
+        $this.replicator.Add('create_target', $this.create_target)
+    }
+
+    AddDocIds ([array]$ids) { 
+        $this.doc_ids += $this.doc_ids + $ids
+        $this.replicator.Add('doc_ids', $this.doc_ids)
+    }
+
+    SetFilter ([string]$filter) { 
+        $this.filter = $filter
+        $this.replicator.Add('filter', $this.filter)
+    }
+
+    SetSourceProxy ([string]$proxyUri) { 
+        $this.source_proxy = $proxyUri
+        $this.replicator.Add('source_proxy', [uri] $this.source_proxy)
+    }
+
+    SetTargetProxy ([string]$proxyUri) { 
+        $this.target_proxy = $proxyUri
+        $this.replicator.Add('target_proxy', [uri] $this.target_proxy)
+    }
+
+    SetQueryParams ([hashtable]$paramaters) { 
+        $this.query_params = $paramaters
+        $this.replicator.Add('query_params', $this.query_params)
+    }
+
+    SetSelector ([string]$selector) { 
+        $this.selector = $selector
+        $this.replicator.Add('selector', $this.selector)
+    }
+
+    SetSinceSequence ([string]$sequence) { 
+        $this.since_seq = $sequence
+        $this.replicator.Add('since_seq', $this.since_seq)
+    }
+
+    UseCheckpoints () { 
+        $this.use_checkpoints = $true
+        $this.replicator.Add('use_checkpoints', $this.use_checkpoints)
+    }
+
+    [hashtable] GetDocument () {
+        return $this.replicator
+    }
+
+    [string] ToJson () {
+        return $this.GetDocument() | ConvertTo-Json -Depth 5
+    }
+
+    [string] ToString () {
+        return $this.ToJson()
+    }
+
+}
 
 # Functions of CouchDB module
 

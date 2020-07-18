@@ -694,7 +694,7 @@ function Set-CouchDBDocument () {
     .PARAMETER Revision
     The CouchDB revision document.
     .PARAMETER Data
-    The data in Json format or hastable.
+    The data in Json format, PSCouchDBDocument or hastable.
     .PARAMETER Replace
     Overwrite data.
     .PARAMETER Attachment
@@ -942,8 +942,8 @@ function Get-CouchDBBulkDocument () {
     The CouchDB server port. Default is 5984.
     .PARAMETER Database
     The CouchDB database.
-    .PARAMETER Document
-    Array of the CouchDB documents.
+    .PARAMETER Data
+    The data in Json format or PSCouchDBBulkDocument.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -954,8 +954,17 @@ function Get-CouchDBBulkDocument () {
     .PARAMETER AsJob
     Send the command in the background.
     .EXAMPLE
-    Get-CouchDBBulkDocument -Database test -Document "Hitchhikers","Hitchhikers Guide", "answer"
-    This example get list of three document: "Hitchhikers","Hitchhikers Guide", "answer" on a database "test".
+    using module PSCouchDB
+    $bdocs = New-Object PSCouchDBBulkDocument -ArgumentList '{"_id":"test"}'
+    $bdocs.AddDocument('{"_id":"test1"}')
+    Get-CouchDBBulkDocument -Database test -Data $bdocs -Authorization admin:password
+    This example get list of two document: "test","test1" on a database "test".
+    .EXAMPLE
+    using module PSCouchDB
+    $bdocs = New-Object PSCouchDBBulkDocument -ArgumentList '{"_id":"test", "_rev":"1-49ce25e3db701c8cb613c1fd18d99619"}'
+    $bdocs.AddDocument('{"_id":"test1", "_rev":"1-49ce25e3db701c8cb613c1fd18d99619"}')
+    Get-CouchDBBulkDocument -Database test -Data $bdocs -Authorization admin:password
+    This example get list of two document: "test","test1" with _rev on a database "test".
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/documents.html#get-a-bulk-documents
     #>
@@ -965,21 +974,16 @@ function Get-CouchDBBulkDocument () {
         [int] $Port,
         [Parameter(mandatory = $true)]
         [string] $Database,
-        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [array] $Document,
+        $Data,
         [string] $Authorization,
         [switch] $Ssl,
         [switch] $AsJob
     )
-    $Data = '{"docs": ['
-    for ($counter = 0; $counter -lt $Document.Count; $counter++) {
-        $Data += "{`"id`": `"$($Document[$counter])`"}"
-        if ($counter -lt ($Document.Count - 1)) {
-            $Data += ','
-        }
+    # Check data is string or PSCouchDBBulkDocument
+    if ($Data -is [PSCouchDBBulkDocument]) {
+        $Data = $Data.ToString()
     }
-    $Data += ']}'
-    [string] $Document = "_bulk_get"
+    $Document = "_bulk_get"
     if ($AsJob.IsPresent) {
         $job = Start-Job -Name "Bulk-Get" { 
             param($Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl)
@@ -993,7 +997,7 @@ function Get-CouchDBBulkDocument () {
     }
 }
 
-function Set-CouchDBBulkDocument () {
+function New-CouchDBBulkDocument () {
     <#
     .SYNOPSIS
     Create a bulk document.
@@ -1008,12 +1012,8 @@ function Set-CouchDBBulkDocument () {
     The CouchDB server port. Default is 5984.
     .PARAMETER Database
     The CouchDB database.
-    .PARAMETER Document
-    Array of the CouchDB documents.
-    .PARAMETER Revision
-    Array of the CouchDB revision documents.
-    .PARAMETER IsDeleted
-    Select only deleted document.
+    .PARAMETER Data
+    The data in Json format or PSCouchDBBulkDocument.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -1024,14 +1024,26 @@ function Set-CouchDBBulkDocument () {
     .PARAMETER AsJob
     Send the command in the background.
     .EXAMPLE
-    Set-CouchDBBulkDocument -Database test -Document "Hitchhikers","Hitchhikers_new","Hitchhikers Guide" -Revision 4-7051cbe5c8faecd085a3fa619e6e6337,$null,3-399796e5ce019e04311637e8a8a0f402 -Authorization "admin:password"
-    This example modify list of three document: "Hitchhikers","Hitchhikers_new","Hitchhikers Guide" on a database "test".
+    using module PSCouchDB
+    $bdocs = New-Object PSCouchDBBulkDocument -ArgumentList '{"_id":"test","name":"test"}'
+    $bdocs.AddDocument('{"_id":"test1","name":"test"}')
+    New-CouchDBBulkDocument -Database test -Data $bdocs -Authorization admin:password
+    Add two documents to database "test" with PSCouchDBBulkDocument object.
     .EXAMPLE
-    Set-CouchDBBulkDocument -Database test -Document "Hitchhikers","Hitchhikers_new","Hitchhikers Guide" -Authorization "admin:password"
-    This example create list of three document: "Hitchhikers","Hitchhikers_new","Hitchhikers Guide" on a database "test".
-    .EXAMPLE
-    Set-CouchDBBulkDocument -Database test -Document "Hitchhikers","Hitchhikers_new","Hitchhikers Guide" -Revision 4-7051cbe5c8faecd085a3fa619e6e6337,$null,3-399796e5ce019e04311637e8a8a0f402 -IsDeleted -Authorization "admin:password"
-    This example modify list of three deleted document: "Hitchhikers","Hitchhikers_new","Hitchhikers Guide" on a database "test".
+    $bdocs = "{
+        "docs":  [
+                    {
+                        "_id":  "test",
+                        "name":  "test"
+                    },
+                    {
+                        "_id":  "test1",
+                        "name":  "test"
+                    }
+                ]
+    }"
+    New-CouchDBBulkDocument -Database test -Data $bdocs -Authorization admin:password
+    Add two documents to database "test" with json format.
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/documents.html#create-documents-in-bulk
     #>
@@ -1041,30 +1053,16 @@ function Set-CouchDBBulkDocument () {
         [int] $Port,
         [Parameter(mandatory = $true)]
         [string] $Database,
-        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [array] $Document,
-        [array] $Revision,
-        [switch] $IsDeleted,
+        $Data,
         [string] $Authorization,
         [switch] $Ssl,
         [switch] $AsJob
     )
-    $Data = '{"docs": ['
-    for ($counter = 0; $counter -lt $Document.Count; $counter++) {
-        $Data += "{`"_id`": `"$($Document[$counter])`""
-        if ( $Revision.Count -ne 0 -and $Revision[$counter]) {
-            $Data += ",`"_rev`": `"$($Revision[$counter])`""
-        }
-        if ($IsDeleted.IsPresent) {
-            $Data += ",`"_deleted`": `"true`""
-        }
-        $Data += "}"
-        if ($counter -lt ($Document.Count - 1)) {
-            $Data += ','
-        }
+    # Check data is string or PSCouchDBBulkDocument
+    if ($Data -is [PSCouchDBBulkDocument]) {
+        $Data = $Data.ToString()
     }
-    $Data += ']}'
-    [string] $Document = "_bulk_docs"
+    $Document = "_bulk_docs"
     if ($AsJob.IsPresent) {
         $job = Start-Job -Name "Bulk-Docs" {
             param($Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl)

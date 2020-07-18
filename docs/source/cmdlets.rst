@@ -94,13 +94,13 @@ Permission
 
 .. code-block:: powershell
 
-    Grant-CouchDBDatabasePermission [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [[-AdminUser] <Array>] [[-AdminRoles] <Array>] [[-MemberUser] <Array>] [[-MemberRoles] <Array>] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    Grant-CouchDBDatabasePermission [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [[-Data] <Object>] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
 
 **Get-CouchDBDatabaseSecurity**
 
 .. code-block:: powershell
 
-    Get-CouchDBDatabaseSecurity [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    Get-CouchDBDatabaseSecurity [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [[-Variable] <String>] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
 
 **Revoke-CouchDBDatabasePermission**
 
@@ -220,7 +220,7 @@ Replication
 
 .. code-block:: powershell
 
-    New-CouchDBReplication [[-SourceServer] <String>] [[-TargetServer] <String>] [[-SourcePort] <Int32>] [[-TargetPort] <Int32>] [[-Database] <String>] [[-SourceDatabase] <String>] [[-TargetDatabase] <String>] [-Continuous] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    New-CouchDBReplication [[-Server] <String>] [[-Port] <Int32>] [[-Data] <Object>] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
 
 **Get-CouchDBDatabaseChanges**
 
@@ -232,7 +232,7 @@ Replication
 
 .. code-block:: powershell
 
-    Set-CouchDBReplication [[-Server] <String>] [[-Port] <Int32>] [[-Database] <String>] [-Document] <String> [-Revision] <String> [-Continuous] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    Set-CouchDBReplication [[-Server] <String>] [[-Port] <Int32>] [-Data] <Object> [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
 
 **Remove-CouchDBReplication**
 
@@ -244,7 +244,7 @@ Replication
 
 .. code-block:: powershell
 
-    Request-CouchDBReplication [[-SourceServer] <String>] [[-TargetServer] <String>] [[-SourcePort] <Int32>] [[-TargetPort] <Int32>] [-SourceDatabase] <String> [-TargetDatabase] <String> [[-Proxy] <String>] [[-Documents] <Array>] [[-Filter] <String>] [-Continuous] [-Cancel] [-CreateTargetDatabase] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    Request-CouchDBReplication [[-Server] <String>] [[-Port] <Int32>] [[-Data] <Object>] [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
 
 Authentication
 **************
@@ -450,13 +450,13 @@ Documents
 
 .. code-block:: powershell
 
-    Get-CouchDBBulkDocument [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <Array> [[-Authorization] <String>] [-Ssl] [-AsJob] [<CommonParameters>]
+    Get-CouchDBBulkDocument [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [[-Data] <Object>] [[-Authorization] <String>] [-Ssl] [-AsJob] [<CommonParameters>]
     
-**Set-CouchDBBulkDocument**
+**New-CouchDBBulkDocument**
 
 .. code-block:: powershell
 
-    Set-CouchDBBulkDocument [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <Array> [[-Revision] <Array>] [-IsDeleted] [[-Authorization] <String>] [-Ssl] [-AsJob] [<CommonParameters>]
+    New-CouchDBBulkDocument [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [[-Data] <Object>] [[-Authorization] <String>] [-Ssl] [-AsJob] [<CommonParameters>]
 
 **Get-CouchDBAttachment**
 
@@ -615,7 +615,8 @@ _______
     ncidx -> New-CouchDBIndex                      
     ncrpl -> New-CouchDBReplication                
     ncusr -> New-CouchDBUser                       
-    ncuuid -> New-CouchDBUuids                     
+    ncuuid -> New-CouchDBUuids
+    ncbd -> New-CouchDBBulkDocument                      
     rcadm -> Remove-CouchDBAdmin                   
     rcatt -> Remove-CouchDBAttachment              
     rcdb -> Remove-CouchDBDatabase                 
@@ -630,8 +631,7 @@ _______
     rcs -> Remove-CouchDBSession                   
     rcsrv -> Restart-CouchDBServer                 
     rcusr -> Remove-CouchDBUser                    
-    scadm -> Set-CouchDBAdmin                
-    scbd -> Set-CouchDBBulkDocument                
+    scadm -> Set-CouchDBAdmin                               
     scconf -> Set-CouchDBConfiguration             
     scdbpl -> Set-CouchDBDatabasePurgedLimit       
     scddoc -> Set-CouchDBDesignDocument        

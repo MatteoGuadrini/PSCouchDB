@@ -194,20 +194,13 @@ function New-CouchDBReplication () {
     .NOTES
     CouchDB API:
         PUT /_replicator
-    .PARAMETER SourceServer
-    The source CouchDB server name. Default is localhost.
-    .PARAMETER TargetServer
-    The destination CouchDB server name. Default is localhost.
-    .PARAMETER SourcePort
-    The source CouchDB server port. Default is 5984.
-    .PARAMETER TargetPort
-    The destination CouchDB server port. Default is 5984.
-    .PARAMETER SourceDatabase
-    The source CouchDB database.
-    .PARAMETER TargetDatabase
-    The destination CouchDB database.
-    .PARAMETER Continuous
-    The Continuous mode of replica.
+        POST /_replicator
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Data
+    The data in json format or PSCouchDBReplication object.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -216,70 +209,33 @@ function New-CouchDBReplication () {
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
     .EXAMPLE
-    New-CouchDBReplication -SourceDatabase test -TargetDatabase test_dump -Continuous -Authorization "admin:password"
-    This example create replication from database "test" to database "test_dump" in Continuous mode.
+    using module PSCouchDB
+    $rep = New-Object PSCouchDBReplication -ArgumentList 'test','reptest'
+    $rep.SetContinuous()
+    New-CouchDBReplication -Data $rep -Authorization "admin:password"
+    This example create replication from database "test" to database "reptest" in Continuous mode.
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/server.html#create-replica
     #>
     [CmdletBinding()]
     param(
-        [string] $SourceServer = 'localhost',
-        [string] $TargetServer = 'localhost',
-        [int] $SourcePort,
-        [int] $TargetPort,
-        [string] $SourceDatabase,
-        [string] $TargetDatabase,
-        [switch] $Continuous,
+        [Parameter(ValueFromPipeline = $true)]
+        [string] $Server,
+        [int] $Port,
+        $Data,
         [string] $Authorization,
         [switch] $Ssl
     )
     $Database = "_replicator"
-    $Server = $SourceServer
-    $Port = $SourcePort
     # Check if replicator database exists
     if (-not(Test-CouchDBDatabase -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
         New-CouchDBDatabase -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl | Out-Null
     }
-    # Check if target database exists
-    if (-not(Test-CouchDBDatabase -Server $Server -Port $Port -Database $TargetDatabase -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
-        New-CouchDBDatabase -Server $Server -Port $Port -Database $TargetDatabase -Authorization $Authorization -Ssl:$Ssl | Out-Null
+    # Check data if PSCouchDBReplication or string
+    if ($Data -is [PSCouchDBReplication]) {
+        $Data = $Data.ToJson()
     }
-    # Set protocol
-    if ($Ssl.IsPresent) {
-        if (-not($SourcePort)) {
-            $SourcePort = 6984
-        }
-        if (-not($TargetPort)) {
-            $TargetPort = 6984
-        }
-        # Set SSL protocol
-        $Protocol = 'https'
-    } else {
-        if (-not($SourcePort)) {
-            $SourcePort = 5984
-        }
-        if (-not($TargetPort)) {
-            $TargetPort = 5984
-        }
-        # Set deafult protocol
-        $Protocol = 'http'
-    }
-    # Create Source and Target URL
-    $Source = "${Protocol}://$SourceServer`:$SourcePort/$SourceDatabase"
-    $Target = "${Protocol}://$TargetServer`:$TargetPort/$TargetDatabase"
-    if ($Continuous.IsPresent) {
-        $Continuous_value = "true"
-    } else {
-        $Continuous_value = "false"
-    }
-    # Create data
-    $Data = "{
-    `"_id`":`"$SourceServer`-$SourceDatabase`_$TargetServer`-$TargetDatabase`",
-    `"source`":`"$Source`",
-    `"target`":`"$Target`",
-    `"continuous`":$Continuous_value
-    }"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Get-CouchDBDatabaseChanges () {
@@ -353,15 +309,13 @@ function Set-CouchDBReplication () {
     To be recognized as such by the system, their database names should end with /_replicator.
     .NOTES
     CouchDB API:
-        PUT /_replicator/{docid}
+        PUT /_replicator
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
     The CouchDB server port. Default is 5984.
-    .PARAMETER Document
-    The CouchDB document.
-    .PARAMETER Continuous
-    The Continuous mode of replication.
+    .PARAMETER Data
+    The data in json format or PSCouchDBReplication object.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -370,11 +324,12 @@ function Set-CouchDBReplication () {
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
     .EXAMPLE
-    Get-CouchDBReplication -Authorization "admin:password"
-    This example get all replica documents.
-    .EXAMPLE
-    Set-CouchDBReplication -Document localhost-test_localhost-test_dump -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Continuous -Authorization "admin:password"
-    This example set replication document "localhost-test_localhost-test_dump" with Continuous replica mode.
+    using module PSCouchDB
+    $rep = New-Object PSCouchDBReplication -ArgumentList 'test','reptest'
+    $rep.SetContinuous()
+    $rep.SetRevision("4-c2cefa18494e47182a125b11eccecd13")
+    Set-CouchDBReplication -Data $rep -Authorization "admin:password"
+    This example modify replication from database "test" to database "reptest" in Continuous mode.
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/server.html#modify-replica
     #>
@@ -382,11 +337,8 @@ function Set-CouchDBReplication () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [string] $Document,
         [Parameter(mandatory = $true)]
-        [string] $Revision,
-        [switch] $Continuous,
+        $Data,
         [string] $Authorization,
         [switch] $Ssl
     )
@@ -394,15 +346,11 @@ function Set-CouchDBReplication () {
     if (-not(Test-CouchDBDatabase -Database $Database -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
         throw "Database _replicator not exists."
     }
-    if ($Continuous.IsPresent) {
-        $Continuous_value = $true
-    } else {
-        $Continuous_value = $false
+    # Check data if PSCouchDBReplication or string
+    if ($Data -is [PSCouchDBReplication]) {
+        $Data = $Data.ToJson()
     }
-    $Data = Get-CouchDBReplication -Server $Server -Port $Port -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
-    $Data.continuous = $Continuous_value
-    $Data = $Data | ConvertTo-Json
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Revision $Revision -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Remove-CouchDBReplication () {
@@ -468,140 +416,42 @@ function Request-CouchDBReplication () {
     .NOTES
     CouchDB API:
         POST /_replicate
-    .PARAMETER SourceServer
-    The source CouchDB server name. Default is localhost.
-    .PARAMETER TargetServer
-    The destination CouchDB server name. Default is localhost.
-    .PARAMETER SourcePort
-    The source CouchDB server port. Default is 5984.
-    .PARAMETER TargetPort
-    The destination CouchDB server port. Default is 5984.
-    .PARAMETER SourceDatabase
-    The source CouchDB database.
-    .PARAMETER TargetDatabase
-    The destination CouchDB database.
-    .PARAMETER SourceProxy
-    The source proxy server.
-    .PARAMETER TargetProxy
-    The target proxy server.
-    .PARAMETER Document
-    Array of CouchDB document.
-    .PARAMETER Filter
-    The filter function.
-    .PARAMETER Continuous
-    The Continuous mode of replica.
-    .PARAMETER Cancel
-    Cancel replica request.
-    .PARAMETER CreateTargetDatabase
-    Create a target database if not exists.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Data
+    The data in json format or PSCouchDBReplication object.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
     ATTENTION: if the password is not specified, it will be prompted.
-    .PARAMETER Force
-    No confirmation prompt.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
     .EXAMPLE
-    Request-CouchDBReplication -SourceDatabase test -TargetDatabase test_dump -Documents "Hitchhikers","Hitchhikers_Guide" -Authorization "admin:password"
-    This example request replication of documents "Hitchhikers","Hitchhikers_Guide" from database "test" to database "test_dump".
+    using module PSCouchDB
+    $rep = New-Object PSCouchDBReplication -ArgumentList 'test','reptest'
+    $rep.SetContinuous()
+    $rep.AddDocIds(@("Hitchhikers","Hitchhikers_Guide"))
+    Request-CouchDBReplication -Data $rep -Authorization "admin:password"
+    This example request replication of documents "Hitchhikers","Hitchhikers_Guide" from database "test" to database "reptest".
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/server.html#replication-request
     #>
     [CmdletBinding()]
     param(
-        [string] $SourceServer = 'localhost',
-        [string] $TargetServer = 'localhost',
-        [int] $SourcePort,
-        [int] $TargetPort,
-        [Parameter(mandatory = $true)]
-        [string] $SourceDatabase,
-        [Parameter(mandatory = $true)]
-        [string] $TargetDatabase,
-        [string] $SourceProxy,
-        [string] $TargetProxy,
-        [array] $Documents,
-        [string] $Filter,
-        [switch] $Continuous,
-        [switch] $Cancel,
-        [switch] $CreateTargetDatabase,
+        [Parameter(ValueFromPipeline = $true)]
+        [string] $Server,
+        [int] $Port,
+        $Data,
         [string] $Authorization,
         [switch] $Ssl
     )
     $Database = "_replicate"
-    $Json = @{ }
-    # Set protocol
-    if ($Ssl.IsPresent) {
-        if (-not($SourcePort)) {
-            $SourcePort = 6984
-        }
-        if (-not($TargetPort)) {
-            $TargetPort = 6984
-        }
-        # Set SSL protocol
-        $Protocol = 'https'
-    } else {
-        if (-not($SourcePort)) {
-            $SourcePort = 5984
-        }
-        if (-not($TargetPort)) {
-            $TargetPort = 5984
-        }
-        # Set deafult protocol
-        $Protocol = 'http'
+    # Check data if PSCouchDBReplication or string
+    if ($Data -is [PSCouchDBReplication]) {
+        $Data = $Data.ToJson()
     }
-    # Create Source and Target URL
-    $Source = "${Protocol}://$SourceServer`:$SourcePort/$SourceDatabase"
-    $Target = "${Protocol}://$TargetServer`:$TargetPort/$TargetDatabase"
-    # Source
-    if ($Authorization) {
-        $Json.Add("source", @{ })
-        $Json.source.Add("url", $Source)
-        $Json.source.Add("headers", @{ })
-        $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(($Authorization)))
-        $Json.source.headers.Add("Authorization", ("Basic {0}" -f $base64AuthInfo))
-    } else {
-        $Json.Add("source", $Source)
-    }
-    # Target
-    if ($Authorization) {
-        $Json.Add("target", @{ })
-        $Json.target.Add("url", $Target)
-        $Json.target.Add("headers", @{ })
-        $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(($Authorization)))
-        $Json.target.headers.Add("Authorization", ("Basic {0}" -f $base64AuthInfo))
-    } else {
-        $Json.Add("target", $Target)
-    }
-    # Check if Continuous is true
-    if ($Continuous.IsPresent) {
-        $Json.Add("continuous", $true)
-    }
-    # Check if Cancel is true
-    if ($Cancel.IsPresent) {
-        $Json.Add("cancel", $true)
-    }
-    # Check if CreateTargetDatabase is true
-    if ($CreateTargetDatabase.IsPresent) {
-        $Json.Add("create_target", $true)
-    }
-    # Check filter
-    if ($Filter) {
-        $Json.Add("filter", $Filter)
-    }
-    # Check proxy
-    if ($SourceProxy) {
-        $Json.Add("source_proxy", $SourceProxy)
-    }
-    if ($TargetProxy) {
-        $Json.Add("target_proxy", $TargetProxy)
-    }
-    # Check doc_ids
-    if ($Documents.Count -ne 0) {
-        $Json.Add("doc_ids", $Documents)
-    }
-    # Convert data to json
-    $Data = $Json | ConvertTo-Json -Depth 4
     Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }

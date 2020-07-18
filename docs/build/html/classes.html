@@ -154,9 +154,44 @@
 <li class="toctree-l3"><a class="reference internal" href="#attach-a-file-to-document">Attach a file to document</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#pscouchdbview-class">PSCouchDBView class</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#pscouchdbbulkdocument-class">PSCouchDBBulkDocument class</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#id5">Properties</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id6">Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#create-bulk-document">Create bulk document</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#add-document">Add document</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#remove-document">Remove document</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#pscouchdbsecurity-class">PSCouchDBSecurity class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id7">Properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#create-security-document">Create security document</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#get-admins">Get admins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#get-members">Get members</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#add-admins">Add admins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#add-members">Add members</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#remove-admin">Remove admin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#remove-member">Remove member</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#get-json">Get json</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#pscouchdbreplication-class">PSCouchDBReplication class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id9">Properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#create-replication-document">Create replication document</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#set-revision">Set revision</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#set-authentication">Set authentication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#set-ssl">Set SSL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#set-server">Set server</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#set-cancel-operation">Set cancel operation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#set-continuous-replica">Set continuous replica</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#other-flag-for-replica">Other flag for replica</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#get-replication-document">Get replication document</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#pscouchdbview-class">PSCouchDBView class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id11">Properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">Methods</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#build-a-view">Build a view</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#get-view">Get view</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#add-function">Add function</a></li>
@@ -165,8 +200,8 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#pscouchdbdesigndoc-class">PSCouchDBDesignDoc class</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id7">Properties</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id8">Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13">Properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id14">Methods</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#build-a-design-document">Build a design document</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#work-with-views">Work with views</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#add-map-function">Add map function</a></li>
@@ -559,19 +594,19 @@ by specifying the selector and the value that you want to associate.</p>
 </div>
 <div class="section" id="id2">
 <h3>Methods<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">AddAttachment</span>       <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddAttachment</span><span class="p">(</span><span class="n">PSCouchDBAttachment</span> <span class="n">attachment</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddAttachment</span><span class="p">(</span><span class="n">string</span> <span class="n">attachm</span><span class="p">...</span>
-<span class="n">Equals</span>              <span class="n">Method</span>     <span class="n">bool</span> <span class="n">Equals</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">obj</span><span class="p">)</span>
-<span class="n">FromJson</span>            <span class="n">Method</span>     <span class="n">hashtable</span> <span class="n">FromJson</span><span class="p">(</span><span class="n">string</span> <span class="n">json</span><span class="p">)</span>
-<span class="n">GetDocument</span>         <span class="n">Method</span>     <span class="n">hashtable</span> <span class="n">GetDocument</span><span class="p">()</span>
-<span class="n">GetHashCode</span>         <span class="n">Method</span>     <span class="n">int</span> <span class="n">GetHashCode</span><span class="p">()</span>
-<span class="n">GetType</span>             <span class="n">Method</span>     <span class="nb">type </span><span class="n">GetType</span><span class="p">()</span>
-<span class="n">RemoveAllAttachment</span> <span class="n">Method</span>     <span class="n">void</span> <span class="n">RemoveAllAttachment</span><span class="p">()</span>
-<span class="n">RemoveAttachment</span>    <span class="n">Method</span>     <span class="n">void</span> <span class="n">RemoveAttachment</span><span class="p">(</span><span class="n">string</span> <span class="n">attachment</span><span class="p">)</span>
-<span class="n">RemoveElement</span>       <span class="n">Method</span>     <span class="n">void</span> <span class="n">RemoveElement</span><span class="p">(</span><span class="n">string</span> <span class="n">key</span><span class="p">)</span>
-<span class="n">ReplaceAttachment</span>   <span class="n">Method</span>     <span class="n">void</span> <span class="n">ReplaceAttachment</span><span class="p">(</span><span class="n">PSCouchDBAttachment</span> <span class="n">attachment</span><span class="p">),</span> <span class="n">void</span> <span class="n">ReplaceAttachment</span><span class="p">(</span><span class="n">string</span><span class="p">...</span>
-<span class="n">SetElement</span>          <span class="n">Method</span>     <span class="n">void</span> <span class="n">SetElement</span><span class="p">(</span><span class="n">string</span> <span class="n">key</span><span class="p">),</span> <span class="n">void</span> <span class="n">SetElement</span><span class="p">(</span><span class="n">string</span> <span class="n">key</span><span class="p">,</span> <span class="n">string</span> <span class="n">value</span><span class="p">)</span>
-<span class="n">ToJson</span>              <span class="n">Method</span>     <span class="n">string</span> <span class="n">ToJson</span><span class="p">(),</span> <span class="n">string</span> <span class="n">ToJson</span><span class="p">(</span><span class="n">int</span> <span class="n">depth</span><span class="p">),</span> <span class="n">string</span> <span class="n">ToJson</span><span class="p">(</span><span class="n">int</span> <span class="n">depth</span><span class="p">,</span> <span class="n">bool</span> <span class="n">compress</span><span class="p">)</span>
-<span class="n">ToString</span>            <span class="n">Method</span>     <span class="n">string</span> <span class="n">ToString</span><span class="p">()</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">AddAttachment</span>        <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddAttachment</span><span class="p">(</span><span class="n">PSCouchDBAttachment</span> <span class="n">attachment</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddAttachment</span><span class="p">(</span><span class="n">string</span> <span class="n">attachment</span><span class="p">)</span>
+<span class="n">Equals</span>               <span class="n">Method</span>     <span class="n">bool</span> <span class="n">Equals</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">obj</span><span class="p">)</span>
+<span class="n">FromJson</span>             <span class="n">Method</span>     <span class="n">hashtable</span> <span class="n">FromJson</span><span class="p">(</span><span class="n">string</span> <span class="n">json</span><span class="p">)</span>
+<span class="n">GetDocument</span>          <span class="n">Method</span>     <span class="n">hashtable</span> <span class="n">GetDocument</span><span class="p">()</span>
+<span class="n">GetHashCode</span>          <span class="n">Method</span>     <span class="n">int</span> <span class="n">GetHashCode</span><span class="p">()</span>
+<span class="n">GetType</span>              <span class="n">Method</span>     <span class="nb">type </span><span class="n">GetType</span><span class="p">()</span>
+<span class="n">RemoveAllAttachments</span> <span class="n">Method</span>     <span class="n">void</span> <span class="n">RemoveAllAttachments</span><span class="p">()</span>
+<span class="n">RemoveAttachment</span>     <span class="n">Method</span>     <span class="n">void</span> <span class="n">RemoveAttachment</span><span class="p">(</span><span class="n">string</span> <span class="n">attachment</span><span class="p">)</span>
+<span class="n">RemoveElement</span>        <span class="n">Method</span>     <span class="n">void</span> <span class="n">RemoveElement</span><span class="p">(</span><span class="n">string</span> <span class="n">key</span><span class="p">)</span>
+<span class="n">ReplaceAttachment</span>    <span class="n">Method</span>     <span class="n">void</span> <span class="n">ReplaceAttachment</span><span class="p">(</span><span class="n">PSCouchDBAttachment</span> <span class="n">attachment</span><span class="p">),</span> <span class="n">void</span> <span class="n">ReplaceAttachment</span><span class="p">(</span><span class="n">string</span> <span class="n">attachment</span><span class="p">)</span>
+<span class="n">SetElement</span>           <span class="n">Method</span>     <span class="n">void</span> <span class="n">SetElement</span><span class="p">(</span><span class="n">string</span> <span class="n">key</span><span class="p">),</span> <span class="n">void</span> <span class="n">SetElement</span><span class="p">(</span><span class="n">string</span> <span class="n">key</span><span class="p">,</span> <span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">value</span><span class="p">)</span>
+<span class="n">ToJson</span>               <span class="n">Method</span>     <span class="n">string</span> <span class="n">ToJson</span><span class="p">(),</span> <span class="n">string</span> <span class="n">ToJson</span><span class="p">(</span><span class="n">int</span> <span class="n">depth</span><span class="p">),</span> <span class="n">string</span> <span class="n">ToJson</span><span class="p">(</span><span class="n">int</span> <span class="n">depth</span><span class="p">,</span> <span class="n">bool</span> <span class="n">compress</span><span class="p">)</span>
+<span class="n">ToString</span>             <span class="n">Method</span>     <span class="n">string</span> <span class="n">ToString</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -679,7 +714,7 @@ by specifying the selector and the value that you want to associate.</p>
 <p>To create a <code class="docutils literal notranslate"><span class="pre">PSCouchDBAttachment</span></code> object, just do the following.</p>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">using</span> <span class="n">module</span> <span class="n">PSCouchDB</span>
 <span class="nv">$attachment</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">PSCouchDBAttachment</span> <span class="n">-ArgumentList</span> <span class="s2">&quot;C:\test\test.log&quot;</span>
-<span class="nv">$doc</span><span class="p">.</span><span class="n">GetType</span><span class="p">()</span>
+<span class="nv">$attachment</span><span class="p">.</span><span class="n">GetType</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -702,11 +737,287 @@ by specifying the selector and the value that you want to associate.</p>
 </div>
 </div>
 </div>
+<div class="section" id="pscouchdbbulkdocument-class">
+<h2>PSCouchDBBulkDocument class<a class="headerlink" href="#pscouchdbbulkdocument-class" title="Permalink to this headline">¶</a></h2>
+<p>This class is used to construct an bulk documents.</p>
+<div class="section" id="id5">
+<h3>Properties<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">docs</span>           <span class="n">Property</span>   <span class="n">PSCouchDBDocument</span><span class="p">[]</span> <span class="n">docs</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id6">
+<h3>Methods<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">AddDocument</span>    <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddDocument</span><span class="p">(</span><span class="n">string</span> <span class="n">doc</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddDocument</span><span class="p">(</span><span class="n">PSCouchDBDocument</span> <span class="n">doc</span><span class="p">)</span>
+<span class="n">Equals</span>         <span class="n">Method</span>     <span class="n">bool</span> <span class="n">Equals</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">obj</span><span class="p">)</span>
+<span class="n">GetDocuments</span>   <span class="n">Method</span>     <span class="n">PSCouchDBDocument</span><span class="p">[]</span> <span class="n">GetDocuments</span><span class="p">()</span>
+<span class="n">GetHashCode</span>    <span class="n">Method</span>     <span class="n">int</span> <span class="n">GetHashCode</span><span class="p">()</span>
+<span class="n">GetType</span>        <span class="n">Method</span>     <span class="nb">type </span><span class="n">GetType</span><span class="p">()</span>
+<span class="n">RemoveDocument</span> <span class="n">Method</span>     <span class="n">void</span> <span class="n">RemoveDocument</span><span class="p">(</span><span class="n">string</span> <span class="n">_id</span><span class="p">)</span>
+<span class="n">SetDeleted</span>     <span class="n">Method</span>     <span class="n">void</span> <span class="n">SetDeleted</span><span class="p">()</span>
+<span class="n">ToString</span>       <span class="n">Method</span>     <span class="n">string</span> <span class="n">ToString</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="create-bulk-document">
+<h3>Create bulk document<a class="headerlink" href="#create-bulk-document" title="Permalink to this headline">¶</a></h3>
+<p>Create a bulk document.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">using</span> <span class="n">module</span> <span class="n">PSCouchDB</span>
+<span class="nv">$bdocs</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">PSCouchDBBulkDocument</span>
+<span class="nv">$bdocs</span><span class="p">.</span><span class="n">GetType</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>You can create also a bulk document with one or more documents.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">using</span> <span class="n">module</span> <span class="n">PSCouchDB</span>
+<span class="nv">$doc120</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">PSCouchDBDocument</span> <span class="n">-ArgumentList</span> <span class="s1">&#39;120&#39;</span>
+<span class="nv">$doc121</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">PSCouchDBDocument</span> <span class="n">-ArgumentList</span> <span class="s1">&#39;121&#39;</span>
+<span class="nv">$doc122</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">PSCouchDBDocument</span> <span class="n">-ArgumentList</span> <span class="s1">&#39;122&#39;</span>
+<span class="c"># One document</span>
+<span class="nv">$bdocs</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">PSCouchDBBulkDocument</span> <span class="n">-ArgumentList</span> <span class="nv">$doc120</span>                             <span class="c"># PSCouchDBDocument</span>
+<span class="nv">$bdocs</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">PSCouchDBBulkDocument</span> <span class="n">-ArgumentList</span> <span class="s1">&#39;{&quot;_id&quot;:&quot;test&quot;,&quot;name&quot;:&quot;test&quot;}&#39;</span>      <span class="c"># JSON</span>
+<span class="c"># Two or more documents</span>
+<span class="nv">$bdocs</span> <span class="p">=</span> <span class="no">[PSCouchDBBulkDocument]</span><span class="p">@{</span><span class="n">docs</span><span class="p">=@(</span><span class="nv">$doc120</span><span class="p">,</span><span class="nv">$doc121</span><span class="p">,</span><span class="nv">$doc122</span><span class="p">)}</span>
+<span class="nv">$bdocs</span><span class="p">.</span><span class="n">GetType</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="add-document">
+<h3>Add document<a class="headerlink" href="#add-document" title="Permalink to this headline">¶</a></h3>
+<p>To add document to bulk documents.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$bdocs</span><span class="p">.</span><span class="n">AddDocument</span><span class="p">(</span><span class="nv">$doc120</span><span class="p">)</span>                         <span class="c"># PSCouchDBDocument</span>
+<span class="nv">$bdocs</span><span class="p">.</span><span class="n">AddDocument</span><span class="p">(</span><span class="s1">&#39;{&quot;_id&quot;:&quot;test&quot;,&quot;name&quot;:&quot;test&quot;}&#39;</span><span class="p">)</span>  <span class="c"># JSON</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="remove-document">
+<h3>Remove document<a class="headerlink" href="#remove-document" title="Permalink to this headline">¶</a></h3>
+<p>To remove document to bulk documents.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$bdocs</span><span class="p">.</span><span class="n">RemoveDocument</span><span class="p">(</span><span class="s1">&#39;120&#39;</span><span class="p">)</span>      <span class="c"># _id of document</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="pscouchdbsecurity-class">
+<h2>PSCouchDBSecurity class<a class="headerlink" href="#pscouchdbsecurity-class" title="Permalink to this headline">¶</a></h2>
+<p>This class is used to construct a security database documents.</p>
+<div class="section" id="id7">
+<h3>Properties<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">admins</span>           <span class="n">Property</span>   <span class="n">psobject</span> <span class="n">admins</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+<span class="n">members</span>          <span class="n">Property</span>   <span class="n">psobject</span> <span class="n">members</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id8">
+<h3>Methods<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">AddAdmins</span>        <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddAdmins</span><span class="p">(</span><span class="n">string</span> <span class="n">name</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddAdmins</span><span class="p">(</span><span class="n">array</span> <span class="n">name</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddAdmins</span><span class="p">(</span><span class="n">string</span> <span class="n">name</span><span class="p">,</span> <span class="n">str</span><span class="p">...</span>
+<span class="n">AddMembers</span>       <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddMembers</span><span class="p">(</span><span class="n">string</span> <span class="n">name</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddMembers</span><span class="p">(</span><span class="n">array</span> <span class="n">name</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddMembers</span><span class="p">(</span><span class="n">string</span> <span class="n">name</span><span class="p">,</span> <span class="p">...</span>
+<span class="n">Equals</span>           <span class="n">Method</span>     <span class="n">bool</span> <span class="n">Equals</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">obj</span><span class="p">)</span>
+<span class="n">GetAdmins</span>        <span class="n">Method</span>     <span class="n">hashtable</span> <span class="n">GetAdmins</span><span class="p">()</span>
+<span class="n">GetHashCode</span>      <span class="n">Method</span>     <span class="n">int</span> <span class="n">GetHashCode</span><span class="p">()</span>
+<span class="n">GetMembers</span>       <span class="n">Method</span>     <span class="n">hashtable</span> <span class="n">GetMembers</span><span class="p">()</span>
+<span class="n">GetType</span>          <span class="n">Method</span>     <span class="nb">type </span><span class="n">GetType</span><span class="p">()</span>
+<span class="n">RemoveAdminName</span>  <span class="n">Method</span>     <span class="n">void</span> <span class="n">RemoveAdminName</span><span class="p">(</span><span class="n">string</span> <span class="n">name</span><span class="p">)</span>
+<span class="n">RemoveAdminRole</span>  <span class="n">Method</span>     <span class="n">void</span> <span class="n">RemoveAdminRole</span><span class="p">(</span><span class="n">string</span> <span class="n">role</span><span class="p">)</span>
+<span class="n">RemoveMemberName</span> <span class="n">Method</span>     <span class="n">void</span> <span class="n">RemoveMemberName</span><span class="p">(</span><span class="n">string</span> <span class="n">name</span><span class="p">)</span>
+<span class="n">RemoveMemberRole</span> <span class="n">Method</span>     <span class="n">void</span> <span class="n">RemoveMemberRole</span><span class="p">(</span><span class="n">string</span> <span class="n">role</span><span class="p">)</span>
+<span class="n">ToJson</span>           <span class="n">Method</span>     <span class="n">string</span> <span class="n">ToJson</span><span class="p">()</span>
+<span class="n">ToString</span>         <span class="n">Method</span>     <span class="n">string</span> <span class="n">ToString</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="create-security-document">
+<h3>Create security document<a class="headerlink" href="#create-security-document" title="Permalink to this headline">¶</a></h3>
+<p>Create a security document for assign permission to a database.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">using</span> <span class="n">module</span> <span class="n">PSCouchDB</span>
+<span class="nv">$sec</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">PSCouchDBSecurity</span>
+<span class="nv">$sec</span><span class="p">.</span><span class="n">GetType</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-admins">
+<h3>Get admins<a class="headerlink" href="#get-admins" title="Permalink to this headline">¶</a></h3>
+<p>To get all admin names and roles.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$sec</span><span class="p">.</span><span class="n">GetAdmins</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-members">
+<h3>Get members<a class="headerlink" href="#get-members" title="Permalink to this headline">¶</a></h3>
+<p>To get all member names and roles.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$sec</span><span class="p">.</span><span class="n">GetMembers</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="add-admins">
+<h3>Add admins<a class="headerlink" href="#add-admins" title="Permalink to this headline">¶</a></h3>
+<p>Add one or more admin names and roles to security object.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$sec</span><span class="p">.</span><span class="n">AddAdmins</span><span class="p">(</span><span class="s1">&#39;root&#39;</span><span class="p">)</span>                                      <span class="c"># add admin name</span>
+<span class="nv">$sec</span><span class="p">.</span><span class="n">AddAdmins</span><span class="p">(</span><span class="s1">&#39;root&#39;</span><span class="p">,</span> <span class="s1">&#39;roots&#39;</span><span class="p">)</span>                             <span class="c"># add admin name and role</span>
+<span class="nv">$sec</span><span class="p">.</span><span class="n">AddAdmins</span><span class="p">(@(</span><span class="s1">&#39;root&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">))</span>                          <span class="c"># add admin names</span>
+<span class="nv">$sec</span><span class="p">.</span><span class="n">AddAdmins</span><span class="p">(@(</span><span class="s1">&#39;root&#39;</span><span class="p">,</span> <span class="s1">&#39;admin&#39;</span><span class="p">),</span> <span class="p">@(</span><span class="s1">&#39;roots&#39;</span><span class="p">,</span> <span class="s1">&#39;admins&#39;</span><span class="p">))</span>    <span class="c"># add admin names and roles</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="add-members">
+<h3>Add members<a class="headerlink" href="#add-members" title="Permalink to this headline">¶</a></h3>
+<p>Add one or more member names and roles to security object.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$sec</span><span class="p">.</span><span class="n">AddMembers</span><span class="p">(</span><span class="s1">&#39;member1&#39;</span><span class="p">)</span>                                      <span class="c"># add member name</span>
+<span class="nv">$sec</span><span class="p">.</span><span class="n">AddMembers</span><span class="p">(</span><span class="s1">&#39;member1&#39;</span><span class="p">,</span> <span class="s1">&#39;access&#39;</span><span class="p">)</span>                            <span class="c"># add member name and role</span>
+<span class="nv">$sec</span><span class="p">.</span><span class="n">AddMembers</span><span class="p">(@(</span><span class="s1">&#39;member1&#39;</span><span class="p">,</span> <span class="s1">&#39;member2&#39;</span><span class="p">))</span>                        <span class="c"># add member names</span>
+<span class="nv">$sec</span><span class="p">.</span><span class="n">AddMembers</span><span class="p">(@(</span><span class="s1">&#39;member1&#39;</span><span class="p">,</span> <span class="s1">&#39;member2&#39;</span><span class="p">),</span> <span class="p">@(</span><span class="s1">&#39;access&#39;</span><span class="p">,</span> <span class="s1">&#39;read&#39;</span><span class="p">))</span>   <span class="c"># add member names and roles</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="remove-admin">
+<h3>Remove admin<a class="headerlink" href="#remove-admin" title="Permalink to this headline">¶</a></h3>
+<p>Remove one admin to security object.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$sec</span><span class="p">.</span><span class="n">RemoveAdminName</span><span class="p">(</span><span class="s1">&#39;root&#39;</span><span class="p">)</span>    <span class="c"># remove member name</span>
+<span class="nv">$sec</span><span class="p">.</span><span class="n">RemoveAdminRole</span><span class="p">(</span><span class="s1">&#39;roots&#39;</span><span class="p">)</span>   <span class="c"># remove member role</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="remove-member">
+<h3>Remove member<a class="headerlink" href="#remove-member" title="Permalink to this headline">¶</a></h3>
+<p>Remove one member to security object.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$sec</span><span class="p">.</span><span class="n">RemoveMemberName</span><span class="p">(</span><span class="s1">&#39;member1&#39;</span><span class="p">)</span>    <span class="c"># remove member name</span>
+<span class="nv">$sec</span><span class="p">.</span><span class="n">RemoveMemberRole</span><span class="p">(</span><span class="s1">&#39;access&#39;</span><span class="p">)</span>     <span class="c"># remove member role</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-json">
+<h3>Get json<a class="headerlink" href="#get-json" title="Permalink to this headline">¶</a></h3>
+<p>To get json string to security object.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$sec</span><span class="p">.</span><span class="n">ToJson</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="pscouchdbreplication-class">
+<h2>PSCouchDBReplication class<a class="headerlink" href="#pscouchdbreplication-class" title="Permalink to this headline">¶</a></h2>
+<p>This class is used to construct a replica database documents.</p>
+<div class="section" id="id9">
+<h3>Properties<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">continuous</span>              <span class="n">Property</span>   <span class="n">bool</span> <span class="n">continuous</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+<span class="n">source</span>                  <span class="n">Property</span>   <span class="n">System</span><span class="p">.</span><span class="n">UriBuilder</span> <span class="n">source</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+<span class="n">target</span>                  <span class="n">Property</span>   <span class="n">System</span><span class="p">.</span><span class="n">UriBuilder</span> <span class="n">target</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+<span class="n">_id</span>                     <span class="n">Property</span>   <span class="n">string</span> <span class="n">_id</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+<span class="n">_rev</span>                    <span class="n">Property</span>   <span class="n">string</span> <span class="n">_rev</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id10">
+<h3>Methods<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">AddDocIds</span>               <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddDocIds</span><span class="p">(</span><span class="n">array</span> <span class="n">ids</span><span class="p">)</span>
+<span class="n">AddSourceAuthentication</span> <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddSourceAuthentication</span><span class="p">(</span><span class="n">string</span> <span class="n">user</span><span class="p">,</span> <span class="n">string</span> <span class="n">passwd</span><span class="p">)</span>
+<span class="n">AddTargetAuthentication</span> <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddTargetAuthentication</span><span class="p">(</span><span class="n">string</span> <span class="n">user</span><span class="p">,</span> <span class="n">string</span> <span class="n">passwd</span><span class="p">)</span>
+<span class="n">CreateTarget</span>            <span class="n">Method</span>     <span class="n">void</span> <span class="n">CreateTarget</span><span class="p">()</span>
+<span class="n">Equals</span>                  <span class="n">Method</span>     <span class="n">bool</span> <span class="n">Equals</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">obj</span><span class="p">)</span>
+<span class="n">GetDocument</span>             <span class="n">Method</span>     <span class="n">hashtable</span> <span class="n">GetDocument</span><span class="p">()</span>
+<span class="n">GetHashCode</span>             <span class="n">Method</span>     <span class="n">int</span> <span class="n">GetHashCode</span><span class="p">()</span>
+<span class="n">GetType</span>                 <span class="n">Method</span>     <span class="nb">type </span><span class="n">GetType</span><span class="p">()</span>
+<span class="n">SetCancel</span>               <span class="n">Method</span>     <span class="n">void</span> <span class="n">SetCancel</span><span class="p">()</span>
+<span class="n">SetCheckpointInterval</span>   <span class="n">Method</span>     <span class="n">void</span> <span class="n">SetCheckpointInterval</span><span class="p">(</span><span class="n">int</span> <span class="n">ms</span><span class="p">)</span>
+<span class="n">SetContinuous</span>           <span class="n">Method</span>     <span class="n">void</span> <span class="n">SetContinuous</span><span class="p">()</span>
+<span class="n">SetFilter</span>               <span class="n">Method</span>     <span class="n">void</span> <span class="n">SetFilter</span><span class="p">(</span><span class="n">string</span> <span class="k">filter</span><span class="p">)</span>
+<span class="n">SetQueryParams</span>          <span class="n">Method</span>     <span class="n">void</span> <span class="n">SetQueryParams</span><span class="p">(</span><span class="n">hashtable</span> <span class="n">paramaters</span><span class="p">)</span>
+<span class="n">SetRevision</span>             <span class="n">Method</span>     <span class="n">void</span> <span class="n">SetRevision</span><span class="p">(</span><span class="n">string</span> <span class="n">revision</span><span class="p">)</span>
+<span class="n">SetSelector</span>             <span class="n">Method</span>     <span class="n">void</span> <span class="n">SetSelector</span><span class="p">(</span><span class="n">string</span> <span class="n">selector</span><span class="p">)</span>
+<span class="n">SetSinceSequence</span>        <span class="n">Method</span>     <span class="n">void</span> <span class="n">SetSinceSequence</span><span class="p">(</span><span class="n">string</span> <span class="n">sequence</span><span class="p">)</span>
+<span class="n">SetSourceProxy</span>          <span class="n">Method</span>     <span class="n">void</span> <span class="n">SetSourceProxy</span><span class="p">(</span><span class="n">string</span> <span class="n">proxyUri</span><span class="p">)</span>
+<span class="n">SetSourceServer</span>         <span class="n">Method</span>     <span class="n">void</span> <span class="n">SetSourceServer</span><span class="p">(</span><span class="n">string</span> <span class="n">server</span><span class="p">)</span>
+<span class="n">SetSourceSsl</span>            <span class="n">Method</span>     <span class="n">void</span> <span class="n">SetSourceSsl</span><span class="p">(),</span> <span class="n">void</span> <span class="n">SetSourceSsl</span><span class="p">(</span><span class="n">int</span> <span class="n">port</span><span class="p">)</span>
+<span class="n">SetTargetProxy</span>          <span class="n">Method</span>     <span class="n">void</span> <span class="n">SetTargetProxy</span><span class="p">(</span><span class="n">string</span> <span class="n">proxyUri</span><span class="p">)</span>
+<span class="n">SetTargetServer</span>         <span class="n">Method</span>     <span class="n">void</span> <span class="n">SetTargetServer</span><span class="p">(</span><span class="n">string</span> <span class="n">server</span><span class="p">)</span>
+<span class="n">SetTargetSsl</span>            <span class="n">Method</span>     <span class="n">void</span> <span class="n">SetTargetSsl</span><span class="p">(),</span> <span class="n">void</span> <span class="n">SetTargetSsl</span><span class="p">(</span><span class="n">int</span> <span class="n">port</span><span class="p">)</span>
+<span class="n">ToJson</span>                  <span class="n">Method</span>     <span class="n">string</span> <span class="n">ToJson</span><span class="p">()</span>
+<span class="n">ToString</span>                <span class="n">Method</span>     <span class="n">string</span> <span class="n">ToString</span><span class="p">()</span>
+<span class="n">UseCheckpoints</span>          <span class="n">Method</span>     <span class="n">void</span> <span class="n">UseCheckpoints</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="create-replication-document">
+<h3>Create replication document<a class="headerlink" href="#create-replication-document" title="Permalink to this headline">¶</a></h3>
+<p>Create a replication document.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">using</span> <span class="n">module</span> <span class="n">PSCouchDB</span>
+<span class="nv">$rep</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">PSCouchDBReplication</span> <span class="n">-ArgumentList</span> <span class="s1">&#39;db&#39;</span><span class="p">,</span><span class="s1">&#39;repdb&#39;</span>
+<span class="nv">$rep</span><span class="p">.</span><span class="n">GetType</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="set-revision">
+<h3>Set revision<a class="headerlink" href="#set-revision" title="Permalink to this headline">¶</a></h3>
+<p>Set revision to replication document.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$rep</span><span class="p">.</span><span class="n">SetRevision</span><span class="p">(</span><span class="s2">&quot;1-f6d66c4d70da66cded6bea889468eb14&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="set-authentication">
+<h3>Set authentication<a class="headerlink" href="#set-authentication" title="Permalink to this headline">¶</a></h3>
+<p>Add authentication for source and target database.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$rep</span><span class="p">.</span><span class="n">AddSourceAuthentication</span><span class="p">(</span><span class="s2">&quot;admin&quot;</span><span class="p">,</span><span class="s2">&quot;password&quot;</span><span class="p">)</span> <span class="c"># Source</span>
+<span class="nv">$rep</span><span class="p">.</span><span class="n">AddTargetAuthentication</span><span class="p">(</span><span class="s2">&quot;admin&quot;</span><span class="p">,</span><span class="s2">&quot;password&quot;</span><span class="p">)</span> <span class="c"># Target</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="set-ssl">
+<h3>Set SSL<a class="headerlink" href="#set-ssl" title="Permalink to this headline">¶</a></h3>
+<p>Set SSL (https protocol) for source and target database.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$rep</span><span class="p">.</span><span class="n">SetSourceSsl</span><span class="p">()</span> <span class="c"># Source</span>
+<span class="nv">$rep</span><span class="p">.</span><span class="n">SetTargetSsl</span><span class="p">(</span><span class="n">443</span><span class="p">)</span> <span class="c"># Target, specifying port</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="set-server">
+<h3>Set server<a class="headerlink" href="#set-server" title="Permalink to this headline">¶</a></h3>
+<p>Set server (default localhost) for source and target database.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$rep</span><span class="p">.</span><span class="n">SetSourceServer</span><span class="p">(</span><span class="s1">&#39;db1.local&#39;</span><span class="p">)</span> <span class="c"># Source</span>
+<span class="nv">$rep</span><span class="p">.</span><span class="n">SetTargetServer</span><span class="p">(</span><span class="s1">&#39;db2.local&#39;</span><span class="p">)</span> <span class="c"># Target, specifying port</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="set-cancel-operation">
+<h3>Set cancel operation<a class="headerlink" href="#set-cancel-operation" title="Permalink to this headline">¶</a></h3>
+<p>Set cancel flag for request replica operation.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$rep</span><span class="p">.</span><span class="n">SetCancel</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="set-continuous-replica">
+<h3>Set continuous replica<a class="headerlink" href="#set-continuous-replica" title="Permalink to this headline">¶</a></h3>
+<p>Set continuous flag for replica operation.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$rep</span><span class="p">.</span><span class="n">SetContinuous</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="other-flag-for-replica">
+<h3>Other flag for replica<a class="headerlink" href="#other-flag-for-replica" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$rep</span><span class="p">.</span><span class="n">SetCheckpointInterval</span><span class="p">(</span><span class="n">300</span><span class="p">)</span> <span class="c"># checkpoint interval in milliseconds</span>
+<span class="nv">$rep</span><span class="p">.</span><span class="n">CreateTarget</span><span class="p">()</span>             <span class="c"># create target database</span>
+<span class="nv">$rep</span><span class="p">.</span><span class="n">AddDocIds</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">,</span><span class="s1">&#39;test2&#39;</span><span class="p">)</span>  <span class="c"># replicate only ids specified</span>
+<span class="nv">$rep</span><span class="p">.</span><span class="n">SetFilter</span><span class="p">()</span>                <span class="c"># set filter function (ddoc/filter format)</span>
+<span class="nv">$rep</span><span class="p">.</span><span class="n">SetSourceProxy</span><span class="p">()</span>           <span class="c"># set source proxy server</span>
+<span class="nv">$rep</span><span class="p">.</span><span class="n">SetTargetProxy</span><span class="p">()</span>           <span class="c"># set target proxy server</span>
+<span class="nv">$rep</span><span class="p">.</span><span class="n">SetQueryParams</span><span class="p">()</span>           <span class="c"># set query for filter function</span>
+<span class="nv">$rep</span><span class="p">.</span><span class="n">SetSelector</span><span class="p">()</span>              <span class="c"># set selector (see PSCouchDBQuery)</span>
+<span class="nv">$rep</span><span class="p">.</span><span class="n">SetSinceSequence</span><span class="p">()</span>         <span class="c"># set since sequence</span>
+<span class="nv">$rep</span><span class="p">.</span><span class="n">UseCheckpoints</span><span class="p">()</span>           <span class="c"># use checkpoint for replication</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-replication-document">
+<h3>Get replication document<a class="headerlink" href="#get-replication-document" title="Permalink to this headline">¶</a></h3>
+<p>Get the replication document.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$rep</span><span class="p">.</span><span class="n">GetDocument</span><span class="p">()</span>  <span class="c"># hashtable format</span>
+<span class="nv">$rep</span><span class="p">.</span><span class="n">ToJson</span><span class="p">()</span>       <span class="c"># json format</span>
+</pre></div>
+</div>
+</div>
+</div>
 <div class="section" id="pscouchdbview-class">
 <h2>PSCouchDBView class<a class="headerlink" href="#pscouchdbview-class" title="Permalink to this headline">¶</a></h2>
 <p>This class is used to construct a view.</p>
-<div class="section" id="id5">
-<h3>Properties<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id11">
+<h3>Properties<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">map</span>                   <span class="n">Property</span>   <span class="n">string</span> <span class="n">map</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
 <span class="n">name</span>                  <span class="n">Property</span>   <span class="n">string</span> <span class="n">name</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
 <span class="n">reduce</span>                <span class="n">Property</span>   <span class="n">string</span> <span class="n">reduce</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
@@ -714,8 +1025,8 @@ by specifying the selector and the value that you want to associate.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="id6">
-<h3>Methods<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id12">
+<h3>Methods<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">AddMapFunction</span>        <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddMapFunction</span><span class="p">(</span><span class="n">string</span> <span class="k">function</span><span class="p">)</span>
 <span class="n">AddReduceFunction</span>     <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddReduceFunction</span><span class="p">(</span><span class="n">string</span> <span class="k">function</span><span class="p">)</span>
 <span class="n">BuilMapFunction</span>       <span class="n">Method</span>     <span class="n">string</span> <span class="no">[PSCouchDBView]</span><span class="p">::</span><span class="n">BuilMapFunction</span><span class="p">(</span><span class="n">hashtable</span> <span class="n">condition</span><span class="p">)</span>
@@ -798,8 +1109,8 @@ Before, create a condition hashtable.</p>
 <div class="section" id="pscouchdbdesigndoc-class">
 <h2>PSCouchDBDesignDoc class<a class="headerlink" href="#pscouchdbdesigndoc-class" title="Permalink to this headline">¶</a></h2>
 <p>This class is used to construct a design documents, simple or complex.</p>
-<div class="section" id="id7">
-<h3>Properties<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id13">
+<h3>Properties<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">validate_doc_update</span>  <span class="n">Property</span>   <span class="n">string</span> <span class="n">validate_doc_update</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
 <span class="n">views</span>                <span class="n">Property</span>   <span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">views</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
 <span class="n">_attachments</span>         <span class="n">Property</span>   <span class="n">hashtable</span> <span class="n">_attachments</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
@@ -808,8 +1119,8 @@ Before, create a condition hashtable.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="id8">
-<h3>Methods<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id14">
+<h3>Methods<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">AddAttachment</span>        <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddAttachment</span><span class="p">(</span><span class="n">PSCouchDBAttachment</span> <span class="n">attachment</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddAttachment</span><span class="p">(</span><span class="n">string</span> <span class="n">attach</span><span class="p">...</span>
 <span class="n">AddView</span>              <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddView</span><span class="p">(</span><span class="n">PSCouchDBView</span> <span class="n">view</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddView</span><span class="p">(</span><span class="n">string</span> <span class="n">name</span><span class="p">,</span> <span class="n">string</span> <span class="n">map</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddVie</span><span class="p">...</span>
 <span class="n">Equals</span>               <span class="n">Method</span>     <span class="n">bool</span> <span class="n">Equals</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">obj</span><span class="p">)</span>

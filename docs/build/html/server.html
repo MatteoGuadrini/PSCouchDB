@@ -336,13 +336,11 @@ Otherwise, if the log is in a custom path, specify the path using the <code clas
 <div class="section" id="create-replica">
 <h2>Create replica<a class="headerlink" href="#create-replica" title="Permalink to this headline">¶</a></h2>
 <p>Creation of the replicator database and replication agent is automatically in the same time.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">New-CouchDBReplication</span> <span class="n">-SourceDatabase</span> <span class="n">test</span> <span class="n">-TargetDatabase</span> <span class="n">test_dump</span> <span class="n">-Continuous</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">using</span> <span class="n">module</span> <span class="n">PSCouchDB</span>
+<span class="nv">$rep</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">PSCouchDBReplication</span> <span class="n">-ArgumentList</span> <span class="s1">&#39;test&#39;</span><span class="p">,</span><span class="s1">&#39;test_dump&#39;</span>
+<span class="nv">$rep</span><span class="p">.</span><span class="n">SetContinuous</span><span class="p">()</span>
+<span class="nb">New-CouchDBReplication</span> <span class="n">-Data</span> <span class="nv">$rep</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">Authorization</span></code> parameter refers to source database.
-It is preferable that the destination database is not password protected, otherwise an inaccessibility error will return.</p>
 </div>
 <p>Now that we have a replicated document, let’s take a look at the change.</p>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDatabaseChanges</span> <span class="n">-Database</span> <span class="n">test_dump</span>
@@ -352,26 +350,27 @@ It is preferable that the destination database is not password protected, otherw
 <div class="section" id="modify-replica">
 <h2>Modify replica<a class="headerlink" href="#modify-replica" title="Permalink to this headline">¶</a></h2>
 <p>To change the replication agent settings (continuous: true | false).</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$replica</span> <span class="p">=</span> <span class="nb">Get-CouchDBReplication</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
-<span class="nb">Write-Output</span> <span class="nv">$replica</span><span class="p">.</span><span class="n">rows</span><span class="p">.</span><span class="n">id</span><span class="p">[</span><span class="n">1</span><span class="p">]</span> <span class="nv">$replica</span><span class="p">.</span><span class="n">rows</span><span class="p">.</span><span class="n">value</span><span class="p">[</span><span class="n">1</span><span class="p">].</span><span class="n">rev</span>
-<span class="c"># continuous: false</span>
-<span class="nb">Set-CouchDBReplication</span> <span class="n">-Document</span> <span class="nv">$replica</span><span class="p">.</span><span class="n">rows</span><span class="p">.</span><span class="n">id</span><span class="p">[</span><span class="n">1</span><span class="p">]</span> <span class="n">-Revision</span> <span class="nv">$replica</span><span class="p">.</span><span class="n">rows</span><span class="p">.</span><span class="n">value</span><span class="p">[</span><span class="n">1</span><span class="p">].</span><span class="n">rev</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
-<span class="c"># continuous: true</span>
-<span class="nb">Set-CouchDBReplication</span> <span class="n">-Document</span> <span class="nv">$replica</span><span class="p">.</span><span class="n">rows</span><span class="p">.</span><span class="n">id</span><span class="p">[</span><span class="n">1</span><span class="p">]</span> <span class="n">-Revision</span> <span class="nv">$replica</span><span class="p">.</span><span class="n">rows</span><span class="p">.</span><span class="n">value</span><span class="p">[</span><span class="n">1</span><span class="p">].</span><span class="n">rev</span> <span class="n">-Continuous</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">using</span> <span class="n">module</span> <span class="n">PSCouchDB</span>
+<span class="nv">$rep</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">PSCouchDBReplication</span> <span class="n">-ArgumentList</span> <span class="s1">&#39;test&#39;</span><span class="p">,</span><span class="s1">&#39;test_dump&#39;</span>
+<span class="nv">$rep</span><span class="p">.</span><span class="n">SetRevision</span><span class="p">(</span><span class="s2">&quot;4-c2cefa18494e47182a125b11eccecd13&quot;</span><span class="p">)</span>
+<span class="nb">Set-CouchDBReplication</span> <span class="n">-Data</span> <span class="nv">$rep</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="remove-replica">
 <h2>Remove replica<a class="headerlink" href="#remove-replica" title="Permalink to this headline">¶</a></h2>
 <p>To remove the replication agent.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Remove-CouchDBReplication</span> <span class="n">-Document</span> <span class="n">localhost-test_localhost-test_dump</span> <span class="n">-Authorization</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Remove-CouchDBReplication</span> <span class="n">-Document</span> <span class="n">test_test_dump</span> <span class="n">-Authorization</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="replication-request">
 <h2>Replication request<a class="headerlink" href="#replication-request" title="Permalink to this headline">¶</a></h2>
 <p>Request, configure, or stop, a replication operation.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Request-CouchDBReplication</span> <span class="n">-SourceDatabase</span> <span class="n">test</span> <span class="n">-TargetDatabase</span> <span class="n">test_dump</span> <span class="n">-Documents</span> <span class="s2">&quot;Hitchhikers&quot;</span><span class="p">,</span><span class="s2">&quot;Hitchhikers_Guide&quot;</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">using</span> <span class="n">module</span> <span class="n">PSCouchDB</span>
+<span class="nv">$rep</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">PSCouchDBReplication</span> <span class="n">-ArgumentList</span> <span class="s1">&#39;test&#39;</span><span class="p">,</span><span class="s1">&#39;reptest&#39;</span>
+<span class="nv">$rep</span><span class="p">.</span><span class="n">AddDocIds</span><span class="p">(@(</span><span class="s2">&quot;Hitchhikers&quot;</span><span class="p">,</span><span class="s2">&quot;Hitchhikers_Guide&quot;</span><span class="p">))</span>
+<span class="nb">Request-CouchDBReplication</span> <span class="n">-Data</span> <span class="nv">$rep</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>

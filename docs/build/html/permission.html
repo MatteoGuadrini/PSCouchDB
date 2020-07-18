@@ -211,7 +211,10 @@ The password has the format <strong>*</strong>.</p>
 </pre></div>
 </div>
 <p>And then enable it to the server.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Grant-CouchDBDatabasePermission</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-ReaderUser</span> <span class="n">member_user</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">using</span> <span class="n">module</span> <span class="n">PSCouchDB</span>
+<span class="nv">$sec</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">PSCouchDBSecurity</span>
+<span class="nv">$sec</span><span class="p">.</span><span class="n">AddMembers</span><span class="p">(</span><span class="s1">&#39;member_user&#39;</span><span class="p">)</span>
+<span class="nb">Grant-CouchDBDatabasePermission</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Data</span> <span class="nv">$sec</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 <p>Let’s check the permissions now.</p>
@@ -225,24 +228,35 @@ The password has the format <strong>*</strong>.</p>
 <p>To protect a database from write requests, you need to create a design document that will contain a validation function. See this section: <a class="reference external" href="classes.html">Classes</a></p>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">using</span> <span class="n">module</span> <span class="n">PSCouchDB</span>
 <span class="nv">$ddoc</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">-TypeName</span> <span class="n">PSCouchDBDesignDoc</span>
-<span class="nv">$ddoc</span><span class="p">.</span><span class="n">AddValidation</span><span class="p">(</span><span class="nv">$true</span><span class="p">)</span>
-<span class="nb">New-CouchDBDesignDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;mydesigndoc&quot;</span> <span class="n">-Data</span> <span class="nv">$ddoc</span><span class="p">.</span><span class="n">GetDesignDocuments</span><span class="p">()</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+<span class="nv">$read_only</span> <span class="p">=</span> <span class="sh">@&quot;</span>
+<span class="sh">function(newDoc, oldDoc, userCtx, secObj) {</span>
+<span class="sh">    if (userCtx.roles.indexOf(&#39;admin&#39;) !== -1) {</span>
+<span class="sh">        return;</span>
+<span class="sh">    } else {</span>
+<span class="sh">        throw({forbidden: &quot;Only admin can edit documents!&quot;})</span>
+<span class="sh">    }</span>
+<span class="sh">}</span>
+<span class="sh">&quot;@</span>
+<span class="nv">$ddoc</span><span class="p">.</span><span class="n">SetValidateFunction</span><span class="p">(</span><span class="nv">$read_only</span><span class="p">)</span>
+<span class="nb">New-CouchDBDesignDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;mydesigndoc&quot;</span> <span class="n">-Data</span> <span class="nv">$ddoc</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="limit-write-access">
 <h2>Limit write access<a class="headerlink" href="#limit-write-access" title="Permalink to this headline">¶</a></h2>
 <p>If you want to limit a single database with different admin user for reading and writing, use this cmdlet:</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$password</span> <span class="p">=</span> <span class="s2">&quot;password&quot;</span> <span class="p">|</span> <span class="nb">ConvertTo-SecureString</span> <span class="n">-AsPlainText</span> <span class="n">-Force</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">using</span> <span class="n">module</span> <span class="n">PSCouchDB</span>
+<span class="nv">$password</span> <span class="p">=</span> <span class="s2">&quot;password&quot;</span> <span class="p">|</span> <span class="nb">ConvertTo-SecureString</span> <span class="n">-AsPlainText</span> <span class="n">-Force</span>
 <span class="nb">New-CouchDBUser</span> <span class="n">-Userid</span> <span class="n">other_admin</span> <span class="n">-Password</span> <span class="nv">$password</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
-<span class="nb">Grant-CouchDBDatabasePermission</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-AdminUser</span> <span class="n">other_admin</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+<span class="nv">$sec</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">PSCouchDBSecurity</span> <span class="n">-ArgumentList</span> <span class="s1">&#39;other_admin&#39;</span>
+<span class="nb">Grant-CouchDBDatabasePermission</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Data</span> <span class="nv">$sec</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 <span class="nb">Get-CouchDBDatabase</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Authorization</span> <span class="s2">&quot;other_admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="revoke-database-permissions">
 <h2>Revoke database permissions<a class="headerlink" href="#revoke-database-permissions" title="Permalink to this headline">¶</a></h2>
-<p>To remove permissions from one database, run this cmdlet:</p>
+<p>To remove all permissions from one database, run this cmdlet:</p>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Revoke-CouchDBDatabasePermission</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
@@ -274,7 +288,7 @@ The password has the format <strong>*</strong>.</p>
 <h2>Reset admin password<a class="headerlink" href="#reset-admin-password" title="Permalink to this headline">¶</a></h2>
 <p>To modify o reset password of an admin.</p>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$password</span> <span class="p">=</span> <span class="s2">&quot;new_password&quot;</span> <span class="p">|</span> <span class="nb">ConvertTo-SecureString</span> <span class="n">-AsPlainText</span> <span class="n">-Force</span>
-<span class="nb">Set-CouchDBAdmin</span> <span class="n">-Userid</span> <span class="n">test_user</span> <span class="n">-Password</span> <span class="nv">$password</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+<span class="nb">Set-CouchDBAdmin</span> <span class="n">-Userid</span> <span class="n">admin</span> <span class="n">-Password</span> <span class="nv">$password</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>

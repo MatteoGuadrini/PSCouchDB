@@ -225,11 +225,10 @@ Creation of the replicator database and replication agent is automatically in th
 
 .. code-block:: powershell
 
-    New-CouchDBReplication -SourceDatabase test -TargetDatabase test_dump -Continuous -Authorization "admin:password"
-
-.. note::
-    The ``Authorization`` parameter refers to source database. 
-    It is preferable that the destination database is not password protected, otherwise an inaccessibility error will return.
+    using module PSCouchDB
+    $rep = New-Object PSCouchDBReplication -ArgumentList 'test','test_dump'
+    $rep.SetContinuous()
+    New-CouchDBReplication -Data $rep -Authorization "admin:password"
 
 Now that we have a replicated document, let's take a look at the change.
 
@@ -244,12 +243,10 @@ To change the replication agent settings (continuous: true | false).
 
 .. code-block:: powershell
 
-    $replica = Get-CouchDBReplication -Authorization "admin:password"
-    Write-Output $replica.rows.id[1] $replica.rows.value[1].rev
-    # continuous: false
-    Set-CouchDBReplication -Document $replica.rows.id[1] -Revision $replica.rows.value[1].rev -Authorization "admin:password"
-    # continuous: true
-    Set-CouchDBReplication -Document $replica.rows.id[1] -Revision $replica.rows.value[1].rev -Continuous -Authorization "admin:password"
+    using module PSCouchDB
+    $rep = New-Object PSCouchDBReplication -ArgumentList 'test','test_dump'
+    $rep.SetRevision("4-c2cefa18494e47182a125b11eccecd13")
+    Set-CouchDBReplication -Data $rep -Authorization "admin:password"
 
 Remove replica
 ______________
@@ -258,7 +255,7 @@ To remove the replication agent.
 
 .. code-block:: powershell
 
-    Remove-CouchDBReplication -Document localhost-test_localhost-test_dump -Authorization -Authorization "admin:password"
+    Remove-CouchDBReplication -Document test_test_dump -Authorization -Authorization "admin:password"
 
 Replication request
 ____________________
@@ -267,4 +264,7 @@ Request, configure, or stop, a replication operation.
 
 .. code-block:: powershell
 
-    Request-CouchDBReplication -SourceDatabase test -TargetDatabase test_dump -Documents "Hitchhikers","Hitchhikers_Guide" -Authorization "admin:password"
+    using module PSCouchDB
+    $rep = New-Object PSCouchDBReplication -ArgumentList 'test','reptest'
+    $rep.AddDocIds(@("Hitchhikers","Hitchhikers_Guide"))
+    Request-CouchDBReplication -Data $rep -Authorization "admin:password"

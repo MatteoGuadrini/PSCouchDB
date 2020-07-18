@@ -64,7 +64,10 @@ And then enable it to the server.
 
 .. code-block:: powershell
 
-    Grant-CouchDBDatabasePermission -Database test -ReaderUser member_user -Authorization "admin:password"
+    using module PSCouchDB
+    $sec = New-Object PSCouchDBSecurity
+    $sec.AddMembers('member_user')
+    Grant-CouchDBDatabasePermission -Database test -Data $sec -Authorization "admin:password"
 
 Let's check the permissions now.
 
@@ -83,8 +86,17 @@ To protect a database from write requests, you need to create a design document 
 
     using module PSCouchDB
     $ddoc = New-Object -TypeName PSCouchDBDesignDoc
-    $ddoc.AddValidation($true)
-    New-CouchDBDesignDocument -Database test -Document "mydesigndoc" -Data $ddoc.GetDesignDocuments() -Authorization "admin:password"
+    $read_only = @"
+    function(newDoc, oldDoc, userCtx, secObj) { 
+        if (userCtx.roles.indexOf('admin') !== -1) { 
+            return; 
+        } else { 
+            throw({forbidden: "Only admin can edit documents!"})
+        }
+    }
+    "@
+    $ddoc.SetValidateFunction($read_only)
+    New-CouchDBDesignDocument -Database test -Document "mydesigndoc" -Data $ddoc -Authorization "admin:password"
 
 
 Limit write access
@@ -94,15 +106,17 @@ If you want to limit a single database with different admin user for reading and
 
 .. code-block:: powershell
 
+    using module PSCouchDB
     $password = "password" | ConvertTo-SecureString -AsPlainText -Force
     New-CouchDBUser -Userid other_admin -Password $password -Authorization "admin:password"
-    Grant-CouchDBDatabasePermission -Database test -AdminUser other_admin -Authorization "admin:password"
+    $sec = New-Object PSCouchDBSecurity -ArgumentList 'other_admin'
+    Grant-CouchDBDatabasePermission -Database test -Data $sec -Authorization "admin:password"
     Get-CouchDBDatabase -Database test -Authorization "other_admin:password"
 
 Revoke database permissions
 ___________________________
 
-To remove permissions from one database, run this cmdlet:
+To remove all permissions from one database, run this cmdlet:
 
 .. code-block:: powershell
 
@@ -146,4 +160,4 @@ To modify o reset password of an admin.
 .. code-block:: powershell
 
     $password = "new_password" | ConvertTo-SecureString -AsPlainText -Force
-    Set-CouchDBAdmin -Userid test_user -Password $password -Authorization "admin:password"
+    Set-CouchDBAdmin -Userid admin -Password $password -Authorization "admin:password"
