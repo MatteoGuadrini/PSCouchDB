@@ -686,16 +686,18 @@ Methods
 Create security document
 ************************
 
-Create a bulk document.
+Create a security document for assign permission to a database.
 
 .. code-block:: powershell
 
     using module PSCouchDB
     $sec = New-Object PSCouchDBSecurity
-    $bdocs.GetType()
+    $sec.GetType()
 
 Get admins
 **********
+
+To get all admin names and roles.
 
 .. code-block:: powershell
 
@@ -704,12 +706,16 @@ Get admins
 Get members
 ***********
 
+To get all member names and roles.
+
 .. code-block:: powershell
 
     $sec.GetMembers()
 
 Add admins
 **********
+
+Add one or more admin names and roles to security object.
 
 .. code-block:: powershell
 
@@ -721,6 +727,8 @@ Add admins
 Add members
 ***********
 
+Add one or more member names and roles to security object.
+
 .. code-block:: powershell
 
     $sec.AddMembers('member1')                                      # add member name
@@ -731,13 +739,17 @@ Add members
 Remove admin
 ************
 
+Remove one admin to security object.
+
 .. code-block:: powershell
 
     $sec.RemoveAdminName('root')    # remove member name
     $sec.RemoveAdminRole('roots')   # remove member role
 
-Remove admin
-************
+Remove member
+*************
+
+Remove one member to security object.
 
 .. code-block:: powershell
 
@@ -747,9 +759,153 @@ Remove admin
 Get json
 ********
 
+To get json string to security object.
+
 .. code-block:: powershell
 
     $sec.ToJson()
+
+PSCouchDBReplication class
+__________________________
+
+This class is used to construct a replica database documents.
+
+Properties
+**********
+
+.. code-block:: powershell
+
+    continuous              Property   bool continuous {get;set;}
+    source                  Property   System.UriBuilder source {get;set;}
+    target                  Property   System.UriBuilder target {get;set;}
+    _id                     Property   string _id {get;set;}
+    _rev                    Property   string _rev {get;set;}
+
+Methods
+*******
+
+.. code-block:: powershell
+
+    AddDocIds               Method     void AddDocIds(array ids)
+    AddSourceAuthentication Method     void AddSourceAuthentication(string user, string passwd)
+    AddTargetAuthentication Method     void AddTargetAuthentication(string user, string passwd)
+    CreateTarget            Method     void CreateTarget()
+    Equals                  Method     bool Equals(System.Object obj)
+    GetDocument             Method     hashtable GetDocument()
+    GetHashCode             Method     int GetHashCode()
+    GetType                 Method     type GetType()
+    SetCancel               Method     void SetCancel()
+    SetCheckpointInterval   Method     void SetCheckpointInterval(int ms)
+    SetContinuous           Method     void SetContinuous()
+    SetFilter               Method     void SetFilter(string filter)
+    SetQueryParams          Method     void SetQueryParams(hashtable paramaters)
+    SetRevision             Method     void SetRevision(string revision)
+    SetSelector             Method     void SetSelector(string selector)
+    SetSinceSequence        Method     void SetSinceSequence(string sequence)
+    SetSourceProxy          Method     void SetSourceProxy(string proxyUri)
+    SetSourceServer         Method     void SetSourceServer(string server)
+    SetSourceSsl            Method     void SetSourceSsl(), void SetSourceSsl(int port)
+    SetTargetProxy          Method     void SetTargetProxy(string proxyUri)
+    SetTargetServer         Method     void SetTargetServer(string server)
+    SetTargetSsl            Method     void SetTargetSsl(), void SetTargetSsl(int port)
+    ToJson                  Method     string ToJson()
+    ToString                Method     string ToString()
+    UseCheckpoints          Method     void UseCheckpoints()
+
+Create replication document
+***************************
+
+Create a replication document.
+
+.. code-block:: powershell
+
+    using module PSCouchDB
+    $rep = New-Object PSCouchDBReplication -ArgumentList 'db','repdb'
+    $rep.GetType()
+
+Set revision
+************
+
+Set revision to replication document.
+
+.. code-block:: powershell
+
+    $rep.SetRevision("1-f6d66c4d70da66cded6bea889468eb14")
+
+Set authentication
+******************
+
+Add authentication for source and target database.
+
+.. code-block:: powershell
+
+    $rep.AddSourceAuthentication("admin","password") # Source
+    $rep.AddTargetAuthentication("admin","password") # Target
+
+Set SSL
+*******
+
+Set SSL (https protocol) for source and target database.
+
+.. code-block:: powershell
+
+    $rep.SetSourceSsl() # Source
+    $rep.SetTargetSsl(443) # Target, specifying port
+
+Set server
+**********
+
+Set server (default localhost) for source and target database.
+
+.. code-block:: powershell
+
+    $rep.SetSourceServer('db1.local') # Source
+    $rep.SetTargetServer('db2.local') # Target, specifying port
+
+Set cancel operation
+********************
+
+Set cancel flag for request replica operation.
+
+.. code-block:: powershell
+
+    $rep.SetCancel()
+
+Set continuous replica
+**********************
+
+Set continuous flag for replica operation.
+
+.. code-block:: powershell
+
+    $rep.SetContinuous()
+
+Other flag for replica
+**********************
+
+.. code-block:: powershell
+
+    $rep.SetCheckpointInterval(300) # checkpoint interval in milliseconds
+    $rep.CreateTarget()             # create target database
+    $rep.AddDocIds('test','test2')  # replicate only ids specified
+    $rep.SetFilter()                # set filter function (ddoc/filter format)
+    $rep.SetSourceProxy()           # set source proxy server
+    $rep.SetTargetProxy()           # set target proxy server
+    $rep.SetQueryParams()           # set query for filter function
+    $rep.SetSelector()              # set selector (see PSCouchDBQuery)
+    $rep.SetSinceSequence()         # set since sequence
+    $rep.UseCheckpoints()           # use checkpoint for replication
+
+Get replication document
+************************
+
+Get the replication document.
+
+.. code-block:: powershell
+
+    $rep.GetDocument()  # hashtable format
+    $rep.ToJson()       # json format
+
 
 PSCouchDBView class
 ___________________
