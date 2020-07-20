@@ -1259,6 +1259,16 @@ class PSCouchDBRequest {
         [string] $results = $sr.ReadToEnd()
         return $results | ConvertFrom-Json
     }
+
+    [string] GetHeader () {
+        # Create web client
+        $this.client = [System.Net.WebRequest]::Create($this.uri.Uri)
+        $this.client.ContentType = "application/json; charset=utf-8";
+        $this.client.Method = 'HEAD'
+        $this.client.UserAgent = "User-Agent: PSCouchDB (compatible; MSIE 7.0;)"
+        [System.Net.WebResponse] $resp = $this.client.GetResponse()
+        return $resp.Headers.ToString()
+    }
 }
 
 # Functions of CouchDB module
