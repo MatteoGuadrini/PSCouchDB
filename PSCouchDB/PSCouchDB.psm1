@@ -1089,7 +1089,7 @@ class PSCouchDBReplication {
 
     SetSourceSsl () {
         $this.source.Scheme = "https"
-        $this.source.Port = 5986
+        $this.source.Port = 6984
         $this.replicator['source'] = [uri] $this.source.Uri
     }
 
@@ -1101,7 +1101,7 @@ class PSCouchDBReplication {
 
     SetTargetSsl () {
         $this.target.Scheme = "https"
-        $this.target.Port = 5986
+        $this.target.Port = 6984
         $this.replicator['target'] = [uri] $this.target.Uri
     }
 
@@ -1193,6 +1193,73 @@ class PSCouchDBReplication {
         return $this.ToJson()
     }
 
+}
+
+class PSCouchDBRequest {
+    <#
+    .SYNOPSIS
+    CouchDB web request
+    .DESCRIPTION
+    Class than representing the CouchDB web request
+    .EXAMPLE
+    using module PSCouchDB
+    # Get database info
+    $req = New-Object PSCouchDBRequest -ArgumentList 'db'
+    # GET http://localhost:5984/db
+    $req.Request()
+    # remote replication
+    $req = New-Object PSCouchDBRequest -ArgumentList 'db','doc'
+    # GET http://localhost:5984/db/doc
+    $req.Request()
+    #>
+    # Propetries
+    [System.UriBuilder] $uri
+    [ValidateSet("HEAD","GET","PUT","DELETE","POST")]
+    [string] $method = 'GET'
+    [string] $protocol = 'http'
+    [string] $server = 'localhost'
+    [int] $port = 5984
+    [string] $database
+    [string] $document
+    [PSCredential] $authorization
+    [string] $parameter
+    [string] $data
+    [bool] $cookies
+    [System.Net.WebRequest] $client
+
+    # Constructor
+    PSCouchDBRequest () {
+        # Add uri
+        $this.uri = "{0}://{1}:{2}" -f $this.protocol, $this.server, $this.port
+        # Create web client
+        $this.client = [System.Net.WebRequest]::Create($this.uri.Uri)
+        $this.client.ContentType = "application/json; charset=utf-8";
+        $this.client.Method = $this.method
+        $this.client.UserAgent = "User-Agent: PSCouchDB (compatible; MSIE 7.0;)"
+    }
+
+    PSCouchDBRequest ([string]$database) {
+        # Add uri
+        $this.uri = "{0}://{1}:{2}/{3}" -f $this.protocol, $this.server, $this.port, $database
+        $this.database = $database
+        # Create web client
+        $this.client = [System.Net.WebRequest]::Create($this.uri.Uri)
+        $this.client.ContentType = "application/json; charset=utf-8";
+        $this.client.Method = $this.method
+        $this.client.UserAgent = "User-Agent: PSCouchDB (compatible; MSIE 7.0;)"
+    }
+
+    PSCouchDBRequest ([string]$database, [string]$document) {
+        # Add uri
+        $this.uri = "{0}://{1}:{2}/{3}/{4}" -f $this.protocol, $this.server, $this.port, $database, $document
+        $this.database = $database
+        $this.document = $document
+        # Create web client
+        $this.client = [System.Net.WebRequest]::Create($this.uri.Uri)
+        $this.client.ContentType = "application/json; charset=utf-8";
+        $this.client.Method = $this.method
+        $this.client.UserAgent = "User-Agent: PSCouchDB (compatible; MSIE 7.0;)"
+    }
 }
 
 # Functions of CouchDB module
