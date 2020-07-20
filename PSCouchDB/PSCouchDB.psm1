@@ -679,17 +679,17 @@ class PSCouchDBView {
         # Substitute variable in hashtable; the pattern is {NAME}
         $currentIndex = 0
         $replacementList = @()
-        if (-not($condition.ContainsKey('EMITDOC'))) {$condition.Add('EMITDOC', 'doc')}
-        foreach($key in $condition.Keys){
+        if (-not($condition.ContainsKey('EMITDOC'))) { $condition.Add('EMITDOC', 'doc') }
+        foreach ($key in $condition.Keys) {
             # Build function
             switch ($key) {
-                'EQUAL' {if ($condition.ContainsKey('EQUEMIT')) {$fun += 'if ({EQUAL}) {{emit({EQUEMIT});}}'} else {$fun += 'if ({EQUAL}) {{emit({EMITDOC});}}'}}
-                'MINIMUM' {if ($condition.ContainsKey('MINEMIT')) {$fun += 'if ({MINIMUM}) {{emit({MINEMIT});}}'} else {$fun += 'if ({MINIMUM}) {{emit({EMITDOC});}}'}}
-                'MAXIMUM' {if ($condition.ContainsKey('MAXEMIT')) {$fun += 'if ({MAXIMUM}) {{emit({MAXEMIT});}}'} else {$fun += 'if ({MAXIMUM}) {{emit({EMITDOC});}}'}}
+                'EQUAL' { if ($condition.ContainsKey('EQUEMIT')) { $fun += 'if ({EQUAL}) {{emit({EQUEMIT});}}' } else { $fun += 'if ({EQUAL}) {{emit({EMITDOC});}}' } }
+                'MINIMUM' { if ($condition.ContainsKey('MINEMIT')) { $fun += 'if ({MINIMUM}) {{emit({MINEMIT});}}' } else { $fun += 'if ({MINIMUM}) {{emit({EMITDOC});}}' } }
+                'MAXIMUM' { if ($condition.ContainsKey('MAXEMIT')) { $fun += 'if ({MAXIMUM}) {{emit({MAXEMIT});}}' } else { $fun += 'if ({MAXIMUM}) {{emit({EMITDOC});}}' } }
             }
             $inputPattern = '{(.*)' + $key + '(.*)}'
             $replacementPattern = '{${1}' + $currentIndex + '${2}}'
-            $fun = $fun -replace $inputPattern,$replacementPattern
+            $fun = $fun -replace $inputPattern, $replacementPattern
             $replacementList += $condition[$key]
             $currentIndex++
         }
@@ -766,7 +766,7 @@ class PSCouchDBDesignDoc : PSCouchDBDocument {
     AddView ([PSCouchDBView]$view) {
         if ($this.views -notcontains $view) {
             [void] $this.views.Add($view)
-            if (-not($this.doc.ContainsKey('views'))) {$this.doc.Add('views', @{})}
+            if (-not($this.doc.ContainsKey('views'))) { $this.doc.Add('views', @{}) }
             $this.doc.views.Add($view.name, $view.GetView())
         }
     }
@@ -881,7 +881,7 @@ class PSCouchDBBulkDocument {
     }
 
     [string] ToString () {
-        [hashtable] $documents = @{docs = @()}
+        [hashtable] $documents = @{docs = @() }
         foreach ($doc in $this.docs) {
             $documents.docs += $doc.GetDocument()
         }
@@ -1214,7 +1214,7 @@ class PSCouchDBRequest {
     #>
     # Propetries
     [System.UriBuilder] $uri
-    [ValidateSet("HEAD","GET","PUT","DELETE","POST")]
+    [ValidateSet("HEAD", "GET", "PUT", "DELETE", "POST")]
     [string] $method = 'GET'
     [string] $protocol = 'http'
     [string] $server = 'localhost'
@@ -1231,22 +1231,12 @@ class PSCouchDBRequest {
     PSCouchDBRequest () {
         # Add uri
         $this.uri = "{0}://{1}:{2}" -f $this.protocol, $this.server, $this.port
-        # Create web client
-        $this.client = [System.Net.WebRequest]::Create($this.uri.Uri)
-        $this.client.ContentType = "application/json; charset=utf-8";
-        $this.client.Method = $this.method
-        $this.client.UserAgent = "User-Agent: PSCouchDB (compatible; MSIE 7.0;)"
     }
 
     PSCouchDBRequest ([string]$database) {
         # Add uri
         $this.uri = "{0}://{1}:{2}/{3}" -f $this.protocol, $this.server, $this.port, $database
         $this.database = $database
-        # Create web client
-        $this.client = [System.Net.WebRequest]::Create($this.uri.Uri)
-        $this.client.ContentType = "application/json; charset=utf-8";
-        $this.client.Method = $this.method
-        $this.client.UserAgent = "User-Agent: PSCouchDB (compatible; MSIE 7.0;)"
     }
 
     PSCouchDBRequest ([string]$database, [string]$document) {
@@ -1254,11 +1244,20 @@ class PSCouchDBRequest {
         $this.uri = "{0}://{1}:{2}/{3}/{4}" -f $this.protocol, $this.server, $this.port, $database, $document
         $this.database = $database
         $this.document = $document
+    }
+
+    # Method
+    [pscustomobject] Request () {
         # Create web client
         $this.client = [System.Net.WebRequest]::Create($this.uri.Uri)
         $this.client.ContentType = "application/json; charset=utf-8";
         $this.client.Method = $this.method
         $this.client.UserAgent = "User-Agent: PSCouchDB (compatible; MSIE 7.0;)"
+        [System.Net.WebResponse] $resp = $this.client.GetResponse()
+        $rs = $resp.GetResponseStream()
+        [System.IO.StreamReader] $sr = New-Object System.IO.StreamReader -ArgumentList $rs
+        [string] $results = $sr.ReadToEnd()
+        return $results | ConvertFrom-Json
     }
 }
 
@@ -1519,8 +1518,8 @@ function New-CouchDBObject () {
     https://pscouchdb.readthedocs.io/en/latest/classes.html
     #>
     param(
-    [string] $TypeName,
-    [array] $ArgumentList
+        [string] $TypeName,
+        [array] $ArgumentList
     )
     return New-Object -TypeName $TypeName -ArgumentList $ArgumentList
 }
