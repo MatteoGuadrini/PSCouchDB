@@ -1224,8 +1224,8 @@ class PSCouchDBRequest {
     [PSCredential] $authorization
     [string] $parameter
     [string] $data
-    [bool] $cookies
-    [System.Net.WebRequest] $client
+    hidden [bool] $cookies
+    hidden [System.Net.WebRequest] $client
 
     # Constructor
     PSCouchDBRequest () {
@@ -1253,10 +1253,18 @@ class PSCouchDBRequest {
         $this.client.ContentType = "application/json; charset=utf-8";
         $this.client.Method = $this.method
         $this.client.UserAgent = "User-Agent: PSCouchDB (compatible; MSIE 7.0;)"
+        # Check data
+        if ($this.data) {
+            $Body = [byte[]][char[]]$this.data;
+            $Stream = $this.client.GetRequestStream();
+            $Stream.Write($Body, 0, $Body.Length);
+            $Stream.Close()
+        }
         [System.Net.WebResponse] $resp = $this.client.GetResponse()
         $rs = $resp.GetResponseStream()
         [System.IO.StreamReader] $sr = New-Object System.IO.StreamReader -ArgumentList $rs
         [string] $results = $sr.ReadToEnd()
+        $resp.Close()
         return $results | ConvertFrom-Json
     }
 
@@ -1267,6 +1275,7 @@ class PSCouchDBRequest {
         $this.client.Method = 'HEAD'
         $this.client.UserAgent = "User-Agent: PSCouchDB (compatible; MSIE 7.0;)"
         [System.Net.WebResponse] $resp = $this.client.GetResponse()
+        $resp.Close()
         return $resp.Headers.ToString()
     }
 }
