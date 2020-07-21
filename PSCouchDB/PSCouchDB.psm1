@@ -1253,6 +1253,11 @@ class PSCouchDBRequest {
         $this.client.ContentType = "application/json; charset=utf-8";
         $this.client.Method = $this.method
         $this.client.UserAgent = "User-Agent: PSCouchDB (compatible; MSIE 7.0;)"
+        # Check authorization
+        if ($this.authorization) {
+            $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("$($this.uri.UserName):$($this.uri.Password)")))
+            $this.client.Headers.Add("Authorization", ("Basic {0}" -f $base64AuthInfo));
+        }
         # Check data
         if ($this.data) {
             $Body = [byte[]][char[]]$this.data;
@@ -1277,6 +1282,11 @@ class PSCouchDBRequest {
         [System.Net.WebResponse] $resp = $this.client.GetResponse()
         $resp.Close()
         return $resp.Headers.ToString()
+    }
+
+    AddAuthorization ([PSCredential]$credential) {
+        $this.authorization = $credential
+        $this.uri.UserName = "$($credential.UserName):$($credential.GetNetworkCredential().Password)"
     }
 }
 
