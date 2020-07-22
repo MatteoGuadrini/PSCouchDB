@@ -1284,6 +1284,23 @@ class PSCouchDBRequest {
         return $resp.Headers.ToString()
     }
 
+    SetSsl () {
+        $this.protocol = 'https'
+        $this.uri.Scheme = 'https'
+        $this.SetPort(6984)
+    }
+
+    SetSsl ([int]$port) {
+        $this.protocol = 'https'
+        $this.uri.Scheme = 'https'
+        $this.SetPort($port)
+    }
+
+    SetPort ([int]$port) {
+        $this.port = $port
+        $this.uri.Port = $port
+    }
+
     SetServer ([string]$server) {
         $this.server = $server
         $this.uri.Host = $server
