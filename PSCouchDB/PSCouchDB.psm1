@@ -1339,6 +1339,10 @@ class PSCouchDBRequest {
             throw [System.Net.WebException] "Database isn't set."
         }
     }
+
+    SetData ([string]$json) {
+        $this.data = $json
+    }
 }
 
 # Functions of CouchDB module
