@@ -1314,6 +1314,12 @@ class PSCouchDBRequest {
     SetMethod ([string]$method) {
         $this.method = $method
     }
+
+    SetDatabase ([string]$database) {
+        $this.database = $database
+        $path = "/{0}" -f $database
+        $this.uri.Path = $path
+    }
 }
 
 # Functions of CouchDB module
