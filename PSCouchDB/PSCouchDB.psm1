@@ -1330,6 +1330,15 @@ class PSCouchDBRequest {
             throw [System.Net.WebException] "Database isn't set."
         }
     }
+
+    SetParameter ([array]$parameter) {
+        if ($this.database) {
+            $this.parameter = $parameter -join '&'
+            $this.uri.Query = $this.parameter
+        } else {
+            throw [System.Net.WebException] "Database isn't set."
+        }
+    }
 }
 
 # Functions of CouchDB module
