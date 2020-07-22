@@ -1288,6 +1288,10 @@ class PSCouchDBRequest {
         $this.authorization = $credential
         $this.uri.UserName = "$($credential.UserName):$($credential.GetNetworkCredential().Password)"
     }
+
+    SetMethod ([string]$method) {
+        $this.method = $method
+    }
 }
 
 # Functions of CouchDB module
