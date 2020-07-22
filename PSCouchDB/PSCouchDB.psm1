@@ -1284,6 +1284,11 @@ class PSCouchDBRequest {
         return $resp.Headers.ToString()
     }
 
+    SetServer ([string]$server) {
+        $this.server = $server
+        $this.uri.Host = $server
+    }
+
     AddAuthorization ([PSCredential]$credential) {
         $this.authorization = $credential
         $this.uri.UserName = "$($credential.UserName):$($credential.GetNetworkCredential().Password)"
