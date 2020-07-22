@@ -1320,6 +1320,16 @@ class PSCouchDBRequest {
         $path = "/{0}" -f $database
         $this.uri.Path = $path
     }
+
+    SetDocument ([string]$document) {
+        if ($this.database) {
+            $this.document = $document
+            $path = "/{0}/{1}" -f $this.database, $document
+            $this.uri.Path = $path
+        } else {
+            throw [System.Net.WebException] "Database isn't set."
+        }
+    }
 }
 
 # Functions of CouchDB module
