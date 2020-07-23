@@ -1343,6 +1343,10 @@ class PSCouchDBRequest {
     SetData ([string]$json) {
         $this.data = $json
     }
+
+    [string] GetData () {
+        return $this.data
+    }
 }
 
 # Functions of CouchDB module
