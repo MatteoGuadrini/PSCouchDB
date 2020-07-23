@@ -1270,6 +1270,10 @@ class PSCouchDBRequest {
         [System.IO.StreamReader] $sr = New-Object System.IO.StreamReader -ArgumentList $rs
         [string] $results = $sr.ReadToEnd()
         $resp.Close()
+        if ($this.cache) {
+            $cached = ($results | ConvertFrom-Json)
+            [void]$this.uri.Cache.Add($cached)
+        }
         return $results | ConvertFrom-Json
     }
 
