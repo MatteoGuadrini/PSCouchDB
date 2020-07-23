@@ -1224,7 +1224,7 @@ class PSCouchDBRequest {
     [PSCredential] $authorization
     [string] $parameter
     [string] $data
-    hidden [bool] $cookies
+    hidden [bool] $cache
     hidden [System.Net.WebRequest] $client
 
     # Constructor
@@ -1366,6 +1366,20 @@ class PSCouchDBRequest {
         } else {
             return 0
         }
+    }
+
+    EnableCache () {
+        $this.cache = $true
+        $c = New-Object System.Collections.ArrayList
+        Add-Member -InputObject $this.uri Cache $c
+    }
+
+    DisableCache () {
+        $this.cache = $false
+    }
+
+    ClearCache () {
+        $this.uri.Cache = New-Object System.Collections.ArrayList
     }
 }
 
