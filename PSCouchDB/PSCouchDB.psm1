@@ -1347,6 +1347,14 @@ class PSCouchDBRequest {
     [string] GetData () {
         return $this.data
     }
+
+    [int] GetStatus () {
+        if ($this.client) {
+            return $this.client.GetResponse().StatusCode
+        } else {
+            return 0
+        }
+    }
 }
 
 # Functions of CouchDB module
