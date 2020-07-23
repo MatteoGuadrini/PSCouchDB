@@ -1311,6 +1311,18 @@ class PSCouchDBRequest {
         $this.uri.UserName = "$($credential.UserName):$($credential.GetNetworkCredential().Password)"
     }
 
+    AddAuthorization ([string]$auth) {
+        # Check if string is in this format: word:word
+        if ($auth -match "^\w+\:\w+$") {
+            $newAuth = $auth -split ":"
+            [SecureString]$secStringPassword = ConvertTo-SecureString $newAuth[1] -AsPlainText -Force
+            [PSCredential]$credOject = New-Object System.Management.Automation.PSCredential ($newAuth[0], $secStringPassword)
+            $this.AddAuthorization($credOject)
+        } else {
+            throw [System.Text.RegularExpressions.RegexMatchTimeoutException]::New('Authorization string is in this format: "user:password"') 
+        }
+    }
+
     SetMethod ([string]$method) {
         $this.method = $method
     }
