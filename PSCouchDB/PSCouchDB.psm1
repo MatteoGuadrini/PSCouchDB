@@ -1231,12 +1231,14 @@ class PSCouchDBRequest {
     PSCouchDBRequest () {
         # Add uri
         $this.uri = "{0}://{1}:{2}" -f $this.protocol, $this.server, $this.port
+        Add-Member -InputObject $this.uri LastStatusCode 0
     }
 
     PSCouchDBRequest ([string]$database) {
         # Add uri
         $this.uri = "{0}://{1}:{2}/{3}" -f $this.protocol, $this.server, $this.port, $database
         $this.database = $database
+        Add-Member -InputObject $this.uri LastStatusCode 0
     }
 
     PSCouchDBRequest ([string]$database, [string]$document) {
@@ -1244,6 +1246,7 @@ class PSCouchDBRequest {
         $this.uri = "{0}://{1}:{2}/{3}/{4}" -f $this.protocol, $this.server, $this.port, $database, $document
         $this.database = $database
         $this.document = $document
+        Add-Member -InputObject $this.uri LastStatusCode 0
     }
 
     # Method
@@ -1269,6 +1272,7 @@ class PSCouchDBRequest {
             [System.Net.WebResponse] $resp = $this.client.GetResponse()
         } catch [System.Net.WebException] {
             [System.Net.HttpWebResponse] $errcode = $_.Exception.Response
+            $this.uri.LastStatusCode = $errcode.StatusCode
             throw ([PSCouchDBRequestException]::new($errcode.StatusCode)).CouchDBMessage
         }
         $rs = $resp.GetResponseStream()
@@ -1307,6 +1311,7 @@ class PSCouchDBRequest {
                 [System.Net.WebResponse] $resp = $Request.GetResponse()
             } catch [System.Net.WebException] {
                 [System.Net.HttpWebResponse] $errcode = $_.Exception.Response
+                $this.uri.LastStatusCode = $errcode.StatusCode
                 throw ([PSCouchDBRequestException]::new($errcode.StatusCode)).CouchDBMessage
             }
             $rs = $resp.GetResponseStream()
@@ -1330,6 +1335,7 @@ class PSCouchDBRequest {
             [System.Net.WebResponse] $resp = $this.client.GetResponse()
         } catch [System.Net.WebException] {
             [System.Net.HttpWebResponse] $errcode = $_.Exception.Response
+            $this.uri.LastStatusCode = $errcode.StatusCode
             throw ([PSCouchDBRequestException]::new($errcode.StatusCode)).CouchDBMessage
         }
         $resp.Close()
@@ -1413,11 +1419,7 @@ class PSCouchDBRequest {
     }
 
     [int] GetStatus () {
-        if ($this.client) {
-            return $this.client.GetResponse().StatusCode
-        } else {
-            return 0
-        }
+        return $this.uri.LastStatusCode
     }
 
     EnableCache () {
