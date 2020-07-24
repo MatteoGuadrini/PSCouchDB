@@ -1418,6 +1418,21 @@ class PSCouchDBRequest {
     ClearCache () {
         $this.uri.Cache = New-Object System.Collections.ArrayList
     }
+
+    [uri] GetUri () {
+        return $this.uri.Uri
+    }
+
+    [string] ToString () {
+        $str = "
+{0} {1}
+Host: {2}:{3}
+Param: {4}
+
+{5}
+        " -f $this.method, $this.uri.Path, $this.server, $this.port, $this.uri.Query, $this.data
+        return $str
+    }
 }
 
 # Functions of CouchDB module
