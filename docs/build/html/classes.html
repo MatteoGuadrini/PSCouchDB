@@ -97,9 +97,29 @@
 <li class="toctree-l1"><a class="reference internal" href="cmdlets.html">Cmdlets and aliases</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Classes</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#create-an-pscouchdb-object">Create an PSCouchDB object</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#pscouchdbquery-class">PSCouchDBQuery class</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#pscouchdbrequest-class">PSCouchDBRequest class</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#properties">Properties</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#methods">Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#build-a-request">Build a request</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#set-server">Set server</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#set-port">Set port</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#set-ssl">Set SSL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#set-a-method">Set a method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#add-authorization">Add authorization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#set-database">Set database</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#set-document">Set document</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#set-parameter">Set parameter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#set-data">Set data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#get-uri">Get Uri</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#get-request-header">Get request header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#get-status-code">Get status code</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#get-request">Get request</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#get-request-in-background">Get request in background</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#pscouchdbquery-class">PSCouchDBQuery class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">Methods</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#build-a-query">Build a query</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#work-with-selector">Work with selector</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#add-selector">Add selector</a></li>
@@ -130,8 +150,8 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#pscouchdbdocument-class">PSCouchDBDocument class</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id1">Properties</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id2">Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">Properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">Methods</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#build-a-document">Build a document</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#add-element-to-document">Add element to document</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#modify-element-to-document">Modify element to document</a></li>
@@ -147,24 +167,24 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#pscouchdbattachment-class">PSCouchDBAttachment class</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id3">Properties</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id4">Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">Properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">Methods</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#build-an-attachment">Build an attachment</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#get-content-of-an-attachment">Get content of an attachment</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#attach-a-file-to-document">Attach a file to document</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#pscouchdbbulkdocument-class">PSCouchDBBulkDocument class</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id5">Properties</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id6">Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">Properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">Methods</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#create-bulk-document">Create bulk document</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#add-document">Add document</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#remove-document">Remove document</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#pscouchdbsecurity-class">PSCouchDBSecurity class</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id7">Properties</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id8">Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">Properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">Methods</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#create-security-document">Create security document</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#get-admins">Get admins</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#get-members">Get members</a></li>
@@ -176,13 +196,13 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#pscouchdbreplication-class">PSCouchDBReplication class</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id9">Properties</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id10">Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">Properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">Methods</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#create-replication-document">Create replication document</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#set-revision">Set revision</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#set-authentication">Set authentication</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#set-ssl">Set SSL</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#set-server">Set server</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13">Set SSL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id14">Set server</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#set-cancel-operation">Set cancel operation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#set-continuous-replica">Set continuous replica</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#other-flag-for-replica">Other flag for replica</a></li>
@@ -190,8 +210,8 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#pscouchdbview-class">PSCouchDBView class</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id11">Properties</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id12">Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id15">Properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id16">Methods</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#build-a-view">Build a view</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#get-view">Get view</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#add-function">Add function</a></li>
@@ -200,8 +220,8 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#pscouchdbdesigndoc-class">PSCouchDBDesignDoc class</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id13">Properties</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id14">Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id17">Properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id18">Methods</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#build-a-design-document">Build a design document</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#work-with-views">Work with views</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#add-map-function">Add map function</a></li>
@@ -288,16 +308,187 @@
 <div class="section" id="create-an-pscouchdb-object">
 <h2>Create an PSCouchDB object<a class="headerlink" href="#create-an-pscouchdb-object" title="Permalink to this headline">¶</a></h2>
 <p>To create every object defined in PSCouchDB module, use this.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$query</span> <span class="p">=</span> <span class="nb">New-CouchDBObject</span> <span class="n">-TypeName</span> <span class="n">PSCouchDBQuery</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$query</span> <span class="p">=</span> <span class="nb">New-CouchDBObject</span> <span class="n">-TypeName</span> <span class="n">PSCouchDBRequest</span>
 <span class="nv">$query</span><span class="p">.</span><span class="n">GetType</span><span class="p">()</span>
 </pre></div>
+</div>
+</div>
+<div class="section" id="pscouchdbrequest-class">
+<h2>PSCouchDBRequest class<a class="headerlink" href="#pscouchdbrequest-class" title="Permalink to this headline">¶</a></h2>
+<p>This class is used to construct a http request object.</p>
+<div class="section" id="properties">
+<h3>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">authorization</span>    <span class="n">Property</span>   <span class="n">pscredential</span> <span class="n">authorization</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+<span class="n">data</span>             <span class="n">Property</span>   <span class="n">string</span> <span class="n">data</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+<span class="n">database</span>         <span class="n">Property</span>   <span class="n">string</span> <span class="n">database</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+<span class="n">document</span>         <span class="n">Property</span>   <span class="n">string</span> <span class="n">document</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+<span class="n">method</span>           <span class="n">Property</span>   <span class="n">string</span> <span class="n">method</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+<span class="k">parameter</span>        <span class="n">Property</span>   <span class="n">string</span> <span class="k">parameter</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+<span class="n">port</span>             <span class="n">Property</span>   <span class="n">int</span> <span class="n">port</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+<span class="n">protocol</span>         <span class="n">Property</span>   <span class="n">string</span> <span class="n">protocol</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+<span class="n">server</span>           <span class="n">Property</span>   <span class="n">string</span> <span class="n">server</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+<span class="n">uri</span>              <span class="n">Property</span>   <span class="n">System</span><span class="p">.</span><span class="n">UriBuilder</span> <span class="n">uri</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="methods">
+<h3>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">AddAuthorization</span> <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddAuthorization</span><span class="p">(</span><span class="n">pscredential</span> <span class="n">credential</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddAuthorization</span><span class="p">(</span><span class="n">string</span> <span class="n">auth</span><span class="p">)</span>
+<span class="n">ClearCache</span>       <span class="n">Method</span>     <span class="n">void</span> <span class="n">ClearCache</span><span class="p">()</span>
+<span class="n">DisableCache</span>     <span class="n">Method</span>     <span class="n">void</span> <span class="n">DisableCache</span><span class="p">()</span>
+<span class="n">EnableCache</span>      <span class="n">Method</span>     <span class="n">void</span> <span class="n">EnableCache</span><span class="p">()</span>
+<span class="n">Equals</span>           <span class="n">Method</span>     <span class="n">bool</span> <span class="n">Equals</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">obj</span><span class="p">)</span>
+<span class="n">GetData</span>          <span class="n">Method</span>     <span class="n">string</span> <span class="n">GetData</span><span class="p">()</span>
+<span class="n">GetHashCode</span>      <span class="n">Method</span>     <span class="n">int</span> <span class="n">GetHashCode</span><span class="p">()</span>
+<span class="n">GetHeader</span>        <span class="n">Method</span>     <span class="n">string</span> <span class="n">GetHeader</span><span class="p">()</span>
+<span class="n">GetStatus</span>        <span class="n">Method</span>     <span class="n">int</span> <span class="n">GetStatus</span><span class="p">()</span>
+<span class="n">GetType</span>          <span class="n">Method</span>     <span class="nb">type </span><span class="n">GetType</span><span class="p">()</span>
+<span class="n">GetUri</span>           <span class="n">Method</span>     <span class="n">uri</span> <span class="n">GetUri</span><span class="p">()</span>
+<span class="n">Request</span>          <span class="n">Method</span>     <span class="n">psobject</span> <span class="n">Request</span><span class="p">()</span>
+<span class="n">RequestAsJob</span>     <span class="n">Method</span>     <span class="n">void</span> <span class="n">RequestAsJob</span><span class="p">(</span><span class="n">string</span> <span class="n">name</span><span class="p">)</span>
+<span class="n">SetData</span>          <span class="n">Method</span>     <span class="n">void</span> <span class="n">SetData</span><span class="p">(</span><span class="n">string</span> <span class="n">json</span><span class="p">)</span>
+<span class="n">SetDatabase</span>      <span class="n">Method</span>     <span class="n">void</span> <span class="n">SetDatabase</span><span class="p">(</span><span class="n">string</span> <span class="n">database</span><span class="p">)</span>
+<span class="n">SetDocument</span>      <span class="n">Method</span>     <span class="n">void</span> <span class="n">SetDocument</span><span class="p">(</span><span class="n">string</span> <span class="n">document</span><span class="p">)</span>
+<span class="n">SetMethod</span>        <span class="n">Method</span>     <span class="n">void</span> <span class="n">SetMethod</span><span class="p">(</span><span class="n">string</span> <span class="n">method</span><span class="p">)</span>
+<span class="n">SetParameter</span>     <span class="n">Method</span>     <span class="n">void</span> <span class="n">SetParameter</span><span class="p">(</span><span class="n">array</span> <span class="k">parameter</span><span class="p">)</span>
+<span class="n">SetPort</span>          <span class="n">Method</span>     <span class="n">void</span> <span class="n">SetPort</span><span class="p">(</span><span class="n">int</span> <span class="n">port</span><span class="p">)</span>
+<span class="n">SetServer</span>        <span class="n">Method</span>     <span class="n">void</span> <span class="n">SetServer</span><span class="p">(</span><span class="n">string</span> <span class="n">server</span><span class="p">)</span>
+<span class="n">SetSsl</span>           <span class="n">Method</span>     <span class="n">void</span> <span class="n">SetSsl</span><span class="p">(),</span> <span class="n">void</span> <span class="n">SetSsl</span><span class="p">(</span><span class="n">int</span> <span class="n">port</span><span class="p">)</span>
+<span class="n">ToString</span>         <span class="n">Method</span>     <span class="n">string</span> <span class="n">ToString</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="build-a-request">
+<h3>Build a request<a class="headerlink" href="#build-a-request" title="Permalink to this headline">¶</a></h3>
+<p>To create a <code class="docutils literal notranslate"><span class="pre">PSCouchDBRequest</span></code> object, just do the following.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">using</span> <span class="n">module</span> <span class="n">PSCouchDB</span>
+<span class="nv">$req</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">-TypeName</span> <span class="n">PSCouchDBRequest</span>                            <span class="c"># GET http://localhost:5984/</span>
+<span class="nv">$req</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">-TypeName</span> <span class="n">PSCouchDBRequest</span> <span class="n">-ArgumentList</span> <span class="s1">&#39;db&#39;</span>         <span class="c"># GET http://localhost:5984/db</span>
+<span class="nv">$req</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">-TypeName</span> <span class="n">PSCouchDBRequest</span> <span class="n">-ArgumentList</span> <span class="s1">&#39;db&#39;</span><span class="p">,</span><span class="s1">&#39;doc1&#39;</span>  <span class="c"># GET http://localhost:5984/db/doc1</span>
+<span class="nv">$req</span><span class="p">.</span><span class="n">GetType</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="set-server">
+<h3>Set server<a class="headerlink" href="#set-server" title="Permalink to this headline">¶</a></h3>
+<p>To set a different server (default is localhost).</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$req</span><span class="p">.</span><span class="n">SetServer</span><span class="p">(</span><span class="s1">&#39;cdb1.local&#39;</span><span class="p">)</span>    <span class="c"># FQDN</span>
+<span class="nv">$req</span><span class="p">.</span><span class="n">SetServer</span><span class="p">(</span><span class="s1">&#39;127.0.0.15&#39;</span><span class="p">)</span>    <span class="c"># ip address</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="set-port">
+<h3>Set port<a class="headerlink" href="#set-port" title="Permalink to this headline">¶</a></h3>
+<p>To set a different port (default is 5984).</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$req</span><span class="p">.</span><span class="n">SetPort</span><span class="p">(</span><span class="n">8080</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="set-ssl">
+<h3>Set SSL<a class="headerlink" href="#set-ssl" title="Permalink to this headline">¶</a></h3>
+<p>To set a SSL https.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$req</span><span class="p">.</span><span class="n">SetSsl</span><span class="p">()</span>       <span class="c"># https on 6984</span>
+<span class="nv">$req</span><span class="p">.</span><span class="n">SetSsl</span><span class="p">(</span><span class="n">443</span><span class="p">)</span>    <span class="c"># https on 443</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="set-a-method">
+<h3>Set a method<a class="headerlink" href="#set-a-method" title="Permalink to this headline">¶</a></h3>
+<p>Default method is GET. To set other method, run this.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$req</span><span class="p">.</span><span class="n">SetMethod</span><span class="p">(</span><span class="s1">&#39;PUT&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="add-authorization">
+<h3>Add authorization<a class="headerlink" href="#add-authorization" title="Permalink to this headline">¶</a></h3>
+<p>To add authorization with two methods.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$req</span><span class="p">.</span><span class="n">AddAuthorization</span><span class="p">(</span><span class="s1">&#39;admin:password&#39;</span><span class="p">)</span>     <span class="c"># string version</span>
+<span class="no">[string]</span><span class="nv">$userName</span> <span class="p">=</span> <span class="s1">&#39;admin&#39;</span>
+<span class="no">[string]</span><span class="nv">$userPassword</span> <span class="p">=</span> <span class="s1">&#39;password&#39;</span>
+<span class="no">[securestring]</span><span class="nv">$secStringPassword</span> <span class="p">=</span> <span class="nb">ConvertTo-SecureString</span> <span class="nv">$userPassword</span> <span class="n">-AsPlainText</span> <span class="n">-Force</span>
+<span class="no">[pscredential]</span><span class="nv">$credOject</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">System</span><span class="p">.</span><span class="n">Management</span><span class="p">.</span><span class="n">Automation</span><span class="p">.</span><span class="n">PSCredential</span> <span class="p">(</span><span class="nv">$userName</span><span class="p">,</span> <span class="nv">$secStringPassword</span><span class="p">)</span>
+<span class="nv">$req</span><span class="p">.</span><span class="n">AddAuthorization</span><span class="p">(</span><span class="nv">$credOject</span><span class="p">)</span>           <span class="c"># PSCredential object version</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="set-database">
+<h3>Set database<a class="headerlink" href="#set-database" title="Permalink to this headline">¶</a></h3>
+<p>To set a database on the URI object.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$req</span><span class="p">.</span><span class="n">SetDatabase</span><span class="p">(</span><span class="s1">&#39;db&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="set-document">
+<h3>Set document<a class="headerlink" href="#set-document" title="Permalink to this headline">¶</a></h3>
+<p>To set a document on the URI object.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$req</span><span class="p">.</span><span class="n">SetDocument</span><span class="p">(</span><span class="s1">&#39;doc&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="set-parameter">
+<h3>Set parameter<a class="headerlink" href="#set-parameter" title="Permalink to this headline">¶</a></h3>
+<p>To set a parameter on the URI object.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$req</span><span class="p">.</span><span class="n">SetParameter</span><span class="p">(</span><span class="s1">&#39;param&#39;</span><span class="p">)</span>                  <span class="c"># single param string</span>
+<span class="nv">$req</span><span class="p">.</span><span class="n">SetParameter</span><span class="p">(</span><span class="s1">&#39;param1=true&#39;</span><span class="p">)</span>            <span class="c"># key=value param string</span>
+<span class="nv">$req</span><span class="p">.</span><span class="n">SetParameter</span><span class="p">(@(</span><span class="s1">&#39;param&#39;</span><span class="p">,</span><span class="s1">&#39;param1=true&#39;</span><span class="p">))</span> <span class="c"># array param</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="set-data">
+<h3>Set data<a class="headerlink" href="#set-data" title="Permalink to this headline">¶</a></h3>
+<p>To set a json data.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$data</span> <span class="p">=</span> <span class="sh">@&quot;</span>
+<span class="sh">{</span>
+<span class="sh">    &quot;doc_ids&quot;: [</span>
+<span class="sh">        &quot;test&quot;</span>
+<span class="sh">    ]</span>
+<span class="sh">}</span>
+<span class="sh">&quot;@</span>
+<span class="nv">$req</span><span class="p">.</span><span class="n">SetData</span><span class="p">(</span><span class="nv">$Data</span><span class="p">)</span>
+<span class="nv">$req</span><span class="p">.</span><span class="n">GetData</span><span class="p">()</span>      <span class="c"># verify json data</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-uri">
+<h3>Get Uri<a class="headerlink" href="#get-uri" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$req</span><span class="p">.</span><span class="n">GetUri</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-request-header">
+<h3>Get request header<a class="headerlink" href="#get-request-header" title="Permalink to this headline">¶</a></h3>
+<p>To get a request header.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$req</span><span class="p">.</span><span class="n">GetHeader</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-status-code">
+<h3>Get status code<a class="headerlink" href="#get-status-code" title="Permalink to this headline">¶</a></h3>
+<p>To get a status code of last request.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$req</span><span class="p">.</span><span class="n">GetStatus</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-request">
+<h3>Get request<a class="headerlink" href="#get-request" title="Permalink to this headline">¶</a></h3>
+<p>To get a result of request.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$req</span><span class="p">.</span><span class="n">Request</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-request-in-background">
+<h3>Get request in background<a class="headerlink" href="#get-request-in-background" title="Permalink to this headline">¶</a></h3>
+<p>To send a request in background like daemon or job.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$req</span><span class="p">.</span><span class="n">RequestAsJob</span><span class="p">(</span><span class="s1">&#39;name of job&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 </div>
 <div class="section" id="pscouchdbquery-class">
 <h2>PSCouchDBQuery class<a class="headerlink" href="#pscouchdbquery-class" title="Permalink to this headline">¶</a></h2>
 <p>This class is used to construct a query object that is compatible with Mango core.</p>
-<div class="section" id="properties">
-<h3>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id1">
+<h3>Properties<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">bookmark</span>            <span class="n">Property</span>   <span class="n">string</span> <span class="n">bookmark</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
 <span class="n">execution_stats</span>     <span class="n">Property</span>   <span class="n">bool</span> <span class="n">execution_stats</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
 <span class="n">fields</span>              <span class="n">Property</span>   <span class="n">array</span> <span class="n">fields</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
@@ -313,8 +504,8 @@
 </pre></div>
 </div>
 </div>
-<div class="section" id="methods">
-<h3>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id2">
+<h3>Methods<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">AddFields</span>           <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddFields</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">fields</span><span class="p">)</span>
 <span class="n">AddIndexies</span>         <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddIndexies</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">indexies</span><span class="p">)</span>
 <span class="n">AddLogicalOperator</span>  <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddLogicalOperator</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">operator</span><span class="p">)</span>
@@ -584,16 +775,16 @@ by specifying the selector and the value that you want to associate.</p>
 <div class="section" id="pscouchdbdocument-class">
 <h2>PSCouchDBDocument class<a class="headerlink" href="#pscouchdbdocument-class" title="Permalink to this headline">¶</a></h2>
 <p>This class is used to construct a documents.</p>
-<div class="section" id="id1">
-<h3>Properties<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id3">
+<h3>Properties<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">_id</span>           <span class="n">Property</span>   <span class="n">string</span> <span class="n">_id</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
 <span class="n">_rev</span>          <span class="n">Property</span>   <span class="n">string</span> <span class="n">_rev</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
 <span class="n">_attachments</span>  <span class="n">Property</span>   <span class="n">hashtable</span> <span class="n">_attachments</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="id2">
-<h3>Methods<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id4">
+<h3>Methods<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">AddAttachment</span>        <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddAttachment</span><span class="p">(</span><span class="n">PSCouchDBAttachment</span> <span class="n">attachment</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddAttachment</span><span class="p">(</span><span class="n">string</span> <span class="n">attachment</span><span class="p">)</span>
 <span class="n">Equals</span>               <span class="n">Method</span>     <span class="n">bool</span> <span class="n">Equals</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">obj</span><span class="p">)</span>
 <span class="n">FromJson</span>             <span class="n">Method</span>     <span class="n">hashtable</span> <span class="n">FromJson</span><span class="p">(</span><span class="n">string</span> <span class="n">json</span><span class="p">)</span>
@@ -691,15 +882,15 @@ by specifying the selector and the value that you want to associate.</p>
 <div class="section" id="pscouchdbattachment-class">
 <h2>PSCouchDBAttachment class<a class="headerlink" href="#pscouchdbattachment-class" title="Permalink to this headline">¶</a></h2>
 <p>This class is used to construct an attachment documents.</p>
-<div class="section" id="id3">
-<h3>Properties<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id5">
+<h3>Properties<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">content_type</span> <span class="n">Property</span>   <span class="n">string</span> <span class="n">content_type</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
 <span class="n">filename</span>     <span class="n">Property</span>   <span class="n">string</span> <span class="n">filename</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="id4">
-<h3>Methods<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id6">
+<h3>Methods<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">Equals</span>       <span class="n">Method</span>     <span class="n">bool</span> <span class="n">Equals</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">obj</span><span class="p">)</span>
 <span class="n">GetData</span>      <span class="n">Method</span>     <span class="n">string</span> <span class="n">GetData</span><span class="p">()</span>
 <span class="n">SaveData</span>     <span class="n">Method</span>     <span class="n">void</span> <span class="n">GetData</span><span class="p">()</span>
@@ -740,14 +931,14 @@ by specifying the selector and the value that you want to associate.</p>
 <div class="section" id="pscouchdbbulkdocument-class">
 <h2>PSCouchDBBulkDocument class<a class="headerlink" href="#pscouchdbbulkdocument-class" title="Permalink to this headline">¶</a></h2>
 <p>This class is used to construct an bulk documents.</p>
-<div class="section" id="id5">
-<h3>Properties<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id7">
+<h3>Properties<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">docs</span>           <span class="n">Property</span>   <span class="n">PSCouchDBDocument</span><span class="p">[]</span> <span class="n">docs</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="id6">
-<h3>Methods<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id8">
+<h3>Methods<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">AddDocument</span>    <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddDocument</span><span class="p">(</span><span class="n">string</span> <span class="n">doc</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddDocument</span><span class="p">(</span><span class="n">PSCouchDBDocument</span> <span class="n">doc</span><span class="p">)</span>
 <span class="n">Equals</span>         <span class="n">Method</span>     <span class="n">bool</span> <span class="n">Equals</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">obj</span><span class="p">)</span>
 <span class="n">GetDocuments</span>   <span class="n">Method</span>     <span class="n">PSCouchDBDocument</span><span class="p">[]</span> <span class="n">GetDocuments</span><span class="p">()</span>
@@ -800,15 +991,15 @@ by specifying the selector and the value that you want to associate.</p>
 <div class="section" id="pscouchdbsecurity-class">
 <h2>PSCouchDBSecurity class<a class="headerlink" href="#pscouchdbsecurity-class" title="Permalink to this headline">¶</a></h2>
 <p>This class is used to construct a security database documents.</p>
-<div class="section" id="id7">
-<h3>Properties<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id9">
+<h3>Properties<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">admins</span>           <span class="n">Property</span>   <span class="n">psobject</span> <span class="n">admins</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
 <span class="n">members</span>          <span class="n">Property</span>   <span class="n">psobject</span> <span class="n">members</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="id8">
-<h3>Methods<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id10">
+<h3>Methods<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">AddAdmins</span>        <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddAdmins</span><span class="p">(</span><span class="n">string</span> <span class="n">name</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddAdmins</span><span class="p">(</span><span class="n">array</span> <span class="n">name</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddAdmins</span><span class="p">(</span><span class="n">string</span> <span class="n">name</span><span class="p">,</span> <span class="n">str</span><span class="p">...</span>
 <span class="n">AddMembers</span>       <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddMembers</span><span class="p">(</span><span class="n">string</span> <span class="n">name</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddMembers</span><span class="p">(</span><span class="n">array</span> <span class="n">name</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddMembers</span><span class="p">(</span><span class="n">string</span> <span class="n">name</span><span class="p">,</span> <span class="p">...</span>
 <span class="n">Equals</span>           <span class="n">Method</span>     <span class="n">bool</span> <span class="n">Equals</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">obj</span><span class="p">)</span>
@@ -895,8 +1086,8 @@ by specifying the selector and the value that you want to associate.</p>
 <div class="section" id="pscouchdbreplication-class">
 <h2>PSCouchDBReplication class<a class="headerlink" href="#pscouchdbreplication-class" title="Permalink to this headline">¶</a></h2>
 <p>This class is used to construct a replica database documents.</p>
-<div class="section" id="id9">
-<h3>Properties<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id11">
+<h3>Properties<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">continuous</span>              <span class="n">Property</span>   <span class="n">bool</span> <span class="n">continuous</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
 <span class="n">source</span>                  <span class="n">Property</span>   <span class="n">System</span><span class="p">.</span><span class="n">UriBuilder</span> <span class="n">source</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
 <span class="n">target</span>                  <span class="n">Property</span>   <span class="n">System</span><span class="p">.</span><span class="n">UriBuilder</span> <span class="n">target</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
@@ -905,8 +1096,8 @@ by specifying the selector and the value that you want to associate.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="id10">
-<h3>Methods<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id12">
+<h3>Methods<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">AddDocIds</span>               <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddDocIds</span><span class="p">(</span><span class="n">array</span> <span class="n">ids</span><span class="p">)</span>
 <span class="n">AddSourceAuthentication</span> <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddSourceAuthentication</span><span class="p">(</span><span class="n">string</span> <span class="n">user</span><span class="p">,</span> <span class="n">string</span> <span class="n">passwd</span><span class="p">)</span>
 <span class="n">AddTargetAuthentication</span> <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddTargetAuthentication</span><span class="p">(</span><span class="n">string</span> <span class="n">user</span><span class="p">,</span> <span class="n">string</span> <span class="n">passwd</span><span class="p">)</span>
@@ -959,16 +1150,16 @@ by specifying the selector and the value that you want to associate.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="set-ssl">
-<h3>Set SSL<a class="headerlink" href="#set-ssl" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id13">
+<h3>Set SSL<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
 <p>Set SSL (https protocol) for source and target database.</p>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$rep</span><span class="p">.</span><span class="n">SetSourceSsl</span><span class="p">()</span> <span class="c"># Source</span>
 <span class="nv">$rep</span><span class="p">.</span><span class="n">SetTargetSsl</span><span class="p">(</span><span class="n">443</span><span class="p">)</span> <span class="c"># Target, specifying port</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="set-server">
-<h3>Set server<a class="headerlink" href="#set-server" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id14">
+<h3>Set server<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
 <p>Set server (default localhost) for source and target database.</p>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$rep</span><span class="p">.</span><span class="n">SetSourceServer</span><span class="p">(</span><span class="s1">&#39;db1.local&#39;</span><span class="p">)</span> <span class="c"># Source</span>
 <span class="nv">$rep</span><span class="p">.</span><span class="n">SetTargetServer</span><span class="p">(</span><span class="s1">&#39;db2.local&#39;</span><span class="p">)</span> <span class="c"># Target, specifying port</span>
@@ -1016,8 +1207,8 @@ by specifying the selector and the value that you want to associate.</p>
 <div class="section" id="pscouchdbview-class">
 <h2>PSCouchDBView class<a class="headerlink" href="#pscouchdbview-class" title="Permalink to this headline">¶</a></h2>
 <p>This class is used to construct a view.</p>
-<div class="section" id="id11">
-<h3>Properties<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id15">
+<h3>Properties<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">map</span>                   <span class="n">Property</span>   <span class="n">string</span> <span class="n">map</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
 <span class="n">name</span>                  <span class="n">Property</span>   <span class="n">string</span> <span class="n">name</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
 <span class="n">reduce</span>                <span class="n">Property</span>   <span class="n">string</span> <span class="n">reduce</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
@@ -1025,8 +1216,8 @@ by specifying the selector and the value that you want to associate.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="id12">
-<h3>Methods<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id16">
+<h3>Methods<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">AddMapFunction</span>        <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddMapFunction</span><span class="p">(</span><span class="n">string</span> <span class="k">function</span><span class="p">)</span>
 <span class="n">AddReduceFunction</span>     <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddReduceFunction</span><span class="p">(</span><span class="n">string</span> <span class="k">function</span><span class="p">)</span>
 <span class="n">BuilMapFunction</span>       <span class="n">Method</span>     <span class="n">string</span> <span class="no">[PSCouchDBView]</span><span class="p">::</span><span class="n">BuilMapFunction</span><span class="p">(</span><span class="n">hashtable</span> <span class="n">condition</span><span class="p">)</span>
@@ -1109,8 +1300,8 @@ Before, create a condition hashtable.</p>
 <div class="section" id="pscouchdbdesigndoc-class">
 <h2>PSCouchDBDesignDoc class<a class="headerlink" href="#pscouchdbdesigndoc-class" title="Permalink to this headline">¶</a></h2>
 <p>This class is used to construct a design documents, simple or complex.</p>
-<div class="section" id="id13">
-<h3>Properties<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id17">
+<h3>Properties<a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">validate_doc_update</span>  <span class="n">Property</span>   <span class="n">string</span> <span class="n">validate_doc_update</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
 <span class="n">views</span>                <span class="n">Property</span>   <span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">views</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
 <span class="n">_attachments</span>         <span class="n">Property</span>   <span class="n">hashtable</span> <span class="n">_attachments</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
@@ -1119,8 +1310,8 @@ Before, create a condition hashtable.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="id14">
-<h3>Methods<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id18">
+<h3>Methods<a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">AddAttachment</span>        <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddAttachment</span><span class="p">(</span><span class="n">PSCouchDBAttachment</span> <span class="n">attachment</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddAttachment</span><span class="p">(</span><span class="n">string</span> <span class="n">attach</span><span class="p">...</span>
 <span class="n">AddView</span>              <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddView</span><span class="p">(</span><span class="n">PSCouchDBView</span> <span class="n">view</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddView</span><span class="p">(</span><span class="n">string</span> <span class="n">name</span><span class="p">,</span> <span class="n">string</span> <span class="n">map</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddVie</span><span class="p">...</span>
 <span class="n">Equals</span>               <span class="n">Method</span>     <span class="n">bool</span> <span class="n">Equals</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="n">Object</span> <span class="n">obj</span><span class="p">)</span>
