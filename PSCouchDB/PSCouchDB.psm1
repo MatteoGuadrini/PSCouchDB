@@ -1256,13 +1256,13 @@ class PSCouchDBRequest {
         # Check authorization
         if ($this.authorization) {
             $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("$($this.uri.UserName):$($this.uri.Password)")))
-            $this.client.Headers.Add("Authorization", ("Basic {0}" -f $base64AuthInfo));
+            $this.client.Headers.Add("Authorization", ("Basic {0}" -f $base64AuthInfo))
         }
         # Check data
         if ($this.data) {
-            $Body = [byte[]][char[]]$this.data;
-            $Stream = $this.client.GetRequestStream();
-            $Stream.Write($Body, 0, $Body.Length);
+            $Body = [byte[]][char[]]$this.data
+            $Stream = $this.client.GetRequestStream()
+            $Stream.Write($Body, 0, $Body.Length)
             $Stream.Close()
         }
         [System.Net.WebResponse] $resp = $this.client.GetResponse()
@@ -1270,11 +1270,44 @@ class PSCouchDBRequest {
         [System.IO.StreamReader] $sr = New-Object System.IO.StreamReader -ArgumentList $rs
         [string] $results = $sr.ReadToEnd()
         $resp.Close()
+        # Check cache
         if ($this.cache) {
             $cached = ($results | ConvertFrom-Json)
             [void]$this.uri.Cache.Add($cached)
         }
         return $results | ConvertFrom-Json
+    }
+
+    RequestAsJob ([string]$name) {
+        $job = Start-Job -Name $name {
+            param($uri, $method, $authorization, $data)
+            # Create web client
+            $Request = [System.Net.WebRequest]::Create($uri)
+            $Request.ContentType = "application/json; charset=utf-8";
+            $Request.Method = $method
+            $Request.UserAgent = "User-Agent: PSCouchDB (compatible; MSIE 7.0;)"
+            # Check authorization
+            if ($authorization) {
+                $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("$($authorization.UserName):$($authorization.GetNetworkCredential().Password)")))
+                $Request.Headers.Add("Authorization", ("Basic {0}" -f $base64AuthInfo))
+            }
+            # Check data
+            if ($data) {
+                $Body = [byte[]][char[]]$data
+                $Stream = $Request.GetRequestStream()
+                $Stream.Write($Body, 0, $Body.Length)
+                $Stream.Close()
+            }
+            [System.Net.WebResponse] $resp = $Request.GetResponse()
+            $rs = $resp.GetResponseStream()
+            [System.IO.StreamReader] $sr = New-Object System.IO.StreamReader -ArgumentList $rs
+            [string] $results = $sr.ReadToEnd()
+            $resp.Close()
+            return $results | ConvertFrom-Json
+        } -ArgumentList $this.uri.Uri, $this.method, $this.authorization, $this.data
+        Register-TemporaryEvent $job "StateChanged" -Action {
+            Write-Host -ForegroundColor Green "#$($sender.Id) ($($sender.Name)) complete."
+        }
     }
 
     [string] GetHeader () {
