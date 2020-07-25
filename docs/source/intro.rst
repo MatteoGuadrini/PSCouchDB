@@ -39,7 +39,7 @@ Installation by git from Github.
     git clone https://github.com/MatteoGuadrini/PSCouchDB.git
     cd PSCouchDB
     # for Windows
-    copy /Y PSCouchDB %Windir%\System32\WindowsPowerShell\v1.0\Modules
+    copy /Y PSCouchDB %Windir%\System32\WindowsPowerShell\v1.0\Modules\PSCouchDB
     # for Unix
     cp -var PSCouchDB /usr/local/share/powershell/Modules
 

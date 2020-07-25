@@ -209,6 +209,10 @@ class PSCouchDBAttachment {
         $this.GetData() | Out-File -FilePath $file -Encoding utf8
     }
 
+    [byte[]] GetRawData () {
+        return [System.Convert]::FromBase64String($this.data)
+    }
+
     [string] static ConfirmMime ([string]$filename) {
         $extension = [System.IO.Path]::GetExtension($filename)
         $mime = switch ($extension) {
@@ -679,17 +683,17 @@ class PSCouchDBView {
         # Substitute variable in hashtable; the pattern is {NAME}
         $currentIndex = 0
         $replacementList = @()
-        if (-not($condition.ContainsKey('EMITDOC'))) {$condition.Add('EMITDOC', 'doc')}
-        foreach($key in $condition.Keys){
+        if (-not($condition.ContainsKey('EMITDOC'))) { $condition.Add('EMITDOC', 'doc') }
+        foreach ($key in $condition.Keys) {
             # Build function
             switch ($key) {
-                'EQUAL' {if ($condition.ContainsKey('EQUEMIT')) {$fun += 'if ({EQUAL}) {{emit({EQUEMIT});}}'} else {$fun += 'if ({EQUAL}) {{emit({EMITDOC});}}'}}
-                'MINIMUM' {if ($condition.ContainsKey('MINEMIT')) {$fun += 'if ({MINIMUM}) {{emit({MINEMIT});}}'} else {$fun += 'if ({MINIMUM}) {{emit({EMITDOC});}}'}}
-                'MAXIMUM' {if ($condition.ContainsKey('MAXEMIT')) {$fun += 'if ({MAXIMUM}) {{emit({MAXEMIT});}}'} else {$fun += 'if ({MAXIMUM}) {{emit({EMITDOC});}}'}}
+                'EQUAL' { if ($condition.ContainsKey('EQUEMIT')) { $fun += 'if ({EQUAL}) {{emit({EQUEMIT});}}' } else { $fun += 'if ({EQUAL}) {{emit({EMITDOC});}}' } }
+                'MINIMUM' { if ($condition.ContainsKey('MINEMIT')) { $fun += 'if ({MINIMUM}) {{emit({MINEMIT});}}' } else { $fun += 'if ({MINIMUM}) {{emit({EMITDOC});}}' } }
+                'MAXIMUM' { if ($condition.ContainsKey('MAXEMIT')) { $fun += 'if ({MAXIMUM}) {{emit({MAXEMIT});}}' } else { $fun += 'if ({MAXIMUM}) {{emit({EMITDOC});}}' } }
             }
             $inputPattern = '{(.*)' + $key + '(.*)}'
             $replacementPattern = '{${1}' + $currentIndex + '${2}}'
-            $fun = $fun -replace $inputPattern,$replacementPattern
+            $fun = $fun -replace $inputPattern, $replacementPattern
             $replacementList += $condition[$key]
             $currentIndex++
         }
@@ -766,7 +770,7 @@ class PSCouchDBDesignDoc : PSCouchDBDocument {
     AddView ([PSCouchDBView]$view) {
         if ($this.views -notcontains $view) {
             [void] $this.views.Add($view)
-            if (-not($this.doc.ContainsKey('views'))) {$this.doc.Add('views', @{})}
+            if (-not($this.doc.ContainsKey('views'))) { $this.doc.Add('views', @{}) }
             $this.doc.views.Add($view.name, $view.GetView())
         }
     }
@@ -881,7 +885,7 @@ class PSCouchDBBulkDocument {
     }
 
     [string] ToString () {
-        [hashtable] $documents = @{docs = @()}
+        [hashtable] $documents = @{docs = @() }
         foreach ($doc in $this.docs) {
             $documents.docs += $doc.GetDocument()
         }
@@ -1089,7 +1093,7 @@ class PSCouchDBReplication {
 
     SetSourceSsl () {
         $this.source.Scheme = "https"
-        $this.source.Port = 5986
+        $this.source.Port = 6984
         $this.replicator['source'] = [uri] $this.source.Uri
     }
 
@@ -1101,7 +1105,7 @@ class PSCouchDBReplication {
 
     SetTargetSsl () {
         $this.target.Scheme = "https"
-        $this.target.Port = 5986
+        $this.target.Port = 6984
         $this.replicator['target'] = [uri] $this.target.Uri
     }
 
@@ -1193,6 +1197,328 @@ class PSCouchDBReplication {
         return $this.ToJson()
     }
 
+}
+
+class PSCouchDBRequest {
+    <#
+    .SYNOPSIS
+    CouchDB web request
+    .DESCRIPTION
+    Class than representing the CouchDB web request
+    .EXAMPLE
+    using module PSCouchDB
+    # Get database info
+    $req = New-Object PSCouchDBRequest -ArgumentList 'db'
+    # GET http://localhost:5984/db
+    $req.Request()
+    # remote replication
+    $req = New-Object PSCouchDBRequest -ArgumentList 'db','doc'
+    # GET http://localhost:5984/db/doc
+    $req.Request()
+    #>
+    # Propetries
+    [System.UriBuilder] $uri
+    [ValidateSet("HEAD", "GET", "PUT", "DELETE", "POST")]
+    [string] $method = 'GET'
+    [string] $protocol = 'http'
+    [string] $server = 'localhost'
+    [int] $port = 5984
+    [string] $database
+    [string] $document
+    [PSCouchDBAttachment] $attachment
+    [PSCredential] $authorization
+    [string] $parameter
+    [string] $data
+    hidden [bool] $cache
+    hidden [System.Net.WebRequest] $client
+
+    # Constructor
+    PSCouchDBRequest () {
+        # Add uri
+        $this.uri = "{0}://{1}:{2}" -f $this.protocol, $this.server, $this.port
+        Add-Member -InputObject $this.uri LastStatusCode 0
+    }
+
+    PSCouchDBRequest ([string]$database) {
+        # Add uri
+        $this.uri = "{0}://{1}:{2}/{3}" -f $this.protocol, $this.server, $this.port, $database
+        $this.database = $database
+        Add-Member -InputObject $this.uri LastStatusCode 0
+    }
+
+    PSCouchDBRequest ([string]$database, [string]$document) {
+        # Add uri
+        $this.uri = "{0}://{1}:{2}/{3}/{4}" -f $this.protocol, $this.server, $this.port, $database, $document
+        $this.database = $database
+        $this.document = $document
+        Add-Member -InputObject $this.uri LastStatusCode 0
+    }
+
+    # Method
+    [PSCustomObject] Request () {
+        # Create web client
+        $this.client = [System.Net.WebRequest]::Create($this.uri.Uri)
+        $this.client.ContentType = "application/json; charset=utf-8";
+        $this.client.Method = $this.method
+        $this.client.UserAgent = "User-Agent: PSCouchDB (compatible; MSIE 7.0;)"
+        # Check authorization
+        if ($this.authorization) {
+            $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("$($this.uri.UserName):$($this.uri.Password)")))
+            $this.client.Headers.Add("Authorization", ("Basic {0}" -f $base64AuthInfo))
+        }
+        # Check data
+        if ($this.data -or $this.attachment) {
+            $Stream = $this.client.GetRequestStream()
+            if ($this.data) {
+                $Body = [byte[]][char[]]$this.data
+                $Stream.Write($Body, 0, $Body.Length)
+            }
+            # Check attachment
+            elseif ($this.attachment) {
+                $this.client.ContentType = $this.attachment.content_type
+                $Body = [byte[]]$this.attachment.GetRawData()
+                $Stream.Write($Body, 0, $Body.Length)
+            }
+            $Stream.Close()
+        }
+        try {
+            [System.Net.WebResponse] $resp = $this.client.GetResponse()
+            $this.uri.LastStatusCode = $this.client.GetResponse().StatusCode
+        } catch [System.Net.WebException] {
+            [System.Net.HttpWebResponse] $errcode = $_.Exception.Response
+            $this.uri.LastStatusCode = $errcode.StatusCode
+            throw ([PSCouchDBRequestException]::new($errcode.StatusCode)).CouchDBMessage
+        }
+        $rs = $resp.GetResponseStream()
+        [System.IO.StreamReader] $sr = New-Object System.IO.StreamReader -ArgumentList $rs
+        [string] $results = $sr.ReadToEnd()
+        $resp.Close()
+        # Check cache
+        if ($this.cache) {
+            $cached = ($results | ConvertFrom-Json)
+            [void]$this.uri.Cache.Add($cached)
+        }
+        if ($results -match "^{.*}$") {
+            return $results | ConvertFrom-Json
+        } else {
+            return [PSCustomObject]@{results = $results }
+        }
+    }
+
+    RequestAsJob ([string]$name) {
+        $job = Start-Job -Name $name {
+            param($uri, $method, $authorization, $data, $attachment)
+            # Create web client
+            $Request = [System.Net.WebRequest]::Create($uri)
+            $Request.ContentType = "application/json; charset=utf-8";
+            $Request.Method = $method
+            $Request.UserAgent = "User-Agent: PSCouchDB (compatible; MSIE 7.0;)"
+            # Check authorization
+            if ($authorization) {
+                $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("$($authorization.UserName):$($authorization.GetNetworkCredential().Password)")))
+                $Request.Headers.Add("Authorization", ("Basic {0}" -f $base64AuthInfo))
+            }
+            # Check data
+            if ($data -or $attachment) {
+                $Stream = $Request.GetRequestStream()
+                if ($data) {
+                    $Body = [byte[]][char[]]$data
+                    $Stream.Write($Body, 0, $Body.Length)
+                }
+                # Check attachment
+                elseif ($attachment) {
+                    $Request.ContentType = $ttachment.content_type
+                    $Body = [byte[]]$attachment.GetRawData()
+                    $Stream.Write($Body, 0, $Body.Length)
+                }
+                $Stream.Close()
+            }
+            try {
+                [System.Net.WebResponse] $resp = $Request.GetResponse()
+            } catch [System.Net.WebException] {
+                [System.Net.HttpWebResponse] $errcode = $_.Exception.Response
+                throw "[$($errcode.StatusCode)] Error."
+            }
+            $rs = $resp.GetResponseStream()
+            [System.IO.StreamReader] $sr = New-Object System.IO.StreamReader -ArgumentList $rs
+            [string] $results = $sr.ReadToEnd()
+            $resp.Close()
+            if ($results -match "^{.*}$") {
+                return $results | ConvertFrom-Json
+            } else {
+                return [PSCustomObject]@{results = $results }
+            }
+        } -ArgumentList $this.uri.Uri, $this.method, $this.authorization, $this.data, $this.attachment
+        Register-TemporaryEvent $job "StateChanged" -Action {
+            Write-Host -ForegroundColor Green "#$($sender.Id) ($($sender.Name)) complete."
+        }
+    }
+
+    [string] GetHeader () {
+        # Create web client
+        $this.client = [System.Net.WebRequest]::Create($this.uri.Uri)
+        $this.client.ContentType = "application/json; charset=utf-8";
+        $this.client.Method = 'HEAD'
+        $this.client.UserAgent = "User-Agent: PSCouchDB (compatible; MSIE 7.0;)"
+        try {
+            [System.Net.WebResponse] $resp = $this.client.GetResponse()
+            $this.uri.LastStatusCode = $this.client.GetResponse().StatusCode
+        } catch [System.Net.WebException] {
+            [System.Net.HttpWebResponse] $errcode = $_.Exception.Response
+            $this.uri.LastStatusCode = $errcode.StatusCode
+            throw ([PSCouchDBRequestException]::new($errcode.StatusCode)).CouchDBMessage
+        }
+        $resp.Close()
+        return $resp.Headers.ToString()
+    }
+
+    SetSsl () {
+        $this.protocol = 'https'
+        $this.uri.Scheme = 'https'
+        $this.SetPort(6984)
+    }
+
+    SetSsl ([int]$port) {
+        $this.protocol = 'https'
+        $this.uri.Scheme = 'https'
+        $this.SetPort($port)
+    }
+
+    SetPort ([int]$port) {
+        $this.port = $port
+        $this.uri.Port = $port
+    }
+
+    SetServer ([string]$server) {
+        $this.server = $server
+        $this.uri.Host = $server
+    }
+
+    AddAuthorization ([PSCredential]$credential) {
+        $this.authorization = $credential
+        $this.uri.UserName = "$($credential.UserName):$($credential.GetNetworkCredential().Password)"
+    }
+
+    AddAuthorization ([string]$auth) {
+        # Check if string is in this format: word:word
+        if ($auth -match "^\w+\:\w+$") {
+            $newAuth = $auth -split ":"
+            [SecureString]$secStringPassword = ConvertTo-SecureString $newAuth[1] -AsPlainText -Force
+            [PSCredential]$credOject = New-Object System.Management.Automation.PSCredential ($newAuth[0], $secStringPassword)
+            $this.AddAuthorization($credOject)
+        } else {
+            throw [System.Text.RegularExpressions.RegexMatchTimeoutException]::New('Authorization string is in this format: "user:password"') 
+        }
+    }
+
+    SetMethod ([string]$method) {
+        $this.method = $method
+    }
+
+    SetDatabase ([string]$database) {
+        $this.database = $database
+        $path = "/{0}" -f $database
+        $this.uri.Path = $path
+    }
+
+    SetDocument ([string]$document) {
+        if ($this.database) {
+            $this.document = $document
+            $path = "/{0}/{1}" -f $this.database, $document
+            $this.uri.Path = $path
+        } else {
+            throw [System.Net.WebException] "Database isn't set."
+        }
+    }
+
+    SetParameter ([array]$parameter) {
+        if ($this.database) {
+            $this.parameter = $parameter -join '&'
+            $this.uri.Query = $this.parameter
+        } else {
+            throw [System.Net.WebException] "Database isn't set."
+        }
+    }
+
+    SetData ([string]$json) {
+        $this.data = $json
+    }
+
+    AddAttachment ([string]$file) {
+        if ($this.document) {
+            $attach = New-Object -TypeName PSCouchDBAttachment -ArgumentList $file
+            $path = "/{0}/{1}/{2}" -f $this.database, $this.document, $attach.filename
+            $this.uri.Path = $path
+            $this.attachment = $attach
+        } else {
+            throw [System.Net.WebException] "Document isn't set."
+        }
+    }
+
+    [string] GetData () {
+        return $this.data
+    }
+
+    [int] GetStatus () {
+        return $this.uri.LastStatusCode
+    }
+
+    EnableCache () {
+        $this.cache = $true
+        $c = New-Object System.Collections.ArrayList
+        Add-Member -InputObject $this.uri Cache $c
+    }
+
+    DisableCache () {
+        $this.cache = $false
+    }
+
+    ClearCache () {
+        $this.uri.Cache = New-Object System.Collections.ArrayList
+    }
+
+    [uri] GetUri () {
+        return $this.uri.Uri
+    }
+
+    [string] ToString () {
+        $str = "
+{0} {1}
+Host: {2}:{3}
+Param: {4}
+
+{5}
+        " -f $this.method, $this.uri.Path, $this.server, $this.port, $this.uri.Query, $this.data
+        return $str
+    }
+}
+
+# CouchDB exception class
+
+class PSCouchDBRequestException : System.Exception {
+    [string] $CouchDBMessage
+    [int] $CouchDBStausCode
+
+    PSCouchDBRequestException([int]$statusCode) {
+        $this.CouchDBStausCode = $statusCode
+        switch ($this.CouchDBStausCode) {
+            304 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Not Modified: The additional content requested has not been modified." }
+            400 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Bad Request: Bad request structure. The error can indicate an error with the request URL, path or headers." }
+            401 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Unauthorized: The item requested was not available using the supplied authorization, or authorization was not supplied." }
+            403 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Forbidden: The requested item or operation is forbidden." }
+            404 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Not Found: The requested content could not be found." }
+            405 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Method Not Allowed: A request was made using an invalid HTTP request type for the URL requested." }
+            406 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Not Acceptable: The requested content type is not supported by the server." }
+            409 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Conflict: Request resulted in an update conflict." }
+            412 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Precondition Failed: The request headers from the client and the capabilities of the server do not match." }
+            413 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Request Entity Too Large: A document exceeds the configured couchdb/max_document_size value or the entire request exceeds the httpd/max_http_request_size value." }
+            415 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Unsupported Media Type: The content types supported, and the content type of the information being requested or submitted indicate that the content type is not supported." }
+            416 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Requested Range Not Satisfiable: The range specified in the request header cannot be satisfied by the server." }
+            417 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Expectation Failed: The bulk load operation failed." }
+            { $this.CouchDBStausCode -ge 500 } { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Internal Server Error: The request was invalid, either because the supplied JSON was invalid, or invalid information was supplied as part of the request." }
+            Default { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Unknown Error: something wrong." }
+        }
+    }
 }
 
 # Functions of CouchDB module
@@ -1452,8 +1778,8 @@ function New-CouchDBObject () {
     https://pscouchdb.readthedocs.io/en/latest/classes.html
     #>
     param(
-    [string] $TypeName,
-    [array] $ArgumentList
+        [string] $TypeName,
+        [array] $ArgumentList
     )
     return New-Object -TypeName $TypeName -ArgumentList $ArgumentList
 }

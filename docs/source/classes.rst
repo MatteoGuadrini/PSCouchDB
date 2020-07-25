@@ -25,9 +25,222 @@ To create every object defined in PSCouchDB module, use this.
 
 .. code-block:: powershell
 
-    $query = New-CouchDBObject -TypeName PSCouchDBQuery
+    $query = New-CouchDBObject -TypeName PSCouchDBRequest
     $query.GetType()
 
+PSCouchDBRequest class
+______________________
+
+This class is used to construct a http request object.
+
+Properties
+**********
+
+.. code-block:: powershell
+
+    attachment       Property   PSCouchDBAttachment attachment {get;set;}
+    authorization    Property   pscredential authorization {get;set;}
+    data             Property   string data {get;set;}
+    database         Property   string database {get;set;}
+    document         Property   string document {get;set;}
+    method           Property   string method {get;set;}
+    parameter        Property   string parameter {get;set;}
+    port             Property   int port {get;set;}
+    protocol         Property   string protocol {get;set;}
+    server           Property   string server {get;set;}
+    uri              Property   System.UriBuilder uri {get;set;}
+
+Methods
+*******
+
+.. code-block:: powershell
+
+    AddAttachment    Method     void AddAttachment(string file)
+    AddAuthorization Method     void AddAuthorization(pscredential credential), void AddAuthorization(string auth)
+    ClearCache       Method     void ClearCache()
+    DisableCache     Method     void DisableCache()
+    EnableCache      Method     void EnableCache()
+    Equals           Method     bool Equals(System.Object obj)
+    GetData          Method     string GetData()
+    GetHashCode      Method     int GetHashCode()
+    GetHeader        Method     string GetHeader()
+    GetStatus        Method     int GetStatus()
+    GetType          Method     type GetType()
+    GetUri           Method     uri GetUri()
+    Request          Method     psobject Request()
+    RequestAsJob     Method     void RequestAsJob(string name)
+    SetData          Method     void SetData(string json)
+    SetDatabase      Method     void SetDatabase(string database)
+    SetDocument      Method     void SetDocument(string document)
+    SetMethod        Method     void SetMethod(string method)
+    SetParameter     Method     void SetParameter(array parameter)
+    SetPort          Method     void SetPort(int port)
+    SetServer        Method     void SetServer(string server)
+    SetSsl           Method     void SetSsl(), void SetSsl(int port)
+    ToString         Method     string ToString()
+
+Build a request
+***************
+
+To create a ``PSCouchDBRequest`` object, just do the following.
+
+.. code-block:: powershell
+
+    using module PSCouchDB
+    $req = New-Object -TypeName PSCouchDBRequest                            # GET http://localhost:5984/
+    $req = New-Object -TypeName PSCouchDBRequest -ArgumentList 'db'         # GET http://localhost:5984/db
+    $req = New-Object -TypeName PSCouchDBRequest -ArgumentList 'db','doc1'  # GET http://localhost:5984/db/doc1
+    $req.GetType()
+
+Set server
+**********
+
+To set a different server (default is localhost).
+
+.. code-block:: powershell
+
+    $req.SetServer('cdb1.local')    # FQDN
+    $req.SetServer('127.0.0.15')    # ip address
+
+Set port
+********
+
+To set a different port (default is 5984).
+
+.. code-block:: powershell
+
+    $req.SetPort(8080)
+
+Set SSL
+*******
+
+To set a SSL https.
+
+.. code-block:: powershell
+
+    $req.SetSsl()       # https on 6984
+    $req.SetSsl(443)    # https on 443
+
+Set a method
+************
+
+Default method is GET. To set other method, run this.
+
+.. code-block:: powershell
+
+    $req.SetMethod('PUT')
+
+Add authorization
+*****************
+
+To add authorization with two methods.
+
+.. code-block:: powershell
+
+    $req.AddAuthorization('admin:password')     # string version
+    [string]$userName = 'admin'
+    [string]$userPassword = 'password'
+    [securestring]$secStringPassword = ConvertTo-SecureString $userPassword -AsPlainText -Force
+    [pscredential]$credOject = New-Object System.Management.Automation.PSCredential ($userName, $secStringPassword)
+    $req.AddAuthorization($credOject)           # PSCredential object version
+
+Set database
+************
+
+To set a database on the URI object.
+
+.. code-block:: powershell
+
+    $req.SetDatabase('db')
+
+Set document
+************
+
+To set a document on the URI object.
+
+.. code-block:: powershell
+
+    $req.SetDocument('doc')
+
+Add attachment
+**************
+
+To add an attachment to document.
+
+.. code-block:: powershell
+
+    $req.AddAttachment('/path/of/file.txt')
+
+Set parameter
+*************
+
+To set a parameter on the URI object.
+
+.. code-block:: powershell
+
+    $req.SetParameter('param')                  # single param string
+    $req.SetParameter('param1=true')            # key=value param string
+    $req.SetParameter(@('param','param1=true')) # array param
+
+Set data
+********
+
+To set a json data.
+
+.. code-block:: powershell
+
+    $data = @"
+    {
+        "doc_ids": [
+            "test"
+        ]
+    }
+    "@
+    $req.SetData($Data)
+    $req.GetData()      # verify json data
+
+Get Uri
+*******
+
+.. code-block:: powershell
+
+    $req.GetUri()
+
+Get request header
+******************
+
+To get a request header.
+
+.. code-block:: powershell
+
+    $req.GetHeader()
+
+Get status code
+***************
+
+To get a status code of last request.
+
+.. code-block:: powershell
+
+    $req.GetStatus()
+
+Get request
+***********
+
+To get a result of request.
+
+.. code-block:: powershell
+
+    $req.Request()
+
+Get request in background
+*************************
+
+To send a request in background like daemon or job.
+
+.. code-block:: powershell
+
+    $req.RequestAsJob('name of job')
 
 PSCouchDBQuery class
 ____________________
@@ -544,6 +757,7 @@ Methods
     GetData      Method     string GetData()
     SaveData     Method     void GetData()
     GetHashCode  Method     int GetHashCode()
+    GetRawData   Method     byte[] GetRawData()
     GetType      Method     type GetType()
     ToString     Method     string ToString()
 
