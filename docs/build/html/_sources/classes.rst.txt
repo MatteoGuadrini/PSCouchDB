@@ -38,6 +38,7 @@ Properties
 
 .. code-block:: powershell
 
+    attachment       Property   PSCouchDBAttachment attachment {get;set;}
     authorization    Property   pscredential authorization {get;set;}
     data             Property   string data {get;set;}
     database         Property   string database {get;set;}
@@ -54,6 +55,7 @@ Methods
 
 .. code-block:: powershell
 
+    AddAttachment    Method     void AddAttachment(string file)
     AddAuthorization Method     void AddAuthorization(pscredential credential), void AddAuthorization(string auth)
     ClearCache       Method     void ClearCache()
     DisableCache     Method     void DisableCache()
@@ -159,6 +161,15 @@ To set a document on the URI object.
 .. code-block:: powershell
 
     $req.SetDocument('doc')
+
+Add attachment
+**************
+
+To add an attachment to document.
+
+.. code-block:: powershell
+
+    $req.AddAttachment('/path/of/file.txt')
 
 Set parameter
 *************
@@ -746,6 +757,7 @@ Methods
     GetData      Method     string GetData()
     SaveData     Method     void GetData()
     GetHashCode  Method     int GetHashCode()
+    GetRawData   Method     byte[] GetRawData()
     GetType      Method     type GetType()
     ToString     Method     string ToString()
 

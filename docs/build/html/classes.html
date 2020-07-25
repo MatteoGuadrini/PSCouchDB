@@ -108,6 +108,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#add-authorization">Add authorization</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#set-database">Set database</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#set-document">Set document</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#add-attachment">Add attachment</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#set-parameter">Set parameter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#set-data">Set data</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#get-uri">Get Uri</a></li>
@@ -318,7 +319,8 @@
 <p>This class is used to construct a http request object.</p>
 <div class="section" id="properties">
 <h3>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">authorization</span>    <span class="n">Property</span>   <span class="n">pscredential</span> <span class="n">authorization</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">attachment</span>       <span class="n">Property</span>   <span class="n">PSCouchDBAttachment</span> <span class="n">attachment</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
+<span class="n">authorization</span>    <span class="n">Property</span>   <span class="n">pscredential</span> <span class="n">authorization</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
 <span class="n">data</span>             <span class="n">Property</span>   <span class="n">string</span> <span class="n">data</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
 <span class="n">database</span>         <span class="n">Property</span>   <span class="n">string</span> <span class="n">database</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
 <span class="n">document</span>         <span class="n">Property</span>   <span class="n">string</span> <span class="n">document</span> <span class="p">{</span><span class="n">get</span><span class="p">;</span><span class="n">set</span><span class="p">;}</span>
@@ -333,7 +335,8 @@
 </div>
 <div class="section" id="methods">
 <h3>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">AddAuthorization</span> <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddAuthorization</span><span class="p">(</span><span class="n">pscredential</span> <span class="n">credential</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddAuthorization</span><span class="p">(</span><span class="n">string</span> <span class="n">auth</span><span class="p">)</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">AddAttachment</span>    <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddAttachment</span><span class="p">(</span><span class="n">string</span> <span class="n">file</span><span class="p">)</span>
+<span class="n">AddAuthorization</span> <span class="n">Method</span>     <span class="n">void</span> <span class="n">AddAuthorization</span><span class="p">(</span><span class="n">pscredential</span> <span class="n">credential</span><span class="p">),</span> <span class="n">void</span> <span class="n">AddAuthorization</span><span class="p">(</span><span class="n">string</span> <span class="n">auth</span><span class="p">)</span>
 <span class="n">ClearCache</span>       <span class="n">Method</span>     <span class="n">void</span> <span class="n">ClearCache</span><span class="p">()</span>
 <span class="n">DisableCache</span>     <span class="n">Method</span>     <span class="n">void</span> <span class="n">DisableCache</span><span class="p">()</span>
 <span class="n">EnableCache</span>      <span class="n">Method</span>     <span class="n">void</span> <span class="n">EnableCache</span><span class="p">()</span>
@@ -422,6 +425,13 @@
 <h3>Set document<a class="headerlink" href="#set-document" title="Permalink to this headline">¶</a></h3>
 <p>To set a document on the URI object.</p>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$req</span><span class="p">.</span><span class="n">SetDocument</span><span class="p">(</span><span class="s1">&#39;doc&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="add-attachment">
+<h3>Add attachment<a class="headerlink" href="#add-attachment" title="Permalink to this headline">¶</a></h3>
+<p>To add an attachment to document.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$req</span><span class="p">.</span><span class="n">AddAttachment</span><span class="p">(</span><span class="s1">&#39;/path/of/file.txt&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -895,6 +905,7 @@ by specifying the selector and the value that you want to associate.</p>
 <span class="n">GetData</span>      <span class="n">Method</span>     <span class="n">string</span> <span class="n">GetData</span><span class="p">()</span>
 <span class="n">SaveData</span>     <span class="n">Method</span>     <span class="n">void</span> <span class="n">GetData</span><span class="p">()</span>
 <span class="n">GetHashCode</span>  <span class="n">Method</span>     <span class="n">int</span> <span class="n">GetHashCode</span><span class="p">()</span>
+<span class="n">GetRawData</span>   <span class="n">Method</span>     <span class="n">byte</span><span class="p">[]</span> <span class="n">GetRawData</span><span class="p">()</span>
 <span class="n">GetType</span>      <span class="n">Method</span>     <span class="nb">type </span><span class="n">GetType</span><span class="p">()</span>
 <span class="n">ToString</span>     <span class="n">Method</span>     <span class="n">string</span> <span class="n">ToString</span><span class="p">()</span>
 </pre></div>
