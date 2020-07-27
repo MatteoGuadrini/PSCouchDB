@@ -255,7 +255,7 @@ To remove the replication agent.
 
 .. code-block:: powershell
 
-    Remove-CouchDBReplication -Document test_test_dump -Authorization -Authorization "admin:password"
+    Remove-CouchDBReplication -Document test_test_dump -Authorization "admin:password"
 
 Replication request
 ____________________
@@ -265,6 +265,6 @@ Request, configure, or stop, a replication operation.
 .. code-block:: powershell
 
     using module PSCouchDB
-    $rep = New-Object PSCouchDBReplication -ArgumentList 'test','reptest'
+    $rep = New-Object PSCouchDBReplication -ArgumentList 'test','test_dump'
     $rep.AddDocIds(@("Hitchhikers","Hitchhikers_Guide"))
     Request-CouchDBReplication -Data $rep -Authorization "admin:password"

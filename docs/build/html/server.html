@@ -360,7 +360,7 @@ Otherwise, if the log is in a custom path, specify the path using the <code clas
 <div class="section" id="remove-replica">
 <h2>Remove replica<a class="headerlink" href="#remove-replica" title="Permalink to this headline">¶</a></h2>
 <p>To remove the replication agent.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Remove-CouchDBReplication</span> <span class="n">-Document</span> <span class="n">test_test_dump</span> <span class="n">-Authorization</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Remove-CouchDBReplication</span> <span class="n">-Document</span> <span class="n">test_test_dump</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -368,7 +368,7 @@ Otherwise, if the log is in a custom path, specify the path using the <code clas
 <h2>Replication request<a class="headerlink" href="#replication-request" title="Permalink to this headline">¶</a></h2>
 <p>Request, configure, or stop, a replication operation.</p>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">using</span> <span class="n">module</span> <span class="n">PSCouchDB</span>
-<span class="nv">$rep</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">PSCouchDBReplication</span> <span class="n">-ArgumentList</span> <span class="s1">&#39;test&#39;</span><span class="p">,</span><span class="s1">&#39;reptest&#39;</span>
+<span class="nv">$rep</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">PSCouchDBReplication</span> <span class="n">-ArgumentList</span> <span class="s1">&#39;test&#39;</span><span class="p">,</span><span class="s1">&#39;test_dump&#39;</span>
 <span class="nv">$rep</span><span class="p">.</span><span class="n">AddDocIds</span><span class="p">(@(</span><span class="s2">&quot;Hitchhikers&quot;</span><span class="p">,</span><span class="s2">&quot;Hitchhikers_Guide&quot;</span><span class="p">))</span>
 <span class="nb">Request-CouchDBReplication</span> <span class="n">-Data</span> <span class="nv">$rep</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
