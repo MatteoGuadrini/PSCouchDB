@@ -1,3 +1,6 @@
+# Global preferences
+[bool] $Global:CouchDBCachePreference = $false
+
 # Native Powershell CouchDB class
 class PSCouchDBDocument {
     <#
@@ -1601,6 +1604,10 @@ function Send-CouchDBRequest {
     )
     # Create PSCouchDBRequest object
     $req = New-Object PSCouchDBRequest
+    # Set cache
+    if ($Global:CouchDBCachePreference) {
+        $req.EnableCache()
+    }
     if ($Server) {
         Write-Verbose -Message "Set server to $Server"
         $req.SetServer($Server)
@@ -1679,6 +1686,13 @@ function Send-CouchDBRequest {
             $req.RequestAsJob($JobName)
         } else {
             $req.Request()
+            if ($req.cache) {
+                if ($CouchDBCache) {
+                    [void]$CouchDBCache.AddRange($req.uri.Cache)
+                } else {
+                    $Global:CouchDBCache = $req.uri.Cache
+                }
+            }
         }
     }
 }
