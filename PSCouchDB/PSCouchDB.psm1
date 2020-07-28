@@ -1,5 +1,6 @@
 # Global preferences
 [bool] $Global:CouchDBCachePreference = $false
+[bool] $Global:CouchDBSaveCredentialPreference = $true
 
 # Native Powershell CouchDB class
 class PSCouchDBDocument {
@@ -1664,9 +1665,18 @@ function Send-CouchDBRequest {
         $req.SetParameter("rev=$Revision")
     }
     # Check authorization
-    if ($Authorization) {
-        Write-Verbose -Message "Add authorization"
-        $req.AddAuthorization($Authorization)
+    if ($Authorization -or $Global:CouchDBCredential) {
+        if ($Global:CouchDBSaveCredentialPreference) {
+            if (-not($Global:CouchDBCredential)) {
+                $Global:CouchDBCredential = $Authorization
+            }
+            Write-Verbose -Message "Add authorization"
+            $req.AddAuthorization($Global:CouchDBCredential)
+        } else {
+            $Global:CouchDBCredential = $null
+            Write-Verbose -Message "Add authorization"
+            $req.AddAuthorization($Authorization)
+        }
     }
     # Check json data
     if ($Data) {
@@ -1686,6 +1696,7 @@ function Send-CouchDBRequest {
             $req.RequestAsJob($JobName)
         } else {
             $req.Request()
+            # Add to cache
             if ($req.cache) {
                 if ($CouchDBCache) {
                     [void]$CouchDBCache.AddRange($req.uri.Cache)
