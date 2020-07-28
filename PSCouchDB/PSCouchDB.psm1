@@ -1746,6 +1746,8 @@ function New-CouchDBObject () {
     https://pscouchdb.readthedocs.io/en/latest/classes.html
     #>
     param(
+        [ValidateSet("PSCouchDBRequest", "PSCouchDBQuery", "PSCouchDBDocument", "PSCouchDBAttachment", "PSCouchDBBulkDocument",
+        "PSCouchDBSecurity", "PSCouchDBReplication", "PSCouchDBView", "PSCouchDBDesignDoc")]
         [string] $TypeName,
         [array] $ArgumentList
     )
