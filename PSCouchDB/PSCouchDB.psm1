@@ -1496,8 +1496,7 @@ class PSCouchDBRequest {
 Host: {2}:{3}
 Param: {4}
 
-{5}
-        " -f $this.method, $this.uri.Path, $this.server, $this.port, $this.uri.Query, $this.data
+{5}" -f $this.method, $this.uri.Path, $this.server, $this.port, $this.uri.Query, $this.data
         return $str
     }
 }
@@ -1577,6 +1576,9 @@ function Send-CouchDBRequest {
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
     https://localhost:6984.
+    .PARAMETER JobName
+    JobName for background powershell job.
+    To get a result for a Job, run "Get-Job -Id <number> | Receive-Job -Keep"
     .EXAMPLE
     This example get a database "db":
     Send-CouchDBRequest -Server couchdb1.local -Method "GET" -Database db
@@ -1680,7 +1682,7 @@ function Send-CouchDBRequest {
     }
     # Check json data
     if ($Data) {
-        Write-Verbose -Message "Set json data to $Data"
+        Write-Verbose -Message "Set json data to: $Data"
         $req.SetData($Data)
     }
     # Set parameter
