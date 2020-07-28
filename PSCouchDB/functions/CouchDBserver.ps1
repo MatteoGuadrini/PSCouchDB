@@ -35,7 +35,7 @@ function Get-CouchDBServer () {
     param(
         [string] $Server,
         [int] $Port,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Status,
         [switch] $Ssl
     )
@@ -79,7 +79,7 @@ function Get-CouchDBUser () {
         [int] $Port,
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Userid,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     $Database = "_users"
@@ -121,7 +121,7 @@ function Get-CouchDBAdmin () {
         [string] $Server,
         [int] $Port,
         [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).all_nodes -contains "couchdb@localhost") { "couchdb@localhost" } else { "couchdb@127.0.0.1" }),
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     $Database = "_node"
@@ -160,7 +160,7 @@ function Get-CouchDBActiveTask () {
         [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     $Database = "_active_tasks"
@@ -202,7 +202,7 @@ function Get-CouchDBClusterSetup () {
         [int] $Port,
         [AllowEmptyCollection()]
         [array] $EnsureDatabaseExist,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     $Database = "_cluster_setup"
@@ -275,7 +275,7 @@ function Measure-CouchDBStatistics () {
         [string] $Server = 'localhost',
         [int] $Port,
         [switch] $System,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     if ($System.IsPresent) {
@@ -364,7 +364,7 @@ function New-CouchDBUuids () {
         [int] $Port,
         [Parameter(ValueFromPipeline = $true)]
         [int] $Count = 10,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     $Database = '_uuids'
@@ -616,7 +616,7 @@ function Get-CouchDBDatabaseUpdates () {
         [int] $Timeout,
         [int] $Heartbeat,
         [string] $Since,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     $Database = '_db_updates'

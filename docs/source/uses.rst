@@ -98,7 +98,7 @@ First, edit your *profile.ps1* and put this function:
         param(
             [Parameter(mandatory=$true)]
             [string] $ComputerName,
-            [string] $Authorization
+            $Authorization
         )
         # Define logs
         $Logs = @("Application","Security","System")

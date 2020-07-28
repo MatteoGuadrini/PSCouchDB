@@ -81,7 +81,7 @@ function Get-CouchDBDatabaseDesignDocument () {
         [string] $StartKeyDocument,
         [Alias('Update')]
         [switch] $UpdateSequence,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     $Document = "_design_docs"
@@ -251,7 +251,7 @@ function Get-CouchDBDesignDocument () {
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Document,
         [switch] $Info,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl,
         [string] $Variable
     )
@@ -358,7 +358,7 @@ function Get-CouchDBDesignDocumentAttachment () {
         [string] $OutFile,
         [Parameter(ParameterSetName = "Attachment")]
         [Parameter(ParameterSetName = "Info")]
-        [string] $Authorization,
+        $Authorization,
         [Parameter(ParameterSetName = "Attachment")]
         [Parameter(ParameterSetName = "Info")]
         [switch] $Ssl,
@@ -436,7 +436,7 @@ function Add-CouchDBDesignDocumentAttachment () {
         $Attachment,
         [Parameter(mandatory = $true)]
         [string] $Revision,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     $Document = "_design/$Document"
@@ -537,7 +537,7 @@ function New-CouchDBDesignDocument () {
         $Data,
         [Parameter(ParameterSetName = "View")]
         [Parameter(ParameterSetName = "CustomData")]
-        [string] $Authorization,
+        $Authorization,
         [Parameter(ParameterSetName = "View")]
         [Parameter(ParameterSetName = "CustomData")]
         [switch] $Ssl
@@ -653,7 +653,7 @@ function Set-CouchDBDesignDocument () {
         $Data,
         [Parameter(ParameterSetName = "View")]
         [Parameter(ParameterSetName = "CustomData")]
-        [string] $Authorization,
+        $Authorization,
         [Parameter(ParameterSetName = "View")]
         [Parameter(ParameterSetName = "CustomData")]
         [switch] $Ssl
@@ -725,7 +725,7 @@ function Compress-CouchDBDesignDocument () {
         [string] $Database,
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $DesignDoc,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     $Document = "_compact/$DesignDoc"
@@ -777,7 +777,7 @@ function Remove-CouchDBDesignDocument () {
         [string] $Document,
         [Parameter(Mandatory = $true)]
         [string] $Revision,
-        [string] $Authorization,
+        $Authorization,
         [switch]$Force,
         [switch] $Ssl
     )
@@ -833,7 +833,7 @@ function Remove-CouchDBDesignDocumentAttachment () {
         [string] $Attachment,
         [Parameter(mandatory = $true)]
         [string] $Revision,
-        [string] $Authorization,
+        $Authorization,
         [switch]$Force,
         [switch] $Ssl
     )

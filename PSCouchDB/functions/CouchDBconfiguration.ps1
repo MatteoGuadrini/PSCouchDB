@@ -57,7 +57,7 @@ function Enable-CouchDBCluster () {
         [string] $RemoteUser,
         [ValidateScript( { if (-not($SingleNode) -and ($RemoteUser)) { $true } })]
         [SecureString] $RemotePassword,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     # Check if an admin has been created
@@ -134,7 +134,7 @@ function Get-CouchDBNode () {
         [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     if ((Get-CouchDBServer).version -match '3.*') { $Database = "_node/_local" } elseif ((Get-CouchDBServer).version -match '2.*') { $Database = "_membership" }
@@ -178,7 +178,7 @@ function Add-CouchDBNode () {
         [int] $BindPort = 5984,
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $BindAddress,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     $Database = "_cluster_setup"
@@ -231,7 +231,7 @@ function Remove-CouchDBNode () {
         [int] $Port,
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Node,
-        [string] $Authorization,
+        $Authorization,
         [switch]$Force,
         [switch] $Ssl
     )
@@ -299,7 +299,7 @@ function Get-CouchDBConfiguration () {
         [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).name -contains "couchdb@localhost") { "couchdb@localhost" } else { "couchdb@127.0.0.1" }),
         [string] $Session,
         [string] $Key,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     $Database = "_node"
@@ -361,7 +361,7 @@ function Set-CouchDBConfiguration () {
         [string] $Key,
         [Parameter(mandatory = $true)]
         [string] $Value,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     $Database = "_node"

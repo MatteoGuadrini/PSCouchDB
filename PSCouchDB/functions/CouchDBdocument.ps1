@@ -231,7 +231,7 @@ function Get-CouchDBDocument () {
         [Parameter(ParameterSetName = "AllDocuments")]
         [Parameter(ParameterSetName = "Document")]
         [Parameter(ParameterSetName = "Info")]
-        [string] $Authorization,
+        $Authorization,
         [Parameter(ParameterSetName = "AllDocuments")]
         [Parameter(ParameterSetName = "Document")]
         [Parameter(ParameterSetName = "Info")]
@@ -648,7 +648,7 @@ function New-CouchDBDocument () {
         $Data,
         [string] $Attachment,
         [switch] $BatchMode,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     # Check type of Data
@@ -743,7 +743,7 @@ function Set-CouchDBDocument () {
         [string] $Attachment,
         [switch] $BatchMode,
         [switch] $NoConflict,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     if ($Data -is [hashtable]) {
@@ -845,7 +845,7 @@ function Remove-CouchDBDocument () {
         [string] $Document,
         [Parameter(mandatory = $true)]
         [string] $Revision,
-        [string] $Authorization,
+        $Authorization,
         [switch]$Force,
         [switch] $Ssl
     )
@@ -904,7 +904,7 @@ function Copy-CouchDBDocument () {
         [Parameter(mandatory = $true)]
         [string] $Destination,
         [string] $Revision,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     # Check document id exists
@@ -975,7 +975,7 @@ function Get-CouchDBBulkDocument () {
         [Parameter(mandatory = $true)]
         [string] $Database,
         $Data,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl,
         [switch] $AsJob
     )
@@ -1054,7 +1054,7 @@ function New-CouchDBBulkDocument () {
         [Parameter(mandatory = $true)]
         [string] $Database,
         $Data,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl,
         [switch] $AsJob
     )
@@ -1155,7 +1155,7 @@ function Get-CouchDBAttachment () {
         [string] $Variable,
         [Parameter(ParameterSetName = "Attachment")]
         [Parameter(ParameterSetName = "Info")]
-        [string] $Authorization,
+        $Authorization,
         [Parameter(ParameterSetName = "Attachment")]
         [Parameter(ParameterSetName = "Info")]
         [switch] $Ssl
@@ -1230,7 +1230,7 @@ function Add-CouchDBAttachment () {
         $Attachment,
         [Parameter(mandatory = $true)]
         [string] $Revision,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     # Check if Attachment param is string or PSCouchDBAttachment
@@ -1300,7 +1300,7 @@ function Remove-CouchDBAttachment () {
         [string] $Attachment,
         [Parameter(mandatory = $true)]
         [string] $Revision,
-        [string] $Authorization,
+        $Authorization,
         [switch]$Force,
         [switch] $Ssl
     )
@@ -1349,7 +1349,7 @@ function Clear-CouchDBDocuments () {
         [string] $Database,
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [array] $Document,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Force,
         [switch] $Ssl
     )
@@ -1412,7 +1412,7 @@ function Search-CouchDBFullText () {
         [Parameter(mandatory = $true)]
         [array] $Patterns,
         [switch] $UseQueries,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl,
         [switch] $AsJob
     )
@@ -1624,7 +1624,7 @@ function Find-CouchDBDocuments () {
         [string] $Find,
         [Parameter(ParameterSetName = "PSCouchDB")]
         [Parameter(ParameterSetName = "Native")]
-        [string] $Authorization,
+        $Authorization,
         [Parameter(ParameterSetName = "PSCouchDB")]
         [Parameter(ParameterSetName = "Native")]
         [switch] $Ssl,

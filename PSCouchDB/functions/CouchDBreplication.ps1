@@ -38,7 +38,7 @@ function Get-CouchDBReplication () {
         [int] $Port,
         [Parameter(ValueFromPipeline = $true)]
         [string] $Document = '_all_docs',
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     $Database = "_replicator"
@@ -85,7 +85,7 @@ function Get-CouchDBReplicationScheduler () {
         [int] $Port,
         [int] $Limit,
         [int] $Skip,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     $Database = "_scheduler"
@@ -153,7 +153,7 @@ function Get-CouchDBReplicationDocument () {
         [string] $ReplicatorDatabase,
         [ValidateScript( { if ($ReplicatorDatabase) { $true } else { $false } })]
         [string] $ReplicatorDocuments,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     $Database = "_scheduler"
@@ -223,7 +223,7 @@ function New-CouchDBReplication () {
         [string] $Server,
         [int] $Port,
         $Data,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     $Database = "_replicator"
@@ -280,7 +280,7 @@ function Get-CouchDBDatabaseChanges () {
         [string] $Database,
         [array] $Filter,
         [switch] $Continuous ,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     if (-not(Test-CouchDBDatabase -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
@@ -339,7 +339,7 @@ function Set-CouchDBReplication () {
         [int] $Port,
         [Parameter(mandatory = $true)]
         $Data,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     $Database = "_replicator"
@@ -394,7 +394,7 @@ function Remove-CouchDBReplication () {
         [string] $Document,
         [Parameter(mandatory = $true)]
         [string] $Revision,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Force,
         [switch] $Ssl
     )
@@ -445,7 +445,7 @@ function Request-CouchDBReplication () {
         [string] $Server,
         [int] $Port,
         $Data,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     $Database = "_replicate"

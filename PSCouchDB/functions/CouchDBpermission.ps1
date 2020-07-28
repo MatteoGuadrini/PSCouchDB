@@ -43,7 +43,7 @@ function New-CouchDBAdmin () {
         [string] $Userid,
         [Parameter(mandatory = $true)]
         [SecureString] $Password,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     $Database = "_node"
@@ -96,7 +96,7 @@ function New-CouchDBUser () {
         [Parameter(mandatory = $true)]
         [SecureString] $Password,
         [array] $Roles,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     $Database = "_users"
@@ -173,7 +173,7 @@ function Grant-CouchDBDatabasePermission () {
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
         $Data,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     # Check data is string or PSCouchDBSecurity
@@ -221,7 +221,7 @@ function Get-CouchDBDatabaseSecurity () {
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
         [string] $Variable,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     $Document = "_security"
@@ -271,7 +271,7 @@ function Revoke-CouchDBDatabasePermission () {
         [int] $Port,
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
-        [string] $Authorization,
+        $Authorization,
         [switch]$Force,
         [switch] $Ssl
     )
@@ -327,7 +327,7 @@ function Remove-CouchDBAdmin () {
         [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).all_nodes -contains "couchdb@localhost") { "couchdb@localhost" } else { "couchdb@127.0.0.1" }),
         [Parameter(mandatory = $true)]
         [string] $Userid,
-        [string] $Authorization,
+        $Authorization,
         [switch]$Force,
         [switch] $Ssl
     )
@@ -379,7 +379,7 @@ function Remove-CouchDBUser () {
         [string] $Userid,
         [Parameter(mandatory = $true)]
         [string] $Revision,
-        [string] $Authorization,
+        $Authorization,
         [switch]$Force,
         [switch] $Ssl
     )
@@ -436,7 +436,7 @@ function Set-CouchDBUser () {
         [array] $Roles,
         [Parameter(mandatory = $true)]
         [string] $Revision,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     $Database = "_users"
@@ -502,7 +502,7 @@ function Set-CouchDBAdmin () {
         [string] $Userid,
         [Parameter(mandatory = $true)]
         [SecureString] $Password,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     $Database = "_node"
