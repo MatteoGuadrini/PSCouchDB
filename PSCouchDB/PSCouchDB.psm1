@@ -1658,8 +1658,13 @@ function Send-CouchDBRequest {
     }
     # Set attachment
     if ($Attachment) {
-        Write-Verbose -Message "Set attachment to $Attachment"
-        $req.AddAttachment($Attachment)
+        if ('GET','HEAD' -contains $Method) {
+            Write-Verbose -Message "Set attachment to $Attachment"
+            $req.SetDocument("$Document/$Attachment")
+        } else {
+            Write-Verbose -Message "Set attachment to $Attachment"
+            $req.AddAttachment($Attachment)
+        }
     }
     # Set revision
     if ($Revision) {
