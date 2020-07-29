@@ -21,6 +21,9 @@ The design document defines the views used to extract information from CouchDB t
 Design documents are created within your CouchDB instance in the same way as you create database documents, 
 but the content and definition of the documents is different.
 
+.. warning::
+    Show and List functions are deprecated in CouchDB 3.0, and will be removed in CouchDB 4.0.
+
 Get a design document
 _____________________
 
