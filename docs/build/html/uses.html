@@ -94,11 +94,19 @@
 <li class="toctree-l1"><a class="reference internal" href="documents.html">Documents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="documents.html#query">Query</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ddoc.html">Design documents</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cmdlets.html">Cmdlets and aliases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdlets.html">Preferences</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdlets.html#cmdlets-and-aliases">Cmdlets and aliases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="classes.html">Classes</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Real uses</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#simple-machine-inventory">Simple machine inventory</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#log-storage">Log storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#scripts">Scripts</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#simple-machine-inventory">Simple machine inventory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#log-storage">Log storage</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#oop">OOP</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#custom-document">Custom document</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="support.html">Support</a></li>
@@ -169,11 +177,14 @@
   <div class="section" id="real-uses">
 <h1>Real uses<a class="headerlink" href="#real-uses" title="Permalink to this headline">¶</a></h1>
 <p>Below are some examples of real-world applications that can give the idea of the module’s potential together with CouchDB.</p>
+<div class="section" id="scripts">
+<h2>Scripts<a class="headerlink" href="#scripts" title="Permalink to this headline">¶</a></h2>
+<p>Scripts, automations and tools are the main use of this module.</p>
 <div class="section" id="simple-machine-inventory">
-<h2>Simple machine inventory<a class="headerlink" href="#simple-machine-inventory" title="Permalink to this headline">¶</a></h2>
+<h3>Simple machine inventory<a class="headerlink" href="#simple-machine-inventory" title="Permalink to this headline">¶</a></h3>
 <p>This is a simple hardware inventory in business scenario, build in three steps.</p>
 <p>First step, create database.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">New-CouchDBDatabase</span> <span class="n">-Database</span> <span class="n">hw_inventory</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">New-CouchDBDatabase</span> <span class="n">-Database</span> <span class="n">hw_inventory</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 <p>Second, edit a new file <em>hw_inventory.ps1</em> e paste this:</p>
@@ -204,10 +215,10 @@
                <span class="p">@{</span><span class="n">Expression</span><span class="p">={</span><span class="nv">$_</span><span class="p">.</span><span class="n">Size</span> <span class="p">/</span> <span class="n">1GB</span><span class="p">};</span><span class="n">Label</span><span class="p">=</span><span class="s2">&quot;SizeGB&quot;</span><span class="p">}))</span>
         <span class="nv">$info</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="s2">&quot;timestamp&quot;</span><span class="p">,</span> <span class="p">(</span><span class="nb">Get-Date</span> <span class="o">-f</span> <span class="n">MM-dd-yyyy_HH_mm_ss</span><span class="p">))</span>
         <span class="c"># Write on database</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nb">Get-CouchDBDocument</span> <span class="n">-Database</span> <span class="n">hw_inventory</span> <span class="n">-Document</span> <span class="nv">$ComputerName</span> <span class="n">-ErrorAction</span> <span class="n">SilentlyContinue</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nb">Set-CouchDBDocument</span> <span class="n">-Database</span> <span class="n">hw_inventory</span> <span class="n">-Document</span> <span class="nv">$ComputerName</span> <span class="n">-Data</span> <span class="nv">$info</span> <span class="n">-Revision</span> <span class="p">$(</span><span class="nb">Get-CouchDBDocument</span> <span class="n">-Database</span> <span class="n">hw_inventory</span> <span class="n">-Document</span> <span class="nv">$ComputerName</span><span class="p">).</span><span class="n">_rev</span> <span class="o">-Replace</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">Get-CouchDBDocument</span> <span class="n">-Database</span> <span class="n">hw_inventory</span> <span class="n">-Document</span> <span class="nv">$ComputerName</span> <span class="n">-ErrorAction</span> <span class="n">SilentlyContinue</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nb">Set-CouchDBDocument</span> <span class="n">-Database</span> <span class="n">hw_inventory</span> <span class="n">-Document</span> <span class="nv">$ComputerName</span> <span class="n">-Data</span> <span class="nv">$info</span> <span class="n">-Revision</span> <span class="p">$(</span><span class="nb">Get-CouchDBDocument</span> <span class="n">-Database</span> <span class="n">hw_inventory</span> <span class="n">-Document</span> <span class="nv">$ComputerName</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span><span class="p">).</span><span class="n">_rev</span> <span class="o">-Replace</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="nb">New-CouchDBDocument</span> <span class="n">-Database</span> <span class="n">hw_inventory</span> <span class="n">-Document</span> <span class="nv">$ComputerName</span> <span class="n">-Data</span> <span class="nv">$info</span>
+            <span class="nb">New-CouchDBDocument</span> <span class="n">-Database</span> <span class="n">hw_inventory</span> <span class="n">-Document</span> <span class="nv">$ComputerName</span> <span class="n">-Data</span> <span class="nv">$info</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">}</span>
@@ -221,18 +232,21 @@
         <span class="p">[</span><span class="k">Parameter</span><span class="p">(</span><span class="k">mandatory</span><span class="p">=</span><span class="nv">$true</span><span class="p">)]</span>
         <span class="no">[string]</span> <span class="nv">$Computername</span>
     <span class="p">)</span>
-    <span class="nv">$docs</span> <span class="p">=</span> <span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">hw_inventory</span> <span class="n">-Selector</span> <span class="s2">&quot;_id&quot;</span> <span class="n">-Operator</span> <span class="n">regex</span> <span class="n">-Value</span> <span class="s2">&quot;.*$Computername.*&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">ComputerHW</span><span class="p">,</span><span class="n">ComputerCPU</span><span class="p">,</span><span class="n">ComputerDisks</span><span class="p">,</span><span class="n">timestamp</span>
+    <span class="nv">$docs</span> <span class="p">=</span> <span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">hw_inventory</span> <span class="n">-Selector</span> <span class="s2">&quot;_id&quot;</span> <span class="n">-Operator</span> <span class="n">regex</span> <span class="n">-Value</span> <span class="s2">&quot;.*$Computername.*&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">ComputerHW</span><span class="p">,</span><span class="n">ComputerCPU</span><span class="p">,</span><span class="n">ComputerDisks</span><span class="p">,</span><span class="n">timestamp</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
     <span class="nv">$docs</span><span class="p">.</span><span class="n">docs</span>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>Schedule the script every six hours.</p>
+<p>Schedule the script at any hour or minute you want.</p>
 </div>
 <div class="section" id="log-storage">
-<h2>Log storage<a class="headerlink" href="#log-storage" title="Permalink to this headline">¶</a></h2>
-<p>To create an application that stores logs from various machines in two steps.</p>
-<p>First, edit your <em>profile.ps1</em> and put this function:</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="nb">Write-WindowsLog</span> <span class="p">()</span> <span class="p">{</span>
+<h3>Log storage<a class="headerlink" href="#log-storage" title="Permalink to this headline">¶</a></h3>
+<p>To create an application that stores logs from various machines in one steps.</p>
+<p>Edit your <em>profile.ps1</em> and put this function:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">using</span> <span class="n">module</span> <span class="n">PSCouchDB</span>
+
+<span class="c"># Write log</span>
+<span class="k">function</span> <span class="nb">Write-WindowsLog</span> <span class="p">()</span> <span class="p">{</span>
     <span class="k">param</span><span class="p">(</span>
         <span class="p">[</span><span class="k">Parameter</span><span class="p">(</span><span class="k">mandatory</span><span class="p">=</span><span class="nv">$true</span><span class="p">)]</span>
         <span class="no">[string]</span> <span class="nv">$ComputerName</span><span class="p">,</span>
@@ -245,7 +259,7 @@
         <span class="nv">$count</span> <span class="p">=</span> <span class="n">0</span>
         <span class="nv">$DBname</span> <span class="p">=</span> <span class="s2">&quot;${ComputerName}_$Log&quot;</span><span class="p">.</span><span class="n">ToLower</span><span class="p">()</span>
         <span class="c"># Test if database log exists</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nv">$null</span> <span class="o">-eq</span> <span class="p">(</span><span class="nb">Test-CouchDBDatabase</span> <span class="n">-Database</span> <span class="nv">$DBname</span> <span class="n">-ErrorAction</span> <span class="n">SilentlyContinue</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$null</span> <span class="o">-eq</span> <span class="p">(</span><span class="nb">Test-CouchDBDatabase</span> <span class="n">-Database</span> <span class="nv">$DBname</span> <span class="n">-ErrorAction</span> <span class="n">SilentlyContinue</span> <span class="n">-Authorization</span> <span class="nv">$Authorization</span><span class="p">))</span> <span class="p">{</span>
             <span class="nb">New-CouchDBDatabase</span> <span class="n">-Database</span> <span class="nv">$DBname</span> <span class="n">-Authorization</span> <span class="nv">$Authorization</span>
         <span class="p">}</span>
         <span class="c"># Get log</span>
@@ -253,17 +267,14 @@
         <span class="nv">$LogList</span> <span class="p">|</span> <span class="k">foreach</span> <span class="p">{</span>
             <span class="nv">$count</span><span class="p">++</span>
             <span class="c"># Write on database</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">-not</span><span class="p">(</span><span class="nb">Get-CouchDBDocument</span> <span class="n">-Database</span> <span class="nv">$DBname</span> <span class="n">-Document</span> <span class="nv">$_</span><span class="p">.</span><span class="n">Index</span> <span class="n">-ErrorAction</span> <span class="n">SilentlyContinue</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">-not</span><span class="p">(</span><span class="nb">Get-CouchDBDocument</span> <span class="n">-Database</span> <span class="nv">$DBname</span> <span class="n">-Document</span> <span class="nv">$_</span><span class="p">.</span><span class="n">Index</span> <span class="n">-ErrorAction</span> <span class="n">SilentlyContinue</span> <span class="n">-Authorization</span> <span class="nv">$Authorization</span><span class="p">))</span> <span class="p">{</span>
                 <span class="nb">New-CouchDBDocument</span> <span class="n">-Database</span> <span class="nv">$DBname</span> <span class="n">-Document</span> <span class="nv">$_</span><span class="p">.</span><span class="n">Index</span> <span class="n">-Data</span> <span class="p">(</span><span class="nv">$_</span> <span class="p">|</span> <span class="nb">Convertto-Json</span> <span class="n">-Depth</span> <span class="n">10</span><span class="p">)</span> <span class="n">-Authorization</span> <span class="nv">$Authorization</span> <span class="p">|</span> <span class="nb">Out-Null</span>
             <span class="p">}</span>
             <span class="nb">Write-Progress</span> <span class="n">-Activity</span> <span class="s2">&quot;Write log $Log in progress&quot;</span> <span class="n">-Status</span> <span class="s2">&quot;Progress $count/</span><span class="p">$(</span><span class="nv">$LogList</span><span class="p">.</span><span class="n">count</span><span class="p">)</span><span class="s2">&quot;</span> <span class="n">-PercentComplete</span> <span class="p">(</span><span class="nv">$count</span><span class="p">/</span><span class="nv">$LogList</span><span class="p">.</span><span class="n">count</span><span class="p">*</span><span class="n">100</span><span class="p">)</span>
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">}</span>
-</pre></div>
-</div>
-<p>Second, edit again your <em>profile.ps1</em> and put this function:</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">using</span> <span class="n">module</span> <span class="n">PSCouchDB</span>
+
 <span class="c"># Find log with criteria</span>
 <span class="k">function</span> <span class="nb">Find-WindowsLog</span> <span class="p">()</span> <span class="p">{</span>
     <span class="k">param</span><span class="p">(</span>
@@ -301,14 +312,54 @@
     <span class="nv">$q</span><span class="p">.</span><span class="n">AddFields</span><span class="p">(</span><span class="s2">&quot;ReplacementStrings&quot;</span><span class="p">)</span>
     <span class="nv">$q</span><span class="p">.</span><span class="n">AddFields</span><span class="p">(</span><span class="s2">&quot;InstanceId&quot;</span><span class="p">)</span>
     <span class="nv">$q</span><span class="p">.</span><span class="n">AddFields</span><span class="p">(</span><span class="s2">&quot;UserName&quot;</span><span class="p">)</span>
-    <span class="nv">$docs</span> <span class="p">=</span> <span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="s2">&quot;${ComputerName}_</span><span class="p">$(</span><span class="nv">$Log</span><span class="p">.</span><span class="n">ToLower</span><span class="p">())</span><span class="s2">&quot;</span> <span class="n">-Find</span> <span class="nv">$q</span><span class="p">.</span><span class="n">GetNativeQuery</span><span class="p">()</span>
+    <span class="nv">$docs</span> <span class="p">=</span> <span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="s2">&quot;${ComputerName}_</span><span class="p">$(</span><span class="nv">$Log</span><span class="p">.</span><span class="n">ToLower</span><span class="p">())</span><span class="s2">&quot;</span> <span class="n">-Find</span> <span class="nv">$q</span><span class="p">.</span><span class="n">GetNativeQuery</span><span class="p">()</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
     <span class="nv">$docs</span><span class="p">.</span><span class="n">docs</span>
 <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="oop">
+<h2>OOP<a class="headerlink" href="#oop" title="Permalink to this headline">¶</a></h2>
+<p>This module has classes representing the various types of documents that exist in CouchDB. You can use them to create objects, extend them to create new custom classes and much more.
+Everything you know about OOP, you can take advantage of it and use it.</p>
+<div class="section" id="custom-document">
+<h3>Custom document<a class="headerlink" href="#custom-document" title="Permalink to this headline">¶</a></h3>
+<p>Creating a custom document to reflect a specific template is very easy.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>using module PSCouchDB
+
+class PersonDocument : PSCouchDBDocument {
+    [string] $Name
+    [string] $Surname
+    [int] $Age
+    [string] $Title
+
+    PersonDocument ([string]$Name, [string]$Surname) {
+        $this.Name = $Name
+        $this.Surname = $Surname
+        $this.SetElement(&#39;Name&#39;, $Name)
+        $this.SetElement(&#39;Surname&#39;, $Surname)
+    }
+}
+
+# Create instance
+$person = New-Object PersonDocument -ArgumentList &#39;Matteo&#39;,&#39;Guadrini&#39;
+
+# Add my age
+$person.SetElement(&#39;Age&#39;, 34)
+$person.Age = 34
+
+# View CouchDB document
+$person.ToJson()
+
+# Write on database
+New-CouchDBDocument -Database &#39;persons&#39; -Document $person._id -Data $person -Authorization &quot;admin:password&quot;
 </pre></div>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p><strong>With PSCouchDB, with just a few lines of code, you can create simple applications for complex tasks.</strong></p>
+</div>
 </div>
 </div>
 </div>
