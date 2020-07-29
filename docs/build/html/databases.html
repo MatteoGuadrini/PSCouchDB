@@ -131,7 +131,8 @@
 <li class="toctree-l1"><a class="reference internal" href="documents.html">Documents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="documents.html#query">Query</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ddoc.html">Design documents</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cmdlets.html">Cmdlets and aliases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdlets.html">Preferences</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdlets.html#cmdlets-and-aliases">Cmdlets and aliases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="classes.html">Classes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uses.html">Real uses</a></li>
 <li class="toctree-l1"><a class="reference internal" href="support.html">Support</a></li>
@@ -205,14 +206,14 @@
 <div class="section" id="test-a-database">
 <h2>Test a database<a class="headerlink" href="#test-a-database" title="Permalink to this headline">¶</a></h2>
 <p>To verify the existence of a database.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Test-CouchDBDatabase</span> <span class="n">-Database</span> <span class="n">test</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Test-CouchDBDatabase</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="read-a-database">
 <h2>Read a database<a class="headerlink" href="#read-a-database" title="Permalink to this headline">¶</a></h2>
 <p>Gets information about the specified database.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDatabase</span> <span class="n">-Database</span> <span class="n">test</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDatabase</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 <p>To get alist of all databases, run this:</p>
@@ -285,7 +286,7 @@ If an invalid database name is supplied, CouchDB returns response with <code cla
 <div class="section" id="get-a-index">
 <h3>Get a index<a class="headerlink" href="#get-a-index" title="Permalink to this headline">¶</a></h3>
 <p>To get list of index present on a database.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBIndex</span> <span class="n">-Database</span> <span class="n">test</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBIndex</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -299,7 +300,7 @@ If an invalid database name is supplied, CouchDB returns response with <code cla
 <div class="section" id="remove-a-index">
 <h3>Remove a index<a class="headerlink" href="#remove-a-index" title="Permalink to this headline">¶</a></h3>
 <p>Remove an existing index.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$idx</span> <span class="p">=</span> <span class="nb">Get-CouchDBIndex</span> <span class="n">-Database</span> <span class="n">test</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$idx</span> <span class="p">=</span> <span class="nb">Get-CouchDBIndex</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 <span class="nb">Remove-CouchDBIndex</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-DesignDoc</span> <span class="nv">$idx</span><span class="p">.</span><span class="n">indexes</span><span class="p">.</span><span class="n">ddoc</span><span class="p">[</span><span class="n">1</span><span class="p">]</span> <span class="n">-Name</span> <span class="nv">$idx</span><span class="p">.</span><span class="n">indexes</span><span class="p">.</span><span class="n">name</span><span class="p">[</span><span class="n">1</span><span class="p">]</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
@@ -311,11 +312,11 @@ If an invalid database name is supplied, CouchDB returns response with <code cla
 <div class="section" id="get-shards">
 <h3>Get shards<a class="headerlink" href="#get-shards" title="Permalink to this headline">¶</a></h3>
 <p>Get a list a database shards.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDatabaseShards</span> <span class="n">-Database</span> <span class="n">test</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDatabaseShards</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 <p>Get the shard document on database.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDatabaseShards</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="n">00000000</span><span class="p">-</span><span class="n">1fffffff</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDatabaseShards</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="n">00000000</span><span class="p">-</span><span class="n">1fffffff</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -330,7 +331,7 @@ If an invalid database name is supplied, CouchDB returns response with <code cla
 <div class="section" id="changes">
 <h2>Changes<a class="headerlink" href="#changes" title="Permalink to this headline">¶</a></h2>
 <p>To get a sorted list of changes made to documents in the database, in time order of application, can be obtained from the database’s _changes resource.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDatabaseChanges</span> <span class="n">-Database</span> <span class="n">test</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDatabaseChanges</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -360,7 +361,7 @@ The compaction process runs as a background process.</p>
 <div class="section" id="get-purged-info-limit">
 <h2>Get purged info limit<a class="headerlink" href="#get-purged-info-limit" title="Permalink to this headline">¶</a></h2>
 <p>Gets the current purged_infos_limit (purged documents limit) setting, the maximum number of historical purges (purged document Ids with their revisions) that can be stored in the database.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDatabasePurgedLimit</span> <span class="n">-Database</span> <span class="n">test</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDatabasePurgedLimit</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -377,21 +378,21 @@ The compaction process runs as a background process.</p>
 <div class="section" id="get-missing-revisions">
 <h3>Get missing revisions<a class="headerlink" href="#get-missing-revisions" title="Permalink to this headline">¶</a></h3>
 <p>Get a list of document revisions, returns the document revisions that do not exist in the database.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBMissingRevision</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;Hitchhikers&quot;</span> <span class="n">-Revision</span> <span class="n">2</span><span class="p">-</span><span class="n">7051cbe5c8faecd085a3fa619e6e6337</span><span class="p">,</span><span class="n">3</span><span class="p">-</span><span class="n">825cb35de44c433bfb2df415563a19de</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBMissingRevision</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;Hitchhikers&quot;</span> <span class="n">-Revision</span> <span class="n">2</span><span class="p">-</span><span class="n">7051cbe5c8faecd085a3fa619e6e6337</span><span class="p">,</span><span class="n">3</span><span class="p">-</span><span class="n">825cb35de44c433bfb2df415563a19de</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="get-revision-difference">
 <h3>Get revision difference<a class="headerlink" href="#get-revision-difference" title="Permalink to this headline">¶</a></h3>
 <p>Given a set of document/revision IDs, returns the subset of those that do not correspond to revisions stored in the database.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBRevisionDifference</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;Hitchhikers&quot;</span> <span class="n">-Revision</span> <span class="n">2</span><span class="p">-</span><span class="n">7051cbe5c8faecd085a3fa619e6e6337</span><span class="p">,</span><span class="n">3</span><span class="p">-</span><span class="n">825cb35de44c433bfb2df415563a19de</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBRevisionDifference</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;Hitchhikers&quot;</span> <span class="n">-Revision</span> <span class="n">2</span><span class="p">-</span><span class="n">7051cbe5c8faecd085a3fa619e6e6337</span><span class="p">,</span><span class="n">3</span><span class="p">-</span><span class="n">825cb35de44c433bfb2df415563a19de</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="get-revision-limit">
 <h3>Get revision limit<a class="headerlink" href="#get-revision-limit" title="Permalink to this headline">¶</a></h3>
 <p>Gets the current revs_limit (revision limit) setting.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBRevisionLimit</span> <span class="n">-Database</span> <span class="n">test</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBRevisionLimit</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -413,18 +414,18 @@ The compaction process runs as a background process.</p>
 <p class="admonition-title">Note</p>
 <p>If you do not specify the path and file name, a JSON file will be saved in UTF8 format in the current path (<code class="docutils literal notranslate"><span class="pre">$pwd</span></code>) with this name: name-of-database_t-i-m-e_s_t_a_m_p.json.</p>
 </div>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Export-CouchDBDatabase</span> <span class="n">-Database</span> <span class="n">test</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Export-CouchDBDatabase</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="import">
 <h3>Import<a class="headerlink" href="#import" title="Permalink to this headline">¶</a></h3>
 <p>For import or restore a database from JSON file.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Import-CouchDBDatabase</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Path</span> <span class="n">test_01</span><span class="p">-</span><span class="n">25</span><span class="p">-</span><span class="n">2019_00_01_00</span><span class="p">.</span><span class="n">json</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Import-CouchDBDatabase</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Path</span> <span class="n">test_01</span><span class="p">-</span><span class="n">25</span><span class="p">-</span><span class="n">2019_00_01_00</span><span class="p">.</span><span class="n">json</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 <p>And this, for create a new database from JSON file.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Import-CouchDBDatabase</span> <span class="n">-Database</span> <span class="n">test_restored</span> <span class="n">-Path</span> <span class="n">test_01</span><span class="p">-</span><span class="n">25</span><span class="p">-</span><span class="n">2019_00_01_00</span><span class="p">.</span><span class="n">json</span> <span class="n">-RemoveRevision</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Import-CouchDBDatabase</span> <span class="n">-Database</span> <span class="n">test_restored</span> <span class="n">-Path</span> <span class="n">test_01</span><span class="p">-</span><span class="n">25</span><span class="p">-</span><span class="n">2019_00_01_00</span><span class="p">.</span><span class="n">json</span> <span class="n">-RemoveRevision</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>

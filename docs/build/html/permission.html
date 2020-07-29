@@ -106,7 +106,8 @@
 <li class="toctree-l1"><a class="reference internal" href="documents.html">Documents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="documents.html#query">Query</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ddoc.html">Design documents</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cmdlets.html">Cmdlets and aliases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdlets.html">Preferences</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdlets.html#cmdlets-and-aliases">Cmdlets and aliases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="classes.html">Classes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uses.html">Real uses</a></li>
 <li class="toctree-l1"><a class="reference internal" href="support.html">Support</a></li>
@@ -178,24 +179,17 @@
 <h1>Permission<a class="headerlink" href="#permission" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="admin-party">
 <h2>Admin Party<a class="headerlink" href="#admin-party" title="Permalink to this headline">¶</a></h2>
-<p>When you start out fresh, CouchDB allows any request to be made by anyone. Create a database and delete some documents? Same deal. CouchDB calls this the Admin Party. Everybody has privileges to do anything.</p>
-<p>This is very nice for testing enviroment, but anyone could delete documents or the whole database. By default, CouchDB, will listen only on your loopback network interface (127.0.0.1 or localhost) and thus only you will be able to make requests to CouchDB, nobody else. But when it is necessary to expose the service on public ip, you will want to think about restricting access.</p>
-<p>CouchDB has the idea of an admin user (for example, an administrator, a super user, or root) that is allowed to do anything to a CouchDB installation. By default, everybody is an admin.</p>
-<p>To restrict permissions, one or more administrators must be created.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>In CouchDB 3.X you have to set an admin in the installation process. Doing so will not make Admin Party work anymore.</p>
-</div>
+<p>Starting from CouchDB 3.X, during installation and configuration, an administrator user must be specified.
+This effectively breaks the old Admin Party logic of the previous version.</p>
 </div>
 <div class="section" id="create-admin-user">
 <h2>Create Admin user<a class="headerlink" href="#create-admin-user" title="Permalink to this headline">¶</a></h2>
-<p>Admin Party allows any user to perform any database operation.
-This could be perfect for application development or on a test machine, but for production it would create many problems.
-To solve this problem, just create an admin user. At this point the admin user can create/modify/delete documents from the database.</p>
+<p>At this point the admin user can create/modify/delete documents from the database.</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
-<p>If the password is not specified, it will be prompted. For example, <code class="docutils literal notranslate"><span class="pre">-Authorization</span> <span class="pre">admin</span></code> will ask you to write the password at the prompt.
-The password has the format <strong>*</strong>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">-Authorization</span></code> parameter, accept two format: string and PSCredential. The string must be in this format: <code class="docutils literal notranslate"><span class="pre">user:password</span></code>.
+If you don’t want the password to be displayed inside the terminal, this is the form of the parameter: <code class="docutils literal notranslate"><span class="pre">-Authorization</span> <span class="pre">(Get-Credential)</span></code>.
+See this section: <a class="reference external" href="permission.html">Permission</a></p>
 </div>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$password</span> <span class="p">=</span> <span class="s2">&quot;password&quot;</span> <span class="p">|</span> <span class="nb">ConvertTo-SecureString</span> <span class="n">-AsPlainText</span> <span class="n">-Force</span>
 <span class="nb">New-CouchDBAdmin</span> <span class="n">-Userid</span> <span class="n">admin</span> <span class="n">-Password</span> <span class="nv">$password</span>

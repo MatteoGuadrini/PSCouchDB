@@ -139,7 +139,8 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="ddoc.html">Design documents</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cmdlets.html">Cmdlets and aliases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdlets.html">Preferences</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdlets.html#cmdlets-and-aliases">Cmdlets and aliases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="classes.html">Classes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uses.html">Real uses</a></li>
 <li class="toctree-l1"><a class="reference internal" href="support.html">Support</a></li>
@@ -213,7 +214,7 @@
 <div class="section" id="get-a-document">
 <h2>Get a document<a class="headerlink" href="#get-a-document" title="Permalink to this headline">¶</a></h2>
 <p>To get document by the specified <code class="docutils literal notranslate"><span class="pre">Document</span></code> from the specified <code class="docutils literal notranslate"><span class="pre">Database</span></code>. Unless you request a specific revision, the latest revision of the document will always be returned.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;Hitchhikers&quot;</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;Hitchhikers&quot;</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -400,7 +401,7 @@
 <div class="section" id="local-document">
 <h2>Local document<a class="headerlink" href="#local-document" title="Permalink to this headline">¶</a></h2>
 <p>To get of all of the local documents in a given database.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Local</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Local</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -446,15 +447,15 @@
 <div class="section" id="get-an-attachment">
 <h3>Get an attachment<a class="headerlink" href="#get-an-attachment" title="Permalink to this headline">¶</a></h3>
 <p>It’s possible to retrieve document with all attached files content.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBAttachment</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;Hitchhikers&quot;</span> <span class="n">-Attachment</span> <span class="n">test</span><span class="p">.</span><span class="n">txt</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBAttachment</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;Hitchhikers&quot;</span> <span class="n">-Attachment</span> <span class="n">test</span><span class="p">.</span><span class="n">txt</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 <p>Also is possible save a file.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBAttachment</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;Hitchhikers&quot;</span> <span class="n">-Attachment</span> <span class="n">test</span><span class="p">.</span><span class="n">txt</span> <span class="n">-OutFile</span> <span class="s2">&quot;C:\out.txt&quot;</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBAttachment</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;Hitchhikers&quot;</span> <span class="n">-Attachment</span> <span class="n">test</span><span class="p">.</span><span class="n">txt</span> <span class="n">-OutFile</span> <span class="s2">&quot;C:\out.txt&quot;</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 <p>Or get info of specific attachment.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBAttachment</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;Hitchhikers&quot;</span> <span class="n">-Attachment</span> <span class="n">test</span><span class="p">.</span><span class="n">txt</span> <span class="n">-Info</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBAttachment</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;Hitchhikers&quot;</span> <span class="n">-Attachment</span> <span class="n">test</span><span class="p">.</span><span class="n">txt</span> <span class="n">-Info</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -478,21 +479,21 @@
 <div class="section" id="get-a-list-of-revisions">
 <h3>Get a list of revisions<a class="headerlink" href="#get-a-list-of-revisions" title="Permalink to this headline">¶</a></h3>
 <p>You can obtain a list of the revisions for a given document.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;Hitchhikers&quot;</span> <span class="n">-Revisions</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;Hitchhikers&quot;</span> <span class="n">-Revisions</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="get-a-history-of-revisions">
 <h3>Get a history of revisions<a class="headerlink" href="#get-a-history-of-revisions" title="Permalink to this headline">¶</a></h3>
 <p>You can get additional information (history) about the revisions for a given document.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;Hitchhikers&quot;</span> <span class="n">-History</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;Hitchhikers&quot;</span> <span class="n">-History</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="get-a-specific-revision">
 <h3>Get a specific revision<a class="headerlink" href="#get-a-specific-revision" title="Permalink to this headline">¶</a></h3>
 <p>To get a specific revision, use the <code class="docutils literal notranslate"><span class="pre">Revision</span></code> parameter, and specify the full revision number.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;Hitchhikers&quot;</span> <span class="n">-Revision</span> <span class="s2">&quot;5-7bf1766d9a5f3e4a60b400e98d62f523&quot;</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;Hitchhikers&quot;</span> <span class="n">-Revision</span> <span class="s2">&quot;5-7bf1766d9a5f3e4a60b400e98d62f523&quot;</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -519,11 +520,11 @@ This is to ensure that deleted documents can be replicated to other databases as
 <div class="section" id="find-a-document">
 <h2>Find a document<a class="headerlink" href="#find-a-document" title="Permalink to this headline">¶</a></h2>
 <p>To search for documents in a database, use the following cmdlet.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 <p>or with native Mango query</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Find</span> <span class="s1">&#39;{&quot;selector&quot;: {&quot;name&quot;:{&quot;$eq&quot;:&quot;Arthur Dent&quot;}},&quot;fields&quot;:[&quot;_id&quot;,&quot;name&quot;,&quot;planet&quot;]}&#39;</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Find</span> <span class="s1">&#39;{&quot;selector&quot;: {&quot;name&quot;:{&quot;$eq&quot;:&quot;Arthur Dent&quot;}},&quot;fields&quot;:[&quot;_id&quot;,&quot;name&quot;,&quot;planet&quot;]}&#39;</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 <p>or with class (for complex query)</p>
@@ -534,7 +535,7 @@ This is to ensure that deleted documents can be replicated to other databases as
 <span class="nv">$q</span><span class="p">.</span><span class="n">AddFields</span><span class="p">(</span><span class="s2">&quot;_id&quot;</span><span class="p">)</span>
 <span class="nv">$q</span><span class="p">.</span><span class="n">AddFields</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
 <span class="nv">$q</span><span class="p">.</span><span class="n">AddFields</span><span class="p">(</span><span class="s2">&quot;planet&quot;</span><span class="p">)</span>
-<span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Find</span> <span class="nv">$q</span><span class="p">.</span><span class="n">GetNativeQuery</span><span class="p">()</span>
+<span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Find</span> <span class="nv">$q</span><span class="p">.</span><span class="n">GetNativeQuery</span><span class="p">()</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 <p>or search partitioned documents in a database, use the following cmdlet.</p>
@@ -545,7 +546,7 @@ This is to ensure that deleted documents can be replicated to other databases as
 <div class="section" id="search-a-document">
 <h3>Search a document<a class="headerlink" href="#search-a-document" title="Permalink to this headline">¶</a></h3>
 <p>To perform a more generic search in a database, without knowing the various selectors, use:</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Search-CouchDBFullText</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Patterns</span> <span class="s2">&quot;space&quot;</span><span class="p">,</span><span class="s2">&quot;planet&quot;</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Search-CouchDBFullText</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Patterns</span> <span class="s2">&quot;space&quot;</span><span class="p">,</span><span class="s2">&quot;planet&quot;</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 <div class="admonition warning">
@@ -693,10 +694,10 @@ There are two core types of operators in the selector syntax:</p>
 <span class="nv">$q</span><span class="p">.</span><span class="n">AddFields</span><span class="p">(</span><span class="s2">&quot;_id&quot;</span><span class="p">)</span>
 <span class="nv">$q</span><span class="p">.</span><span class="n">AddFields</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
 <span class="nv">$q</span><span class="p">.</span><span class="n">AddFields</span><span class="p">(</span><span class="s2">&quot;planet&quot;</span><span class="p">)</span>
-<span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Find</span> <span class="nv">$q</span><span class="p">.</span><span class="n">GetNativeQuery</span><span class="p">()</span>
+<span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Find</span> <span class="nv">$q</span><span class="p">.</span><span class="n">GetNativeQuery</span><span class="p">()</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 <div class="admonition warning">
@@ -796,28 +797,28 @@ The direction value is “asc” for ascending, and “desc” for descending. I
 <span class="p">}</span>
 </pre></div>
 </div>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-Sort</span> <span class="n">name</span><span class="p">,</span><span class="n">planet</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-Sort</span> <span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="limit">
 <h3>Limit<a class="headerlink" href="#limit" title="Permalink to this headline">¶</a></h3>
 <p>Maximum number of results returned. Default is 25.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-Limit</span> <span class="n">100</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-Limit</span> <span class="n">100</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="skip">
 <h3>Skip<a class="headerlink" href="#skip" title="Permalink to this headline">¶</a></h3>
 <p>Skip the first ‘n’ results, where ‘n’ is the value specified.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-Skip</span> <span class="n">10</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-Skip</span> <span class="n">10</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="use-index">
 <h3>Use index<a class="headerlink" href="#use-index" title="Permalink to this headline">¶</a></h3>
 <p>Instruct a query to use a specific index.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-UseIndex</span> <span class="s2">&quot;index_planet&quot;</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-UseIndex</span> <span class="s2">&quot;index_planet&quot;</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -825,7 +826,7 @@ The direction value is “asc” for ascending, and “desc” for descending. I
 <h3>Read quorum<a class="headerlink" href="#read-quorum" title="Permalink to this headline">¶</a></h3>
 <p>Read quorum needed for the result. This defaults to 1, in which case the document found in the index is returned.</p>
 <p>If set to a higher value, each document is read from at least that many replicas before it is returned in the results. This is likely to take more time than using only the document stored locally with the index.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-ReadQuorum</span> <span class="n">3</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-ReadQuorum</span> <span class="n">3</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -837,42 +838,42 @@ Used for paging through result sets.
 Every query returns an opaque string under the bookmark key that can then be passed back in a query to get the next page of results.
 If any part of the selector query changes between requests, the results are undefined.</p>
 </div></blockquote>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-Bookmark</span> <span class="s2">&quot;my_bookmark&quot;</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-Bookmark</span> <span class="s2">&quot;my_bookmark&quot;</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="no-update">
 <h3>No Update<a class="headerlink" href="#no-update" title="Permalink to this headline">¶</a></h3>
 <p>Whether to update the index prior to returning the result. Default is true.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-NoUpdate</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-NoUpdate</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="stable">
 <h3>Stable<a class="headerlink" href="#stable" title="Permalink to this headline">¶</a></h3>
 <p>Whether or not the view results should be returned from a “stable” set of shards.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-Stable</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-Stable</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="stale">
 <h3>Stale<a class="headerlink" href="#stale" title="Permalink to this headline">¶</a></h3>
 <p>Combination of <code class="docutils literal notranslate"><span class="pre">update=false</span></code> and <code class="docutils literal notranslate"><span class="pre">stable=true</span></code> options. Possible options: <code class="docutils literal notranslate"><span class="pre">&quot;ok&quot;</span></code></p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-Stale</span> <span class="s1">&#39;ok&#39;</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-Stale</span> <span class="s1">&#39;ok&#39;</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="execution-statistics">
 <h3>Execution statistics<a class="headerlink" href="#execution-statistics" title="Permalink to this headline">¶</a></h3>
 <p>Include execution statistics in the query response.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-ExecutionStats</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-ExecutionStats</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="explain">
 <h3>Explain<a class="headerlink" href="#explain" title="Permalink to this headline">¶</a></h3>
 <p>Shows which index is being used by the query.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-Sort</span> <span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-Explain</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Find-CouchDBDocuments</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Selector</span> <span class="s2">&quot;name&quot;</span> <span class="n">-Operator</span> <span class="n">eq</span> <span class="n">-Value</span> <span class="s2">&quot;Arthur Dent&quot;</span> <span class="n">-Fields</span> <span class="n">_id</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-Sort</span> <span class="n">name</span><span class="p">,</span><span class="n">planet</span> <span class="n">-Explain</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>

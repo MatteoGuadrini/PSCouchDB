@@ -16,9 +16,14 @@
 Authentication
 ==============
 
-CouchDB generates a token that the client can use for the next few requests to CouchDB. 
-Tokens are valid until a timeout. When CouchDB sees a valid token in a subsequent request, it will authenticate the user by this token without requesting the password again. 
-By default, cookies are valid for 10 minutes.
+For security reasons, PSCouchDB does not use CouchDB token cookies. But authentication can be stored inside the current powershell session. 
+By default, credential storage is allowed so that the ``Authorization`` parameter can only be specified once.
+
+To modify the saved credential preference, set this:
+
+.. code-block:: powershell
+
+    $CouchDBSaveCredentialPreference = $false   # default is $true
 
 Set a cookie:
 
@@ -26,12 +31,14 @@ Set a cookie:
 
     $password = "password" | ConvertTo-SecureString -AsPlainText -Force
     Set-CouchDBSession -UserId admin -Password $password
+    Set-CouchDBSession -UserId admin    # prompt password
 
 Get a session:
 
 .. code-block:: powershell
 
-    Get-CouchDBSession
+    Get-CouchDBSession          # PSCredential
+    Get-CouchDBSession -Clear   # string format user:password
 
 Now let verify a protected read database without ``Authorization`` param:
 
@@ -43,4 +50,4 @@ And remove a session:
 
 .. code-block:: powershell
 
-    Remove-CouchDBSession -Authorization "admin:password"
+    Remove-CouchDBSession

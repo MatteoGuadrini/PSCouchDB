@@ -94,7 +94,8 @@
 <li class="toctree-l1"><a class="reference internal" href="documents.html">Documents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="documents.html#query">Query</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ddoc.html">Design documents</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cmdlets.html">Cmdlets and aliases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdlets.html">Preferences</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdlets.html#cmdlets-and-aliases">Cmdlets and aliases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="classes.html">Classes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uses.html">Real uses</a></li>
 <li class="toctree-l1"><a class="reference internal" href="support.html">Support</a></li>
@@ -164,16 +165,21 @@
             
   <div class="section" id="authentication">
 <h1>Authentication<a class="headerlink" href="#authentication" title="Permalink to this headline">¶</a></h1>
-<p>CouchDB generates a token that the client can use for the next few requests to CouchDB.
-Tokens are valid until a timeout. When CouchDB sees a valid token in a subsequent request, it will authenticate the user by this token without requesting the password again.
-By default, cookies are valid for 10 minutes.</p>
+<p>For security reasons, PSCouchDB does not use CouchDB token cookies. But authentication can be stored inside the current powershell session.
+By default, credential storage is allowed so that the <code class="docutils literal notranslate"><span class="pre">Authorization</span></code> parameter can only be specified once.</p>
+<p>To modify the saved credential preference, set this:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$CouchDBSaveCredentialPreference</span> <span class="p">=</span> <span class="nv">$false</span>   <span class="c"># default is $true</span>
+</pre></div>
+</div>
 <p>Set a cookie:</p>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$password</span> <span class="p">=</span> <span class="s2">&quot;password&quot;</span> <span class="p">|</span> <span class="nb">ConvertTo-SecureString</span> <span class="n">-AsPlainText</span> <span class="n">-Force</span>
 <span class="nb">Set-CouchDBSession</span> <span class="n">-UserId</span> <span class="n">admin</span> <span class="n">-Password</span> <span class="nv">$password</span>
+<span class="nb">Set-CouchDBSession</span> <span class="n">-UserId</span> <span class="n">admin</span>    <span class="c"># prompt password</span>
 </pre></div>
 </div>
 <p>Get a session:</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBSession</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBSession</span>          <span class="c"># PSCredential</span>
+<span class="nb">Get-CouchDBSession</span> <span class="n">-Clear</span>   <span class="c"># string format user:password</span>
 </pre></div>
 </div>
 <p>Now let verify a protected read database without <code class="docutils literal notranslate"><span class="pre">Authorization</span></code> param:</p>
@@ -181,7 +187,7 @@ By default, cookies are valid for 10 minutes.</p>
 </pre></div>
 </div>
 <p>And remove a session:</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Remove-CouchDBSession</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Remove-CouchDBSession</span>
 </pre></div>
 </div>
 </div>

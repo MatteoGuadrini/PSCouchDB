@@ -13,6 +13,16 @@
     uses
     support
 
+Preferences
+===========
+
+Below a list of variable preferences of module
+
+.. code-block:: powershell
+
+    $CouchDBCachePreference             # default value: $false
+    $CouchDBSaveCredentialPreference    # default value: $true
+
 Cmdlets and aliases
 ===================
 
@@ -139,7 +149,7 @@ Server
 
 .. code-block:: powershell
 
-    Send-CouchDBRequest [[-Method] <String>] [[-Server] <String>] [[-Port] <Int32>] [[-Database] <String>] [[-Document] <String>] [[-Authorization] <String>] [[-Revision] <String>] [[-Attachment] <String>] [[-Data] <String>] [[-OutFile] <String>] [-Ssl] [<CommonParameters>]
+    Send-CouchDBRequest [[-Method] <String>] [[-Server] <String>] [[-Port] <Int32>] [[-Database] <String>] [[-Document] <String>] [[-Authorization] <Object>] [[-Revision] <String>] [[-Attachment] <String>] [[-Data] <String>] [-Ssl] [[-JobName] <String>] [<CommonParameters>]
 
 **Get-CouchDBServer**
 

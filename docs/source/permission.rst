@@ -19,28 +19,19 @@ Permission
 Admin Party
 ___________
 
-When you start out fresh, CouchDB allows any request to be made by anyone. Create a database and delete some documents? Same deal. CouchDB calls this the Admin Party. Everybody has privileges to do anything.
-
-This is very nice for testing enviroment, but anyone could delete documents or the whole database. By default, CouchDB, will listen only on your loopback network interface (127.0.0.1 or localhost) and thus only you will be able to make requests to CouchDB, nobody else. But when it is necessary to expose the service on public ip, you will want to think about restricting access.
-
-CouchDB has the idea of an admin user (for example, an administrator, a super user, or root) that is allowed to do anything to a CouchDB installation. By default, everybody is an admin.
-
-To restrict permissions, one or more administrators must be created.
-
-.. note::
-    In CouchDB 3.X you have to set an admin in the installation process. Doing so will not make Admin Party work anymore.
+Starting from CouchDB 3.X, during installation and configuration, an administrator user must be specified. 
+This effectively breaks the old Admin Party logic of the previous version.
 
 
 Create Admin user
 _________________
 
-Admin Party allows any user to perform any database operation.
-This could be perfect for application development or on a test machine, but for production it would create many problems.
-To solve this problem, just create an admin user. At this point the admin user can create/modify/delete documents from the database.
+At this point the admin user can create/modify/delete documents from the database.
 
 .. important::  
-    If the password is not specified, it will be prompted. For example, ``-Authorization admin`` will ask you to write the password at the prompt.
-    The password has the format *****.
+    The ``-Authorization`` parameter, accept two format: string and PSCredential. The string must be in this format: ``user:password``.
+    If you don't want the password to be displayed inside the terminal, this is the form of the parameter: ``-Authorization (Get-Credential)``.
+    See this section: `Permission <permission.html>`_
 
 .. code-block:: powershell
 

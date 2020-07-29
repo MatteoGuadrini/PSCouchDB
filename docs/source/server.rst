@@ -41,13 +41,13 @@ To get list of all the databases in the CouchDB instance:
 
 .. code-block:: powershell
 
-    Get-CouchDBDatabase
+    Get-CouchDBDatabase -Authorization "admin:password"
 
 To get information of a list of the specified databases in the CouchDB instance:
 
 .. code-block:: powershell
 
-    Get-CouchDBDatabaseInfo -Keys test,test1,test2
+    Get-CouchDBDatabaseInfo -Keys test,test1,test2 -Authorization "admin:password"
 
 To get the status of the node or cluster, run this:
 
@@ -234,7 +234,7 @@ Now that we have a replicated document, let's take a look at the change.
 
 .. code-block:: powershell
 
-    Get-CouchDBDatabaseChanges -Database test_dump
+    Get-CouchDBDatabaseChanges -Database test_dump -Authorization "admin:password"
 
 Modify replica
 ______________

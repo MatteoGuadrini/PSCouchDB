@@ -102,7 +102,8 @@
 <li class="toctree-l1"><a class="reference internal" href="documents.html">Documents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="documents.html#query">Query</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ddoc.html">Design documents</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cmdlets.html">Cmdlets and aliases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdlets.html">Preferences</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdlets.html#cmdlets-and-aliases">Cmdlets and aliases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="classes.html">Classes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uses.html">Real uses</a></li>
 <li class="toctree-l1"><a class="reference internal" href="support.html">Support</a></li>
@@ -189,8 +190,10 @@
 <p>Installation by git from Github.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/MatteoGuadrini/PSCouchDB.git
 <span class="nb">cd</span> PSCouchDB
-<span class="c1"># for Windows</span>
+<span class="c1"># for Windows: powershell 5.1</span>
 copy /Y PSCouchDB %Windir%<span class="se">\S</span>ystem32<span class="se">\W</span>indowsPowerShell<span class="se">\v</span><span class="m">1</span>.0<span class="se">\M</span>odules<span class="se">\P</span>SCouchDB
+<span class="c1"># for Windows: powershell core 6 or high</span>
+copy /Y PSCouchDB %ProgramFiles%<span class="se">\W</span>indowsPowerShell<span class="se">\M</span>odules<span class="se">\P</span>SCouchDB
 <span class="c1"># for Unix</span>
 cp -var PSCouchDB /usr/local/share/powershell/Modules
 </pre></div>
