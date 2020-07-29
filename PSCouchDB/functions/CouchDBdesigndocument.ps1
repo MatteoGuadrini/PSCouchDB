@@ -375,14 +375,19 @@ function Get-CouchDBDesignDocumentAttachment () {
     if ($Variable) {
         $tempfile = New-TemporaryFile
         $attachName = Join-Path -Path $tempfile.DirectoryName -ChildPath $(Split-Path -Path $Attachment -Leaf)
-        $attachment = Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Revision $Revision -Attachment $Attachment -OutFile $tempfile.FullName -Authorization $Authorization -Ssl:$Ssl
+        $attachment = Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Revision $Revision -Attachment $Attachment -Authorization $Authorization -Ssl:$Ssl | Out-File $tempfile.FullName -Encoding utf8
         Rename-Item -Path $tempfile.FullName -NewName $attachName -Force
         $exportAttachment = New-Object -TypeName PSCouchDBAttachment -ArgumentList $attachName
         Remove-Item -Path $attachName -Force
         Set-Variable -Name $Variable -Value $exportAttachment -Scope Global
         return $null
     }
-    Send-CouchDBRequest -Server $Server -Port $Port -Method $Method -Database $Database -Document $Document -Revision $Revision -Attachment $Attachment -OutFile $OutFile -Authorization $Authorization -Ssl:$Ssl
+    # Save Attachment
+    if ($OutFile) {
+        (Send-CouchDBRequest -Server $Server -Port $Port -Method $Method -Database $Database -Document $Document -Revision $Revision -Attachment $Attachment -Authorization $Authorization -Ssl:$Ssl).results | Out-File $OutFile -Encoding utf8
+        return "$OutFile"
+    }
+    Send-CouchDBRequest -Server $Server -Port $Port -Method $Method -Database $Database -Document $Document -Revision $Revision -Attachment $Attachment -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Add-CouchDBDesignDocumentAttachment () {
@@ -443,14 +448,10 @@ function Add-CouchDBDesignDocumentAttachment () {
     # Check if Attachment param is string or PSCouchDBAttachment
     if ($Attachment -is [PSCouchDBAttachment]) {
         $tempfile = New-TemporaryFile
-        if ($Attachment.GetData()) {
-            $attachName = Join-Path -Path $tempfile.DirectoryName -ChildPath $Attachment.filename
-            Rename-Item -Path $tempfile.FullName -NewName $attachName -Force
-            $Attachment.SaveData($attachName)
-            $Attachment = $attachName
-        } else {
-            throw "Attachment object doesn't contains any data"
-        }
+        $attachName = Join-Path -Path $tempfile.DirectoryName -ChildPath $Attachment.filename
+        Rename-Item -Path $tempfile.FullName -NewName $attachName -Force
+        $Attachment.SaveData($attachName)
+        $Attachment = $attachName
     } elseif ($Attachment -is [string]) {
         if (-not(Test-Path -Path $Attachment)) {
             throw "File not found: $Attachment"

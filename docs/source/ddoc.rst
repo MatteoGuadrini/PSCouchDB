@@ -64,7 +64,8 @@ To retrieve or save an attachment in a design document.
 
 .. code-block:: powershell
 
-    Get-CouchDBDesignDocumentAttachment -Database test2 -Document space -Attachment test.txt -OutFile -Authorization "admin:password"
+    Get-CouchDBDesignDocumentAttachment -Database test -Document space -Attachment test.txt -Authorization "admin:password"                             # Get content
+    Get-CouchDBDesignDocumentAttachment -Database test -Document space -Attachment test.txt -OutFile "C:\test.txt" -Authorization "admin:password"      # Save content
 
 Creates a design document
 _________________________
