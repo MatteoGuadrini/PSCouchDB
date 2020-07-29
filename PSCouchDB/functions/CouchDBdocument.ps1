@@ -569,13 +569,7 @@ function Get-CouchDBDocument () {
         return $null
     }
     if ($AsJob.IsPresent) {
-        $job = Start-Job -Name "Get-Docs" {
-            param($Server, $Port, $Method, $Database, $Document, $Authorization, $Ssl)
-            Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
-        } -ArgumentList $Server, $Port, $Method, $Database, $Document, $Authorization, $Ssl
-        Register-TemporaryEvent $job "StateChanged" -Action {
-            Write-Host -ForegroundColor Green "Get docs #$($sender.Id) ($($sender.Name)) complete."
-        }
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -JobName "Get-CouchDBDocument" -Authorization $Authorization -Ssl:$Ssl
     } else {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
     }
@@ -985,13 +979,7 @@ function Get-CouchDBBulkDocument () {
     }
     $Document = "_bulk_get"
     if ($AsJob.IsPresent) {
-        $job = Start-Job -Name "Bulk-Get" { 
-            param($Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl)
-            Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl 
-        } -ArgumentList $Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl
-        Register-TemporaryEvent $job "StateChanged" -Action {
-            Write-Host -ForegroundColor Green "Bulk get #$($sender.Id) ($($sender.Name)) complete."
-        }
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -JobName "Get-CouchDBBulkDocument" -Authorization $Authorization -Ssl:$Ssl
     } else {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
     }
@@ -1064,13 +1052,7 @@ function New-CouchDBBulkDocument () {
     }
     $Document = "_bulk_docs"
     if ($AsJob.IsPresent) {
-        $job = Start-Job -Name "Bulk-Docs" {
-            param($Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl)
-            Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl 
-        } -ArgumentList $Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl
-        Register-TemporaryEvent $job "StateChanged" -Action {
-            Write-Host -ForegroundColor Green "Bulk docs #$($sender.Id) ($($sender.Name)) complete."
-        }
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -JobName "New-CouchDBBulkDocument" -Authorization $Authorization -Ssl:$Ssl
     } else {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
     }
@@ -1434,13 +1416,7 @@ function Search-CouchDBFullText () {
 "@
         $Document = "_all_docs/queries"
         if ($AsJob.IsPresent) {
-            $job = Start-Job -Name "Search-FullText" {
-                param($Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl)
-                Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
-            } -ArgumentList $Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl
-            Register-TemporaryEvent $job "StateChanged" -Action {
-                Write-Host -ForegroundColor Green "Search full text docs with queries #$($sender.Id) ($($sender.Name)) complete."
-            }
+            Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -JobName "Search-CouchDBFullText" -Authorization $Authorization -Ssl:$Ssl
         } else {
             Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
         }
@@ -1691,13 +1667,7 @@ function Find-CouchDBDocuments () {
         $Data = $Query.GetNativeQuery()
     }
     if ($AsJob.IsPresent) {
-        $job = Start-Job -Name "Find-Docs" {
-            param($Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl)
-            Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
-        } -ArgumentList $Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl
-        Register-TemporaryEvent $job "StateChanged" -Action {
-            Write-Host -ForegroundColor Green "Find docs #$($sender.Id) ($($sender.Name)) complete."
-        }
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -JobName "Find-CouchDBDocuments" -Authorization $Authorization -Ssl:$Ssl
     } else {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
     }
