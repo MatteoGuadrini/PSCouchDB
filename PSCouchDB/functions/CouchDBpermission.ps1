@@ -38,7 +38,7 @@ function New-CouchDBAdmin () {
         [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
-        [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).all_nodes -contains "couchdb@localhost") { "couchdb@localhost" } else { "couchdb@127.0.0.1" }),
+        [string] $Node,
         [Parameter(mandatory = $true)]
         [string] $Userid,
         [Parameter(mandatory = $true)]
@@ -46,6 +46,14 @@ function New-CouchDBAdmin () {
         $Authorization,
         [switch] $Ssl
     )
+    # Check node
+    if (-not($Node)) {
+        if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).name) {
+            $Node = (Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).name
+        } else {
+            $Node = Read-Host "Enter the node name (ex. couchdb@localhost)"
+        }
+    }
     $Database = "_node"
     $Document = "$Node/_config/admins/$Userid"
     $ClearPassword = ConvertTo-CouchDBPassword -SecurePassword $Password
