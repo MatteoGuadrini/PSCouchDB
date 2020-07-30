@@ -270,7 +270,7 @@
 <div class="section" id="read-the-log">
 <h2>Read the log<a class="headerlink" href="#read-the-log" title="Permalink to this headline">¶</a></h2>
 <p>To read entire log.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Read-CouchDBLog</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Read-CouchDBLog</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -279,11 +279,11 @@
 Otherwise, if the log is in a custom path, specify the path using the <code class="docutils literal notranslate"><span class="pre">-Path</span></code> parameter.</p>
 </div>
 <p>This example is used to read only the last 15 lines of log.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Read-CouchDBLog</span> <span class="n">-Tail</span> <span class="n">15</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Read-CouchDBLog</span> <span class="n">-Tail</span> <span class="n">15</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 <p>Instead this to stay in append on the log for the level of warning.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Read-CouchDBLog</span> <span class="n">-Level</span> <span class="n">warning</span> <span class="n">-Follow</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Read-CouchDBLog</span> <span class="n">-Level</span> <span class="n">warning</span> <span class="n">-Follow</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 <div class="section" id="level">
@@ -311,7 +311,7 @@ Otherwise, if the log is in a custom path, specify the path using the <code clas
 <div class="section" id="clear-the-log">
 <h2>Clear the log<a class="headerlink" href="#clear-the-log" title="Permalink to this headline">¶</a></h2>
 <p>Clear entire and rotate (save a copy in the same folder) log.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Clear-CouchDBLog</span> <span class="n">-Rotate</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Clear-CouchDBLog</span> <span class="n">-Rotate</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>

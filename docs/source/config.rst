@@ -71,7 +71,7 @@ To manually add a node to the cluster, simply run:
 
     Get-CouchDBNode -Authorization "admin:password"
 
-    Remove-CouchDBNode -BindAddress couchdb@127.0.1.1 -Authorization "admin:password"
+    Remove-CouchDBNode -Node couchdb@127.0.1.1 -Authorization "admin:password"
 
 
 Configuration

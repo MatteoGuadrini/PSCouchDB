@@ -197,13 +197,13 @@ Server
 
 .. code-block:: powershell
 
-    Read-CouchDBLog [[-Path] <String>] [[-Level] <String>] [-Follow] [[-Tail] <Int32>] [<CommonParameters>]
+    Read-CouchDBLog [[-Path] <String>] [[-Level] <String>] [-Follow] [[-Tail] <Int32>] [[-Authorization] <Object>] [<CommonParameters>]
 
 **Clear-CouchDBLog**
 
 .. code-block:: powershell
 
-    Clear-CouchDBLog [[-Path] <String>] [-Rotate] [<CommonParameters>]
+    Clear-CouchDBLog [[-Path] <String>] [-Rotate] [[-Authorization] <Object>] [<CommonParameters>]
 
 Replication
 ***********

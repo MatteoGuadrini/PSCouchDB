@@ -36,7 +36,7 @@ At this point the admin user can create/modify/delete documents from the databas
 .. code-block:: powershell
 
     $password = "password" | ConvertTo-SecureString -AsPlainText -Force
-    New-CouchDBAdmin -Userid admin -Password $password
+    New-CouchDBAdmin -Userid admin -Password $password -Authorization "admin:password"
 
 Naturally, all reading requests can be made without user and password.
 

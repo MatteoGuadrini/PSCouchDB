@@ -121,7 +121,7 @@ To read entire log.
 
 .. code-block:: powershell
 
-    Read-CouchDBLog
+    Read-CouchDBLog -Authorization "admin:password"
 
 .. note::
     The default path on Windows is ``C:\CouchDB\couch.log``, while on Unix it is ``/var/log/couchdb/couch.log``.
@@ -131,13 +131,13 @@ This example is used to read only the last 15 lines of log.
 
 .. code-block:: powershell
 
-    Read-CouchDBLog -Tail 15
+    Read-CouchDBLog -Tail 15 -Authorization "admin:password"
 
 Instead this to stay in append on the log for the level of warning.
 
 .. code-block:: powershell
 
-    Read-CouchDBLog -Level warning -Follow
+    Read-CouchDBLog -Level warning -Follow -Authorization "admin:password"
 
 Level
 *****
@@ -189,7 +189,7 @@ Clear entire and rotate (save a copy in the same folder) log.
 
 .. code-block:: powershell
 
-    Clear-CouchDBLog -Rotate
+    Clear-CouchDBLog -Rotate -Authorization "admin:password"
 
 
 Replication
