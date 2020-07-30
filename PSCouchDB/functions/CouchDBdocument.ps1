@@ -907,7 +907,7 @@ function Copy-CouchDBDocument () {
     } else {
         $Doc = New-Object -TypeName PSCouchDBDocument
         [void] $Doc.FromJson((Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization -Ssl:$Ssl | ConvertTo-Json -Depth 99))
-        $Doc._id = $Destination
+        $Doc.SetElement('_id', $Destination)
         # Remove _rev
         $Doc.RemoveElement('_rev')
         $Data = $Doc.ToJson(99)
