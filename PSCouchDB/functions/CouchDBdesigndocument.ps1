@@ -555,10 +555,12 @@ function New-CouchDBDesignDocument () {
             } elseif ($ViewMapFunction) {
                 $ddoc.AddView($ViewName, $ViewMapFunction)
             }
+            if ($ValidationFunction) { $ddoc.SetValidateFunction($ValidationFunction) }
+        } elseif ($ValidationFunction) {
+            $ddoc.SetValidateFunction($ValidationFunction)
         } else {
             throw "View function required a name!"
         }
-        if ($ValidationFunction) { $ddoc.SetValidateFunction($ValidationFunction) }
         $Data = $ddoc.ToJson(99)
     }
     # CustomData
@@ -671,10 +673,12 @@ function Set-CouchDBDesignDocument () {
             } elseif ($ViewMapFunction) {
                 $ddoc.AddView($ViewName, $ViewMapFunction)
             }
+            if ($ValidationFunction) { $ddoc.SetValidateFunction($ValidationFunction) }
+        } elseif ($ValidationFunction) {
+            $ddoc.SetValidateFunction($ValidationFunction)
         } else {
             throw "View function required a name!"
         }
-        if ($ValidationFunction) { $ddoc.SetValidateFunction($ValidationFunction) }
         $Data = $ddoc.ToJson(99)
     }
     # CustomData

@@ -1662,8 +1662,12 @@ function Send-CouchDBRequest {
             Write-Verbose -Message "Set attachment to $Attachment"
             $req.SetDocument("$Document/$Attachment")
         } else {
-            Write-Verbose -Message "Set attachment to $Attachment"
-            $req.AddAttachment($Attachment)
+            if (-not(Test-Path -Path $Attachment -ErrorAction SilentlyContinue)) {
+                $req.SetDocument("$Document/$Attachment")
+            } else {
+                Write-Verbose -Message "Set attachment to $Attachment"
+                $req.AddAttachment($Attachment)
+            }
         }
     }
     # Set revision
