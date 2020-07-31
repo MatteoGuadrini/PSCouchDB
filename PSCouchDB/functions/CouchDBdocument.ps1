@@ -250,7 +250,7 @@ function Get-CouchDBDocument () {
     }
     # Check local docs
     if ($Local.IsPresent) {
-        if ($AllDocuments.IsPresent) {
+        if ($AllDocuments.IsPresent -or $Document -eq "_all_docs") {
             Write-Warning -Message "-Document $Document parameter is rewrite in _local_docs because -Local parameter is specified."
             $Document = "_local_docs"
         } else {
