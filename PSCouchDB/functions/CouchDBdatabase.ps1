@@ -1200,7 +1200,12 @@ function Import-CouchDBDatabase () {
         $job = Start-Job -Name "Import-Database" {
             param($Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl, $docs)
             [string] $Document = "_bulk_docs"
-            $Data = "{ `"docs`" : $(($docs | ConvertFrom-Json) | ConvertTo-Json -Depth 99)}"
+            if ($docs) {
+                $Data = "{ `"docs`" : $(($docs | ConvertFrom-Json) | ConvertTo-Json -Depth 99)}"
+            } else {
+                Write-Warning -Message "File is empty!"
+                return $null
+            }
             Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
         } -ArgumentList $Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl, $docs
         Register-TemporaryEvent $job "StateChanged" -Action {
@@ -1209,7 +1214,12 @@ function Import-CouchDBDatabase () {
     } else {
         # Import data in bulk
         [string] $Document = "_bulk_docs"
-        $Data = "{ `"docs`" : $(($docs | ConvertFrom-Json) | ConvertTo-Json -Depth 99)}"
+        if ($docs) {
+            $Data = "{ `"docs`" : $(($docs | ConvertFrom-Json) | ConvertTo-Json -Depth 99)}"
+        } else {
+            Write-Warning -Message "File is empty!"
+            return $null
+        }
         Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
     }
 }
