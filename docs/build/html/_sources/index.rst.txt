@@ -6,17 +6,20 @@
 Welcome to PSCouchDB's documentation!
 =====================================
 
-.. figure:: ./_static/pscouchdb-logo.png
+.. figure:: ./_static/pscouchdb-logo.svg
     :height: 224 px
     :width: 320 px
     :align: center
     :target: https://github.com/MatteoGuadrini/PSCouchDB
 
-**The complete and powerful powershell module for CouchDB v2.X and v3.X**
+**Advanced CLI for CouchDB server**
 
 .. raw:: html
 
     <script id="asciicast-232696" src="https://asciinema.org/a/232696.js" async></script>
+
+.. note::
+    If you are using CouchDB version 2, use the PSCouchDB 1.X version; if instead you are using CouchDB version 3 or 4, use the PSCouchDB version 2.X
 
 .. toctree::
     :maxdepth: 2
