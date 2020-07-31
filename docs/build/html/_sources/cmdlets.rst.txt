@@ -413,11 +413,11 @@ Databases
 
     Import-CouchDBDatabase [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Path] <String> [-RemoveRevision] [[-Authorization] <String>] [-Ssl] [-AsJob] [<CommonParameters>]
 
-**Set-CouchDBDatabasePartition**
+**New-CouchDBDatabasePartition**
 
 .. code-block:: powershell
 
-    Set-CouchDBDatabasePartition [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    New-CouchDBDatabasePartition [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
 
 Documents
 *********

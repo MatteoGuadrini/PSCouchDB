@@ -1224,7 +1224,7 @@ function Import-CouchDBDatabase () {
     }
 }
 
-function Set-CouchDBDatabasePartition () {
+function New-CouchDBDatabasePartition () {
     <#
     .SYNOPSIS
     Create a partitioned database.
@@ -1247,7 +1247,7 @@ function Set-CouchDBDatabasePartition () {
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
     .EXAMPLE
-    Set-CouchDBDatabasePartition -Database test -Authorization admin:password
+    New-CouchDBDatabasePartition -Database test -Authorization admin:password
     Create a partitioned database.
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/databases.html#partition-database
