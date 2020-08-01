@@ -1264,3 +1264,81 @@ function New-CouchDBDatabasePartition () {
     $Database += "?partitioned=true"
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Authorization $Authorization -Ssl:$Ssl
 }
+
+function Connect-CouchDBDatabase () {
+    <#
+    .SYNOPSIS
+    Connect database.
+    .DESCRIPTION
+    To permanently connect to a database.
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
+    .EXAMPLE
+    Connect-CouchDBDatabase -Database test -Authorization admin:password
+    Connect to server localhost:5984 on database test.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/databases.html#connect-database
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server = 'localhost',
+        [int] $Port = 5984,
+        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
+        [string] $Database,
+        $Authorization,
+        [switch] $Ssl
+    )
+    # Default parameter set variable
+    $Global:PSDefaultParameterValues["*CouchDB*:Server"] = $Server
+    $Global:PSDefaultParameterValues["*CouchDB*:Port"] = $Port
+    $Global:PSDefaultParameterValues["*CouchDB*:Database"] = $Database
+
+    # Define global variable
+    $Global:CouchDBServer = $Server
+    $Global:CouchDBPort = $Port
+    $Global:CouchDBDatabase = $Database
+
+    # Add authorization global variable
+    Set-Variable -Name "CouchDBCredential" -Value $Authorization -Scope Global
+
+    function Global:prompt {
+        Write-Host -NoNewLine -ForegroundColor Red "[CouchDB Server:$($Global:CouchDBServer):$($Global:CouchDBPort) Database:$($Global:CouchDBDatabase)]`n"
+    }
+}
+
+function Disconnect-CouchDBDatabase () {
+    <#
+    .SYNOPSIS
+    Disconnect database.
+    .DESCRIPTION
+    Disconnect database.
+    .EXAMPLE
+    Disconnect-CouchDBDatabase
+    Disconnect to server localhost:5984 on database test.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/databases.html#connect-database
+    #>
+    # Remove parameter set variable
+    $Global:PSDefaultParameterValues = @{}
+
+    # Remove global variable
+    Remove-Variable CouchDBServer -Scope global
+    Remove-Variable CouchDBPort -Scope global
+    Remove-Variable CouchDBDatabase -Scope global
+
+    # Remove authorization global variable
+    Remove-Variable CouchDBCredential -Scope global
+
+    function Global:prompt {}
+}
