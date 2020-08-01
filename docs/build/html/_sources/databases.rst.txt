@@ -18,6 +18,21 @@ Databases
 
 The Database endpoint provides an interface to an entire database with in CouchDB. These are database-level, rather than document-level requests.
 
+Connect database
+________________
+
+To permanently connect to a database, do the following:
+
+.. code-block:: powershell
+
+    Connect-Database -Database test -Authorization "admin:password"
+
+and disconnect:
+
+.. code-block:: powershell
+
+    Disconnect-Database -Database test -Authorization "admin:password"
+
 Test a database
 _______________
 

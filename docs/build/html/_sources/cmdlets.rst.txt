@@ -280,6 +280,18 @@ Authentication
 Databases
 *********
 
+**Connect-CouchDBDatabase**
+
+.. code-block:: powershell
+
+    Connect-CouchDBDatabase [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [[-Authorization] <Object>] [-Ssl] [<CommonParameters>]
+
+**Disconnect-CouchDBDatabase**
+
+.. code-block:: powershell
+
+    Disconnect-CouchDBDatabase
+
 **Test-CouchDBDatabase**
 
 .. code-block:: powershell

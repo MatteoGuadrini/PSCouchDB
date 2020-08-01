@@ -94,6 +94,7 @@
 <li class="toctree-l1"><a class="reference internal" href="server.html#replication">Replication</a></li>
 <li class="toctree-l1"><a class="reference internal" href="auth.html">Authentication</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Databases</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#connect-database">Connect database</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#test-a-database">Test a database</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#read-a-database">Read a database</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#create-a-database">Create a database</a></li>
@@ -206,6 +207,17 @@
   <div class="section" id="databases">
 <h1>Databases<a class="headerlink" href="#databases" title="Permalink to this headline">¶</a></h1>
 <p>The Database endpoint provides an interface to an entire database with in CouchDB. These are database-level, rather than document-level requests.</p>
+<div class="section" id="connect-database">
+<h2>Connect database<a class="headerlink" href="#connect-database" title="Permalink to this headline">¶</a></h2>
+<p>To permanently connect to a database, do the following:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Connect-Database</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+</pre></div>
+</div>
+<p>and disconnect:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Disconnect-Database</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="test-a-database">
 <h2>Test a database<a class="headerlink" href="#test-a-database" title="Permalink to this headline">¶</a></h2>
 <p>To verify the existence of a database.</p>
