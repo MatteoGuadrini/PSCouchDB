@@ -35,7 +35,7 @@ function Get-CouchDBServer () {
     param(
         [string] $Server,
         [int] $Port,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Status,
         [switch] $Ssl
     )
@@ -79,7 +79,7 @@ function Get-CouchDBUser () {
         [int] $Port,
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Userid,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     $Database = "_users"
@@ -120,10 +120,18 @@ function Get-CouchDBAdmin () {
         [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
-        [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).all_nodes -contains "couchdb@localhost") { "couchdb@localhost" } else { "couchdb@127.0.0.1" }),
-        [string] $Authorization,
+        [string] $Node,
+        $Authorization,
         [switch] $Ssl
     )
+    # Check node
+    if (-not($Node)) {
+        if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).name) {
+            $Node = (Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).name
+        } else {
+            $Node = Read-Host "Enter the node name (ex. couchdb@localhost)"
+        }
+    }
     $Database = "_node"
     $Document = "$Node/_config/admins"
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
@@ -160,7 +168,7 @@ function Get-CouchDBActiveTask () {
         [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     $Database = "_active_tasks"
@@ -202,7 +210,7 @@ function Get-CouchDBClusterSetup () {
         [int] $Port,
         [AllowEmptyCollection()]
         [array] $EnsureDatabaseExist,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     $Database = "_cluster_setup"
@@ -275,7 +283,7 @@ function Measure-CouchDBStatistics () {
         [string] $Server = 'localhost',
         [int] $Port,
         [switch] $System,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     if ($System.IsPresent) {
@@ -316,7 +324,7 @@ function Restart-CouchDBServer () {
             try {
                 Restart-Service -Name $Service -Force -ErrorAction Stop
             } catch [Microsoft.PowerShell.Commands.ServiceCommandException] {
-                throw "Cannot open $Service service on computer"
+                throw "Cannot open $Service service on computer. To run restart must have admnistrative privileges."
             }
             Write-Host
             Write-Host -ForegroundColor Green "Apache CouchDB restarted successfully."
@@ -364,7 +372,7 @@ function New-CouchDBUuids () {
         [int] $Port,
         [Parameter(ValueFromPipeline = $true)]
         [int] $Count = 10,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     $Database = '_uuids'
@@ -414,42 +422,16 @@ function Read-CouchDBLog () {
         [Parameter(ValueFromPipeline = $true)]
         [string] $Level = "info",
         [switch] $Follow,
-        [int] $Tail
+        [int] $Tail,
+        $Authorization
     )
     # Check if $Path is empty
     if (-not($Path)) {
-        # Windows?
-        try {
-            $Windows = ([bool](Get-CimInstance -ClassName Win32_OperatingSystem -ErrorAction SilentlyContinue))
-        } catch [System.Management.Automation.CommandNotFoundException] {
-            $Windows = $false
-        }
-        # Set default path...
-        # Windows platform
-        if ($Windows) {
-            if ((Get-CouchDBServer).version -match '3.*') { 
-                $Path = "C:\Program Files\Apache CouchDB\var\log\couchdb.log"
-                $root = "C:\Program Files\Apache CouchDB"
-            } elseif ((Get-CouchDBServer).version -match '2.*') { 
-                $Path = "C:\CouchDB\couch.log"
-                $root = "C:\CouchDB"
-            }
-            # Unix platform
-        } else {
-            $Path = "/var/log/couchdb/couch.log"
-            $root = "/var/log"
-        }
-        # ...and if not exists, search it
-        if (-not(Test-Path -Path $Path -ErrorAction SilentlyContinue)) {
-            Write-Warning -Message "Default log path $Path not exists!"
-            Write-Host "Search couch.log in the $root path..."
-            $Path = (Get-ChildItem -Path $root -Recurse | Where-Object { $_.Name -like "couch.log" } | Select-Object FullName).FullName
-            if (-not(Test-Path -Path $Path)) {
-                throw "couch.log not found! Specify the `$Path parameter or check configuration!"
-            }
-            Write-Host
+        if ((Get-CouchDBConfiguration -Session log -Key file -Authorization $Authorization -ErrorAction SilentlyContinue).results) {
+            $Path = (Get-CouchDBConfiguration -Session log -Key file -Authorization $Authorization -ErrorAction SilentlyContinue).results -replace '"',''
         }
     }
+    if (-not(Test-Path -Path $Path -ErrorAction SilentlyContinue)) { throw "Log file not found! See 'Get-CouchDBConfiguration -Session log -Key file'" }
     # Set level
     $Levels = [PSCustomObject]@{
         debug     = @{
@@ -527,37 +509,16 @@ function Clear-CouchDBLog () {
     param(
         [Parameter(ValueFromPipeline = $true)]
         [string] $Path,
-        [switch] $Rotate
+        [switch] $Rotate,
+        $Authorization
     )
     # Check if $Path is empty
     if (-not($Path)) {
-        # Windows?
-        try {
-            $Windows = ([bool](Get-CimInstance -ClassName Win32_OperatingSystem -ErrorAction SilentlyContinue))
-        } catch [System.Management.Automation.CommandNotFoundException] {
-            $Windows = $false
-        }
-        # Set default path...
-        # Windows platform
-        if ($Windows) {
-            $Path = "C:\CouchDB\couch.log"
-            $root = "C:\CouchDB"
-            # Unix platform
-        } else {
-            $Path = "/var/log/couchdb/couch.log"
-            $root = "/var/log"
+        if ((Get-CouchDBConfiguration -Session log -Key file -Authorization $Authorization -ErrorAction SilentlyContinue).results) {
+            $Path = (Get-CouchDBConfiguration -Session log -Key file -Authorization $Authorization -ErrorAction SilentlyContinue).results -replace '"',''
         }
     }
-    # ...and if not exists, search it
-    if (-not(Test-Path -Path $Path -ErrorAction SilentlyContinue)) {
-        Write-Warning -Message "Default log path $Path not exists!"
-        Write-Host "Search couch.log in the $root path..."
-        $Path = (Get-ChildItem -Path $root -Recurse | Where-Object { $_.Name -like "couch.log" } | Select-Object FullName).FullName
-        if (-not(Test-Path -Path $Path)) {
-            throw "couch.log not found! Specify the `$Path parameter or check configuration!"
-        }
-        Write-Host
-    }
+    if (-not(Test-Path -Path $Path -ErrorAction SilentlyContinue)) { throw "Log file not found! See 'Get-CouchDBConfiguration -Session log -Key file'" }
     # Clear log
     if ($Rotate.IsPresent) {
         Copy-Item -Path $Path -Destination "$Path.$(Get-Date -Format 'MM-dd-yyyy_HH_mm_ss')" -Force
@@ -616,9 +577,13 @@ function Get-CouchDBDatabaseUpdates () {
         [int] $Timeout,
         [int] $Heartbeat,
         [string] $Since,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
+    # Check if _global_changes exists
+    if (-not(Get-CouchDBDatabase -Server $Server -Port $Port -Database "_global_changes" -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
+        throw "Database _global_changes doesn't exists."
+    }
     $Database = '_db_updates'
     # Check Feed parameter
     if ($Feed) {

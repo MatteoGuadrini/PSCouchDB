@@ -21,6 +21,9 @@ The design document defines the views used to extract information from CouchDB t
 Design documents are created within your CouchDB instance in the same way as you create database documents, 
 but the content and definition of the documents is different.
 
+.. warning::
+    Show and List functions are deprecated in CouchDB 3.0, and will be removed in CouchDB 4.0.
+
 Get a design document
 _____________________
 
@@ -29,13 +32,13 @@ Unless you request a specific revision, the latest revision of the document will
 
 .. code-block:: powershell
 
-    Get-CouchDBDesignDocument -Database test -Document "space"
+    Get-CouchDBDesignDocument -Database test -Document "space" -Authorization "admin:password"
 
 To get all the Design Documents in a database.
 
 .. code-block:: powershell
 
-    Get-CouchDBDatabaseDesignDocument -Database test
+    Get-CouchDBDatabaseDesignDocument -Database test -Authorization "admin:password"
 
 In this table you can find all the possible parameters to get the design documents with this cmdlet.
 
@@ -64,7 +67,8 @@ To retrieve or save an attachment in a design document.
 
 .. code-block:: powershell
 
-    Get-CouchDBDesignDocumentAttachment -Database test2 -Document space -Attachment test.txt -OutFile
+    Get-CouchDBDesignDocumentAttachment -Database test -Document space -Attachment test.txt -Authorization "admin:password"                             # Get content
+    Get-CouchDBDesignDocumentAttachment -Database test -Document space -Attachment test.txt -OutFile "C:\test.txt" -Authorization "admin:password"      # Save content
 
 Creates a design document
 _________________________
@@ -94,7 +98,7 @@ Now, navigate with your favorite browser to ``http://localhost:5984/test/_design
 
 .. code-block:: powershell
 
-    Get-CouchDBDocument -Database test -Document "_design/space/_view/planet_view"
+    Get-CouchDBDocument -Database test -Document "_design/space/_view/planet_view" -Authorization "admin:password"
 
 Validation
 **********

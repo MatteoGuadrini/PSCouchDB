@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Cmdlets and aliases &mdash; PSCouchDB  documentation</title>
+  <title>Preferences &mdash; PSCouchDB  documentation</title>
   
 
   
@@ -54,6 +54,9 @@
           
 
           
+            
+            <img src="_static/pscouchdb-logo.svg" class="logo" alt="Logo"/>
+          
           </a>
 
           
@@ -94,7 +97,8 @@
 <li class="toctree-l1"><a class="reference internal" href="documents.html">Documents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="documents.html#query">Query</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ddoc.html">Design documents</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Cmdlets and aliases</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Preferences</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#cmdlets-and-aliases">Cmdlets and aliases</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#cmdlets">Cmdlets</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#help">Help</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#configuration">Configuration</a></li>
@@ -158,7 +162,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Cmdlets and aliases</li>
+      <li>Preferences</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -177,7 +181,15 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="cmdlets-and-aliases">
+  <div class="section" id="preferences">
+<h1>Preferences<a class="headerlink" href="#preferences" title="Permalink to this headline">¶</a></h1>
+<p>Below a list of variable preferences of module</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$CouchDBCachePreference</span>             <span class="c"># default value: $false</span>
+<span class="nv">$CouchDBSaveCredentialPreference</span>    <span class="c"># default value: $true</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="cmdlets-and-aliases">
 <h1>Cmdlets and aliases<a class="headerlink" href="#cmdlets-and-aliases" title="Permalink to this headline">¶</a></h1>
 <p>Below is a list of cmdlets and aliases</p>
 <div class="section" id="cmdlets">
@@ -262,7 +274,7 @@
 <div class="section" id="server">
 <h3>Server<a class="headerlink" href="#server" title="Permalink to this headline">¶</a></h3>
 <p><strong>Send-CouchDBRequest</strong></p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Send-CouchDBRequest</span> <span class="p">[[</span><span class="n">-Method</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Server</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Port</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Int32</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Database</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Document</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Authorization</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Revision</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Attachment</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Data</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-OutFile</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Ssl</span><span class="p">]</span> <span class="p">[&lt;</span><span class="n">CommonParameters</span><span class="p">&gt;]</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Send-CouchDBRequest</span> <span class="p">[[</span><span class="n">-Method</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Server</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Port</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Int32</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Database</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Document</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Authorization</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Object</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Revision</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Attachment</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Data</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Ssl</span><span class="p">]</span> <span class="p">[[</span><span class="n">-JobName</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[&lt;</span><span class="n">CommonParameters</span><span class="p">&gt;]</span>
 </pre></div>
 </div>
 <p><strong>Get-CouchDBServer</strong></p>
@@ -294,11 +306,11 @@
 </pre></div>
 </div>
 <p><strong>Read-CouchDBLog</strong></p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Read-CouchDBLog</span> <span class="p">[[</span><span class="n">-Path</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Level</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Follow</span><span class="p">]</span> <span class="p">[[</span><span class="n">-Tail</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Int32</span><span class="p">&gt;]</span> <span class="p">[&lt;</span><span class="n">CommonParameters</span><span class="p">&gt;]</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Read-CouchDBLog</span> <span class="p">[[</span><span class="n">-Path</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Level</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Follow</span><span class="p">]</span> <span class="p">[[</span><span class="n">-Tail</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Int32</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Authorization</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Object</span><span class="p">&gt;]</span> <span class="p">[&lt;</span><span class="n">CommonParameters</span><span class="p">&gt;]</span>
 </pre></div>
 </div>
 <p><strong>Clear-CouchDBLog</strong></p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Clear-CouchDBLog</span> <span class="p">[[</span><span class="n">-Path</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Rotate</span><span class="p">]</span> <span class="p">[&lt;</span><span class="n">CommonParameters</span><span class="p">&gt;]</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Clear-CouchDBLog</span> <span class="p">[[</span><span class="n">-Path</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Rotate</span><span class="p">]</span> <span class="p">[[</span><span class="n">-Authorization</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Object</span><span class="p">&gt;]</span> <span class="p">[&lt;</span><span class="n">CommonParameters</span><span class="p">&gt;]</span>
 </pre></div>
 </div>
 </div>
@@ -354,6 +366,14 @@
 </div>
 <div class="section" id="databases">
 <h3>Databases<a class="headerlink" href="#databases" title="Permalink to this headline">¶</a></h3>
+<p><strong>Connect-CouchDBDatabase</strong></p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Connect-CouchDBDatabase</span> <span class="p">[[</span><span class="n">-Server</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Port</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Int32</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Database</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;</span> <span class="p">[[</span><span class="n">-Authorization</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Object</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Ssl</span><span class="p">]</span> <span class="p">[&lt;</span><span class="n">CommonParameters</span><span class="p">&gt;]</span>
+</pre></div>
+</div>
+<p><strong>Disconnect-CouchDBDatabase</strong></p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Disconnect-CouchDBDatabase</span>
+</pre></div>
+</div>
 <p><strong>Test-CouchDBDatabase</strong></p>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Test-CouchDBDatabase</span> <span class="p">[[</span><span class="n">-Server</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Port</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Int32</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Database</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;</span> <span class="p">[[</span><span class="n">-Authorization</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Ssl</span><span class="p">]</span> <span class="p">[&lt;</span><span class="n">CommonParameters</span><span class="p">&gt;]</span>
 </pre></div>
@@ -443,8 +463,8 @@
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Import-CouchDBDatabase</span> <span class="p">[[</span><span class="n">-Server</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Port</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Int32</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Database</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;</span> <span class="p">[</span><span class="n">-Path</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;</span> <span class="p">[</span><span class="n">-RemoveRevision</span><span class="p">]</span> <span class="p">[[</span><span class="n">-Authorization</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Ssl</span><span class="p">]</span> <span class="p">[</span><span class="n">-AsJob</span><span class="p">]</span> <span class="p">[&lt;</span><span class="n">CommonParameters</span><span class="p">&gt;]</span>
 </pre></div>
 </div>
-<p><strong>Set-CouchDBDatabasePartition</strong></p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Set-CouchDBDatabasePartition</span> <span class="p">[[</span><span class="n">-Server</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Port</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Int32</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Database</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;</span> <span class="p">[[</span><span class="n">-Authorization</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Ssl</span><span class="p">]</span> <span class="p">[&lt;</span><span class="n">CommonParameters</span><span class="p">&gt;]</span>
+<p><strong>New-CouchDBDatabasePartition</strong></p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">New-CouchDBDatabasePartition</span> <span class="p">[[</span><span class="n">-Server</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[[</span><span class="n">-Port</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">Int32</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Database</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;</span> <span class="p">[[</span><span class="n">-Authorization</span><span class="p">]</span> <span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;]</span> <span class="p">[</span><span class="n">-Ssl</span><span class="p">]</span> <span class="p">[&lt;</span><span class="n">CommonParameters</span><span class="p">&gt;]</span>
 </pre></div>
 </div>
 </div>
@@ -677,7 +697,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Matteo Guadrini
+        &copy; Copyright 2020, Matteo Guadrini
 
     </p>
   </div>

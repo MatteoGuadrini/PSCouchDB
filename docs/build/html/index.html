@@ -53,6 +53,9 @@
           
 
           
+            
+            <img src="_static/pscouchdb-logo.svg" class="logo" alt="Logo"/>
+          
           </a>
 
           
@@ -93,7 +96,8 @@
 <li class="toctree-l1"><a class="reference internal" href="documents.html">Documents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="documents.html#query">Query</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ddoc.html">Design documents</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cmdlets.html">Cmdlets and aliases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdlets.html">Preferences</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdlets.html#cmdlets-and-aliases">Cmdlets and aliases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="classes.html">Classes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uses.html">Real uses</a></li>
 <li class="toctree-l1"><a class="reference internal" href="support.html">Support</a></li>
@@ -164,10 +168,14 @@
   <div class="section" id="welcome-to-pscouchdb-s-documentation">
 <h1>Welcome to PSCouchDB’s documentation!<a class="headerlink" href="#welcome-to-pscouchdb-s-documentation" title="Permalink to this headline">¶</a></h1>
 <div class="figure align-center">
-<a class="reference external image-reference" href="https://github.com/MatteoGuadrini/PSCouchDB"><img alt="_images/pscouchdb-logo.png" src="_images/pscouchdb-logo.png" style="width: 320px; height: 224px;" /></a>
+<a class="reference external image-reference" href="https://github.com/MatteoGuadrini/PSCouchDB"><img alt="_images/pscouchdb-logo.svg" height="224px" src="_images/pscouchdb-logo.svg" width="320px" /></a>
 </div>
-<p><strong>The complete and powerful powershell module for CouchDB v2.X and v3.X</strong></p>
-<script id="asciicast-232696" src="https://asciinema.org/a/232696.js" async></script><div class="toctree-wrapper compound">
+<p><strong>Advanced CLI for CouchDB server</strong></p>
+<script id="asciicast-232696" src="https://asciinema.org/a/232696.js" async></script><div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you are using CouchDB version 2, use the PSCouchDB 1.X version; if instead you are using CouchDB version 3 or 4, use the PSCouchDB version 2.X</p>
+</div>
+<div class="toctree-wrapper compound">
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a><ul>
@@ -219,6 +227,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="auth.html">Authentication</a></li>
 <li class="toctree-l1"><a class="reference internal" href="databases.html">Databases</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="databases.html#connect-database">Connect database</a></li>
 <li class="toctree-l2"><a class="reference internal" href="databases.html#test-a-database">Test a database</a></li>
 <li class="toctree-l2"><a class="reference internal" href="databases.html#read-a-database">Read a database</a></li>
 <li class="toctree-l2"><a class="reference internal" href="databases.html#create-a-database">Create a database</a></li>
@@ -263,7 +272,8 @@
 <li class="toctree-l2"><a class="reference internal" href="ddoc.html#remove-design-document">Remove design document</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="cmdlets.html">Cmdlets and aliases</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="cmdlets.html">Preferences</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdlets.html#cmdlets-and-aliases">Cmdlets and aliases</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="cmdlets.html#cmdlets">Cmdlets</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cmdlets.html#aliases">Aliases</a></li>
 </ul>
@@ -282,8 +292,8 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="uses.html">Real uses</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="uses.html#simple-machine-inventory">Simple machine inventory</a></li>
-<li class="toctree-l2"><a class="reference internal" href="uses.html#log-storage">Log storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="uses.html#scripts">Scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="uses.html#oop">OOP</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="support.html">Support</a><ul>
@@ -314,7 +324,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Matteo Guadrini
+        &copy; Copyright 2020, Matteo Guadrini
 
     </p>
   </div>

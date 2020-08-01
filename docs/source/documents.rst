@@ -25,7 +25,7 @@ To get document by the specified ``Document`` from the specified ``Database``. U
 
 .. code-block:: powershell
 
-    Get-CouchDBDocument -Database test -Document "Hitchhikers"
+    Get-CouchDBDocument -Database test -Document "Hitchhikers" -Authorization "admin:password"
 
 Get partitioned documents
 _________________________
@@ -148,7 +148,7 @@ To get of all of the local documents in a given database.
 
 .. code-block:: powershell
 
-    Get-CouchDBDocument -Database test -Local
+    Get-CouchDBDocument -Database test -Local -Authorization "admin:password"
 
 Get a bulk documents
 ____________________
@@ -207,19 +207,19 @@ It’s possible to retrieve document with all attached files content.
 
 .. code-block:: powershell
 
-    Get-CouchDBAttachment -Database test -Document "Hitchhikers" -Attachment test.txt
+    Get-CouchDBAttachment -Database test -Document "Hitchhikers" -Attachment test.txt -Authorization "admin:password"
 
 Also is possible save a file.
 
 .. code-block:: powershell
 
-    Get-CouchDBAttachment -Database test -Document "Hitchhikers" -Attachment test.txt -OutFile "C:\out.txt"
+    Get-CouchDBAttachment -Database test -Document "Hitchhikers" -Attachment test.txt -OutFile "C:\out.txt" -Authorization "admin:password"
 
 Or get info of specific attachment.
 
 .. code-block:: powershell
 
-    Get-CouchDBAttachment -Database test -Document "Hitchhikers" -Attachment test.txt -Info
+    Get-CouchDBAttachment -Database test -Document "Hitchhikers" -Attachment test.txt -Info -Authorization "admin:password"
 
 Create an attachment
 ********************
@@ -249,7 +249,7 @@ You can obtain a list of the revisions for a given document.
 
 .. code-block:: powershell
 
-    Get-CouchDBDocument -Database test -Document "Hitchhikers" -Revisions
+    Get-CouchDBDocument -Database test -Document "Hitchhikers" -Revisions -Authorization "admin:password"
 
 Get a history of revisions
 **************************
@@ -258,7 +258,7 @@ You can get additional information (history) about the revisions for a given doc
 
 .. code-block:: powershell
 
-    Get-CouchDBDocument -Database test -Document "Hitchhikers" -History
+    Get-CouchDBDocument -Database test -Document "Hitchhikers" -History -Authorization "admin:password"
 
 Get a specific revision
 ***********************
@@ -267,7 +267,7 @@ To get a specific revision, use the ``Revision`` parameter, and specify the full
 
 .. code-block:: powershell
 
-    Get-CouchDBDocument -Database test -Document "Hitchhikers" -Revision "5-7bf1766d9a5f3e4a60b400e98d62f523"
+    Get-CouchDBDocument -Database test -Document "Hitchhikers" -Revision "5-7bf1766d9a5f3e4a60b400e98d62f523" -Authorization "admin:password"
 
 Missing revision
 ****************
@@ -299,13 +299,13 @@ To search for documents in a database, use the following cmdlet.
 
 .. code-block:: powershell
 
-    Find-CouchDBDocuments -Database test -Selector "name" -Operator eq -Value "Arthur Dent" -Fields _id,name,planet
+    Find-CouchDBDocuments -Database test -Selector "name" -Operator eq -Value "Arthur Dent" -Fields _id,name,planet -Authorization "admin:password"
 
 or with native Mango query
 
 .. code-block:: powershell
 
-    Find-CouchDBDocuments -Database test -Find '{"selector": {"name":{"$eq":"Arthur Dent"}},"fields":["_id","name","planet"]}'
+    Find-CouchDBDocuments -Database test -Find '{"selector": {"name":{"$eq":"Arthur Dent"}},"fields":["_id","name","planet"]}' -Authorization "admin:password"
 
 or with class (for complex query)
 
@@ -318,7 +318,7 @@ or with class (for complex query)
     $q.AddFields("_id")
     $q.AddFields("name")
     $q.AddFields("planet")
-    Find-CouchDBDocuments -Database test -Find $q.GetNativeQuery()
+    Find-CouchDBDocuments -Database test -Find $q.GetNativeQuery() -Authorization "admin:password"
 
 or search partitioned documents in a database, use the following cmdlet.
 
@@ -335,7 +335,7 @@ To perform a more generic search in a database, without knowing the various sele
 
 .. code-block:: powershell
 
-    Search-CouchDBFullText -Database test -Patterns "space","planet"
+    Search-CouchDBFullText -Database test -Patterns "space","planet" -Authorization "admin:password"
 
 .. warning::
     This search is much slower than the ``Find-CouchdbDocuments`` cmdlet.
@@ -456,11 +456,11 @@ Examples
     $q.AddFields("_id")
     $q.AddFields("name")
     $q.AddFields("planet")
-    Find-CouchDBDocuments -Database test -Find $q.GetNativeQuery()
+    Find-CouchDBDocuments -Database test -Find $q.GetNativeQuery() -Authorization "admin:password"
 
 .. code-block:: powershell
 
-    Find-CouchDBDocuments -Database test -Selector "name" -Operator eq -Value "Arthur Dent" -Fields _id,name,planet
+    Find-CouchDBDocuments -Database test -Selector "name" -Operator eq -Value "Arthur Dent" -Fields _id,name,planet -Authorization "admin:password"
 
 .. warning::
     Pay attention to the ``$`` (dollar) sign. If you use the PSCouchDBQuery class or a native query, the sign is required.
@@ -553,7 +553,7 @@ The direction value is "asc" for ascending, and "desc" for descending. If you om
 
 .. code-block:: powershell
 
-    Find-CouchDBDocuments -Database test -Selector "name" -Operator eq -Value "Arthur Dent" -Fields _id,name,planet -Sort name,planet
+    Find-CouchDBDocuments -Database test -Selector "name" -Operator eq -Value "Arthur Dent" -Fields _id,name,planet -Sort name,planet -Authorization "admin:password"
 
 Limit
 *****
@@ -562,7 +562,7 @@ Maximum number of results returned. Default is 25.
 
 .. code-block:: powershell
 
-    Find-CouchDBDocuments -Database test -Selector "name" -Operator eq -Value "Arthur Dent" -Fields _id,name,planet -Limit 100
+    Find-CouchDBDocuments -Database test -Selector "name" -Operator eq -Value "Arthur Dent" -Fields _id,name,planet -Limit 100 -Authorization "admin:password"
 
 Skip
 ****
@@ -571,7 +571,7 @@ Skip the first ‘n’ results, where ‘n’ is the value specified.
 
 .. code-block:: powershell
 
-    Find-CouchDBDocuments -Database test -Selector "name" -Operator eq -Value "Arthur Dent" -Fields _id,name,planet -Skip 10
+    Find-CouchDBDocuments -Database test -Selector "name" -Operator eq -Value "Arthur Dent" -Fields _id,name,planet -Skip 10 -Authorization "admin:password"
 
 Use index
 *********
@@ -580,7 +580,7 @@ Instruct a query to use a specific index.
 
 .. code-block:: powershell
 
-    Find-CouchDBDocuments -Database test -Selector "name" -Operator eq -Value "Arthur Dent" -Fields _id,name,planet -UseIndex "index_planet"
+    Find-CouchDBDocuments -Database test -Selector "name" -Operator eq -Value "Arthur Dent" -Fields _id,name,planet -UseIndex "index_planet" -Authorization "admin:password"
 
 Read quorum
 ***********
@@ -591,7 +591,7 @@ If set to a higher value, each document is read from at least that many replicas
 
 .. code-block:: powershell
 
-    Find-CouchDBDocuments -Database test -Selector "name" -Operator eq -Value "Arthur Dent" -Fields _id,name,planet -ReadQuorum 3
+    Find-CouchDBDocuments -Database test -Selector "name" -Operator eq -Value "Arthur Dent" -Fields _id,name,planet -ReadQuorum 3 -Authorization "admin:password"
 
 Bookmark
 ********
@@ -603,7 +603,7 @@ Bookmark
 
 .. code-block:: powershell
 
-    Find-CouchDBDocuments -Database test -Selector "name" -Operator eq -Value "Arthur Dent" -Fields _id,name,planet -Bookmark "my_bookmark"
+    Find-CouchDBDocuments -Database test -Selector "name" -Operator eq -Value "Arthur Dent" -Fields _id,name,planet -Bookmark "my_bookmark" -Authorization "admin:password"
 
 No Update
 *********
@@ -612,7 +612,7 @@ Whether to update the index prior to returning the result. Default is true.
 
 .. code-block:: powershell
 
-    Find-CouchDBDocuments -Database test -Selector "name" -Operator eq -Value "Arthur Dent" -Fields _id,name,planet -NoUpdate
+    Find-CouchDBDocuments -Database test -Selector "name" -Operator eq -Value "Arthur Dent" -Fields _id,name,planet -NoUpdate -Authorization "admin:password"
 
 Stable
 ******
@@ -621,7 +621,7 @@ Whether or not the view results should be returned from a “stable” set of sh
 
 .. code-block:: powershell
 
-    Find-CouchDBDocuments -Database test -Selector "name" -Operator eq -Value "Arthur Dent" -Fields _id,name,planet -Stable
+    Find-CouchDBDocuments -Database test -Selector "name" -Operator eq -Value "Arthur Dent" -Fields _id,name,planet -Stable -Authorization "admin:password"
 
 Stale
 *****
@@ -630,7 +630,7 @@ Combination of ``update=false`` and ``stable=true`` options. Possible options: `
 
 .. code-block:: powershell
 
-    Find-CouchDBDocuments -Database test -Selector "name" -Operator eq -Value "Arthur Dent" -Fields _id,name,planet -Stale 'ok'
+    Find-CouchDBDocuments -Database test -Selector "name" -Operator eq -Value "Arthur Dent" -Fields _id,name,planet -Stale 'ok' -Authorization "admin:password"
 
 Execution statistics
 ********************
@@ -639,7 +639,7 @@ Include execution statistics in the query response.
 
 .. code-block:: powershell
 
-    Find-CouchDBDocuments -Database test -Selector "name" -Operator eq -Value "Arthur Dent" -Fields _id,name,planet -ExecutionStats
+    Find-CouchDBDocuments -Database test -Selector "name" -Operator eq -Value "Arthur Dent" -Fields _id,name,planet -ExecutionStats -Authorization "admin:password"
 
 Explain
 *******
@@ -648,4 +648,4 @@ Shows which index is being used by the query.
 
 .. code-block:: powershell
 
-    Find-CouchDBDocuments -Database test -Selector "name" -Operator eq -Value "Arthur Dent" -Fields _id,name,planet -Sort name,planet -Explain
+    Find-CouchDBDocuments -Database test -Selector "name" -Operator eq -Value "Arthur Dent" -Fields _id,name,planet -Sort name,planet -Explain -Authorization "admin:password"

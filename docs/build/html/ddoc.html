@@ -35,7 +35,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Cmdlets and aliases" href="cmdlets.html" />
+    <link rel="next" title="Preferences" href="cmdlets.html" />
     <link rel="prev" title="Documents" href="documents.html" /> 
 </head>
 
@@ -53,6 +53,9 @@
             <a href="index.html" class="icon icon-home"> PSCouchDB
           
 
+          
+            
+            <img src="_static/pscouchdb-logo.svg" class="logo" alt="Logo"/>
           
           </a>
 
@@ -113,7 +116,8 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="cmdlets.html">Cmdlets and aliases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdlets.html">Preferences</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdlets.html#cmdlets-and-aliases">Cmdlets and aliases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="classes.html">Classes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uses.html">Real uses</a></li>
 <li class="toctree-l1"><a class="reference internal" href="support.html">Support</a></li>
@@ -187,15 +191,19 @@
 The design document defines the views used to extract information from CouchDB through one or more views.
 Design documents are created within your CouchDB instance in the same way as you create database documents,
 but the content and definition of the documents is different.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Show and List functions are deprecated in CouchDB 3.0, and will be removed in CouchDB 4.0.</p>
+</div>
 <div class="section" id="get-a-design-document">
 <h2>Get a design document<a class="headerlink" href="#get-a-design-document" title="Permalink to this headline">¶</a></h2>
 <p>Returns the contents of the design document specified with the name of the design document and from the specified database.
 Unless you request a specific revision, the latest revision of the document will always be returned.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDesignDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;space&quot;</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDesignDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;space&quot;</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 <p>To get all the Design Documents in a database.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDatabaseDesignDocument</span> <span class="n">-Database</span> <span class="n">test</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDatabaseDesignDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 <p>In this table you can find all the possible parameters to get the design documents with this cmdlet.</p>
@@ -254,7 +262,8 @@ Unless you request a specific revision, the latest revision of the document will
 <div class="section" id="get-design-document-attachment">
 <h3>Get design document attachment<a class="headerlink" href="#get-design-document-attachment" title="Permalink to this headline">¶</a></h3>
 <p>To retrieve or save an attachment in a design document.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDesignDocumentAttachment</span> <span class="n">-Database</span> <span class="n">test2</span> <span class="n">-Document</span> <span class="n">space</span> <span class="n">-Attachment</span> <span class="n">test</span><span class="p">.</span><span class="n">txt</span> <span class="n">-OutFile</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDesignDocumentAttachment</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="n">space</span> <span class="n">-Attachment</span> <span class="n">test</span><span class="p">.</span><span class="n">txt</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>                             <span class="c"># Get content</span>
+<span class="nb">Get-CouchDBDesignDocumentAttachment</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="n">space</span> <span class="n">-Attachment</span> <span class="n">test</span><span class="p">.</span><span class="n">txt</span> <span class="n">-OutFile</span> <span class="s2">&quot;C:\test.txt&quot;</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>      <span class="c"># Save content</span>
 </pre></div>
 </div>
 </div>
@@ -279,7 +288,7 @@ View indexes are updated incrementally in the following situations:</p>
 </pre></div>
 </div>
 <p>Now, navigate with your favorite browser to <code class="docutils literal notranslate"><span class="pre">http://localhost:5984/test/_design/space/_view/planet_view</span></code> or</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;_design/space/_view/planet_view&quot;</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDocument</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Document</span> <span class="s2">&quot;_design/space/_view/planet_view&quot;</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -374,7 +383,7 @@ This operation is very similar to the vacuum (SQLite ex.) operation available fo
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="cmdlets.html" class="btn btn-neutral float-right" title="Cmdlets and aliases" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="cmdlets.html" class="btn btn-neutral float-right" title="Preferences" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="documents.html" class="btn btn-neutral float-left" title="Documents" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -386,7 +395,7 @@ This operation is very similar to the vacuum (SQLite ex.) operation available fo
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Matteo Guadrini
+        &copy; Copyright 2020, Matteo Guadrini
 
     </p>
   </div>

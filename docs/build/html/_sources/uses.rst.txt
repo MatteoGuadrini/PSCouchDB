@@ -18,8 +18,13 @@ Real uses
 
 Below are some examples of real-world applications that can give the idea of the module's potential together with CouchDB.
 
+Scripts
+_______
+
+Scripts, automations and tools are the main use of this module.
+
 Simple machine inventory
-________________________
+************************
 
 This is a simple hardware inventory in business scenario, build in three steps.
 
@@ -27,7 +32,7 @@ First step, create database.
 
 .. code-block:: powershell
 
-    New-CouchDBDatabase -Database hw_inventory
+    New-CouchDBDatabase -Database hw_inventory -Authorization "admin:password"
 
 Second, edit a new file *hw_inventory.ps1* e paste this:
 
@@ -60,10 +65,10 @@ Second, edit a new file *hw_inventory.ps1* e paste this:
                    @{Expression={$_.Size / 1GB};Label="SizeGB"}))
             $info.Add("timestamp", (Get-Date -f MM-dd-yyyy_HH_mm_ss))
             # Write on database
-            if (Get-CouchDBDocument -Database hw_inventory -Document $ComputerName -ErrorAction SilentlyContinue) {
-                Set-CouchDBDocument -Database hw_inventory -Document $ComputerName -Data $info -Revision $(Get-CouchDBDocument -Database hw_inventory -Document $ComputerName)._rev -Replace
+            if (Get-CouchDBDocument -Database hw_inventory -Document $ComputerName -ErrorAction SilentlyContinue -Authorization "admin:password") {
+                Set-CouchDBDocument -Database hw_inventory -Document $ComputerName -Data $info -Revision $(Get-CouchDBDocument -Database hw_inventory -Document $ComputerName -Authorization "admin:password")._rev -Replace -Authorization "admin:password"
             } else {
-                New-CouchDBDocument -Database hw_inventory -Document $ComputerName -Data $info
+                New-CouchDBDocument -Database hw_inventory -Document $ComputerName -Data $info -Authorization "admin:password"
             }
         }
     }
@@ -79,26 +84,29 @@ Third, edit your *profile.ps1* and put this function:
             [Parameter(mandatory=$true)]
             [string] $Computername
         )
-        $docs = Find-CouchDBDocuments -Database hw_inventory -Selector "_id" -Operator regex -Value ".*$Computername.*" -Fields _id,ComputerHW,ComputerCPU,ComputerDisks,timestamp
+        $docs = Find-CouchDBDocuments -Database hw_inventory -Selector "_id" -Operator regex -Value ".*$Computername.*" -Fields _id,ComputerHW,ComputerCPU,ComputerDisks,timestamp -Authorization "admin:password"
         $docs.docs
     }
 
-Schedule the script every six hours.
+Schedule the script at any hour or minute you want.
 
 Log storage
-___________
+***********
 
-To create an application that stores logs from various machines in two steps.
+To create an application that stores logs from various machines in one steps.
 
-First, edit your *profile.ps1* and put this function:
+Edit your *profile.ps1* and put this function:
 
 .. code-block:: powershell
 
+    using module PSCouchDB
+
+    # Write log
     function Write-WindowsLog () {
         param(
             [Parameter(mandatory=$true)]
             [string] $ComputerName,
-            [string] $Authorization
+            $Authorization
         )
         # Define logs
         $Logs = @("Application","Security","System")
@@ -107,7 +115,7 @@ First, edit your *profile.ps1* and put this function:
             $count = 0
             $DBname = "${ComputerName}_$Log".ToLower()
             # Test if database log exists
-            if ($null -eq (Test-CouchDBDatabase -Database $DBname -ErrorAction SilentlyContinue)) {
+            if ($null -eq (Test-CouchDBDatabase -Database $DBname -ErrorAction SilentlyContinue -Authorization $Authorization)) {
                 New-CouchDBDatabase -Database $DBname -Authorization $Authorization
             }
             # Get log
@@ -115,7 +123,7 @@ First, edit your *profile.ps1* and put this function:
             $LogList | foreach {
                 $count++
                 # Write on database
-                if (-not(Get-CouchDBDocument -Database $DBname -Document $_.Index -ErrorAction SilentlyContinue)) {
+                if (-not(Get-CouchDBDocument -Database $DBname -Document $_.Index -ErrorAction SilentlyContinue -Authorization $Authorization)) {
                     New-CouchDBDocument -Database $DBname -Document $_.Index -Data ($_ | Convertto-Json -Depth 10) -Authorization $Authorization | Out-Null
                 }
                 Write-Progress -Activity "Write log $Log in progress" -Status "Progress $count/$($LogList.count)" -PercentComplete ($count/$LogList.count*100)
@@ -123,11 +131,6 @@ First, edit your *profile.ps1* and put this function:
         }
     }
 
-Second, edit again your *profile.ps1* and put this function: 
-
-.. code-block:: powershell
-
-    using module PSCouchDB
     # Find log with criteria
     function Find-WindowsLog () {
         param(
@@ -165,9 +168,51 @@ Second, edit again your *profile.ps1* and put this function:
         $q.AddFields("ReplacementStrings")
         $q.AddFields("InstanceId")
         $q.AddFields("UserName")
-        $docs = Find-CouchDBDocuments -Database "${ComputerName}_$($Log.ToLower())" -Find $q.GetNativeQuery()
+        $docs = Find-CouchDBDocuments -Database "${ComputerName}_$($Log.ToLower())" -Find $q.GetNativeQuery() -Authorization "admin:password"
         $docs.docs
     }
+
+OOP
+___
+
+This module has classes representing the various types of documents that exist in CouchDB. You can use them to create objects, extend them to create new custom classes and much more. 
+Everything you know about OOP, you can take advantage of it and use it.
+
+Custom document
+***************
+
+Creating a custom document to reflect a specific template is very easy.
+
+.. code-block::
+
+    using module PSCouchDB
+
+    class PersonDocument : PSCouchDBDocument {
+        [string] $Name
+        [string] $Surname
+        [int] $Age
+        [string] $Title
+
+        PersonDocument ([string]$Name, [string]$Surname) {
+            $this.Name = $Name
+            $this.Surname = $Surname
+            $this.SetElement('Name', $Name)
+            $this.SetElement('Surname', $Surname)
+        }
+    }
+
+    # Create instance
+    $person = New-Object PersonDocument -ArgumentList 'Matteo','Guadrini'
+
+    # Add my age
+    $person.SetElement('Age', 34)
+    $person.Age = 34
+
+    # View CouchDB document
+    $person.ToJson()
+
+    # Write on database
+    New-CouchDBDocument -Database 'persons' -Document $person._id -Data $person -Authorization "admin:password"
 
 .. note::
     **With PSCouchDB, with just a few lines of code, you can create simple applications for complex tasks.**

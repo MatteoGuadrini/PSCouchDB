@@ -18,6 +18,21 @@ Databases
 
 The Database endpoint provides an interface to an entire database with in CouchDB. These are database-level, rather than document-level requests.
 
+Connect database
+________________
+
+To permanently connect to a database, do the following:
+
+.. code-block:: powershell
+
+    Connect-Database -Database test -Authorization "admin:password"
+
+and disconnect:
+
+.. code-block:: powershell
+
+    Disconnect-Database -Database test -Authorization "admin:password"
+
 Test a database
 _______________
 
@@ -25,7 +40,7 @@ To verify the existence of a database.
 
 .. code-block:: powershell
 
-    Test-CouchDBDatabase -Database test
+    Test-CouchDBDatabase -Database test -Authorization "admin:password"
 
 Read a database
 _______________
@@ -34,7 +49,7 @@ Gets information about the specified database.
 
 .. code-block:: powershell
 
-    Get-CouchDBDatabase -Database test
+    Get-CouchDBDatabase -Database test -Authorization "admin:password"
 
 To get alist of all databases, run this:
 
@@ -103,7 +118,7 @@ To get list of index present on a database.
 
 .. code-block:: powershell
 
-    Get-CouchDBIndex -Database test
+    Get-CouchDBIndex -Database test -Authorization "admin:password"
 
 Create a new index
 ******************
@@ -121,7 +136,7 @@ Remove an existing index.
 
 .. code-block:: powershell
 
-    $idx = Get-CouchDBIndex -Database test
+    $idx = Get-CouchDBIndex -Database test -Authorization "admin:password"
     Remove-CouchDBIndex -Database test -DesignDoc $idx.indexes.ddoc[1] -Name $idx.indexes.name[1] -Authorization "admin:password"
 
 Shards
@@ -136,13 +151,13 @@ Get a list a database shards.
 
 .. code-block:: powershell
 
-    Get-CouchDBDatabaseShards -Database test
+    Get-CouchDBDatabaseShards -Database test -Authorization "admin:password"
 
 Get the shard document on database.
 
 .. code-block:: powershell
 
-    Get-CouchDBDatabaseShards -Database test -Document 00000000-1fffffff
+    Get-CouchDBDatabaseShards -Database test -Document 00000000-1fffffff -Authorization "admin:password"
 
 Sync shards
 ***********
@@ -160,7 +175,7 @@ To get a sorted list of changes made to documents in the database, in time order
 
 .. code-block:: powershell
 
-    Get-CouchDBDatabaseChanges -Database test
+    Get-CouchDBDatabaseChanges -Database test -Authorization "admin:password"
 
 Compact
 _______
@@ -198,7 +213,7 @@ Gets the current purged_infos_limit (purged documents limit) setting, the maximu
 
 .. code-block:: powershell
 
-    Get-CouchDBDatabasePurgedLimit -Database test
+    Get-CouchDBDatabasePurgedLimit -Database test -Authorization "admin:password"
 
 Set purged info limit
 _____________________
@@ -221,7 +236,7 @@ Get a list of document revisions, returns the document revisions that do not exi
 
 .. code-block:: powershell
 
-    Get-CouchDBMissingRevision -Database test -Document "Hitchhikers" -Revision 2-7051cbe5c8faecd085a3fa619e6e6337,3-825cb35de44c433bfb2df415563a19de
+    Get-CouchDBMissingRevision -Database test -Document "Hitchhikers" -Revision 2-7051cbe5c8faecd085a3fa619e6e6337,3-825cb35de44c433bfb2df415563a19de -Authorization "admin:password"
 
 Get revision difference
 ***********************
@@ -230,7 +245,7 @@ Given a set of document/revision IDs, returns the subset of those that do not co
 
 .. code-block:: powershell
 
-    Get-CouchDBRevisionDifference -Database test -Document "Hitchhikers" -Revision 2-7051cbe5c8faecd085a3fa619e6e6337,3-825cb35de44c433bfb2df415563a19de
+    Get-CouchDBRevisionDifference -Database test -Document "Hitchhikers" -Revision 2-7051cbe5c8faecd085a3fa619e6e6337,3-825cb35de44c433bfb2df415563a19de -Authorization "admin:password"
 
 Get revision limit
 ******************
@@ -239,7 +254,7 @@ Gets the current revs_limit (revision limit) setting.
 
 .. code-block:: powershell
 
-    Get-CouchDBRevisionLimit -Database test
+    Get-CouchDBRevisionLimit -Database test -Authorization "admin:password"
 
 Set revision limit
 ******************
@@ -265,7 +280,7 @@ For export a database in a json file format.
 
 .. code-block:: powershell
 
-    Export-CouchDBDatabase -Database test
+    Export-CouchDBDatabase -Database test -Authorization "admin:password"
 
 Import
 ******
@@ -274,13 +289,13 @@ For import or restore a database from JSON file.
 
 .. code-block:: powershell
 
-    Import-CouchDBDatabase -Database test -Path test_01-25-2019_00_01_00.json
+    Import-CouchDBDatabase -Database test -Path test_01-25-2019_00_01_00.json -Authorization "admin:password"
 
 And this, for create a new database from JSON file.
 
 .. code-block:: powershell
 
-    Import-CouchDBDatabase -Database test_restored -Path test_01-25-2019_00_01_00.json -RemoveRevision
+    Import-CouchDBDatabase -Database test_restored -Path test_01-25-2019_00_01_00.json -RemoveRevision -Authorization "admin:password"
 
 Partition database
 __________________
@@ -289,4 +304,4 @@ To create a partitioned database, we simply run:
 
 .. code-block:: powershell
 
-    Set-CouchDBDatabasePartition -Database test -Authorization "admin:password"
+    New-CouchDBDatabasePartition -Database test -Authorization "admin:password"

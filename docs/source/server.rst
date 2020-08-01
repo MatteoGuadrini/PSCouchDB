@@ -41,13 +41,13 @@ To get list of all the databases in the CouchDB instance:
 
 .. code-block:: powershell
 
-    Get-CouchDBDatabase
+    Get-CouchDBDatabase -Authorization "admin:password"
 
 To get information of a list of the specified databases in the CouchDB instance:
 
 .. code-block:: powershell
 
-    Get-CouchDBDatabaseInfo -Keys test,test1,test2
+    Get-CouchDBDatabaseInfo -Keys test,test1,test2 -Authorization "admin:password"
 
 To get the status of the node or cluster, run this:
 
@@ -121,7 +121,7 @@ To read entire log.
 
 .. code-block:: powershell
 
-    Read-CouchDBLog
+    Read-CouchDBLog -Authorization "admin:password"
 
 .. note::
     The default path on Windows is ``C:\CouchDB\couch.log``, while on Unix it is ``/var/log/couchdb/couch.log``.
@@ -131,13 +131,13 @@ This example is used to read only the last 15 lines of log.
 
 .. code-block:: powershell
 
-    Read-CouchDBLog -Tail 15
+    Read-CouchDBLog -Tail 15 -Authorization "admin:password"
 
 Instead this to stay in append on the log for the level of warning.
 
 .. code-block:: powershell
 
-    Read-CouchDBLog -Level warning -Follow
+    Read-CouchDBLog -Level warning -Follow -Authorization "admin:password"
 
 Level
 *****
@@ -189,7 +189,7 @@ Clear entire and rotate (save a copy in the same folder) log.
 
 .. code-block:: powershell
 
-    Clear-CouchDBLog -Rotate
+    Clear-CouchDBLog -Rotate -Authorization "admin:password"
 
 
 Replication
@@ -234,7 +234,7 @@ Now that we have a replicated document, let's take a look at the change.
 
 .. code-block:: powershell
 
-    Get-CouchDBDatabaseChanges -Database test_dump
+    Get-CouchDBDatabaseChanges -Database test_dump -Authorization "admin:password"
 
 Modify replica
 ______________
@@ -255,7 +255,7 @@ To remove the replication agent.
 
 .. code-block:: powershell
 
-    Remove-CouchDBReplication -Document test_test_dump -Authorization -Authorization "admin:password"
+    Remove-CouchDBReplication -Document test_test_dump -Authorization "admin:password"
 
 Replication request
 ____________________
@@ -265,6 +265,6 @@ Request, configure, or stop, a replication operation.
 .. code-block:: powershell
 
     using module PSCouchDB
-    $rep = New-Object PSCouchDBReplication -ArgumentList 'test','reptest'
+    $rep = New-Object PSCouchDBReplication -ArgumentList 'test','test_dump'
     $rep.AddDocIds(@("Hitchhikers","Hitchhikers_Guide"))
     Request-CouchDBReplication -Data $rep -Authorization "admin:password"

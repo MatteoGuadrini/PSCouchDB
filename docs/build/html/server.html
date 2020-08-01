@@ -54,6 +54,9 @@
           
 
           
+            
+            <img src="_static/pscouchdb-logo.svg" class="logo" alt="Logo"/>
+          
           </a>
 
           
@@ -108,7 +111,8 @@
 <li class="toctree-l1"><a class="reference internal" href="documents.html">Documents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="documents.html#query">Query</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ddoc.html">Design documents</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cmdlets.html">Cmdlets and aliases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdlets.html">Preferences</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmdlets.html#cmdlets-and-aliases">Cmdlets and aliases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="classes.html">Classes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="uses.html">Real uses</a></li>
 <li class="toctree-l1"><a class="reference internal" href="support.html">Support</a></li>
@@ -193,11 +197,11 @@
 </pre></div>
 </div>
 <p>To get list of all the databases in the CouchDB instance:</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDatabase</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDatabase</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 <p>To get information of a list of the specified databases in the CouchDB instance:</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDatabaseInfo</span> <span class="n">-Keys</span> <span class="n">test</span><span class="p">,</span><span class="n">test1</span><span class="p">,</span><span class="n">test2</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDatabaseInfo</span> <span class="n">-Keys</span> <span class="n">test</span><span class="p">,</span><span class="n">test1</span><span class="p">,</span><span class="n">test2</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 <p>To get the status of the node or cluster, run this:</p>
@@ -269,7 +273,7 @@
 <div class="section" id="read-the-log">
 <h2>Read the log<a class="headerlink" href="#read-the-log" title="Permalink to this headline">¶</a></h2>
 <p>To read entire log.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Read-CouchDBLog</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Read-CouchDBLog</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -278,11 +282,11 @@
 Otherwise, if the log is in a custom path, specify the path using the <code class="docutils literal notranslate"><span class="pre">-Path</span></code> parameter.</p>
 </div>
 <p>This example is used to read only the last 15 lines of log.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Read-CouchDBLog</span> <span class="n">-Tail</span> <span class="n">15</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Read-CouchDBLog</span> <span class="n">-Tail</span> <span class="n">15</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 <p>Instead this to stay in append on the log for the level of warning.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Read-CouchDBLog</span> <span class="n">-Level</span> <span class="n">warning</span> <span class="n">-Follow</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Read-CouchDBLog</span> <span class="n">-Level</span> <span class="n">warning</span> <span class="n">-Follow</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 <div class="section" id="level">
@@ -310,7 +314,7 @@ Otherwise, if the log is in a custom path, specify the path using the <code clas
 <div class="section" id="clear-the-log">
 <h2>Clear the log<a class="headerlink" href="#clear-the-log" title="Permalink to this headline">¶</a></h2>
 <p>Clear entire and rotate (save a copy in the same folder) log.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Clear-CouchDBLog</span> <span class="n">-Rotate</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Clear-CouchDBLog</span> <span class="n">-Rotate</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -343,7 +347,7 @@ Otherwise, if the log is in a custom path, specify the path using the <code clas
 </pre></div>
 </div>
 <p>Now that we have a replicated document, let’s take a look at the change.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDatabaseChanges</span> <span class="n">-Database</span> <span class="n">test_dump</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBDatabaseChanges</span> <span class="n">-Database</span> <span class="n">test_dump</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -360,7 +364,7 @@ Otherwise, if the log is in a custom path, specify the path using the <code clas
 <div class="section" id="remove-replica">
 <h2>Remove replica<a class="headerlink" href="#remove-replica" title="Permalink to this headline">¶</a></h2>
 <p>To remove the replication agent.</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Remove-CouchDBReplication</span> <span class="n">-Document</span> <span class="n">test_test_dump</span> <span class="n">-Authorization</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Remove-CouchDBReplication</span> <span class="n">-Document</span> <span class="n">test_test_dump</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -368,7 +372,7 @@ Otherwise, if the log is in a custom path, specify the path using the <code clas
 <h2>Replication request<a class="headerlink" href="#replication-request" title="Permalink to this headline">¶</a></h2>
 <p>Request, configure, or stop, a replication operation.</p>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">using</span> <span class="n">module</span> <span class="n">PSCouchDB</span>
-<span class="nv">$rep</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">PSCouchDBReplication</span> <span class="n">-ArgumentList</span> <span class="s1">&#39;test&#39;</span><span class="p">,</span><span class="s1">&#39;reptest&#39;</span>
+<span class="nv">$rep</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">PSCouchDBReplication</span> <span class="n">-ArgumentList</span> <span class="s1">&#39;test&#39;</span><span class="p">,</span><span class="s1">&#39;test_dump&#39;</span>
 <span class="nv">$rep</span><span class="p">.</span><span class="n">AddDocIds</span><span class="p">(@(</span><span class="s2">&quot;Hitchhikers&quot;</span><span class="p">,</span><span class="s2">&quot;Hitchhikers_Guide&quot;</span><span class="p">))</span>
 <span class="nb">Request-CouchDBReplication</span> <span class="n">-Data</span> <span class="nv">$rep</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
@@ -396,7 +400,7 @@ Otherwise, if the log is in a custom path, specify the path using the <code clas
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Matteo Guadrini
+        &copy; Copyright 2020, Matteo Guadrini
 
     </p>
   </div>

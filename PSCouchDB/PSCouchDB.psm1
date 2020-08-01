@@ -1,3 +1,7 @@
+# Global preferences
+[bool] $Global:CouchDBCachePreference = $false
+[bool] $Global:CouchDBSaveCredentialPreference = $true
+
 # Native Powershell CouchDB class
 class PSCouchDBDocument {
     <#
@@ -1298,10 +1302,10 @@ class PSCouchDBRequest {
             $cached = ($results | ConvertFrom-Json)
             [void]$this.uri.Cache.Add($cached)
         }
-        if ($results -match "^{.*}$") {
+        if ($results -match "^({.*)|(\[.*)$") {
             return $results | ConvertFrom-Json
         } else {
-            return [PSCustomObject]@{results = $results }
+            return [PSCustomObject]@{ results = $results }
         }
     }
 
@@ -1360,6 +1364,11 @@ class PSCouchDBRequest {
         $this.client.ContentType = "application/json; charset=utf-8";
         $this.client.Method = 'HEAD'
         $this.client.UserAgent = "User-Agent: PSCouchDB (compatible; MSIE 7.0;)"
+        # Check authorization
+        if ($this.authorization) {
+            $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("$($this.uri.UserName):$($this.uri.Password)")))
+            $this.client.Headers.Add("Authorization", ("Basic {0}" -f $base64AuthInfo))
+        }
         try {
             [System.Net.WebResponse] $resp = $this.client.GetResponse()
             $this.uri.LastStatusCode = $this.client.GetResponse().StatusCode
@@ -1407,7 +1416,7 @@ class PSCouchDBRequest {
             [PSCredential]$credOject = New-Object System.Management.Automation.PSCredential ($newAuth[0], $secStringPassword)
             $this.AddAuthorization($credOject)
         } else {
-            throw [System.Text.RegularExpressions.RegexMatchTimeoutException]::New('Authorization string is in this format: "user:password"') 
+            throw [System.Text.RegularExpressions.RegexMatchTimeoutException]::New('Authorization string must be this format: "user:password"') 
         }
     }
 
@@ -1487,8 +1496,7 @@ class PSCouchDBRequest {
 Host: {2}:{3}
 Param: {4}
 
-{5}
-        " -f $this.method, $this.uri.Path, $this.server, $this.port, $this.uri.Query, $this.data
+{5}" -f $this.method, $this.uri.Path, $this.server, $this.port, $this.uri.Query, $this.data
         return $str
     }
 }
@@ -1528,8 +1536,7 @@ function Send-CouchDBRequest {
     .SYNOPSIS
     Send a request through rest method to CouchDB server.
     .DESCRIPTION
-    This command builds the url and data and uses Invoke 
-    to pass the CouchDB API call.
+    This command builds the url, data and send to CouchDB server.
     .PARAMETER Method
     The REST method. Default is "GET".
     The avalaible methods are:
@@ -1551,12 +1558,7 @@ function Send-CouchDBRequest {
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
-    ATTENTION: if the password is not specified, it will be prompted.
-    When the authorization parameter is first specified, a 
-    session variable is created ($couchdb_session) that lasts the entire 
-    powershell session. The next calls can be made without
-    specifying the authorization parameter, 
-    if you do not have to change users.
+    Can specified PSCredential.
     This takes part in the url here: 
     http://{authorization}@localhost:5984.
     .PARAMETER Revision
@@ -1566,17 +1568,17 @@ function Send-CouchDBRequest {
     This takes part in the url here: 
     http://localhost:5984/db/doc?rev={revision}.
     .PARAMETER Attachment
-    The CouchDB document attachment. Is a ContentType -> multipart/form-data
-    and InFile -> path of attachment.
+    The CouchDB document attachment.
     .PARAMETER Data
     The CouchDB document data. Is a Json data format.
     The encoding is UTF-8.
-    .PARAMETER OutFile
-    Path of download attachment file.
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
     https://localhost:6984.
+    .PARAMETER JobName
+    JobName for background powershell job.
+    To get a result for a Job, run "Get-Job -Id <number> | Receive-Job -Keep"
     .EXAMPLE
     This example get a database "db":
     Send-CouchDBRequest -Server couchdb1.local -Method "GET" -Database db
@@ -1587,7 +1589,7 @@ function Send-CouchDBRequest {
     This example get a document "doc1" on database "db" on "localhost" server in SSL connection:
     Send-CouchDBRequest -Method "GET" -Database db -Document doc1 -Ssl:$true
     .LINK
-    Invoke-RestMethod
+    https://pscouchdb.readthedocs.io/en/latest/classes.html#pscouchdbrequest-class
     #>
     [CmdletBinding()]
     param (
@@ -1596,137 +1598,125 @@ function Send-CouchDBRequest {
         [int] $Port,
         [string] $Database,
         [string] $Document,
-        [string] $Authorization,
+        $Authorization,
         [string] $Revision,
         [string] $Attachment,
         [string] $Data,
-        [string] $OutFile,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $JobName
     )
-    # Set default server
-    Write-Verbose -Message "Check if variable `$Server is null, else set variable to 'localhost'"
-    if (-not($Server)) {
-        $Server = 'localhost'
-        Write-Debug -Message "`$Server is $Server"
+    # Create PSCouchDBRequest object
+    $req = New-Object PSCouchDBRequest
+    # Set cache
+    if ($Global:CouchDBCachePreference) {
+        $req.EnableCache()
+    }
+    if ($Server) {
+        Write-Verbose -Message "Set server to $Server"
+        $req.SetServer($Server)
     }
     # Set protocol
-    Write-Verbose -Message "Check if SSL is enable"
     if ($Ssl.IsPresent) {
         # Set default port
-        Write-Verbose -Message "Check if variable `$Port is null, else set variable to '6984'"
-        if (-not($Port)) {
-            $Port = 6984
-            Write-Debug -Message "`$Port is $Port"
-        }
-        # Set SSL protocol
-        $Protocol = 'https'
-        Write-Debug -Message "`$Protocol is $Protocol"
-    } else {
-        # Set default port
-        Write-Verbose -Message "Check if variable `$Port is null, else set variable to '5984'"
-        if (-not($Port)) {
-            $Port = 5984
-            Write-Debug -Message "`$Port is $Port"
-        }
-        # Set deafult protocol
-        $Protocol = 'http'
-        Write-Debug -Message "`$Protocol is $Protocol"
+        Write-Verbose -Message "Enable SSL on port 6984"
+        $req.SetSsl()
     }
-    # Initialize option of command
-    $options = @{ }
-    # Analize method for web request
-    Write-Verbose -Message "Check http method, default is GET"
-    Write-Debug -Message "`$Method is $Method"
+    # Set port
+    if ($Port) {
+        Write-Verbose -Message "Set port on $Port"
+        $req.SetPort($Port)
+    }
+    # Set method
     switch ($Method) {
-        "HEAD" { $options.Add("Method", "HEAD") }
-        "GET" { $options.Add("Method", "GET") }
-        "PUT" { $options.Add("Method", "PUT") }
-        "DELETE" { $options.Add("Method", "DELETE") }
-        "POST" { $options.Add("Method", "POST") }
-        Default { $options.Add("Method", "GET") }
+        "HEAD" { $req.SetMethod("HEAD") }
+        "GET" { $req.SetMethod("GET") }
+        "PUT" { $req.SetMethod("PUT") }
+        "DELETE" { $req.SetMethod("DELETE") }
+        "POST" { $req.SetMethod("POST") }
+        Default { $req.SetMethod("GET") }
     }
-    # Build the url
-    Write-Verbose -Message "Build the url"
-    $url = "${Protocol}://${Server}:$Port"
+    Write-Verbose -Message "Set method to $($req.method)"
     # Set database
-    Write-Verbose -Message "Add database to url, if exists"
     if ($Database) {
-        $url += "/$Database"
-        Write-Debug -Message "`$Database is $Database"
+        if ($Database -match "\?") {
+            $arr = $Database -split "\?"
+            $Database = $arr[0]
+            $Param = $arr[1]
+        }
+        Write-Verbose -Message "Set database to $Database"
+        $req.SetDatabase($Database)
     }
     # Set document
-    Write-Verbose -Message "Add document to url, if exists"
-    if (($Document) -and ($Database)) {
-        $url += "/$Document"
-        Write-Debug -Message "`$Document is $Document"
+    if ($Document) {
+        if ($Document -match "\?") {
+            $arr = $Document -split "\?"
+            $Document = $arr[0]
+            $Param = $arr[1]
+        }
+        Write-Verbose -Message "Set document to $Document"
+        $req.SetDocument($Document)
     }
     # Set attachment
-    Write-Verbose -Message "Add attachment to url, if exists"
-    if (($Attachment) -and ($Document) -and ($Database)) {
-        Write-Debug -Message "`$Attachment is $Attachment"
-        if (Test-Path $Attachment) {
-            $AttachmentName = (Get-Item $Attachment).Name
-            $options.Add("ContentType", "multipart/form-data")
-            $options.Add("InFile", $Attachment)
-            Write-Debug -Message "Tested attachment path $Attachment"
+    if ($Attachment) {
+        if ('GET','HEAD' -contains $Method) {
+            Write-Verbose -Message "Set attachment to $Attachment"
+            $req.SetDocument("$Document/$Attachment")
         } else {
-            $AttachmentName = $Attachment
-            Write-Debug -Message "Tested name of attachment $AttachmentName"
-            if ($OutFile) {
-                $options.Add("OutFile", $OutFile)
-                Write-Debug -Message "Get attachment $AttachmentName to file $OutFile"
+            if (-not(Test-Path -Path $Attachment -ErrorAction SilentlyContinue)) {
+                $req.SetDocument("$Document/$Attachment")
+            } else {
+                Write-Verbose -Message "Set attachment to $Attachment"
+                $req.AddAttachment($Attachment)
             }
         }
-        $url += "/$AttachmentName"
     }
-    # Check revision
-    Write-Verbose -Message "Add revision to url, if exists"
+    # Set revision
     if ($Revision) {
-        $url += "?rev=$Revision"
-        Write-Debug -Message "`$Revision is $Revision"
+        Write-Verbose -Message "Set revision to $Revision"
+        $req.SetParameter("rev=$Revision")
     }
-    # Add url
-    Write-Verbose -Message "Compose the url: $url"
-    $options.Add("Uri", $url)
-    # Check session
-    if (-not($couchdb_session) -or ($Authorization)) {
-        # Check the credential for access on database
-        $cred = $Authorization -split ":"
-        if (-not($cred[1]) -and ($cred[0])) { 
-            $password = ConvertTo-CouchDBPassword -SecurePassword (Read-Host "Enter password for $($cred[0])" -AsSecureString)
-            $Authorization = "$($cred[0]):${password}".Replace(" ", "")
-            Remove-Variable -Name password
+    # Check authorization
+    if ($Authorization -or $Global:CouchDBCredential) {
+        if ($Global:CouchDBSaveCredentialPreference) {
+            if (-not($Global:CouchDBCredential)) {
+                $Global:CouchDBCredential = $Authorization
+            }
+            Write-Verbose -Message "Add authorization"
+            $req.AddAuthorization($Global:CouchDBCredential)
+        } else {
+            $Global:CouchDBCredential = $null
+            Write-Verbose -Message "Add authorization"
+            $req.AddAuthorization($Authorization)
         }
-        Write-Verbose -Message "Check authorization"
-        $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(($Authorization)))
-        $options.Add("Headers", @{Authorization = ("Basic {0}" -f $base64AuthInfo) })
-        Write-Debug -Message "`$Authorization is $Authorization"
-        $options.Add("SessionVariable", "couchdb_session")
-    } else {
-        $options.Add("WebSession", $couchdb_session)
     }
-    # Build the json data
-    Write-Verbose -Message "Check json data"
-    if (($Data) -and ($Database)) {
-        $options.Add("ContentType", "application/json")
-        $options.Add("Body", ([System.Text.Encoding]::UTF8.GetBytes($Data)))
-        Write-Debug -Message "`$Data is $Data"
-        Write-Verbose -Message "`$Data is $Data"
+    # Check json data
+    if ($Data) {
+        Write-Verbose -Message "Set json data to: $Data"
+        $req.SetData($Data)
     }
-    # Check return header or not
+    # Set parameter
+    if ($Param) {
+        $req.SetParameter($Param)
+    }
+    # Get header or request
+    Write-Verbose -Message "Request to CouchDB server: $req"
     if ($Method -eq "HEAD") {
-        # Invoke WEB request
-        Write-Verbose -Message "Finally, send request to CouchDB server $Server"
-        $results = Invoke-WebRequest @options
-        Set-Variable -Name couchdb_session -Value $couchdb_session -Scope Global
+        $req.GetHeader()
     } else {
-        # Invoke REST method
-        Write-Verbose -Message "Finally, send request to CouchDB server $Server"
-        $results = Invoke-RestMethod @options
-        Set-Variable -Name couchdb_session -Value $couchdb_session -Scope Global
-        
+        if ($JobName) {
+            $req.RequestAsJob($JobName)
+        } else {
+            $req.Request()
+            # Add to cache
+            if ($req.cache) {
+                if ($CouchDBCache) {
+                    [void]$CouchDBCache.AddRange($req.uri.Cache)
+                } else {
+                    $Global:CouchDBCache = $req.uri.Cache
+                }
+            }
+        }
     }
-    return $results
 }
 
 function Search-CouchDBHelp () {
@@ -1778,6 +1768,8 @@ function New-CouchDBObject () {
     https://pscouchdb.readthedocs.io/en/latest/classes.html
     #>
     param(
+        [ValidateSet("PSCouchDBRequest", "PSCouchDBQuery", "PSCouchDBDocument", "PSCouchDBAttachment", "PSCouchDBBulkDocument",
+        "PSCouchDBSecurity", "PSCouchDBReplication", "PSCouchDBView", "PSCouchDBDesignDoc")]
         [string] $TypeName,
         [array] $ArgumentList
     )

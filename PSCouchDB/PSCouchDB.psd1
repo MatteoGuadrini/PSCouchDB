@@ -86,6 +86,8 @@
 
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
     FunctionsToExport = @(
+        "Connect-CouchDBDatabase",
+        "Disconnect-CouchDBDatabase",
         "Send-CouchDBRequest",
         "Get-CouchDBDatabase",
         "Test-CouchDBDatabase",
@@ -138,7 +140,7 @@
         "Set-CouchDBReplication",
         "Set-CouchDBRevisionLimit",
         "Set-CouchDBSession",
-        "Set-CouchDBDatabasePartition",
+        "New-CouchDBDatabasePartition",
         "Grant-CouchDBDatabasePermission",
         "Revoke-CouchDBDatabasePermission",
         "Request-CouchDBReplication",
@@ -177,10 +179,12 @@
     CmdletsToExport   = @()
 
     # Variables to export from this module
-    VariablesToExport = 'couchdb_session'
+    VariablesToExport = 'CouchDBCachePreference','CouchDBSaveCredentialPreference'
 
     # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
     AliasesToExport   = @(
+        "condb",
+        "disdb",
         "creq",    
         "gcdb",
         "cpdb",
@@ -233,7 +237,7 @@
         "scrpl",
         "scrl",
         "scs",
-        "scdp",
+        "ncdp",
         "gcdbp",
         "rcdbp",
         "rcdbr",
@@ -303,7 +307,7 @@
             ProjectUri = 'https://matteoguadrini.github.io/PSCouchDB'
 
             # A URL to an icon representing this module.
-            IconUri    = 'https://pscouchdb.readthedocs.io/en/latest/_images/pscouchdb-logo.png'
+            IconUri    = 'https://pscouchdb.readthedocs.io/en/latest/_images/pscouchdb-logo.svg'
 
             # ReleaseNotes of this module
             # ReleaseNotes = ''

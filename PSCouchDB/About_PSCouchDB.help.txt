@@ -15,6 +15,6 @@ LONG DESCRIPTION
 		- Restart server
 		- Develop complex object for query and design document
 SEE ALSO
-	Invoke-RestMethod
+	System.Net.WebRequest
 LINK
     https://pscouchdb.readthedocs.io/en/latest

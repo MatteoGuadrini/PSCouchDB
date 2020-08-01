@@ -20,7 +20,7 @@
 # -- Project information -----------------------------------------------------
 
 project = u'PSCouchDB'
-copyright = u'2019, Matteo Guadrini'
+copyright = u'2020, Matteo Guadrini'
 author = u'Matteo Guadrini'
 
 # The short X.Y version
@@ -172,3 +172,8 @@ epub_title = project
 
 # A list of files that should not be packed into the epub file.
 epub_exclude_files = ['search.html']
+
+html_theme_options = {
+    'logo_only': False
+}
+html_logo = "_static/pscouchdb-logo.svg"

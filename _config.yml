@@ -1,4 +1,0 @@
-name:  Matteo Guadrini
-theme: jekyll-theme-merlot
-show_downloads: true
-description: "PSCouchDB is a powershell module then makes it possible to work with CouchDB in powershell host or ise, without a third-party tool like curl"

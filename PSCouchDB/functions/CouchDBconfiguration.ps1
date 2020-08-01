@@ -41,64 +41,79 @@ function Enable-CouchDBCluster () {
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/config.html#setup
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'Single')]
     param(
         [Parameter(ValueFromPipeline = $true)]
+        [Parameter(ParameterSetName = "Single")]
+        [Parameter(ParameterSetName = "Cluster")]
         [string] $Server,
+        [Parameter(ParameterSetName = "Single")]
+        [Parameter(ParameterSetName = "Cluster")]
         [int] $Port,
+        [Parameter(ParameterSetName = "Cluster")]
         [ValidateRange(1, 3)]
         [int] $NodeCount = 3,
+        [Parameter(ParameterSetName = "Single")]
         [switch] $SingleNode,
+        [Parameter(ParameterSetName = "Single")]
+        [Parameter(ParameterSetName = "Cluster")]
         [string] $BindAddress = '0.0.0.0',
+        [Parameter(ParameterSetName = "Single")]
+        [Parameter(ParameterSetName = "Cluster")]
         [int] $BindPort = 5984,
-        [ValidateScript( { if (-not($SingleNode)) { $true } })]
+        [Parameter(ParameterSetName = "Cluster")]
         [string] $RemoteNode,
-        [ValidateScript( { if (-not($SingleNode)) { $true } })]
+        [Parameter(ParameterSetName = "Cluster")]
         [string] $RemoteUser,
-        [ValidateScript( { if (-not($SingleNode) -and ($RemoteUser)) { $true } })]
+        [Parameter(ParameterSetName = "Cluster")]
         [SecureString] $RemotePassword,
-        [string] $Authorization,
+        [Parameter(ParameterSetName = "Single")]
+        [Parameter(ParameterSetName = "Cluster")]
+        $Authorization,
+        [Parameter(ParameterSetName = "Single")]
+        [Parameter(ParameterSetName = "Cluster")]
         [switch] $Ssl
     )
-    # Check if an admin has been created
-    $name = & { if ($Authorization) { Write-Output $($Authorization -split ":")[0] } else { Write-Output "___" } }
-    $admins = Get-CouchDBAdmin -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue
-    if (-not(Get-Member -Inputobject $admins -Name "$name" -ErrorAction SilentlyContinue)) {
-        throw "Create an admin before configure cluster or specify a valid -Authorization parameter!" 
-    }
     $Database = "_cluster_setup"
-    $Credential = $Authorization -split ":"
-    # Check if single node cluster mode enabled
-    if ($SingleNode.IsPresent) {
-        $Action = "enable_single_node"
-    } else {
-        $Action = "enable_cluster"
+    # Initialize data
+    $Data = [PSCustomObject]@{
+        action = ''
+        bind_address = ''
+        port = 5984
+        username = ''
+        password = ''
     }
-    $Data = "
-        {
-            `"action`": `"$Action`",
-            `"bind_address`": `"$BindAddress`",
-            `"port`": `"$BindPort`",
-            `"username`": `"$($Credential[0])`",
-            `"password`": `"$($Credential[1])`"
-        "
-    # Check if single node cluster or not
-    if ($Action -eq "enable_cluster") {
-        if ($RemoteNode) { $Data += ",`"remote_node`": `"$RemoteNode`"" }
-        if ($RemoteUser) { $Data += ",`"remote_current_user`": `"$RemoteUser`"" }
-        if ($RemotePassword) { $Data += ",`"remote_current_password `": `"$(ConvertTo-CouchDBPassword -SecurePassword $RemotePassword)`"" }
-        $Data += ",`"node_count`": `"$NodeCount`"}"
+    # Get a user and password
+    if ($Authorization -is [pscredential]) {
+        $username, $password = $Authorization.UserName, $Authorization.GetNetworkCredential().Password
     } else {
-        $Data += ",`"node_count`": `"1`"}"
+        $username, $password = $Authorization -split ':'
     }
-    Write-Host "Enabling $Action cluster"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
-    if ($Action -eq "enable_cluster") { 
-        $Data = '{"action": "finish_cluster"}'
-        Write-Host "Finishing $Action cluster"
+    if ($PSCmdlet.ParameterSetName -eq "Single") {
+        $Data.action = 'enable_single_node'
+        $Data.bind_address = $BindAddress
+        $Data.port = $BindPort
+        $Data.username = $username
+        $Data.password = $password
+        Add-Member -InputObject $Data NoteProperty 'node_count' 1
+        Write-Host "Enabling single cluster"
+        $Data = $Data | ConvertTo-Json
         Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
     } else {
-        Write-Host "Finishing $Action cluster"
+        $Data.action = 'enable_cluster'
+        $Data.bind_address = $BindAddress
+        $Data.port = $BindPort
+        $Data.username = $username
+        $Data.password = $password
+        Add-Member -InputObject $Data NoteProperty 'remote_node' $RemoteNode
+        Add-Member -InputObject $Data NoteProperty 'remote_current_user' $RemoteUser
+        Add-Member -InputObject $Data NoteProperty 'remote_current_password' $RemotePassword
+        Add-Member -InputObject $Data NoteProperty 'node_count' $NodeCount
+        Write-Host "Enabling cluster"
+        $Data = $Data | ConvertTo-Json
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
+        Write-Host "Finishing cluster"
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data '{"action": "finish_cluster"}' -Authorization $Authorization -Ssl:$Ssl
     }
 }
 
@@ -134,7 +149,7 @@ function Get-CouchDBNode () {
         [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     if ((Get-CouchDBServer).version -match '3.*') { $Database = "_node/_local" } elseif ((Get-CouchDBServer).version -match '2.*') { $Database = "_membership" }
@@ -178,7 +193,7 @@ function Add-CouchDBNode () {
         [int] $BindPort = 5984,
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $BindAddress,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     $Database = "_cluster_setup"
@@ -231,22 +246,18 @@ function Remove-CouchDBNode () {
         [int] $Port,
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Node,
-        [string] $Authorization,
+        $Authorization,
         [switch]$Force,
         [switch] $Ssl
     )
-    $Database = "_nodes"
-    # Set protocol
-    if ($Ssl.IsPresent) {
-        if (-not($Port)) {
-            if ((Get-CouchDBServer).version -match '3.*') { $Port = 6984 } elseif ((Get-CouchDBServer).version -match '2.*') { $Port = 6986 }
-        }
+    $Database = "_nodes/_local"
+    # Check node
+    if ((Get-CouchDBClusterSetup -Authorization $Authorization).state -eq 'single_node_enabled') {
+        $clu_property = 'name'
     } else {
-        if (-not($Port)) {
-            if ((Get-CouchDBServer).version -match '3.*') { $Port = 5984 } elseif ((Get-CouchDBServer).version -match '2.*') { $Port = 5986 }
-        }
+        $clu_property = 'all_nodes'
     }
-    if (Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Node -Info -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue) {
+    if ((Get-CouchDBNode -Authorization "admin:password" -ErrorAction SilentlyContinue).$clu_property -contains $Node) {
         $Revision = (Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Node -Authorization $Authorization -Ssl:$Ssl)._rev
     } else {
         throw "Node $Node not exist."
@@ -299,7 +310,7 @@ function Get-CouchDBConfiguration () {
         [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).name -contains "couchdb@localhost") { "couchdb@localhost" } else { "couchdb@127.0.0.1" }),
         [string] $Session,
         [string] $Key,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     $Database = "_node"
@@ -361,7 +372,7 @@ function Set-CouchDBConfiguration () {
         [string] $Key,
         [Parameter(mandatory = $true)]
         [string] $Value,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     $Database = "_node"

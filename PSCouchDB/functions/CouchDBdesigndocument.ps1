@@ -81,7 +81,7 @@ function Get-CouchDBDatabaseDesignDocument () {
         [string] $StartKeyDocument,
         [Alias('Update')]
         [switch] $UpdateSequence,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     $Document = "_design_docs"
@@ -251,7 +251,7 @@ function Get-CouchDBDesignDocument () {
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Document,
         [switch] $Info,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl,
         [string] $Variable
     )
@@ -358,7 +358,7 @@ function Get-CouchDBDesignDocumentAttachment () {
         [string] $OutFile,
         [Parameter(ParameterSetName = "Attachment")]
         [Parameter(ParameterSetName = "Info")]
-        [string] $Authorization,
+        $Authorization,
         [Parameter(ParameterSetName = "Attachment")]
         [Parameter(ParameterSetName = "Info")]
         [switch] $Ssl,
@@ -375,14 +375,19 @@ function Get-CouchDBDesignDocumentAttachment () {
     if ($Variable) {
         $tempfile = New-TemporaryFile
         $attachName = Join-Path -Path $tempfile.DirectoryName -ChildPath $(Split-Path -Path $Attachment -Leaf)
-        $attachment = Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Revision $Revision -Attachment $Attachment -OutFile $tempfile.FullName -Authorization $Authorization -Ssl:$Ssl
+        $attachment = Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Revision $Revision -Attachment $Attachment -Authorization $Authorization -Ssl:$Ssl | Out-File $tempfile.FullName -Encoding utf8
         Rename-Item -Path $tempfile.FullName -NewName $attachName -Force
         $exportAttachment = New-Object -TypeName PSCouchDBAttachment -ArgumentList $attachName
         Remove-Item -Path $attachName -Force
         Set-Variable -Name $Variable -Value $exportAttachment -Scope Global
         return $null
     }
-    Send-CouchDBRequest -Server $Server -Port $Port -Method $Method -Database $Database -Document $Document -Revision $Revision -Attachment $Attachment -OutFile $OutFile -Authorization $Authorization -Ssl:$Ssl
+    # Save Attachment
+    if ($OutFile) {
+        (Send-CouchDBRequest -Server $Server -Port $Port -Method $Method -Database $Database -Document $Document -Revision $Revision -Attachment $Attachment -Authorization $Authorization -Ssl:$Ssl).results | Out-File $OutFile -Encoding utf8
+        return "$OutFile"
+    }
+    Send-CouchDBRequest -Server $Server -Port $Port -Method $Method -Database $Database -Document $Document -Revision $Revision -Attachment $Attachment -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Add-CouchDBDesignDocumentAttachment () {
@@ -436,21 +441,17 @@ function Add-CouchDBDesignDocumentAttachment () {
         $Attachment,
         [Parameter(mandatory = $true)]
         [string] $Revision,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     $Document = "_design/$Document"
     # Check if Attachment param is string or PSCouchDBAttachment
     if ($Attachment -is [PSCouchDBAttachment]) {
         $tempfile = New-TemporaryFile
-        if ($Attachment.GetData()) {
-            $attachName = Join-Path -Path $tempfile.DirectoryName -ChildPath $Attachment.filename
-            Rename-Item -Path $tempfile.FullName -NewName $attachName -Force
-            $Attachment.SaveData($attachName)
-            $Attachment = $attachName
-        } else {
-            throw "Attachment object doesn't contains any data"
-        }
+        $attachName = Join-Path -Path $tempfile.DirectoryName -ChildPath $Attachment.filename
+        Rename-Item -Path $tempfile.FullName -NewName $attachName -Force
+        $Attachment.SaveData($attachName)
+        $Attachment = $attachName
     } elseif ($Attachment -is [string]) {
         if (-not(Test-Path -Path $Attachment)) {
             throw "File not found: $Attachment"
@@ -537,7 +538,7 @@ function New-CouchDBDesignDocument () {
         $Data,
         [Parameter(ParameterSetName = "View")]
         [Parameter(ParameterSetName = "CustomData")]
-        [string] $Authorization,
+        $Authorization,
         [Parameter(ParameterSetName = "View")]
         [Parameter(ParameterSetName = "CustomData")]
         [switch] $Ssl
@@ -554,10 +555,12 @@ function New-CouchDBDesignDocument () {
             } elseif ($ViewMapFunction) {
                 $ddoc.AddView($ViewName, $ViewMapFunction)
             }
+            if ($ValidationFunction) { $ddoc.SetValidateFunction($ValidationFunction) }
+        } elseif ($ValidationFunction) {
+            $ddoc.SetValidateFunction($ValidationFunction)
         } else {
             throw "View function required a name!"
         }
-        if ($ValidationFunction) { $ddoc.SetValidateFunction($ValidationFunction) }
         $Data = $ddoc.ToJson(99)
     }
     # CustomData
@@ -653,7 +656,7 @@ function Set-CouchDBDesignDocument () {
         $Data,
         [Parameter(ParameterSetName = "View")]
         [Parameter(ParameterSetName = "CustomData")]
-        [string] $Authorization,
+        $Authorization,
         [Parameter(ParameterSetName = "View")]
         [Parameter(ParameterSetName = "CustomData")]
         [switch] $Ssl
@@ -670,10 +673,12 @@ function Set-CouchDBDesignDocument () {
             } elseif ($ViewMapFunction) {
                 $ddoc.AddView($ViewName, $ViewMapFunction)
             }
+            if ($ValidationFunction) { $ddoc.SetValidateFunction($ValidationFunction) }
+        } elseif ($ValidationFunction) {
+            $ddoc.SetValidateFunction($ValidationFunction)
         } else {
             throw "View function required a name!"
         }
-        if ($ValidationFunction) { $ddoc.SetValidateFunction($ValidationFunction) }
         $Data = $ddoc.ToJson(99)
     }
     # CustomData
@@ -725,7 +730,7 @@ function Compress-CouchDBDesignDocument () {
         [string] $Database,
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $DesignDoc,
-        [string] $Authorization,
+        $Authorization,
         [switch] $Ssl
     )
     $Document = "_compact/$DesignDoc"
@@ -777,7 +782,7 @@ function Remove-CouchDBDesignDocument () {
         [string] $Document,
         [Parameter(Mandatory = $true)]
         [string] $Revision,
-        [string] $Authorization,
+        $Authorization,
         [switch]$Force,
         [switch] $Ssl
     )
@@ -833,7 +838,7 @@ function Remove-CouchDBDesignDocumentAttachment () {
         [string] $Attachment,
         [Parameter(mandatory = $true)]
         [string] $Revision,
-        [string] $Authorization,
+        $Authorization,
         [switch]$Force,
         [switch] $Ssl
     )

@@ -13,6 +13,16 @@
     uses
     support
 
+Preferences
+===========
+
+Below a list of variable preferences of module
+
+.. code-block:: powershell
+
+    $CouchDBCachePreference             # default value: $false
+    $CouchDBSaveCredentialPreference    # default value: $true
+
 Cmdlets and aliases
 ===================
 
@@ -139,7 +149,7 @@ Server
 
 .. code-block:: powershell
 
-    Send-CouchDBRequest [[-Method] <String>] [[-Server] <String>] [[-Port] <Int32>] [[-Database] <String>] [[-Document] <String>] [[-Authorization] <String>] [[-Revision] <String>] [[-Attachment] <String>] [[-Data] <String>] [[-OutFile] <String>] [-Ssl] [<CommonParameters>]
+    Send-CouchDBRequest [[-Method] <String>] [[-Server] <String>] [[-Port] <Int32>] [[-Database] <String>] [[-Document] <String>] [[-Authorization] <Object>] [[-Revision] <String>] [[-Attachment] <String>] [[-Data] <String>] [-Ssl] [[-JobName] <String>] [<CommonParameters>]
 
 **Get-CouchDBServer**
 
@@ -187,13 +197,13 @@ Server
 
 .. code-block:: powershell
 
-    Read-CouchDBLog [[-Path] <String>] [[-Level] <String>] [-Follow] [[-Tail] <Int32>] [<CommonParameters>]
+    Read-CouchDBLog [[-Path] <String>] [[-Level] <String>] [-Follow] [[-Tail] <Int32>] [[-Authorization] <Object>] [<CommonParameters>]
 
 **Clear-CouchDBLog**
 
 .. code-block:: powershell
 
-    Clear-CouchDBLog [[-Path] <String>] [-Rotate] [<CommonParameters>]
+    Clear-CouchDBLog [[-Path] <String>] [-Rotate] [[-Authorization] <Object>] [<CommonParameters>]
 
 Replication
 ***********
@@ -269,6 +279,18 @@ Authentication
 
 Databases
 *********
+
+**Connect-CouchDBDatabase**
+
+.. code-block:: powershell
+
+    Connect-CouchDBDatabase [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [[-Authorization] <Object>] [-Ssl] [<CommonParameters>]
+
+**Disconnect-CouchDBDatabase**
+
+.. code-block:: powershell
+
+    Disconnect-CouchDBDatabase
 
 **Test-CouchDBDatabase**
 
@@ -403,11 +425,11 @@ Databases
 
     Import-CouchDBDatabase [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Path] <String> [-RemoveRevision] [[-Authorization] <String>] [-Ssl] [-AsJob] [<CommonParameters>]
 
-**Set-CouchDBDatabasePartition**
+**New-CouchDBDatabasePartition**
 
 .. code-block:: powershell
 
-    Set-CouchDBDatabasePartition [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
+    New-CouchDBDatabasePartition [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [[-Authorization] <String>] [-Ssl] [<CommonParameters>]
 
 Documents
 *********
