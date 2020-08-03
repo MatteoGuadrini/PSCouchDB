@@ -1684,7 +1684,7 @@ function Send-CouchDBRequest {
             Write-Verbose -Message "Add authorization"
             $req.AddAuthorization($Global:CouchDBCredential)
         } else {
-            $Global:CouchDBCredential = $null
+            Remove-CouchDBSession
             Write-Verbose -Message "Add authorization"
             $req.AddAuthorization($Authorization)
         }

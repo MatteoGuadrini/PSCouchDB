@@ -1,9 +1,9 @@
 TOPIC
 	about_pscouchdb_content
 SHORT DESCRIPTION
-	The complete and powerfull powershell module for CouchDB v2.X
+	Advanced CLI for CouchDB server
 LONG DESCRIPTION
-	This module is an interface to CouchDB nosql database.
+	This module is a coplete CLI for CouchDB server database.
 	With this you can:
 		- Configure server
 		- Manage database (create, modify, delete)
@@ -13,7 +13,7 @@ LONG DESCRIPTION
 		- Configure and manage replica
 		- Configure and manage node of cluster
 		- Restart server
-		- Develop complex object for query and design document
+		- Develop complex object for http request, document, design documents, views, attachments and more.
 SEE ALSO
 	System.Net.WebRequest
 LINK

@@ -1,5 +1,5 @@
 # PSCouchDB: Advanced CLI for CouchDB server
-<img src="https://pscouchdb.readthedocs.io/en/latest/_images/pscouchdb-logo.svg" alt="PSCouchDB" title="PSCouchDB" width="320" height="224" />
+<img src="https://pscouchdb.readthedocs.io/en/latest/_images/pscouchdb-logo.svg" alt="PSCouchDB" title="PSCouchDB" width="300" height="300" />
 
 ## Installation and simple usage
 1. Download and install CouchDB following the [docs](http://docs.couchdb.org/en/latest/install/index.html).

@@ -1,65 +1,86 @@
 # Release notes
 
+## 2.0.0
+Aug 03, 2020
+
+With this release, support for CouchDB 2.X is abandoned to support CouchDB 3.X and (in the future) 4.X. Below are the various changes made:
+
+- Split function cmdlet in a nested module
+- Add _-AsJob_ parameter on various cmdlet (background job)
+- Public and rewrite **Send-CouchDBRequest** cmdlet (now based on - specific CouchDB request build on System.Net.WebRequest .NET class)
+- Supports partitioned databases
+- Add PSCouchDBDocument class
+- Add PSCouchDBAttachment class
+- Add PSCouchDBView class
+- Add new PSCouchDBDesignDoc class
+- Add PSCouchDBBulkDocument class
+- Add PSCouchDBRequest class
+- Rewrite Get/Set/Remove-CouchDBSession cmdlet
+- Enable Preferences variable: CouchDBSaveCredentialPreference, - CouchDBCachePreference
+- Add Connect/Disconnect-CouchDBDatabase cmdlet
+- Fix some cmdlet and bugs
+- New homepage: [https://matteoguadrini.github.io/PSCouchDB/](https://matteoguadrini.github.io/PSCouchDB/)
+
 ## 1.14.0
 Mar 03, 2020
 
-Fix *Value* param on **Find-CouchDBDocuments**
-Fix *Key* param on **Get-CouchDBDocument**
-Fix **Clear-CouchDBDocuments**
-Add issue template cmdlet bug
-Add issue template cmdlet enhancement
-Add issue template **PSCouchDBQuery** class bug
-Add issue template **PSCouchDBQuery** class enhancement
-Add issue template **PSCouchDBDesignDoc** class bug
-Add issue template **PSCouchDBDesignDoc** class enhancement
-Improved **Grant-CouchDBDatabasePermission** cmdlet
-Re-adaptation of the **Revoke-CouchDBDatabasePermission** cmdlet
-Add pull request template
-Fix **Search-CouchDBFullText** *UseQueries* param
-Add *ReadOnly* validation function to **PSCouchDBDesignDoc**
-Added remote possibilities for database copying
-Fix **Get-CouchDBDatabaseInfo**
-Fix **Restart-CouchDBServer** on Unix based os
-Fix **Copy-CouchDBDatabase** cmdlet
-Fix issue #1523,#2092,#2336,#2475 for default port
-Add deprecation shows and list in design documents class
+- Fix *Value* param on **Find-CouchDBDocuments**
+- Fix *Key* param on **Get-CouchDBDocument**
+- Fix **Clear-CouchDBDocuments**
+- Add issue template cmdlet bug
+- Add issue template cmdlet enhancement
+- Add issue template **PSCouchDBQuery** class bug
+- Add issue template **PSCouchDBQuery** class enhancement
+- Add issue template **PSCouchDBDesignDoc** class bug
+- Add issue template **PSCouchDBDesignDoc** class enhancement
+- Improved **Grant-CouchDBDatabasePermission** cmdlet
+- Re-adaptation of the **Revoke-CouchDBDatabasePermission** cmdlet
+- Add pull request template
+- Fix **Search-CouchDBFullText** *UseQueries* param
+- Add *ReadOnly* validation function to **PSCouchDBDesignDoc**
+- Added remote possibilities for database copying
+- Fix **Get-CouchDBDatabaseInfo**
+- Fix **Restart-CouchDBServer** on Unix based os
+- Fix **Copy-CouchDBDatabase** cmdlet
+- Fix issue #1523,#2092,#2336,#2475 for default port
+- Add deprecation shows and list in design documents class
 
 
 ## 1.13.0
 Sep 18, 2019
 
-Add param -Document on **Get-CouchDBDatabaseShards**.
-Add some param **Get-CouchDBDatabaseDesignDocument**:
-- *Descending*
-- *EndKey*
-- *EndKeyDocument*
-- *IncludeDocument*
-- *InclusiveEnd*
-- *Key*
-- *Keys*
-- *Conflict*
-- *Limit*
-- *Skip*
-- *StartKey*
-- *StartKeyDocument*
-- *UpdateSequence*
-Add some param to **Get-CouchDBDatabaseUpdates**: 
-- *Feed*
-- *Timeout*
-- *Heartbeat*
-- *Since*
-Complete **_all_docs** query parameter.
-Add full param to **Get-CouchDBDatabase**.
-Add *EnsureDatabaseExist* to **Get-CouchDBClusterSetup**.
-Add some param to **Enable-CouchDBCluster**:
-- *BindPort*
-- *BindAddress*
-- *RemoteNode*
-- *RemoteUser*
-- *RemotePassword*
-Add *Limit* and *Skip* param to **Get-CouchDBReplicationScheduler**.
-Add some parameter to **Get-CouchDBReplicationDocument**.
-Add *Session* and *Key* param to **Get-CouchDBConfiguration**.
+- Add param -Document on **Get-CouchDBDatabaseShards**.
+- Add some param **Get-CouchDBDatabaseDesignDocument**:
+    - *Descending*
+    - *EndKey*
+    - *EndKeyDocument*
+    - *IncludeDocument*
+    - *InclusiveEnd*
+    - *Key*
+    - *Keys*
+    - *Conflict*
+    - *Limit*
+    - *Skip*
+    - *StartKey*
+    - *StartKeyDocument*
+    - *UpdateSequence*
+- Add some param to **Get-CouchDBDatabaseUpdates**: 
+    - *Feed*
+    - *Timeout*
+    - *Heartbeat*
+    - *Since*
+- Complete **_all_docs** query parameter.
+- Add full param to **Get-CouchDBDatabase**.
+- Add *EnsureDatabaseExist* to **Get-CouchDBClusterSetup**.
+- Add some param to **Enable-CouchDBCluster**:
+    - *BindPort*
+    - *BindAddress*
+    - *RemoteNode*
+    - *RemoteUser*
+    - *RemotePassword*
+- Add *Limit* and *Skip* param to **Get-CouchDBReplicationScheduler**.
+- Add some parameter to **Get-CouchDBReplicationDocument**.
+- Add *Session* and *Key* param to **Get-CouchDBConfiguration**.
 
 ## 1.12.0
 Aug 8, 2019
