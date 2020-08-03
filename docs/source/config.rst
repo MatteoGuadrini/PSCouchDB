@@ -16,13 +16,8 @@
 Setup
 =====
 
-CouchDB 2.x can be deployed in either a single-node or a clustered setup. 
+CouchDB 3.x can be deployed in either a single-node or a clustered setup. 
 This section covers the first-time setup steps required for each of these configuration.
-
-.. warning::
-    Before configuring one of the two modes, it is advisable to create an administrative user. Without it, the two cluster modes will not be complete.
-    For more details, see `Permission <permission.html>`_ section.
-
 
 Single Node
 ___________

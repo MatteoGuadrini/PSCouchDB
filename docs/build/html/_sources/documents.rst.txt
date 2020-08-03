@@ -169,7 +169,7 @@ or run in background:
     using module PSCouchDB
     $bdocs = New-Object PSCouchDBBulkDocument -ArgumentList '{"_id":"test"}'
     $bdocs.AddDocument('{"_id":"test1","_rev":"2-9a68ee74a8276c7f11146245ba43676f"}')
-    Get-CouchDBBulkDocument -Database test -Document "Hitchhikers","Hitchhikers Guide _deleted","Hitchhikers Guide" -AsJob
+    Get-CouchDBBulkDocument -Database test -Data $bdocs -Authorization "admin:password" -AsJob
     Get-Job -Id 1 | Receive-Job -Keep
 
 Create documents in bulk

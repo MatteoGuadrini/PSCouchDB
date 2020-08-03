@@ -1287,7 +1287,7 @@ class PSCouchDBRequest {
         }
         try {
             [System.Net.WebResponse] $resp = $this.client.GetResponse()
-            $this.uri.LastStatusCode = $this.client.GetResponse().StatusCode
+            $this.uri.LastStatusCode = $resp.StatusCode
         } catch [System.Net.WebException] {
             [System.Net.HttpWebResponse] $errcode = $_.Exception.Response
             $this.uri.LastStatusCode = $errcode.StatusCode
@@ -1350,7 +1350,7 @@ class PSCouchDBRequest {
             if ($results -match "^{.*}$") {
                 return $results | ConvertFrom-Json
             } else {
-                return [PSCustomObject]@{results = $results }
+                return [PSCustomObject]@{ results = $results }
             }
         } -ArgumentList $this.uri.Uri, $this.method, $this.authorization, $this.data, $this.attachment
         Register-TemporaryEvent $job "StateChanged" -Action {
@@ -1371,13 +1371,12 @@ class PSCouchDBRequest {
         }
         try {
             [System.Net.WebResponse] $resp = $this.client.GetResponse()
-            $this.uri.LastStatusCode = $this.client.GetResponse().StatusCode
+            $this.uri.LastStatusCode = $resp.StatusCode
         } catch [System.Net.WebException] {
             [System.Net.HttpWebResponse] $errcode = $_.Exception.Response
             $this.uri.LastStatusCode = $errcode.StatusCode
             throw ([PSCouchDBRequestException]::new($errcode.StatusCode)).CouchDBMessage
         }
-        $resp.Close()
         return $resp.Headers.ToString()
     }
 
@@ -1684,7 +1683,7 @@ function Send-CouchDBRequest {
             Write-Verbose -Message "Add authorization"
             $req.AddAuthorization($Global:CouchDBCredential)
         } else {
-            $Global:CouchDBCredential = $null
+            Remove-CouchDBSession
             Write-Verbose -Message "Add authorization"
             $req.AddAuthorization($Authorization)
         }

@@ -278,8 +278,8 @@
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The default path on Windows is <code class="docutils literal notranslate"><span class="pre">C:\CouchDB\couch.log</span></code>, while on Unix it is <code class="docutils literal notranslate"><span class="pre">/var/log/couchdb/couch.log</span></code>.
-Otherwise, if the log is in a custom path, specify the path using the <code class="docutils literal notranslate"><span class="pre">-Path</span></code> parameter.</p>
+<p>The default path is specified in the server configuration. Run `` Get-CouchDBConfiguration -Session log -Key file -Authorization admin:password``.
+Otherwise, specify the path using the <code class="docutils literal notranslate"><span class="pre">-Path</span></code> parameter.</p>
 </div>
 <p>This example is used to read only the last 15 lines of log.</p>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Read-CouchDBLog</span> <span class="n">-Tail</span> <span class="n">15</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>

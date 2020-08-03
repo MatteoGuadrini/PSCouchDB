@@ -25,8 +25,8 @@ To create every object defined in PSCouchDB module, use this.
 
 .. code-block:: powershell
 
-    $query = New-CouchDBObject -TypeName PSCouchDBRequest
-    $query.GetType()
+    $req = New-CouchDBObject -TypeName PSCouchDBRequest
+    $req.GetType()
 
 PSCouchDBRequest class
 ______________________

@@ -124,8 +124,8 @@ To read entire log.
     Read-CouchDBLog -Authorization "admin:password"
 
 .. note::
-    The default path on Windows is ``C:\CouchDB\couch.log``, while on Unix it is ``/var/log/couchdb/couch.log``.
-    Otherwise, if the log is in a custom path, specify the path using the ``-Path`` parameter.
+    The default path is specified in the server configuration. Run `` Get-CouchDBConfiguration -Session log -Key file -Authorization admin:password``.
+    Otherwise, specify the path using the ``-Path`` parameter.
 
 This example is used to read only the last 15 lines of log.
 

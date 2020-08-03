@@ -68,5 +68,5 @@ function Remove-CouchDBSession () {
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/auth.html
     #>
-    Remove-Variable CouchDBCredential -Scope global
+    Remove-Variable CouchDBCredential -Scope global -ErrorAction SilentlyContinue
 }
