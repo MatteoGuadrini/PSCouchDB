@@ -25,13 +25,13 @@ To permanently connect to a database, do the following:
 
 .. code-block:: powershell
 
-    Connect-Database -Database test -Authorization "admin:password"
+    Connect-CouchDBDatabase -Database test -Authorization "admin:password"
 
 and disconnect:
 
 .. code-block:: powershell
 
-    Disconnect-Database -Database test -Authorization "admin:password"
+    Disconnect-CouchDBDatabase -Database test -Authorization "admin:password"
 
 Test a database
 _______________

@@ -27,9 +27,15 @@ function Register-TemporaryEvent () {
     itself afterward. In PowerShell version three, use the -MaxTriggerCount
     parameter of the Register-*Event cmdlets.
     .DESCRIPTION
-    Convert to SecureString to simple string.
-    .PARAMETER SecurePassword
-    Password format in [SecureString].
+    Registers an event action for an object, and automatically unregisters
+    itself afterward. In PowerShell version three, use the -MaxTriggerCount
+    parameter of the Register-*Event cmdlets.
+    .PARAMETER Object
+    Job object to execute in background.
+    .PARAMETER Event
+    Event catched.
+    .PARAMETER Action
+    ScriptBlock powershell commands to post execution.
     .EXAMPLE
     PS > $timer = New-Object Timers.Timer
     PS > Register-TemporaryEvent $timer Disposed { [Console]::Beep(100,100) }

@@ -1350,7 +1350,7 @@ class PSCouchDBRequest {
             if ($results -match "^{.*}$") {
                 return $results | ConvertFrom-Json
             } else {
-                return [PSCustomObject]@{results = $results }
+                return [PSCustomObject]@{ results = $results }
             }
         } -ArgumentList $this.uri.Uri, $this.method, $this.authorization, $this.data, $this.attachment
         Register-TemporaryEvent $job "StateChanged" -Action {
@@ -1377,7 +1377,6 @@ class PSCouchDBRequest {
             $this.uri.LastStatusCode = $errcode.StatusCode
             throw ([PSCouchDBRequestException]::new($errcode.StatusCode)).CouchDBMessage
         }
-        $resp.Close()
         return $resp.Headers.ToString()
     }
 
