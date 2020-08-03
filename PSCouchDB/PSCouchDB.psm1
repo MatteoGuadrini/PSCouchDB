@@ -1287,7 +1287,7 @@ class PSCouchDBRequest {
         }
         try {
             [System.Net.WebResponse] $resp = $this.client.GetResponse()
-            $this.uri.LastStatusCode = $this.client.GetResponse().StatusCode
+            $this.uri.LastStatusCode = $resp.StatusCode
         } catch [System.Net.WebException] {
             [System.Net.HttpWebResponse] $errcode = $_.Exception.Response
             $this.uri.LastStatusCode = $errcode.StatusCode
@@ -1371,7 +1371,7 @@ class PSCouchDBRequest {
         }
         try {
             [System.Net.WebResponse] $resp = $this.client.GetResponse()
-            $this.uri.LastStatusCode = $this.client.GetResponse().StatusCode
+            $this.uri.LastStatusCode = $resp.StatusCode
         } catch [System.Net.WebException] {
             [System.Net.HttpWebResponse] $errcode = $_.Exception.Response
             $this.uri.LastStatusCode = $errcode.StatusCode
