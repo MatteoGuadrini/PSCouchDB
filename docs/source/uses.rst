@@ -183,7 +183,7 @@ Custom document
 
 Creating a custom document to reflect a specific template is very easy.
 
-.. code-block::
+::
 
     using module PSCouchDB
 
