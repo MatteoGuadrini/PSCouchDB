@@ -1566,6 +1566,11 @@ function Send-CouchDBRequest {
     2-b91bb807b4685080c6a651115ff558f5
     This takes part in the url here: 
     http://localhost:5984/db/doc?rev={revision}.
+    .PARAMETER Params
+    The CouchDB other parameter.
+    This takes part in the url here:
+    http://localhost:5984/db/doc?{param}
+    http://localhost:5984/db/doc?{param}={value}.
     .PARAMETER Attachment
     The CouchDB document attachment.
     .PARAMETER Data
@@ -1601,6 +1606,7 @@ function Send-CouchDBRequest {
         [string] $Revision,
         [string] $Attachment,
         [string] $Data,
+        [array] $Params,
         [switch] $Ssl,
         [string] $JobName
     )
@@ -1673,6 +1679,13 @@ function Send-CouchDBRequest {
     if ($Revision) {
         Write-Verbose -Message "Set revision to $Revision"
         $req.SetParameter("rev=$Revision")
+    }
+    # Check other params
+    if ($Params) {
+        foreach ($Param in $Params) {
+            Write-Verbose -Message "Add other parameter: $Param"
+            $req.SetParameter($Param)
+        }
     }
     # Check authorization
     if ($Authorization -or $Global:CouchDBCredential) {
