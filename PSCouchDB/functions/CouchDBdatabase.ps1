@@ -179,6 +179,8 @@ function Get-CouchDBDatabase () {
     The CouchDB server port. Default is 5984.
     .PARAMETER Database
     The CouchDB database. Default is _all_dbs.
+    .PARAMETER AllDatabase
+    The all CouchDB database.
     .PARAMETER Descending
     Return the databases in descending order by key. Default is false. The database must be _all_dbs.
     .PARAMETER EndKey
@@ -205,68 +207,70 @@ function Get-CouchDBDatabase () {
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/databases.html#read-a-database
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Database")]
     param(
+        [Parameter(ParameterSetName = "AllDatabase")]
+        [Parameter(ParameterSetName = "Database")]
         [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
+        [Parameter(ParameterSetName = "Database")]
+        [Parameter(ParameterSetName = "AllDatabase")]
         [int] $Port,
-        [string] $Database = "_all_dbs",
-        [ValidateScript( { if (-not($Database) -or ($Database -eq "_all_dbs")) { $true } })]
+        [Parameter(ParameterSetName = "Database")]
+        [Parameter(ParameterSetName = "AllDatabase")]
+        [string] $Database,
+        [Parameter(ParameterSetName = "AllDatabase")]
+        [switch] $AllDatabase,
+        [Parameter(ParameterSetName = "AllDatabase")]
         [switch] $Descending,
-        [ValidateScript( { if (-not($Database) -or ($Database -eq "_all_dbs")) { $true } })]
+        [Parameter(ParameterSetName = "AllDatabase")]
         [Alias('End')]
         [string] $EndKey,
-        [ValidateScript( { if (-not($Database) -or ($Database -eq "_all_dbs")) { $true } })]
+        [Parameter(ParameterSetName = "AllDatabase")]
         [int] $Limit,
-        [ValidateScript( { if (-not($Database) -or ($Database -eq "_all_dbs")) { $true } })]
+        [Parameter(ParameterSetName = "AllDatabase")]
         [int] $Skip,
-        [ValidateScript( { if (-not($Database) -or ($Database -eq "_all_dbs")) { $true } })]
+        [Parameter(ParameterSetName = "AllDatabase")]
         [Alias('Start')]
         [string] $StartKey,
+        [Parameter(ParameterSetName = "Database")]
+        [Parameter(ParameterSetName = "AllDatabase")]
         $Authorization,
+        [Parameter(ParameterSetName = "Database")]
+        [Parameter(ParameterSetName = "AllDatabase")]
         [switch] $Ssl
     )
-    # Check Descending param
-    if ($Descending.IsPresent) {
-        if ($Database -match "\?") {
-            $Database += "&descending=true"
-        } else {
-            $Database += "?descending=true"
+    # All database?
+    if ($AllDatabase.IsPresent) {
+        $Params = @()
+        $Database = "_all_dbs"
+    } elseif (-not($Database)) {
+        $Params = @()
+        $Database = "_all_dbs"
+    }
+    if ($PSCmdlet.ParameterSetName -eq "AllDatabase") {
+        # Check Descending param
+        if ($Descending.IsPresent) {
+            $Params += "descending=true"
+        }
+        # Check EndKey param
+        if ($EndKey) {
+            $Params += "endkey=`"$EndKey`""
+        }
+        # Check Limit param
+        if ($Limit) {
+            $Params += "limit=$Limit"
+        }
+        # Check Skip param
+        if ($Skip) {
+            $Params += "skip=$Skip"
+        }
+        # Check StartKey param
+        if ($StartKey) {
+            $Params += "startkey=`"$StartKey`""
         }
     }
-    # Check EndKey param
-    if ($EndKey) {
-        if ($Database -match "\?") {
-            $Database += "&endkey=`"$EndKey`""
-        } else {
-            $Database += "?endkey=`"$EndKey`""
-        }
-    }
-    # Check Limit param
-    if ($Limit) {
-        if ($Database -match "\?") {
-            $Database += "&limit=$Limit"
-        } else {
-            $Database += "?limit=$Limit"
-        }
-    }
-    # Check Skip param
-    if ($Skip) {
-        if ($Database -match "\?") {
-            $Database += "&skip=$Skip"
-        } else {
-            $Database += "?skip=$Skip"
-        }
-    }
-    # Check StartKey param
-    if ($StartKey) {
-        if ($Database -match "\?") {
-            $Database += "&startkey=`"$StartKey`""
-        } else {
-            $Database += "?startkey=`"$StartKey`""
-        }
-    }
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Params $Params -Authorization $Authorization -Ssl:$Ssl
 }
 
 function New-CouchDBDatabase () {

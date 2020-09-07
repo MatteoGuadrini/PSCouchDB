@@ -308,8 +308,9 @@ Databases
 
 .. code-block:: powershell
 
-    Get-CouchDBDatabase [[-Server] <String>] [[-Port] <Int32>] [[-Database] <String>] [-Descending] [[-EndKey] <String>] [[-Limit] <Int32>] [[-Skip] <Int32>] [[-StartKey] <String>] [[-Authorization] <String>] [-Ssl]
-    [<CommonParameters>]
+    Get-CouchDBDatabase [-Server <String>] [-Port <Int32>] [-Database <String>] [-Authorization <Object>] [-Ssl] [<CommonParameters>]
+    
+    Get-CouchDBDatabase [-Server <String>] [-Port <Int32>] [-Database <String>] [-AllDatabase] [-Descending] [-EndKey <String>] [-Limit <Int32>] [-Skip <Int32>] [-StartKey <String>] [-Authorization <Object>] [-Ssl] [<CommonParameters>]
 
 **New-CouchDBDatabase**
 
