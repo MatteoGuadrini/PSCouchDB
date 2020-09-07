@@ -293,6 +293,8 @@ function New-CouchDBDatabase () {
     The CouchDB server port. Default is 5984.
     .PARAMETER Database
     The CouchDB database.
+    .PARAMETER Partition
+    The CouchDB partition database.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -312,10 +314,12 @@ function New-CouchDBDatabase () {
         [int] $Port,
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
+        [switch] $Partition,
         $Authorization,
         [switch] $Ssl
     )
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Authorization $Authorization -Ssl:$Ssl
+    if ($Partition.IsPresent) { $Params = "partitioned=true" }
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Params $Params -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Remove-CouchDBDatabase () {
@@ -514,7 +518,7 @@ function Remove-CouchDBIndex () {
         [switch] $Ssl
     )
     $Document = "_index/$DesignDoc/json/$Name"
-    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove index $DesignDoc ?", "Remove index $DesignDoc on database $Database")) {
+    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove index $Name on $DesignDoc ?", "Remove index $Name on $DesignDoc on database $Database")) {
         Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
     }
 }
@@ -964,7 +968,7 @@ function Get-CouchDBRevisionDifference () {
         $Authorization,
         [switch] $Ssl
     )
-    $Data = @{$Document = $Revision }
+    $Data = @{ $Document = $Revision }
     $Data = $Data | ConvertTo-Json
     $Database = $Database + '/_revs_diff'
     Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
@@ -1228,46 +1232,6 @@ function Import-CouchDBDatabase () {
     }
 }
 
-function New-CouchDBDatabasePartition () {
-    <#
-    .SYNOPSIS
-    Create a partitioned database.
-    .DESCRIPTION
-    Create a partitioned database, than forms documents into logical partitions by using a partition key.
-    .NOTES
-    CouchDB API:
-        PUT /{db}?partitioned=true
-    .PARAMETER Server
-    The CouchDB server name. Default is localhost.
-    .PARAMETER Port
-    The CouchDB server port. Default is 5984.
-    .PARAMETER Database
-    The CouchDB database.
-    .PARAMETER Authorization
-    The CouchDB authorization form; user and password.
-    Authorization format like this: user:password
-    ATTENTION: if the password is not specified, it will be prompted.
-    .PARAMETER Ssl
-    Set ssl connection on CouchDB server.
-    This modify protocol to https and port to 6984.
-    .EXAMPLE
-    New-CouchDBDatabasePartition -Database test -Authorization admin:password
-    Create a partitioned database.
-    .LINK
-    https://pscouchdb.readthedocs.io/en/latest/databases.html#partition-database
-    #>
-    [CmdletBinding()]
-    param(
-        [string] $Server,
-        [int] $Port,
-        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [string] $Database,
-        $Authorization,
-        [switch] $Ssl
-    )
-    $Database += "?partitioned=true"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Authorization $Authorization -Ssl:$Ssl
-}
 
 function Connect-CouchDBDatabase () {
     <#

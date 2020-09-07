@@ -304,4 +304,4 @@ To create a partitioned database, we simply run:
 
 .. code-block:: powershell
 
-    New-CouchDBDatabasePartition -Database test -Authorization "admin:password"
+    New-CouchDBDatabase -Database test -Partition -Authorization "admin:password"
