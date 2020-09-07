@@ -1701,6 +1701,11 @@ function Send-CouchDBRequest {
             if (-not($Global:CouchDBCredential)) {
                 $Global:CouchDBCredential = $Authorization
             }
+            # Check if authorization has been changed
+            if ($Authorization -and $Global:CouchDBCredential -ne $Authorization) {
+                Write-Verbose -Message "Override global authorization"
+                $Global:CouchDBCredential = $Authorization
+            }
             Write-Verbose -Message "Add authorization"
             $req.AddAuthorization($Global:CouchDBCredential)
         } else {

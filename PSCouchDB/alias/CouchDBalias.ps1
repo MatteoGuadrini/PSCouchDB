@@ -52,7 +52,6 @@ New-Alias -Name "scconf" -Value Set-CouchDBConfiguration -Option ReadOnly
 New-Alias -Name "scrpl" -Value Set-CouchDBReplication -Option ReadOnly
 New-Alias -Name "scrl" -Value Set-CouchDBRevisionLimit -Option ReadOnly
 New-Alias -Name "scs" -Value Set-CouchDBSession -Option ReadOnly
-New-Alias -Name "ncdp" -Value New-CouchDBDatabasePartition -Option ReadOnly
 New-Alias -Name "gcdbp" -Value Grant-CouchDBDatabasePermission -Option ReadOnly
 New-Alias -Name "rcdbp" -Value Revoke-CouchDBDatabasePermission -Option ReadOnly
 New-Alias -Name "rcdbr" -Value Request-CouchDBReplication -Option ReadOnly
