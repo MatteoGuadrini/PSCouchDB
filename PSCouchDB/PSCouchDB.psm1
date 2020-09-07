@@ -1612,6 +1612,7 @@ function Send-CouchDBRequest {
     )
     # Create PSCouchDBRequest object
     $req = New-Object PSCouchDBRequest
+    $parameters = @()
     # Set cache
     if ($Global:CouchDBCachePreference) {
         $req.EnableCache()
@@ -1647,6 +1648,9 @@ function Send-CouchDBRequest {
             $arr = $Database -split "\?"
             $Database = $arr[0]
             $Param = $arr[1]
+            if ($Param) {
+                $parameters += $Param
+            }
         }
         Write-Verbose -Message "Set database to $Database"
         $req.SetDatabase($Database)
@@ -1657,6 +1661,9 @@ function Send-CouchDBRequest {
             $arr = $Document -split "\?"
             $Document = $arr[0]
             $Param = $arr[1]
+            if ($Param) {
+                $parameters += $Param
+            }
         }
         Write-Verbose -Message "Set document to $Document"
         $req.SetDocument($Document)
@@ -1678,14 +1685,15 @@ function Send-CouchDBRequest {
     # Set revision
     if ($Revision) {
         Write-Verbose -Message "Set revision to $Revision"
-        $req.SetParameter("rev=$Revision")
+        $parameters += "rev=$Revision"
     }
     # Check other params
     if ($Params) {
-        foreach ($Param in $Params) {
-            Write-Verbose -Message "Add other parameter: $Param"
-            $req.SetParameter($Param)
-        }
+        $parameters += $Params
+    }
+    if ($parameters) {
+        Write-Verbose -Message "Set parameters: $parameters"
+        $req.SetParameter($parameters)
     }
     # Check authorization
     if ($Authorization -or $Global:CouchDBCredential) {
@@ -1705,10 +1713,6 @@ function Send-CouchDBRequest {
     if ($Data) {
         Write-Verbose -Message "Set json data to: $Data"
         $req.SetData($Data)
-    }
-    # Set parameter
-    if ($Param) {
-        $req.SetParameter($Param)
     }
     # Get header or request
     Write-Verbose -Message "Request to CouchDB server: $req"
