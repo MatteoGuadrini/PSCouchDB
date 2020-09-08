@@ -85,123 +85,66 @@ function Get-CouchDBDatabaseDesignDocument () {
         [switch] $Ssl
     )
     $Document = "_design_docs"
+    $parameters = @()
     # Check descending parameter
     if ($Descending.IsPresent) {
-        if ($Document -match "\?") {
-            $Document += "&descending=true"
-        } else {
-            $Document += "?descending=true"
-        }
+        $parameters += "descending=true"
     }
     # Check endkey parameter
     if ($EndKey) {
-        if ($Document -match "\?") {
-            $Document += "&endkey=`"$EndKey`""
-        } else {
-            $Document += "?endkey=`"$EndKey`""
-        }
+        $parameters += "endkey=`"$EndKey`""
     }
     # Check endkey_docid parameter
     if ($EndKeyDocument) {
-        if ($Document -match "\?") {
-            $Document += "&endkey_docid=`"$EndKeyDocument`""
-        } else {
-            $Document += "?endkey_docid=`"$EndKeyDocument`""
-        }
+        $parameters += "endkey_docid=`"$EndKeyDocument`""
     }
     # Check include_docs parameter
     if ($IncludeDocument.IsPresent) {
-        if ($Document -match "\?") {
-            $Document += "&include_docs=true"
-        } else {
-            $Document += "?include_docs=true"
-        }
+        $parameters += "include_docs=true"
     }
     # Check inclusive_end parameter
     if ($InclusiveEnd -eq $false) {
-        if ($Document -match "\?") {
-            $Document += "&inclusive_end=false"
-        } else {
-            $Document += "?inclusive_end=false"
-        }
+        $parameters += "inclusive_end=false"
     }
     # Check key parameter
     if ($Key) {
-        if ($Document -match "\?") {
-            $Document += "&key=`"$Key`""
-        } else {
-            $Document += "?key=`"$Key`""
-        }
+        $parameters += "key=`"$Key`""
     }
     # Check keys parameter
     if ($Keys) {
-        if ($Document -match "\?") {
-            $Document += "&keys=$(
+        $parameters += "keys=$(
                 if ($Keys.Count -eq 1) {
                     "[$($Keys | ConvertTo-Json -Compress)]"
                 } else {
                     $Keys | ConvertTo-Json -Compress
                 }
             )"
-        } else {
-            $Document += "?keys=$(
-                if ($Keys.Count -eq 1) {
-                    "[$($Keys | ConvertTo-Json -Compress)]"
-                } else {
-                    $Keys | ConvertTo-Json -Compress
-                }
-            )"
-        }
     }
     # Check conflicts parameter
     if ($Conflict.IsPresent) {
-        if ($Document -match "\?") {
-            $Document += "&conflicts=true"
-        } else {
-            $Document += "?conflicts=true"
-        }
+        $parameters += "conflicts=true"
     }
     # Check limit parameter
     if ($Limit) {
-        if ($Document -match "\?") {
-            $Document += "&limit=$Limit"
-        } else {
-            $Document += "?limit=$Limit"
-        }
+        $parameters += "limit=$Limit"
     }
     # Check skip parameter
     if ($Skip) {
-        if ($Document -match "\?") {
-            $Document += "&skip=$Skip"
-        } else {
-            $Document += "?skip=$Skip"
-        }
+        $parameters += "skip=$Skip"
     }
     # Check startkey parameter
     if ($StartKey) {
-        if ($Document -match "\?") {
-            $Document += "&startkey=`"$StartKey`""
-        } else {
-            $Document += "?startkey=`"$StartKey`""
-        }
+        $parameters += "startkey=`"$StartKey`""
     }
     # Check startkey_docid parameter
     if ($StartKeyDocument) {
-        if ($Document -match "\?") {
-            $Document += "&startkey_docid=`"$StartKeyDocument`""
-        } else {
-            $Document += "?startkey_docid=`"$StartKeyDocument`""
-        }
+        $parameters += "startkey_docid=`"$StartKeyDocument`""
     }
     # Check update_seq parameter
     if ($UpdateSequence.IsPresent) {
-        if ($Document -match "\?") {
-            $Document += "&update_seq=true"
-        } else {
-            $Document += "?update_seq=true"
-        }
+        $parameters += "update_seq=true"
     }
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Params $parameters -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Get-CouchDBDesignDocument () {
