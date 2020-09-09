@@ -242,6 +242,7 @@ function Get-CouchDBDocument () {
         [Parameter(ParameterSetName = "Document")]
         [string] $Variable
     )
+    $parameters = @()
     # Check all docs 
     if ($AllDocuments.IsPresent) {
         $Document = '_all_docs'
@@ -268,310 +269,168 @@ function Get-CouchDBDocument () {
     }
     # Select a revision
     if ($Revision) {
-        $Document += "?rev=$Revision"
+        $parameters += "rev=$Revision"
     }
     # Check info
     if ($Info.IsPresent) {
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "HEAD" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "HEAD" -Database $Database -Document $Document -Params $parameters -Authorization $Authorization -Ssl:$Ssl
         return
     }
     # Check Revisions parameter
     if ($Revisions.IsPresent) {
-        if ($Document -match "\?") {
-            $Document += "&revs=true"
-        } else {
-            $Document += "?revs=true"
-        }
+        $parameters += "revs=true"
     } 
     # Check History parameter
     if ($History.IsPresent) {
-        if ($Document -match "\?") {
-            $Document += "&revs_info=true"
-        } else {
-            $Document += "?revs_info=true"
-        }
+        $parameters += "revs_info=true"
     }
     # Check Attachments parameter
     if ($Attachments.IsPresent) {
-        if ($Document -match "\?") {
-            $Document += "&attachments=true"
-        } else {
-            $Document += "?attachments=true"
-        }
+        $parameters += "attachments=true"
     }
     # Check AttachmentsInfo parameter
     if ($AttachmentsInfo.IsPresent) {
-        if ($Document -match "\?") {
-            $Document += "&att_encoding_info=true"
-        } else {
-            $Document += "?att_encoding_info=true"
-        }
+        $parameters += "att_encoding_info=true"
     }
     # Check AttachmentsSince parameter
     if ($AttachmentsSince) {
-        if ($Document -match "\?") {
-            $Document += "&atts_since=$(
+        $parameters += "atts_since=$(
                 if ($AttachmentsSince.Count -eq 1) {
                     "[$($AttachmentsSince | ConvertTo-Json -Compress)]"
                 } else {
                     $AttachmentsSince | ConvertTo-Json -Compress
                 }
             )"
-        } else {
-            $Document += "?atts_since=$(
-                if ($AttachmentsSince.Count -eq 1) {
-                    "[$($AttachmentsSince | ConvertTo-Json -Compress)]"
-                } else {
-                    $AttachmentsSince | ConvertTo-Json -Compress
-                }
-            )"
-        }
     }
     # Check Conflicts parameter
     if ($Conflicts.IsPresent) {
-        if ($Document -match "\?") {
-            $Document += "&conflicts=true"
-        } else {
-            $Document += "?conflicts=true"
-        }
+        $parameters += "conflicts=true"
     }
     # Check DeletedConflicts parameter
     if ($DeletedConflicts.IsPresent) {
-        if ($Document -match "\?") {
-            $Document += "&deleted_conflicts=true"
-        } else {
-            $Document += "?deleted_conflicts=true"
-        }
+        $parameters += "deleted_conflicts=true"
     }
     # Check Latest parameter
     if ($Latest.IsPresent) {
-        if ($Document -match "\?") {
-            $Document += "&latest=true"
-        } else {
-            $Document += "?latest=true"
-        }
+        $parameters += "latest=true"
     }
     # Check LocalSequence parameter
     if ($LocalSequence.IsPresent) {
-        if ($Document -match "\?") {
-            $Document += "&local_seq=true"
-        } else {
-            $Document += "?local_seq=true"
-        }
+        $parameters += "local_seq=true"
     }
     # Check Metadata parameter
     if ($Metadata.IsPresent) {
-        if ($Document -match "\?") {
-            $Document += "&meta=true"
-        } else {
-            $Document += "?meta=true"
-        }
+        $parameters += "meta=true"
     }
     # Check OpenRevisions parameter
     if ($MyInvocation.BoundParameters.Keys -match 'OpenRevisions') {
         if ($OpenRevisions) {
-            if ($Document -match "\?") {
-                $Document += "&open_revs=$(
+            $parameters += "open_revs=$(
                     if ($OpenRevisions.Count -eq 1) {
                         "[$($OpenRevisions | ConvertTo-Json -Compress)]"
                     } else {
                         $OpenRevisions | ConvertTo-Json -Compress
                     }
                     )"
-            } else {
-                $Document += "?open_revs=$(
-                    if ($OpenRevisions.Count -eq 1) {
-                        "[$($OpenRevisions | ConvertTo-Json -Compress)]"
-                    } else {
-                        $OpenRevisions | ConvertTo-Json -Compress
-                    }
-                    )"
-            }
         } elseif ($OpenRevisions.Length -eq 0) {
-            if ($Document -match "\?") {
-                $Document += '&open_revs=all'
-            } else {
-                $Document += '?open_revs=all'
-            }
+            $parameters += 'open_revs=all'
         }
     }
     # Check Descending parameter
     if ($Descending.IsPresent) {
-        if ($Document -match "\?") {
-            $Document += "&descending=true"
-        } else {
-            $Document += "?descending=true"
-        }
+        $parameters += "descending=true"
     }
     # Check EndKey parameter
     if ($EndKey) {
-        if ($Document -match "\?") {
-            $Document += "&endkey=`"$EndKey`""
-        } else {
-            $Document += "?endkey=`"$EndKey`""
-        }
+        $parameters += "endkey=`"$EndKey`""
     }
     # Check EndKeyDocument parameter
     if ($EndKeyDocument) {
-        if ($Document -match "\?") {
-            $Document += "&endkey_docid=`"$EndKeyDocument`""
-        } else {
-            $Document += "?endkey_docid=`"$EndKeyDocument`""
-        }
+        $parameters += "endkey_docid=`"$EndKeyDocument`""
     }
     # Check Group parameter
     if ($Group.IsPresent) {
-        if ($Document -match "\?") {
-            $Document += "&group=true"
-        } else {
-            $Document += "?group=true"
-        }
+        $parameters += "group=true"
     }
     # Check GroupLevel parameter
     if ($GroupLevel) {
-        if ($Document -match "\?") {
-            $Document += "&group_level=$GroupLevel"
-        } else {
-            $Document += "?group_level=$GroupLevel"
-        }
+        $parameters += "group_level=$GroupLevel"
     }
     # Check IncludeDocuments parameter
     if ($IncludeDocuments.IsPresent) {
-        if ($Document -match "\?") {
-            $Document += "&include_docs=true"
-        } else {
-            $Document += "?include_docs=true"
-        }
+        $parameters += "include_docs=true"
     }
     # Check InclusiveEnd parameter
     if ($InclusiveEnd -eq $false) {
-        if ($Document -match "\?") {
-            $Document += "&inclusive_end=false"
-        } else {
-            $Document += "?inclusive_end=false"
-        }
+        $parameters += "inclusive_end=false"
     }
     # Check Key parameter
     if ($Key) {
         if ($Key -isnot [int]) { $Key = "`"$Key`"" }
-        if ($Document -match "\?") {
-            $Document += "&key=$Key"
-        } else {
-            $Document += "?key=$Key"
-        }
+        $parameters += "key=$Key"
     }
     # Check Keys parameter
     if ($Keys) {
-        if ($Document -match "\?") {
-            $Document += "&keys=$(
+        $parameters += "keys=$(
                 if ($Keys.Count -eq 1) {
                     "[$($Keys | ConvertTo-Json -Compress)]"
                 } else {
                     $Keys | ConvertTo-Json -Compress
                 }
                 )"
-        } else {
-            $Document += "?keys=$(
-                if ($Keys.Count -eq 1) {
-                    "[$($Keys | ConvertTo-Json -Compress)]"
-                } else {
-                    $Keys | ConvertTo-Json -Compress
-                }
-                )"
-        }
     }
     # Check Limit parameter
     if ($Limit) {
-        if ($Document -match "\?") {
-            $Document += "&limit=$Limit"
-        } else {
-            $Document += "?limit=$Limit"
-        }
+        $parameters += "limit=$Limit"
     }
     # Check Reduce parameter
     if ($Reduce -eq $false) {
-        if ($Document -match "\?") {
-            $Document += "&reduce=false"
-        } else {
-            $Document += "?reduce=false"
-        }
+        $parameters += "reduce=false"
     }
     # Check Skip parameter
     if ($Skip) {
-        if ($Document -match "\?") {
-            $Document += "&skip=$Skip"
-        } else {
-            $Document += "?skip=$Skip"
-        }
+        $parameters += "skip=$Skip"
     }
     # Check Sorted parameter
     if ($Sorted -eq $false) {
-        if ($Document -match "\?") {
-            $Document += "&sorted=false"
-        } else {
-            $Document += "?sorted=false"
-        }
+        $parameters += "sorted=false"
     }
     # Check Stable parameter
     if ($Stable.IsPresent) {
-        if ($Document -match "\?") {
-            $Document += "&stable=true"
-        } else {
-            $Document += "?stable=true"
-        }
+        $parameters += "stable=true"
     }
     # Check Stale parameter
     if ($Stale) {
-        if ($Document -match "\?") {
-            $Document += "&stale=$Stale"
-        } else {
-            $Document += "?stale=$Stale"
-        }
+        $parameters += "stale=$Stale"
     }
     # Check StartKey parameter
     if ($StartKey) {
-        if ($Document -match "\?") {
-            $Document += "&startkey=`"$StartKey`""
-        } else {
-            $Document += "?startkey=`"$StartKey`""
-        }
+        $parameters += "startkey=`"$StartKey`""
     }
     # Check StartKeyDocument parameter
     if ($StartKeyDocument) {
-        if ($Document -match "\?") {
-            $Document += "&startkey_docid=`"$StartKeyDocument`""
-        } else {
-            $Document += "?startkey_docid=`"$StartKeyDocument`""
-        }
+        $parameters += "startkey_docid=`"$StartKeyDocument`""
     }
     # Check Update parameter
     if ($Update) {
-        if ($Document -match "\?") {
-            $Document += "&update=$Update"
-        } else {
-            $Document += "?update=$Update"
-        }
+        $parameters += "update=$Update"
     }
     # Check UpdateSequence parameter
     if ($UpdateSequence.IsPresent) {
-        if ($Document -match "\?") {
-            $Document += "&update_seq=true"
-        } else {
-            $Document += "?update_seq=true"
-        }
+        $parameters += "update_seq=true"
     }
     # Export document in a variable
     if ($Variable) {
-        $doc = Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+        $doc = Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Params $parameters -Authorization $Authorization -Ssl:$Ssl
         $exportDoc = New-Object -TypeName PSCouchDBDocument
         [void] $exportDoc.FromJson(($doc | ConvertTo-Json -Depth 99))
         Set-Variable -Name $Variable -Value $exportDoc -Scope Global
         return $null
     }
     if ($AsJob.IsPresent) {
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -JobName "Get-CouchDBDocument" -Authorization $Authorization -Ssl:$Ssl
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Params $parameters -JobName "Get-CouchDBDocument" -Authorization $Authorization -Ssl:$Ssl
     } else {
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Params $parameters -Authorization $Authorization -Ssl:$Ssl
     }
 }
 
