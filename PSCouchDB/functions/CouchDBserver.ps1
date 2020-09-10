@@ -568,6 +568,7 @@ function Get-CouchDBDatabaseUpdates () {
         $Authorization,
         [switch] $Ssl
     )
+    $parameters = @()
     # Check if _global_changes exists
     if (-not(Get-CouchDBDatabase -Server $Server -Port $Port -Database "_global_changes" -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
         throw "Database _global_changes doesn't exists."
@@ -575,35 +576,19 @@ function Get-CouchDBDatabaseUpdates () {
     $Database = '_db_updates'
     # Check Feed parameter
     if ($Feed) {
-        if ($Database -match "\?") {
-            $Database += "&feed=$Feed"
-        } else {
-            $Database += "?feed=$Feed"
-        }
+        $parameters += "feed=$Feed"
     }
     # Check Timeout parameter
     if ($Timeout) {
-        if ($Database -match "\?") {
-            $Database += "&timeout=$Timeout"
-        } else {
-            $Database += "?timeout=$Timeout"
-        }
+        $parameters += "timeout=$Timeout"
     }
     # Check Heartbeat parameter
     if ($Heartbeat) {
-        if ($Database -match "\?") {
-            $Database += "&heartbeat=$Heartbeat"
-        } else {
-            $Database += "?heartbeat=$Heartbeat"
-        }
+        $parameters += "heartbeat=$Heartbeat"
     }
     # Check Since parameter
     if ($Since) {
-        if ($Database -match "\?") {
-            $Database += if ($Since -eq "now") { "&since=now" } else { "&since=$Since" }
-        } else {
-            $Database += if ($Since -eq "now") { "?since=now" } else { "?since=$Since" }
-        }
+        $parameters += if ($Since -eq "now") { "since=now" } else { "since=$Since" }
     }
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Params $parameters -Authorization $Authorization -Ssl:$Ssl
 }
