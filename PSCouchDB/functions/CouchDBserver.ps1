@@ -229,7 +229,7 @@ function Get-CouchDBClusterSetup () {
             $parameters += 'ensure_dbs_exist=["_users","_replicator","_global_changes"]'
         }
     }
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Params $parameters -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Measure-CouchDBStatistics () {
@@ -358,16 +358,17 @@ function New-CouchDBUuids () {
         [string] $Server,
         [int] $Port,
         [Parameter(ValueFromPipeline = $true)]
-        [int] $Count = 10,
+        [int] $Count,
         $Authorization,
         [switch] $Ssl
     )
+    $parameters = @()
     $Database = '_uuids'
     # Check count
     if ($Count) {
-        $Database += "?count=$Count"
+        $parameters += "count=$Count"
     }
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Params $parameters -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Read-CouchDBLog () {
