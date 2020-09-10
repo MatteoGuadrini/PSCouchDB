@@ -600,6 +600,7 @@ function Set-CouchDBDocument () {
         $Authorization,
         [switch] $Ssl
     )
+    $parameters = @()
     if ($Data -is [hashtable]) {
         # Hashtable Data
         $NewData = New-Object -TypeName PSCouchDBDocument
@@ -644,15 +645,16 @@ function Set-CouchDBDocument () {
     }
     # Check BatchMode
     if ($BatchMode.IsPresent) { 
-        $Document += "?batch=ok" 
+        $parameters += "batch=ok" 
         # Check NoConflict
     } elseif ($NoConflict.IsPresent -and $Revision) { 
-        $Document += "?rev=$Revision&new_edits=false"
+        $parameters += "rev=$Revision"
+        $parameters += "new_edits=false"
         $Revision = $null
     }
     # Convert doc object to json
     $Data = $Data.ToJson(99)
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Revision $Revision -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Revision $Revision -Params $parameters -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Remove-CouchDBDocument () {
