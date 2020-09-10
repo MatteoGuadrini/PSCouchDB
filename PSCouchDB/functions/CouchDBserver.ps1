@@ -213,33 +213,20 @@ function Get-CouchDBClusterSetup () {
         $Authorization,
         [switch] $Ssl
     )
+    $parameters = @()
     $Database = "_cluster_setup"
     # Check EnsureDatabaseExist parameter
     if ($PSBoundParameters.ContainsKey('EnsureDatabaseExist')) {
         if ($EnsureDatabaseExist) {
-            if ($Database -match "\?") {
-                $Database += "&ensure_dbs_exist=$(
+            $parameters += "ensure_dbs_exist=$(
                     if ($EnsureDatabaseExist.Count -eq 1) {
                         "[$($EnsureDatabaseExist | ConvertTo-Json -Compress)]"
                     } else {
                         $EnsureDatabaseExist | ConvertTo-Json -Compress
                     }
                 )"
-            } else {
-                $Database += "?ensure_dbs_exist=$(
-                    if ($EnsureDatabaseExist.Count -eq 1) {
-                        "[$($EnsureDatabaseExist | ConvertTo-Json -Compress)]"
-                    } else {
-                        $EnsureDatabaseExist | ConvertTo-Json -Compress
-                    }
-                )"
-            }
         } else {
-            if ($Database -match "\?") {
-                $Database += '&ensure_dbs_exist=["_users","_replicator","_global_changes"]'
-            } else {
-                $Database += '?ensure_dbs_exist=["_users","_replicator","_global_changes"]'
-            }
+            $parameters += 'ensure_dbs_exist=["_users","_replicator","_global_changes"]'
         }
     }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl
