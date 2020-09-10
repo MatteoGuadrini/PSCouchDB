@@ -504,6 +504,7 @@ function New-CouchDBDocument () {
         $Authorization,
         [switch] $Ssl
     )
+    $parameters = @()
     # Check type of Data
     if ($Data -is [hashtable]) {
         $Doc = New-Object -TypeName PSCouchDBDocument -ArgumentList $Document
@@ -523,8 +524,8 @@ function New-CouchDBDocument () {
     # Check Partition
     if ($Partition) { $Document = "${Partition}:${Document}" }
     # Check BatchMode
-    if ($BatchMode.IsPresent) { $Document += "?batch=ok" }
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    if ($BatchMode.IsPresent) { $parameters += "batch=ok" }
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Params $parameters -Data $Data -Authorization $Authorization -Ssl:$Ssl
 }
 
 function Set-CouchDBDocument () {
