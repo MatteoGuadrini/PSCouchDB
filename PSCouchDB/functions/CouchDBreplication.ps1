@@ -283,20 +283,21 @@ function Get-CouchDBDatabaseChanges () {
         $Authorization,
         [switch] $Ssl
     )
+    $parameters = @()
     if (-not(Test-CouchDBDatabase -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
         throw "Database $Database is not exists."
     }
     $Document = '_changes'
     if ($Filter) {
-        $Document += '?filter=_doc_ids'
+        $parameters += 'filter=_doc_ids'
         $Data = "{ `"doc_ids`": $($Filter | ConvertTo-Json -Compress) }"
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Params $parameters -Data $Data -Authorization $Authorization -Ssl:$Ssl
     } elseif ($Continuous.IsPresent) { 
-        $Document += '?feed=continuous'
+        $parameters += 'feed=continuous'
         $Data = "{}"
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Params $parameters -Data $Data -Authorization $Authorization -Ssl:$Ssl
     } else {
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Params $parameters -Authorization $Authorization -Ssl:$Ssl
     }
 }
 

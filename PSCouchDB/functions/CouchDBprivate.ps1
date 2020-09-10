@@ -47,7 +47,7 @@ function Register-TemporaryEvent () {
     #>
     param(
         $Object,
-        $Event,
+        $EventName,
         [ScriptBlock] $Action
     )
 
@@ -58,6 +58,6 @@ function Register-TemporaryEvent () {
 '@
 
     $eventAction = [ScriptBlock]::Create($actionText)
-    $null = Register-ObjectEvent $Object $Event -Action $eventAction
+    $null = Register-ObjectEvent $Object $EventName -Action $eventAction
 
 }
