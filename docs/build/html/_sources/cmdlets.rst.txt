@@ -151,6 +151,12 @@ Server
 
     Send-CouchDBRequest [[-Method] <String>] [[-Server] <String>] [[-Port] <Int32>] [[-Database] <String>] [[-Document] <String>] [[-Authorization] <Object>] [[-Revision] <String>] [[-Attachment] <String>] [[-Data] <String>] [[-Params] <Array>] [-Ssl] [[-JobName] <String>] [[-ProxyServer] <String>] [[-ProxyCredential] <Object>] [<CommonParameters>]
 
+**Set-CouchDBProxy**
+
+.. code-block:: powershell
+
+    Set-CouchDBProxy [-Server] <String> [[-Credential] <PSCredential>] [<CommonParameters>]
+
 **Get-CouchDBServer**
 
 .. code-block:: powershell

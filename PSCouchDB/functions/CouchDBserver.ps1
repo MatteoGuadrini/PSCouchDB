@@ -592,3 +592,35 @@ function Get-CouchDBDatabaseUpdates () {
     }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Params $parameters -Authorization $Authorization -Ssl:$Ssl
 }
+
+function Set-CouchDBProxy () {
+    <#
+    .SYNOPSIS
+    Set proxy server and credential.
+    .DESCRIPTION
+    Set proxy server and credential for all calls.
+    .PARAMETER Server
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER Credential
+    Proxy server credential. It must be specified with a PSCredential object.
+    .EXAMPLE
+    Set-CouchDBProxy -Server 'http://myproxy.local:8080' -Credential (Get-Credential)
+    Set proxy server for all calls.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/server.html#server-operation
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(mandatory = $true)]
+        [string] $Server,
+        [pscredential] $Credential
+    )
+    # Check credential
+    if ($Credential) {
+        # Default parameter set variable for ProxyCredential
+        $Global:PSDefaultParameterValues["*CouchDB*:ProxyCredential"] = $Credential
+    }
+    # Default parameter set variable for ProxyServer
+    $Global:PSDefaultParameterValues["*CouchDB*:ProxyServer"] = $Server
+}
