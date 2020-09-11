@@ -149,7 +149,7 @@ Server
 
 .. code-block:: powershell
 
-    Send-CouchDBRequest [[-Method] <String>] [[-Server] <String>] [[-Port] <Int32>] [[-Database] <String>] [[-Document] <String>] [[-Authorization] <Object>] [[-Revision] <String>] [[-Attachment] <String>] [[-Data] <String>] [[-Params] <Array>] [-Ssl] [[-JobName] <String>] [<CommonParameters>]
+    Send-CouchDBRequest [[-Method] <String>] [[-Server] <String>] [[-Port] <Int32>] [[-Database] <String>] [[-Document] <String>] [[-Authorization] <Object>] [[-Revision] <String>] [[-Attachment] <String>] [[-Data] <String>] [[-Params] <Array>] [-Ssl] [[-JobName] <String>] [[-ProxyServer] <String>] [[-ProxyCredential] <Object>] [<CommonParameters>]
 
 **Get-CouchDBServer**
 
