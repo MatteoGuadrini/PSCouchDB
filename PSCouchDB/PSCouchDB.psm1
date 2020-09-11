@@ -1624,8 +1624,7 @@ function Send-CouchDBRequest {
     Proxy server through which all non-local calls pass.
     Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
     .PARAMETER ProxyCredential
-    Proxy server credential. It can be specified with a PSCredential or with an array of two elements, user and password:
-    Ex. ... -ProxyCredential @('user', 'password') ...
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     This example get a database "db":
     Send-CouchDBRequest -Server couchdb1.local -Method "GET" -Database db
@@ -1653,7 +1652,7 @@ function Send-CouchDBRequest {
         [switch] $Ssl,
         [string] $JobName,
         [string] $ProxyServer,
-        $ProxyCredential
+        [pscredential] $ProxyCredential
     )
     # Create PSCouchDBRequest object
     $req = New-Object PSCouchDBRequest
@@ -1669,11 +1668,8 @@ function Send-CouchDBRequest {
     # Set proxy server
     if ($ProxyServer) {
         if ($ProxyCredential -is [pscredential]) {
-            Write-Verbose -Message "Set proxy server $ProxyServer with PSCredential"
-            $req.SetProxy($ProxyServer, $ProxyCredential)
-        } elseif ($ProxyCredential -is [array]) {
             Write-Verbose -Message "Set proxy server $ProxyServer with credential"
-            $req.SetProxy($ProxyServer, $ProxyCredential[0], $ProxyCredential[1])
+            $req.SetProxy($ProxyServer, $ProxyCredential)
         } else {
             Write-Verbose -Message "Set proxy server $ProxyServer"
             $req.SetProxy($ProxyServer)
