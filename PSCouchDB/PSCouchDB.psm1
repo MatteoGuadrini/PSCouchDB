@@ -1235,6 +1235,7 @@ class PSCouchDBRequest {
     [string] $data
     hidden [bool] $cache
     hidden [System.Net.WebRequest] $client
+    hidden [System.Net.WebProxy] $proxy
 
     # Constructor
     PSCouchDBRequest () {
@@ -1265,6 +1266,10 @@ class PSCouchDBRequest {
         $this.client.ContentType = "application/json; charset=utf-8";
         $this.client.Method = $this.method
         $this.client.UserAgent = "User-Agent: PSCouchDB (compatible; MSIE 7.0;)"
+        # Check proxy
+        if ($this.proxy) {
+            $this.client.Proxy = $this.proxy
+        }
         # Check authorization
         if ($this.authorization) {
             $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("$($this.uri.UserName):$($this.uri.Password)")))
@@ -1317,6 +1322,10 @@ class PSCouchDBRequest {
             $Request.ContentType = "application/json; charset=utf-8";
             $Request.Method = $method
             $Request.UserAgent = "User-Agent: PSCouchDB (compatible; MSIE 7.0;)"
+            # Check proxy
+            if ($this.proxy) {
+                $this.client.Proxy = $this.proxy
+            }
             # Check authorization
             if ($authorization) {
                 $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("$($authorization.UserName):$($authorization.GetNetworkCredential().Password)")))
@@ -1364,6 +1373,10 @@ class PSCouchDBRequest {
         $this.client.ContentType = "application/json; charset=utf-8";
         $this.client.Method = 'HEAD'
         $this.client.UserAgent = "User-Agent: PSCouchDB (compatible; MSIE 7.0;)"
+        # Check proxy
+        if ($this.proxy) {
+            $this.client.Proxy = $this.proxy
+        }
         # Check authorization
         if ($this.authorization) {
             $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("$($this.uri.UserName):$($this.uri.Password)")))
@@ -1378,6 +1391,30 @@ class PSCouchDBRequest {
             throw ([PSCouchDBRequestException]::new($errcode.StatusCode)).CouchDBMessage
         }
         return $resp.Headers.ToString()
+    }
+
+    SetProxy ([string]$uri) {
+        $proxyUri = [uri]$uri
+        $this.proxy = New-Object System.Net.WebProxy
+        $this.proxy.Address = $proxyUri
+        $this.proxy.BypassProxyOnLocal = $true
+    }
+
+    SetProxy ([string]$uri, [string]$user, [string]$pass) {
+        $proxyUri = [uri]$uri
+        $this.proxy = New-Object System.Net.WebProxy
+        $this.proxy.Credentials = [System.Net.NetworkCredential]::new($user, $pass)
+        $this.proxy.Address = $proxyUri
+        $this.proxy.BypassProxyOnLocal = $true
+    }
+
+    SetProxy ([string]$uri, [PSCredential]$credential) {
+        $auth = $credential.UserName, $credential.GetNetworkCredential().Password
+        $this.SetProxy($uri, $auth[0], $auth[1])
+    }
+
+    RemoveProxy () {
+        $this.proxy = $null
     }
 
     SetSsl () {
