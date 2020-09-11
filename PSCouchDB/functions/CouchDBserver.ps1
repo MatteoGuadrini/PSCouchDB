@@ -624,3 +624,19 @@ function Set-CouchDBProxy () {
     # Default parameter set variable for ProxyServer
     $Global:PSDefaultParameterValues["*CouchDB*:ProxyServer"] = $Server
 }
+
+function Remove-CouchDBProxy () {
+    <#
+    .SYNOPSIS
+    Remove proxy server and credential.
+    .DESCRIPTION
+    Remove proxy server and credential for all calls.
+    .EXAMPLE
+    Remove-CouchDBProxy
+    Set proxy server for all calls.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/server.html#server-operation
+    #>
+    $Global:PSDefaultParameterValues["*CouchDB*:ProxyCredential"] = $null
+    $Global:PSDefaultParameterValues["*CouchDB*:ProxyServer"] = $null
+}

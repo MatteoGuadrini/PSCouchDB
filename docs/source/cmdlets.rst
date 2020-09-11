@@ -157,6 +157,12 @@ Server
 
     Set-CouchDBProxy [-Server] <String> [[-Credential] <PSCredential>] [<CommonParameters>]
 
+**Remove-CouchDBProxy**
+
+.. code-block:: powershell
+
+    Remove-CouchDBProxy [<CommonParameters>]
+
 **Get-CouchDBServer**
 
 .. code-block:: powershell

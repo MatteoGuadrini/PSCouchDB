@@ -120,6 +120,12 @@ To set proxy server for all calls:
 
     Set-CouchDBProxy -Server 'http://myproxy.local:8080' -Credential (Get-Credential)
 
+And remove it
+
+.. code-block:: powershell
+
+    Remove-CouchDBProxy
+
 Read the log
 ____________
 
