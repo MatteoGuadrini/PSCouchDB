@@ -1267,6 +1267,9 @@ function Connect-CouchDBDatabase () {
         $Authorization,
         [switch] $Ssl
     )
+    # Save original prompt
+    Set-Variable -Name "orig_prompt" -Value $(Get-Content function:prompt) -Scope Global
+
     # Default parameter set variable
     $Global:PSDefaultParameterValues["*CouchDB*:Server"] = $Server
     $Global:PSDefaultParameterValues["*CouchDB*:Port"] = $Port
@@ -1298,7 +1301,9 @@ function Disconnect-CouchDBDatabase () {
     https://pscouchdb.readthedocs.io/en/latest/databases.html#connect-database
     #>
     # Remove parameter set variable
-    $Global:PSDefaultParameterValues = @{}
+    $Global:PSDefaultParameterValues["*CouchDB*:Server"] = $null
+    $Global:PSDefaultParameterValues["*CouchDB*:Port"] = $null
+    $Global:PSDefaultParameterValues["*CouchDB*:Database"] = $null
 
     # Remove global variable
     Remove-Variable CouchDBServer -Scope global
@@ -1308,5 +1313,5 @@ function Disconnect-CouchDBDatabase () {
     # Remove authorization global variable
     Remove-Variable CouchDBCredential -Scope global
 
-    function Global:prompt {}
+    Set-Item -Path function:prompt -Value $Global:orig_prompt
 }
