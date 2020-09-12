@@ -48,6 +48,11 @@ function Get-CouchDBDatabaseDesignDocument () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Get-CouchDBDatabaseDesignDocument -Database test
     This example get all design document on database "test".
@@ -82,7 +87,9 @@ function Get-CouchDBDatabaseDesignDocument () {
         [Alias('Update')]
         [switch] $UpdateSequence,
         $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     $Document = "_design_docs"
     $parameters = @()
@@ -144,7 +151,7 @@ function Get-CouchDBDatabaseDesignDocument () {
     if ($UpdateSequence.IsPresent) {
         $parameters += "update_seq=true"
     }
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Params $parameters -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Params $parameters -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Get-CouchDBDesignDocument () {
@@ -179,6 +186,11 @@ function Get-CouchDBDesignDocument () {
     This modify protocol to https and port to 6984.
     .PARAMETER Variable
     Export into a PSCouchDBDesignDoc variable object.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Get-CouchDBDesignDocument -Database test -Document "space"
     This example get "space" design document on database "test".
@@ -196,12 +208,14 @@ function Get-CouchDBDesignDocument () {
         [switch] $Info,
         $Authorization,
         [switch] $Ssl,
-        [string] $Variable
+        [string] $Variable,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     $Document = "_design/$Document"
     # Export document in a variable
     if ($Variable) {
-        $ddoc = Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+        $ddoc = Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
         $exportDdoc = New-Object -TypeName PSCouchDBDesignDoc -ArgumentList $ddoc._id,$ddoc._rev
         # Retrieve views function
         foreach ($v in $ddoc.views.psobject.properties) {
@@ -222,7 +236,7 @@ function Get-CouchDBDesignDocument () {
         return $null
     }
     if ($Info.IsPresent) { $Method = "HEAD" } else { $Method = "GET" }
-    Send-CouchDBRequest -Server $Server -Port $Port -Method $Method -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method $Method -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Get-CouchDBDesignDocumentAttachment () {
@@ -260,6 +274,11 @@ function Get-CouchDBDesignDocumentAttachment () {
     This modify protocol to https and port to 6984.
     .PARAMETER Variable
     Export into a PSCouchDBAttachment variable object.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Get-CouchDBDesignDocumentAttachment -Database test -Document space -Attachment test.txt
     This example get attachment "test.txt" on "space" design document on database "test".
@@ -306,7 +325,13 @@ function Get-CouchDBDesignDocumentAttachment () {
         [Parameter(ParameterSetName = "Info")]
         [switch] $Ssl,
         [Parameter(ParameterSetName = "Attachment")]
-        [string] $Variable
+        [string] $Variable,
+        [Parameter(ParameterSetName = "Attachment")]
+        [Parameter(ParameterSetName = "Info")]
+        [string] $ProxyServer,
+        [Parameter(ParameterSetName = "Attachment")]
+        [Parameter(ParameterSetName = "Info")]
+        [pscredential] $ProxyCredential
     )
     if ($Info.IsPresent) {
         $Method = "HEAD"
@@ -318,7 +343,7 @@ function Get-CouchDBDesignDocumentAttachment () {
     if ($Variable) {
         $tempfile = New-TemporaryFile
         $attachName = Join-Path -Path $tempfile.DirectoryName -ChildPath $(Split-Path -Path $Attachment -Leaf)
-        $attachment = Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Revision $Revision -Attachment $Attachment -Authorization $Authorization -Ssl:$Ssl | Out-File $tempfile.FullName -Encoding utf8
+        $attachment = Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Revision $Revision -Attachment $Attachment -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential | Out-File $tempfile.FullName -Encoding utf8
         Rename-Item -Path $tempfile.FullName -NewName $attachName -Force
         $exportAttachment = New-Object -TypeName PSCouchDBAttachment -ArgumentList $attachName
         Remove-Item -Path $attachName -Force
@@ -327,10 +352,10 @@ function Get-CouchDBDesignDocumentAttachment () {
     }
     # Save Attachment
     if ($OutFile) {
-        (Send-CouchDBRequest -Server $Server -Port $Port -Method $Method -Database $Database -Document $Document -Revision $Revision -Attachment $Attachment -Authorization $Authorization -Ssl:$Ssl).results | Out-File $OutFile -Encoding utf8
+        (Send-CouchDBRequest -Server $Server -Port $Port -Method $Method -Database $Database -Document $Document -Revision $Revision -Attachment $Attachment -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential).results | Out-File $OutFile -Encoding utf8
         return "$OutFile"
     }
-    Send-CouchDBRequest -Server $Server -Port $Port -Method $Method -Database $Database -Document $Document -Revision $Revision -Attachment $Attachment -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method $Method -Database $Database -Document $Document -Revision $Revision -Attachment $Attachment -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Add-CouchDBDesignDocumentAttachment () {
@@ -361,6 +386,11 @@ function Add-CouchDBDesignDocumentAttachment () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Add-CouchDBDesignDocumentAttachment -Database test -Document space -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Attachment test.txt
     This example add attachment "test.txt" on "space" design document from database "test".
@@ -385,7 +415,9 @@ function Add-CouchDBDesignDocumentAttachment () {
         [Parameter(mandatory = $true)]
         [string] $Revision,
         $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     $Document = "_design/$Document"
     # Check if Attachment param is string or PSCouchDBAttachment
@@ -402,7 +434,7 @@ function Add-CouchDBDesignDocumentAttachment () {
     } else {
         throw "Attachment parameter must be string or PSCouchDBAttachment object"
     }
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Attachment $Attachment -Revision $Revision -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Attachment $Attachment -Revision $Revision -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function New-CouchDBDesignDocument () {
@@ -439,6 +471,11 @@ function New-CouchDBDesignDocument () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     New-CouchDBDesignDocument -Database test -Document "space" -ViewName "planet_view" -ViewMapFunction "function(doc){if(doc.planet && doc.name) {emit(doc.planet, doc.name);}}" -Authorization "admin:password"
     The example create "space" design document with add "planet_view" view.
@@ -484,7 +521,13 @@ function New-CouchDBDesignDocument () {
         $Authorization,
         [Parameter(ParameterSetName = "View")]
         [Parameter(ParameterSetName = "CustomData")]
-        [switch] $Ssl
+        [switch] $Ssl,
+        [Parameter(ParameterSetName = "View")]
+        [Parameter(ParameterSetName = "CustomData")]
+        [string] $ProxyServer,
+        [Parameter(ParameterSetName = "View")]
+        [Parameter(ParameterSetName = "CustomData")]
+        [pscredential] $ProxyCredential
     )
     $Document = "_design/$Document"
     # Instance new PSCouchDBDesignDoc object
@@ -514,7 +557,7 @@ function New-CouchDBDesignDocument () {
             $Data = $Data.ToJson(99)
         }
     }
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Set-CouchDBDesignDocument () {
@@ -553,6 +596,11 @@ function Set-CouchDBDesignDocument () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Set-CouchDBDesignDocument -Database test -Document "space" -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -ViewName "planet_view" -ViewMapFunction "function(doc){if(doc.planet && doc.name) {emit(doc.planet, doc.name);}}" -Authorization "admin:password"
     The example create "space" design document with add "planet_view" view.
@@ -602,7 +650,13 @@ function Set-CouchDBDesignDocument () {
         $Authorization,
         [Parameter(ParameterSetName = "View")]
         [Parameter(ParameterSetName = "CustomData")]
-        [switch] $Ssl
+        [switch] $Ssl,
+        [Parameter(ParameterSetName = "View")]
+        [Parameter(ParameterSetName = "CustomData")]
+        [string] $ProxyServer,
+        [Parameter(ParameterSetName = "View")]
+        [Parameter(ParameterSetName = "CustomData")]
+        [pscredential] $ProxyCredential
     )
     $Document = "_design/$Document"
     # Instance new PSCouchDBDesignDoc object
@@ -632,7 +686,7 @@ function Set-CouchDBDesignDocument () {
             $Data = $Data.ToJson(99)
         }
     }
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Revision $Revision -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Revision $Revision -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 function Compress-CouchDBDesignDocument () {
     <#
@@ -659,6 +713,11 @@ function Compress-CouchDBDesignDocument () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Compress-CouchDBDesignDocument -Database test -DesignDoc space -Authorization "admin:password"
     This example compact design document "space" on database "test".
@@ -674,11 +733,13 @@ function Compress-CouchDBDesignDocument () {
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $DesignDoc,
         $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     $Document = "_compact/$DesignDoc"
     $Data = '{}'
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Remove-CouchDBDesignDocument () {
@@ -709,6 +770,11 @@ function Remove-CouchDBDesignDocument () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Remove-CouchDBDesignDocument -Database test -Document "space" -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:password"
     The example removes a design document "space" on database "test".
@@ -727,11 +793,13 @@ function Remove-CouchDBDesignDocument () {
         [string] $Revision,
         $Authorization,
         [switch]$Force,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     $Document = "_design/$Document"
     if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove design document $Document on database $Database ?", "Remove design document $Document on database $Database")) {
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization -Ssl:$Ssl
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization -Ssl:$Ssl  -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
     }
 }
 
@@ -763,6 +831,11 @@ function Remove-CouchDBDesignDocumentAttachment () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Remove-CouchDBDesignDocumentAttachment -Database test -Document "space" -Attachment test.txt -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:password"
     The example removes an attachment "test.txt" on a design document "space" from database "test".
@@ -783,10 +856,12 @@ function Remove-CouchDBDesignDocumentAttachment () {
         [string] $Revision,
         $Authorization,
         [switch]$Force,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     $Document = "_design/$Document"
     if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove attachment $Attachment in design document $Document on database $Database ?", "Remove attachment $Attachment in design document $Document on database $Database")) {
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Attachment $Attachment -Revision $Revision -Authorization $Authorization -Ssl:$Ssl
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Attachment $Attachment -Revision $Revision -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
     }
 }

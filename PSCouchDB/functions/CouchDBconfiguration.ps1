@@ -35,6 +35,11 @@ function Enable-CouchDBCluster () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Enable-CouchDBCluster -SingleNode -Authorization "admin:password"
     This example get a cluster setup.
@@ -72,7 +77,9 @@ function Enable-CouchDBCluster () {
         $Authorization,
         [Parameter(ParameterSetName = "Single")]
         [Parameter(ParameterSetName = "Cluster")]
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     $Database = "_cluster_setup"
     # Initialize data
@@ -98,7 +105,7 @@ function Enable-CouchDBCluster () {
         Add-Member -InputObject $Data NoteProperty 'node_count' 1
         Write-Host "Enabling single cluster"
         $Data = $Data | ConvertTo-Json
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
     } else {
         $Data.action = 'enable_cluster'
         $Data.bind_address = $BindAddress
@@ -111,9 +118,9 @@ function Enable-CouchDBCluster () {
         Add-Member -InputObject $Data NoteProperty 'node_count' $NodeCount
         Write-Host "Enabling cluster"
         $Data = $Data | ConvertTo-Json
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
         Write-Host "Finishing cluster"
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data '{"action": "finish_cluster"}' -Authorization $Authorization -Ssl:$Ssl
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data '{"action": "finish_cluster"}' -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
     }
 }
 
@@ -138,6 +145,11 @@ function Get-CouchDBNode () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Get-CouchDBNode -Authorization "admin:password"
     This example get all node in a cluster.
@@ -150,10 +162,12 @@ function Get-CouchDBNode () {
         [string] $Server,
         [int] $Port,
         $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     $Database = "_node/_local"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Add-CouchDBNode () {
@@ -180,6 +194,11 @@ function Add-CouchDBNode () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Add-CouchDBNode -BindAddress couchdb1 -Authorization "admin:password"
     This example add node couchdb1:5984 in a cluster.
@@ -194,7 +213,9 @@ function Add-CouchDBNode () {
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $BindAddress,
         $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     $Database = "_cluster_setup"
     $Credential = $Authorization -split ":"
@@ -207,7 +228,7 @@ function Add-CouchDBNode () {
         `"password`": `"$($Credential[1])`"
     }
     "
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Remove-CouchDBNode () {
@@ -234,6 +255,11 @@ function Remove-CouchDBNode () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Remove-CouchDBNode -Node "couchdb@localhost" -Authorization "admin:password"
     The example removes "test" node on cluster configuration.
@@ -248,23 +274,25 @@ function Remove-CouchDBNode () {
         [string] $Node,
         $Authorization,
         [switch]$Force,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     $Database = "_nodes/_local"
     # Check node
-    if ((Get-CouchDBClusterSetup -Authorization $Authorization).state -eq 'single_node_enabled') {
+    if ((Get-CouchDBClusterSetup -Authorization $Authorization -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential).state -eq 'single_node_enabled') {
         $clu_property = 'name'
     } else {
         $clu_property = 'all_nodes'
     }
-    if ((Get-CouchDBNode -Authorization "admin:password" -ErrorAction SilentlyContinue).$clu_property -contains $Node) {
-        $Revision = (Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Node -Authorization $Authorization -Ssl:$Ssl)._rev
+    if ((Get-CouchDBNode -Authorization "admin:password" -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential -ErrorAction SilentlyContinue).$clu_property -contains $Node) {
+        $Revision = (Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Node -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential)._rev
     } else {
         throw "Node $Node not exist."
     }
     $Document = $Node
     if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove node $Node ?", "Remove $Node")) {
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization -Ssl:$Ssl
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
     }
 }
 
@@ -296,6 +324,11 @@ function Get-CouchDBConfiguration () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Get-CouchDBConfiguration
     This example get the localhost configuration of CouchDB server.
@@ -307,11 +340,13 @@ function Get-CouchDBConfiguration () {
         [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
-        [string] $Node = (Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).name,
+        [string] $Node = (Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential).name,
         [string] $Session,
         [string] $Key,
         $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     $Database = "_node"
     $Document = "$Node/_config"
@@ -323,7 +358,7 @@ function Get-CouchDBConfiguration () {
     if ($Session -and $Key) {
         $Document += "/$Key"
     }
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Set-CouchDBConfiguration () {
@@ -354,6 +389,11 @@ function Set-CouchDBConfiguration () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Set-CouchDBConfiguration -Element ssl -Key port -Value 443 -Authorization "admin:password"
     This example set the localhost ssl port on 443 in configuration of CouchDB server.
@@ -365,7 +405,7 @@ function Set-CouchDBConfiguration () {
         [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
-        [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).name -contains "couchdb@localhost") { "couchdb@localhost" } else { "couchdb@127.0.0.1" }),
+        [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential).name -contains "couchdb@localhost") { "couchdb@localhost" } else { "couchdb@127.0.0.1" }),
         [Parameter(mandatory = $true)]
         [string] $Element,
         [Parameter(mandatory = $true)]
@@ -373,15 +413,17 @@ function Set-CouchDBConfiguration () {
         [Parameter(mandatory = $true)]
         [string] $Value,
         $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     $Database = "_node"
     $Document = "$Node/_config"
-    if ((Get-CouchDBConfiguration -Server $Server -Port $Port -Node $Node -Authorization $Authorization -Ssl:$Ssl).$Element) {
+    if ((Get-CouchDBConfiguration -Server $Server -Port $Port -Node $Node -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential).$Element) {
         $Document += "/$Element/$Key"
     } else {
         throw "Element $Element not exist!"
     }
     $Data = $Value | ConvertTo-Json
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
