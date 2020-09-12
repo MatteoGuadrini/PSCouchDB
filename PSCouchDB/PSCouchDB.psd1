@@ -28,7 +28,7 @@
     )
 
     # Version number of this module.
-    ModuleVersion     = '2.0.0'
+    ModuleVersion     = '2.1.0'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -140,7 +140,7 @@
         "Set-CouchDBReplication",
         "Set-CouchDBRevisionLimit",
         "Set-CouchDBSession",
-        "New-CouchDBDatabasePartition",
+        "Set-CouchDBProxy",
         "Grant-CouchDBDatabasePermission",
         "Revoke-CouchDBDatabasePermission",
         "Request-CouchDBReplication",
@@ -165,6 +165,7 @@
         "Remove-CouchDBReplication",
         "Remove-CouchDBIndex",
         "Remove-CouchDBSession",
+        "Remove-CouchDBProxy",
         "Restart-CouchDBServer",
         "Search-CouchDBFullText",
         "Find-CouchDBDocuments",
@@ -237,7 +238,7 @@
         "scrpl",
         "scrl",
         "scs",
-        "ncdp",
+        "sps",
         "gcdbp",
         "rcdbp",
         "rcdbr",
@@ -263,6 +264,7 @@
         "rcidx",
         "rcsrv",
         "rcs",
+        "rps",
         "scft",
         "fcdoc",
         "finddoc",

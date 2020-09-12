@@ -1235,6 +1235,7 @@ class PSCouchDBRequest {
     [string] $data
     hidden [bool] $cache
     hidden [System.Net.WebRequest] $client
+    hidden [System.Net.WebProxy] $proxy
 
     # Constructor
     PSCouchDBRequest () {
@@ -1265,6 +1266,10 @@ class PSCouchDBRequest {
         $this.client.ContentType = "application/json; charset=utf-8";
         $this.client.Method = $this.method
         $this.client.UserAgent = "User-Agent: PSCouchDB (compatible; MSIE 7.0;)"
+        # Check proxy
+        if ($this.proxy) {
+            $this.client.Proxy = $this.proxy
+        }
         # Check authorization
         if ($this.authorization) {
             $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("$($this.uri.UserName):$($this.uri.Password)")))
@@ -1317,6 +1322,10 @@ class PSCouchDBRequest {
             $Request.ContentType = "application/json; charset=utf-8";
             $Request.Method = $method
             $Request.UserAgent = "User-Agent: PSCouchDB (compatible; MSIE 7.0;)"
+            # Check proxy
+            if ($this.proxy) {
+                $this.client.Proxy = $this.proxy
+            }
             # Check authorization
             if ($authorization) {
                 $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("$($authorization.UserName):$($authorization.GetNetworkCredential().Password)")))
@@ -1364,6 +1373,10 @@ class PSCouchDBRequest {
         $this.client.ContentType = "application/json; charset=utf-8";
         $this.client.Method = 'HEAD'
         $this.client.UserAgent = "User-Agent: PSCouchDB (compatible; MSIE 7.0;)"
+        # Check proxy
+        if ($this.proxy) {
+            $this.client.Proxy = $this.proxy
+        }
         # Check authorization
         if ($this.authorization) {
             $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("$($this.uri.UserName):$($this.uri.Password)")))
@@ -1378,6 +1391,30 @@ class PSCouchDBRequest {
             throw ([PSCouchDBRequestException]::new($errcode.StatusCode)).CouchDBMessage
         }
         return $resp.Headers.ToString()
+    }
+
+    SetProxy ([string]$uri) {
+        $proxyUri = [uri]$uri
+        $this.proxy = New-Object System.Net.WebProxy
+        $this.proxy.Address = $proxyUri
+        $this.proxy.BypassProxyOnLocal = $true
+    }
+
+    SetProxy ([string]$uri, [string]$user, [string]$pass) {
+        $proxyUri = [uri]$uri
+        $this.proxy = New-Object System.Net.WebProxy
+        $this.proxy.Credentials = [System.Net.NetworkCredential]::new($user, $pass)
+        $this.proxy.Address = $proxyUri
+        $this.proxy.BypassProxyOnLocal = $true
+    }
+
+    SetProxy ([string]$uri, [PSCredential]$credential) {
+        $auth = $credential.UserName, $credential.GetNetworkCredential().Password
+        $this.SetProxy($uri, $auth[0], $auth[1])
+    }
+
+    RemoveProxy () {
+        $this.proxy = $null
     }
 
     SetSsl () {
@@ -1566,6 +1603,11 @@ function Send-CouchDBRequest {
     2-b91bb807b4685080c6a651115ff558f5
     This takes part in the url here: 
     http://localhost:5984/db/doc?rev={revision}.
+    .PARAMETER Params
+    The CouchDB other parameter.
+    This takes part in the url here:
+    http://localhost:5984/db/doc?{param}
+    http://localhost:5984/db/doc?{param}={value}.
     .PARAMETER Attachment
     The CouchDB document attachment.
     .PARAMETER Data
@@ -1578,6 +1620,11 @@ function Send-CouchDBRequest {
     .PARAMETER JobName
     JobName for background powershell job.
     To get a result for a Job, run "Get-Job -Id <number> | Receive-Job -Keep"
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     This example get a database "db":
     Send-CouchDBRequest -Server couchdb1.local -Method "GET" -Database db
@@ -1601,11 +1648,15 @@ function Send-CouchDBRequest {
         [string] $Revision,
         [string] $Attachment,
         [string] $Data,
+        [array] $Params,
         [switch] $Ssl,
-        [string] $JobName
+        [string] $JobName,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     # Create PSCouchDBRequest object
     $req = New-Object PSCouchDBRequest
+    $parameters = @()
     # Set cache
     if ($Global:CouchDBCachePreference) {
         $req.EnableCache()
@@ -1613,6 +1664,16 @@ function Send-CouchDBRequest {
     if ($Server) {
         Write-Verbose -Message "Set server to $Server"
         $req.SetServer($Server)
+    }
+    # Set proxy server
+    if ($ProxyServer) {
+        if ($ProxyCredential -is [pscredential]) {
+            Write-Verbose -Message "Set proxy server $ProxyServer with credential"
+            $req.SetProxy($ProxyServer, $ProxyCredential)
+        } else {
+            Write-Verbose -Message "Set proxy server $ProxyServer"
+            $req.SetProxy($ProxyServer)
+        }
     }
     # Set protocol
     if ($Ssl.IsPresent) {
@@ -1641,6 +1702,9 @@ function Send-CouchDBRequest {
             $arr = $Database -split "\?"
             $Database = $arr[0]
             $Param = $arr[1]
+            if ($Param) {
+                $parameters += $Param
+            }
         }
         Write-Verbose -Message "Set database to $Database"
         $req.SetDatabase($Database)
@@ -1651,6 +1715,9 @@ function Send-CouchDBRequest {
             $arr = $Document -split "\?"
             $Document = $arr[0]
             $Param = $arr[1]
+            if ($Param) {
+                $parameters += $Param
+            }
         }
         Write-Verbose -Message "Set document to $Document"
         $req.SetDocument($Document)
@@ -1672,12 +1739,25 @@ function Send-CouchDBRequest {
     # Set revision
     if ($Revision) {
         Write-Verbose -Message "Set revision to $Revision"
-        $req.SetParameter("rev=$Revision")
+        $parameters += "rev=$Revision"
+    }
+    # Check other params
+    if ($Params) {
+        $parameters += $Params
+    }
+    if ($parameters) {
+        Write-Verbose -Message "Set parameters: $parameters"
+        $req.SetParameter($parameters)
     }
     # Check authorization
     if ($Authorization -or $Global:CouchDBCredential) {
         if ($Global:CouchDBSaveCredentialPreference) {
             if (-not($Global:CouchDBCredential)) {
+                $Global:CouchDBCredential = $Authorization
+            }
+            # Check if authorization has been changed
+            if ($Authorization -and $Global:CouchDBCredential -ne $Authorization) {
+                Write-Verbose -Message "Override global authorization"
                 $Global:CouchDBCredential = $Authorization
             }
             Write-Verbose -Message "Add authorization"
@@ -1692,10 +1772,6 @@ function Send-CouchDBRequest {
     if ($Data) {
         Write-Verbose -Message "Set json data to: $Data"
         $req.SetData($Data)
-    }
-    # Set parameter
-    if ($Param) {
-        $req.SetParameter($Param)
     }
     # Get header or request
     Write-Verbose -Message "Request to CouchDB server: $req"

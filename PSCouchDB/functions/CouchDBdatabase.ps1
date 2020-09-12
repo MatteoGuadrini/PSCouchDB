@@ -22,6 +22,11 @@ function Test-CouchDBDatabase () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Test-CouchDBDatabase -Database test
     This example test if database "test" exists.
@@ -42,9 +47,11 @@ function Test-CouchDBDatabase () {
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
         $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "HEAD" -Database $Database -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "HEAD" -Database $Database -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Copy-CouchDBDatabase () {
@@ -86,6 +93,11 @@ function Copy-CouchDBDatabase () {
     This modify protocol to https and port to 6984.
     .PARAMETER AsJob
     Send the command in the background.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Copy-CouchDBDatabase -Database test -Destination test_new -Authorization admin:password
     Copy a test database in a new test_new database.
@@ -105,9 +117,11 @@ function Copy-CouchDBDatabase () {
         $Authorization,
         [string] $RemoteAuthorization,
         [switch] $Ssl,
-        [switch] $AsJob
+        [switch] $AsJob,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
-    $all_docs = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl
+    $all_docs = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
     # Check RemoteServer is defined
     if ($RemoteServer) {
         $DestinationServer = $RemoteServer
@@ -126,24 +140,24 @@ function Copy-CouchDBDatabase () {
     } else {
         $DestinationAuthorization = $Authorization
     }
-    if (-not(Test-CouchDBDatabase -Server $DestinationServer -Port $DestinationPort -Database $Destination -Authorization $DestinationAuthorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
-        New-CouchDBDatabase -Server $DestinationServer -Port $DestinationPort -Database $Destination -Authorization $DestinationAuthorization -Ssl:$Ssl | Out-Null
+    if (-not(Test-CouchDBDatabase -Server $DestinationServer -Port $DestinationPort -Database $Destination -Authorization $DestinationAuthorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential -ErrorAction SilentlyContinue)) {
+        New-CouchDBDatabase -Server $DestinationServer -Port $DestinationPort -Database $Destination -Authorization $DestinationAuthorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential | Out-Null
     } else {
         throw "Database $Destination exists! Choose another name."
     }
     # Start copy
     if ($AsJob.IsPresent) {
         $job = Start-Job -Name "Copy-Database" {
-            param($Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl, $all_docs, $ExcludeIds, $DestinationServer, $DestinationPort, $Destination, $DestinationAuthorization)
+            param($Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl, $all_docs, $ExcludeIds, $DestinationServer, $DestinationPort, $Destination, $DestinationAuthorization, $ProxyServer, [pscredential]$ProxyCredential)
             $count = 0
             foreach ($doc in $all_docs.rows) {
                 if ($ExcludeIds -notcontains $doc.id) {
                     $count++
-                    $Data = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $doc.id -Authorization $Authorization -Ssl:$Ssl | ConvertTo-Json -Depth 99 
-                    New-CouchDBDocument -Server $DestinationServer -Port $DestinationPort -Database $Destination -Document $doc.id -Data $($Data -replace '"_rev":.*,?', "") -Authorization $DestinationAuthorization -Ssl:$Ssl
+                    $Data = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $doc.id -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential | ConvertTo-Json -Depth 99 
+                    New-CouchDBDocument -Server $DestinationServer -Port $DestinationPort -Database $Destination -Document $doc.id -Data $($Data -replace '"_rev":.*,?', "") -Authorization $DestinationAuthorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
                 }  
             }
-        } -ArgumentList $Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl, $all_docs, $ExcludeIds, $DestinationServer, $DestinationPort, $Destination, $DestinationAuthorization
+        } -ArgumentList $Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl, $all_docs, $ExcludeIds, $DestinationServer, $DestinationPort, $Destination, $DestinationAuthorization, $ProxyServer, $ProxyCredential
         Register-TemporaryEvent $job "StateChanged" -Action {
             Write-Host -ForegroundColor Green "Copy database #$($sender.Id) ($($sender.Name)) complete."
         }
@@ -152,8 +166,8 @@ function Copy-CouchDBDatabase () {
         foreach ($doc in $all_docs.rows) {
             if ($ExcludeIds -notcontains $doc.id) {
                 $count++
-                $Data = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $doc.id -Authorization $Authorization -Ssl:$Ssl | ConvertTo-Json -Depth 99 
-                New-CouchDBDocument -Server $DestinationServer -Port $DestinationPort -Database $Destination -Document $doc.id -Data $($Data -replace '"_rev":.*,?', "") -Authorization $DestinationAuthorization -Ssl:$Ssl
+                $Data = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $doc.id -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential | ConvertTo-Json -Depth 99 
+                New-CouchDBDocument -Server $DestinationServer -Port $DestinationPort -Database $Destination -Document $doc.id -Data $($Data -replace '"_rev":.*,?', "") -Authorization $DestinationAuthorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
                 Write-Progress -Activity "Copy document $($doc.id) in a new database $Destination in progress" -Status "Progress $count/$($all_docs.total_rows)" -PercentComplete ($count / $all_docs.total_rows * 100)
             } else {
                 Write-Host "Skip $($doc.id) because exists in exclude list."
@@ -179,6 +193,8 @@ function Get-CouchDBDatabase () {
     The CouchDB server port. Default is 5984.
     .PARAMETER Database
     The CouchDB database. Default is _all_dbs.
+    .PARAMETER AllDatabase
+    The all CouchDB database.
     .PARAMETER Descending
     Return the databases in descending order by key. Default is false. The database must be _all_dbs.
     .PARAMETER EndKey
@@ -196,6 +212,11 @@ function Get-CouchDBDatabase () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Get-CouchDBDatabase -Database test
     This example get info of the database "test".
@@ -205,68 +226,76 @@ function Get-CouchDBDatabase () {
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/databases.html#read-a-database
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Database")]
     param(
+        [Parameter(ParameterSetName = "AllDatabase")]
+        [Parameter(ParameterSetName = "Database")]
         [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
+        [Parameter(ParameterSetName = "Database")]
+        [Parameter(ParameterSetName = "AllDatabase")]
         [int] $Port,
-        [string] $Database = "_all_dbs",
-        [ValidateScript( { if (-not($Database) -or ($Database -eq "_all_dbs")) { $true } })]
+        [Parameter(ParameterSetName = "Database")]
+        [Parameter(ParameterSetName = "AllDatabase")]
+        [string] $Database,
+        [Parameter(ParameterSetName = "AllDatabase")]
+        [switch] $AllDatabase,
+        [Parameter(ParameterSetName = "AllDatabase")]
         [switch] $Descending,
-        [ValidateScript( { if (-not($Database) -or ($Database -eq "_all_dbs")) { $true } })]
+        [Parameter(ParameterSetName = "AllDatabase")]
         [Alias('End')]
         [string] $EndKey,
-        [ValidateScript( { if (-not($Database) -or ($Database -eq "_all_dbs")) { $true } })]
+        [Parameter(ParameterSetName = "AllDatabase")]
         [int] $Limit,
-        [ValidateScript( { if (-not($Database) -or ($Database -eq "_all_dbs")) { $true } })]
+        [Parameter(ParameterSetName = "AllDatabase")]
         [int] $Skip,
-        [ValidateScript( { if (-not($Database) -or ($Database -eq "_all_dbs")) { $true } })]
+        [Parameter(ParameterSetName = "AllDatabase")]
         [Alias('Start')]
         [string] $StartKey,
+        [Parameter(ParameterSetName = "Database")]
+        [Parameter(ParameterSetName = "AllDatabase")]
         $Authorization,
-        [switch] $Ssl
+        [Parameter(ParameterSetName = "Database")]
+        [Parameter(ParameterSetName = "AllDatabase")]
+        [switch] $Ssl,
+        [Parameter(ParameterSetName = "Database")]
+        [Parameter(ParameterSetName = "AllDatabase")]
+        [string] $ProxyServer,
+        [Parameter(ParameterSetName = "Database")]
+        [Parameter(ParameterSetName = "AllDatabase")]
+        [pscredential] $ProxyCredential
     )
-    # Check Descending param
-    if ($Descending.IsPresent) {
-        if ($Database -match "\?") {
-            $Database += "&descending=true"
-        } else {
-            $Database += "?descending=true"
+    # All database?
+    if ($AllDatabase.IsPresent) {
+        $Params = @()
+        $Database = "_all_dbs"
+    } elseif (-not($Database)) {
+        $Params = @()
+        $Database = "_all_dbs"
+    }
+    if ($PSCmdlet.ParameterSetName -eq "AllDatabase") {
+        # Check Descending param
+        if ($Descending.IsPresent) {
+            $Params += "descending=true"
+        }
+        # Check EndKey param
+        if ($EndKey) {
+            $Params += "endkey=`"$EndKey`""
+        }
+        # Check Limit param
+        if ($Limit) {
+            $Params += "limit=$Limit"
+        }
+        # Check Skip param
+        if ($Skip) {
+            $Params += "skip=$Skip"
+        }
+        # Check StartKey param
+        if ($StartKey) {
+            $Params += "startkey=`"$StartKey`""
         }
     }
-    # Check EndKey param
-    if ($EndKey) {
-        if ($Database -match "\?") {
-            $Database += "&endkey=`"$EndKey`""
-        } else {
-            $Database += "?endkey=`"$EndKey`""
-        }
-    }
-    # Check Limit param
-    if ($Limit) {
-        if ($Database -match "\?") {
-            $Database += "&limit=$Limit"
-        } else {
-            $Database += "?limit=$Limit"
-        }
-    }
-    # Check Skip param
-    if ($Skip) {
-        if ($Database -match "\?") {
-            $Database += "&skip=$Skip"
-        } else {
-            $Database += "?skip=$Skip"
-        }
-    }
-    # Check StartKey param
-    if ($StartKey) {
-        if ($Database -match "\?") {
-            $Database += "&startkey=`"$StartKey`""
-        } else {
-            $Database += "?startkey=`"$StartKey`""
-        }
-    }
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Params $Params -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function New-CouchDBDatabase () {
@@ -289,6 +318,8 @@ function New-CouchDBDatabase () {
     The CouchDB server port. Default is 5984.
     .PARAMETER Database
     The CouchDB database.
+    .PARAMETER Partition
+    The CouchDB partition database.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -296,6 +327,11 @@ function New-CouchDBDatabase () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     New-CouchDBDatabase -Database test -Authorization "admin:password"
     This example create a database "test".
@@ -308,10 +344,14 @@ function New-CouchDBDatabase () {
         [int] $Port,
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
+        [switch] $Partition,
         $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Authorization $Authorization -Ssl:$Ssl
+    if ($Partition.IsPresent) { $Params = "partitioned=true" }
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Params $Params -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Remove-CouchDBDatabase () {
@@ -338,6 +378,11 @@ function Remove-CouchDBDatabase () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Remove-CouchDBDatabase -Database test -Authorization "admin:password"
     This example remove a database "test".
@@ -352,10 +397,12 @@ function Remove-CouchDBDatabase () {
         [string] $Database,
         $Authorization,
         [switch]$Force,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove database $Database ?", "Remove database $Database")) {
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Authorization $Authorization -Ssl:$Ssl
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
     }
 }
 
@@ -381,6 +428,11 @@ function Get-CouchDBIndex () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Get-CouchDBIndex -Database test
     This example get index document for database "test".
@@ -394,10 +446,12 @@ function Get-CouchDBIndex () {
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
         $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     $Document = '_index'
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl  -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function New-CouchDBIndex () {
@@ -428,6 +482,11 @@ function New-CouchDBIndex () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     New-CouchDBIndex -Database test -Name test-index -Fields name,surname -Authorization "admin:password"
     This example create index document "test_index" with fields "name" and "surname" for database "test".
@@ -445,7 +504,9 @@ function New-CouchDBIndex () {
         [Parameter(mandatory = $true)]
         [array] $Fields,
         $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     $Document = '_index'
     $index = @{ 'index' = @{ }; 'type' = 'json' }
@@ -455,7 +516,7 @@ function New-CouchDBIndex () {
         $index.index.fields += $Field
     }
     $Data = $index | ConvertTo-Json -Depth 3 -Compress
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Remove-CouchDBIndex () {
@@ -488,6 +549,11 @@ function Remove-CouchDBIndex () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     $ddoc = Get-CouchDBIndex -Database test -Authorization "admin:password"
     Remove-CouchDBIndex -Database test -DesignDoc $ddoc.indexes.ddoc[1] -Name $ddoc.indexes.name[1] -Authorization "admin:password"
@@ -507,11 +573,13 @@ function Remove-CouchDBIndex () {
         [string] $Name,
         $Authorization,
         [switch]$Force,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     $Document = "_index/$DesignDoc/json/$Name"
-    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove index $DesignDoc ?", "Remove index $DesignDoc on database $Database")) {
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+    if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove index $Name on $DesignDoc ?", "Remove index $Name on $DesignDoc on database $Database")) {
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
     }
 }
 
@@ -537,6 +605,11 @@ function Get-CouchDBDatabaseInfo () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Get-CouchDBDatabaseInfo -Keys test
     This example get info of the database purged documents limit "test".
@@ -550,13 +623,15 @@ function Get-CouchDBDatabaseInfo () {
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [array] $Keys,
         $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     $Database = '_dbs_info'
     $Data = @{ keys = @() }
     if ($Keys) { $Data.keys += $Keys }
     $Data = $Data | ConvertTo-Json -Depth 3
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Get-CouchDBDatabaseShards () {
@@ -584,6 +659,11 @@ function Get-CouchDBDatabaseShards () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Get-CouchDBDatabaseShards -Database test
     This example get list of shard will have its internal database range "test".
@@ -598,10 +678,12 @@ function Get-CouchDBDatabaseShards () {
         [string] $Database,
         [string] $Document,
         $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     $Database = $Database + '/_shards'
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl-ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Sync-CouchDBDatabaseShards () {
@@ -626,6 +708,11 @@ function Sync-CouchDBDatabaseShards () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Sync-CouchDBDatabaseShards -Database test -Authorization "admin:password"
     This example sync shards in all replicas from database "test".
@@ -639,11 +726,13 @@ function Sync-CouchDBDatabaseShards () {
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
         $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     $Database = $Database + '/_sync_shards'
     $Data = "{}"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Compress-CouchDBDatabase () {
@@ -670,6 +759,11 @@ function Compress-CouchDBDatabase () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Compress-CouchDBDatabase -Database test -Authorization "admin:password"
     This example compact database "test".
@@ -683,11 +777,13 @@ function Compress-CouchDBDatabase () {
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
         $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     $Document = '_compact'
     $Data = '{}'
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Write-CouchDBFullCommit () {
@@ -715,6 +811,11 @@ function Write-CouchDBFullCommit () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Write-CouchDBFullCommit -Database test -Authorization "admin:password"
     The example write all commit the disk of database "test".
@@ -729,12 +830,14 @@ function Write-CouchDBFullCommit () {
         [string] $Database,
         $Authorization,
         [switch]$Force,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     $Document = '_ensure_full_commit'
     $Data = '{}'
     if ($Force -or $PSCmdlet.ShouldContinue("Do you wish to commits any recent changes to the specified database $Database to disk ?", "Commit changes")) {
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
     }
 }
 
@@ -760,6 +863,11 @@ function Clear-CouchDBView () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Clear-CouchDBView -Database test -Authorization "admin:password"
     This example removes index files on database "test".
@@ -773,10 +881,12 @@ function Clear-CouchDBView () {
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
         $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     $Document = "_view_cleanup"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Get-CouchDBDatabasePurgedLimit () {
@@ -801,6 +911,11 @@ function Get-CouchDBDatabasePurgedLimit () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Get-CouchDBDatabasePurgedLimit -Database test
     This example get info of the database purged documents limit "test".
@@ -814,10 +929,12 @@ function Get-CouchDBDatabasePurgedLimit () {
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
         $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     $Database = $Database + "/_purged_infos_limit"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Set-CouchDBDatabasePurgedLimit () {
@@ -844,6 +961,11 @@ function Set-CouchDBDatabasePurgedLimit () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Set-CouchDBDatabasePurgedLimit -Database test -Limit 1500 -Authorization "admin:password"
     This example set purged documents limit to 1500 on database "test".
@@ -859,11 +981,13 @@ function Set-CouchDBDatabasePurgedLimit () {
         [Parameter(mandatory = $true)]
         [int] $Limit,
         $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     $Database = $Database + "/_purged_infos_limit"
     $Data = "$Limit"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Get-CouchDBMissingRevision () {
@@ -892,6 +1016,11 @@ function Get-CouchDBMissingRevision () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Get-CouchDBMissingRevision -Database test -Document "Hitchhikers" -Revision 2-7051cbe5c8faecd085a3fa619e6e6337,3-825cb35de44c433bfb2df415563a19de
     This example check if revisions 2-7051cbe5c8faecd085a3fa619e6e6337,3-825cb35de44c433bfb2df415563a19de exists on document "Hitchhikers" from database "test".
@@ -908,12 +1037,14 @@ function Get-CouchDBMissingRevision () {
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [array] $Revision,
         $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     $Data = @{$Document = $Revision }
     $Data = $Data | ConvertTo-Json
     $Database = $Database + '/_missing_revs'
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Get-CouchDBRevisionDifference () {
@@ -942,6 +1073,11 @@ function Get-CouchDBRevisionDifference () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Get-CouchDBRevisionDifference -Database test -Document "Hitchhikers" -Revision 2-7051cbe5c8faecd085a3fa619e6e6337,3-825cb35de44c433bfb2df415563a19de
     This example get revisions that do not correspond to revisions 2-7051cbe5c8faecd085a3fa619e6e6337,3-825cb35de44c433bfb2df415563a19de on document "Hitchhikers" from database "test".
@@ -958,12 +1094,14 @@ function Get-CouchDBRevisionDifference () {
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [array] $Revision,
         $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
-    $Data = @{$Document = $Revision }
+    $Data = @{ $Document = $Revision }
     $Data = $Data | ConvertTo-Json
     $Database = $Database + '/_revs_diff'
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Get-CouchDBRevisionLimit () {
@@ -988,6 +1126,11 @@ function Get-CouchDBRevisionLimit () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Get-CouchDBRevisionLimit -Database test
     This example get revision limit number from database "test".
@@ -1000,10 +1143,12 @@ function Get-CouchDBRevisionLimit () {
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
         $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     $Database = $Database + '/_revs_limit'
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Set-CouchDBRevisionLimit () {
@@ -1030,6 +1175,11 @@ function Set-CouchDBRevisionLimit () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Set-CouchDBRevisionLimit -Database test -Limit 100 -Authorization "admin:password"
     This example set revision limit number to 1000 on database "test".
@@ -1043,11 +1193,13 @@ function Set-CouchDBRevisionLimit () {
         [string] $Database,
         [int] $Limit = 1000,
         $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     $Database = $Database + '/_revs_limit'
     $Data = $Limit
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Export-CouchDBDatabase () {
@@ -1074,6 +1226,11 @@ function Export-CouchDBDatabase () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .PARAMETER AsJob
     Send the command in the background.
     .EXAMPLE
@@ -1091,15 +1248,17 @@ function Export-CouchDBDatabase () {
         [string] $Path = $(Join-Path -Path "$($PWD.path)" -ChildPath "$($Database)_$(Get-Date -Format 'MM-dd-yyyy_HH_mm_ss').json"),
         $Authorization,
         [switch] $Ssl,
-        [switch] $AsJob
+        [switch] $AsJob,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     # Create list container
     $list = New-Object System.Collections.Generic.List[System.Object]
     $count = 0
-    $all_docs = (Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl).rows
+    $all_docs = (Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential).rows
     foreach ($doc in $all_docs) {
         $count++
-        $list.Add($(Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $doc.id -Authorization $Authorization -Ssl:$Ssl))
+        $list.Add($(Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $doc.id -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential))
         Write-Progress -Activity "Export document $($doc.id) in progress" -Status "Progress $count/$($all_docs.count)" -PercentComplete ($count / $all_docs.count * 100)
     }
     if ($AsJob.IsPresent) {
@@ -1161,6 +1320,11 @@ function Import-CouchDBDatabase () {
     This modify protocol to https and port to 6984.
     .PARAMETER AsJob
     Send the command in the background.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Import-CouchDBDatabase -Path test_01-25-2019_00_01_00.json -Database test_restored
     Import "test" database from a json file.
@@ -1178,7 +1342,9 @@ function Import-CouchDBDatabase () {
         [switch] $RemoveRevision,
         $Authorization,
         [switch] $Ssl,
-        [switch] $AsJob
+        [switch] $AsJob,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     # Check RemoveRevision parameter
     if ($RemoveRevision.IsPresent) {
@@ -1193,12 +1359,12 @@ function Import-CouchDBDatabase () {
         $docs = $(Get-Content -Path $Path)
     }
     # Check if database exists
-    if (-not(Test-CouchDBDatabase -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
-        New-CouchDBDatabase -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl | Out-Null
+    if (-not(Test-CouchDBDatabase -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential -ErrorAction SilentlyContinue)) {
+        New-CouchDBDatabase -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential | Out-Null
     }
     if ($AsJob.IsPresent) {
         $job = Start-Job -Name "Import-Database" {
-            param($Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl, $docs)
+            param($Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl, $docs, $ProxyServer, [pscredential]$ProxyCredential)
             [string] $Document = "_bulk_docs"
             if ($docs) {
                 $Data = "{ `"docs`" : $(($docs | ConvertFrom-Json) | ConvertTo-Json -Depth 99)}"
@@ -1206,8 +1372,8 @@ function Import-CouchDBDatabase () {
                 Write-Warning -Message "File is empty!"
                 return $null
             }
-            Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
-        } -ArgumentList $Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl, $docs
+            Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
+        } -ArgumentList $Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl, $docs, $ProxyServer, $ProxyCredential
         Register-TemporaryEvent $job "StateChanged" -Action {
             Write-Host -ForegroundColor Green "Import database #$($sender.Id) ($($sender.Name)) complete."
         }
@@ -1220,50 +1386,10 @@ function Import-CouchDBDatabase () {
             Write-Warning -Message "File is empty!"
             return $null
         }
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
     }
 }
 
-function New-CouchDBDatabasePartition () {
-    <#
-    .SYNOPSIS
-    Create a partitioned database.
-    .DESCRIPTION
-    Create a partitioned database, than forms documents into logical partitions by using a partition key.
-    .NOTES
-    CouchDB API:
-        PUT /{db}?partitioned=true
-    .PARAMETER Server
-    The CouchDB server name. Default is localhost.
-    .PARAMETER Port
-    The CouchDB server port. Default is 5984.
-    .PARAMETER Database
-    The CouchDB database.
-    .PARAMETER Authorization
-    The CouchDB authorization form; user and password.
-    Authorization format like this: user:password
-    ATTENTION: if the password is not specified, it will be prompted.
-    .PARAMETER Ssl
-    Set ssl connection on CouchDB server.
-    This modify protocol to https and port to 6984.
-    .EXAMPLE
-    New-CouchDBDatabasePartition -Database test -Authorization admin:password
-    Create a partitioned database.
-    .LINK
-    https://pscouchdb.readthedocs.io/en/latest/databases.html#partition-database
-    #>
-    [CmdletBinding()]
-    param(
-        [string] $Server,
-        [int] $Port,
-        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [string] $Database,
-        $Authorization,
-        [switch] $Ssl
-    )
-    $Database += "?partitioned=true"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Authorization $Authorization -Ssl:$Ssl
-}
 
 function Connect-CouchDBDatabase () {
     <#
@@ -1281,9 +1407,6 @@ function Connect-CouchDBDatabase () {
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
     ATTENTION: if the password is not specified, it will be prompted.
-    .PARAMETER Ssl
-    Set ssl connection on CouchDB server.
-    This modify protocol to https and port to 6984.
     .EXAMPLE
     Connect-CouchDBDatabase -Database test -Authorization admin:password
     Connect to server localhost:5984 on database test.
@@ -1296,9 +1419,11 @@ function Connect-CouchDBDatabase () {
         [int] $Port = 5984,
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Database,
-        $Authorization,
-        [switch] $Ssl
+        $Authorization
     )
+    # Save original prompt
+    Set-Variable -Name "orig_prompt" -Value $(Get-Content function:prompt) -Scope Global
+
     # Default parameter set variable
     $Global:PSDefaultParameterValues["*CouchDB*:Server"] = $Server
     $Global:PSDefaultParameterValues["*CouchDB*:Port"] = $Port
@@ -1330,7 +1455,9 @@ function Disconnect-CouchDBDatabase () {
     https://pscouchdb.readthedocs.io/en/latest/databases.html#connect-database
     #>
     # Remove parameter set variable
-    $Global:PSDefaultParameterValues = @{}
+    $Global:PSDefaultParameterValues["*CouchDB*:Server"] = $null
+    $Global:PSDefaultParameterValues["*CouchDB*:Port"] = $null
+    $Global:PSDefaultParameterValues["*CouchDB*:Database"] = $null
 
     # Remove global variable
     Remove-Variable CouchDBServer -Scope global
@@ -1340,5 +1467,5 @@ function Disconnect-CouchDBDatabase () {
     # Remove authorization global variable
     Remove-Variable CouchDBCredential -Scope global
 
-    function Global:prompt {}
+    Set-Item -Path function:prompt -Value $Global:orig_prompt
 }

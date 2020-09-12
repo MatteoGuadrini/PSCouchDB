@@ -270,6 +270,14 @@
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">New-CouchDBUuids</span>
 </pre></div>
 </div>
+<p>To set proxy server for all calls:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Set-CouchDBProxy</span> <span class="n">-Server</span> <span class="s1">&#39;http://myproxy.local:8080&#39;</span> <span class="n">-Credential</span> <span class="p">(</span><span class="nb">Get-Credential</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>And remove it</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Remove-CouchDBProxy</span>
+</pre></div>
+</div>
 <div class="section" id="read-the-log">
 <h2>Read the log<a class="headerlink" href="#read-the-log" title="Permalink to this headline">¶</a></h2>
 <p>To read entire log.</p>

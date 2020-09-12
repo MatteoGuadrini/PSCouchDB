@@ -108,6 +108,11 @@ function Get-CouchDBDocument () {
     Send the command in the background.
     .PARAMETER Variable
     Export into a PSCouchDBDocument variable object.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Get-CouchDBDocument -Database test -Document "Hitchhikers"
     This example get document "Hitchhikers" on database "test".
@@ -240,8 +245,17 @@ function Get-CouchDBDocument () {
         [Parameter(ParameterSetName = "Document")]
         [switch] $AsJob,
         [Parameter(ParameterSetName = "Document")]
-        [string] $Variable
+        [string] $Variable,
+        [Parameter(ParameterSetName = "AllDocuments")]
+        [Parameter(ParameterSetName = "Document")]
+        [Parameter(ParameterSetName = "Info")]
+        [string] $ProxyServer,
+        [Parameter(ParameterSetName = "AllDocuments")]
+        [Parameter(ParameterSetName = "Document")]
+        [Parameter(ParameterSetName = "Info")]
+        [pscredential] $ProxyCredential
     )
+    $parameters = @()
     # Check all docs 
     if ($AllDocuments.IsPresent) {
         $Document = '_all_docs'
@@ -268,310 +282,168 @@ function Get-CouchDBDocument () {
     }
     # Select a revision
     if ($Revision) {
-        $Document += "?rev=$Revision"
+        $parameters += "rev=$Revision"
     }
     # Check info
     if ($Info.IsPresent) {
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "HEAD" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "HEAD" -Database $Database -Document $Document -Params $parameters -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
         return
     }
     # Check Revisions parameter
     if ($Revisions.IsPresent) {
-        if ($Document -match "\?") {
-            $Document += "&revs=true"
-        } else {
-            $Document += "?revs=true"
-        }
+        $parameters += "revs=true"
     } 
     # Check History parameter
     if ($History.IsPresent) {
-        if ($Document -match "\?") {
-            $Document += "&revs_info=true"
-        } else {
-            $Document += "?revs_info=true"
-        }
+        $parameters += "revs_info=true"
     }
     # Check Attachments parameter
     if ($Attachments.IsPresent) {
-        if ($Document -match "\?") {
-            $Document += "&attachments=true"
-        } else {
-            $Document += "?attachments=true"
-        }
+        $parameters += "attachments=true"
     }
     # Check AttachmentsInfo parameter
     if ($AttachmentsInfo.IsPresent) {
-        if ($Document -match "\?") {
-            $Document += "&att_encoding_info=true"
-        } else {
-            $Document += "?att_encoding_info=true"
-        }
+        $parameters += "att_encoding_info=true"
     }
     # Check AttachmentsSince parameter
     if ($AttachmentsSince) {
-        if ($Document -match "\?") {
-            $Document += "&atts_since=$(
+        $parameters += "atts_since=$(
                 if ($AttachmentsSince.Count -eq 1) {
                     "[$($AttachmentsSince | ConvertTo-Json -Compress)]"
                 } else {
                     $AttachmentsSince | ConvertTo-Json -Compress
                 }
             )"
-        } else {
-            $Document += "?atts_since=$(
-                if ($AttachmentsSince.Count -eq 1) {
-                    "[$($AttachmentsSince | ConvertTo-Json -Compress)]"
-                } else {
-                    $AttachmentsSince | ConvertTo-Json -Compress
-                }
-            )"
-        }
     }
     # Check Conflicts parameter
     if ($Conflicts.IsPresent) {
-        if ($Document -match "\?") {
-            $Document += "&conflicts=true"
-        } else {
-            $Document += "?conflicts=true"
-        }
+        $parameters += "conflicts=true"
     }
     # Check DeletedConflicts parameter
     if ($DeletedConflicts.IsPresent) {
-        if ($Document -match "\?") {
-            $Document += "&deleted_conflicts=true"
-        } else {
-            $Document += "?deleted_conflicts=true"
-        }
+        $parameters += "deleted_conflicts=true"
     }
     # Check Latest parameter
     if ($Latest.IsPresent) {
-        if ($Document -match "\?") {
-            $Document += "&latest=true"
-        } else {
-            $Document += "?latest=true"
-        }
+        $parameters += "latest=true"
     }
     # Check LocalSequence parameter
     if ($LocalSequence.IsPresent) {
-        if ($Document -match "\?") {
-            $Document += "&local_seq=true"
-        } else {
-            $Document += "?local_seq=true"
-        }
+        $parameters += "local_seq=true"
     }
     # Check Metadata parameter
     if ($Metadata.IsPresent) {
-        if ($Document -match "\?") {
-            $Document += "&meta=true"
-        } else {
-            $Document += "?meta=true"
-        }
+        $parameters += "meta=true"
     }
     # Check OpenRevisions parameter
     if ($MyInvocation.BoundParameters.Keys -match 'OpenRevisions') {
         if ($OpenRevisions) {
-            if ($Document -match "\?") {
-                $Document += "&open_revs=$(
+            $parameters += "open_revs=$(
                     if ($OpenRevisions.Count -eq 1) {
                         "[$($OpenRevisions | ConvertTo-Json -Compress)]"
                     } else {
                         $OpenRevisions | ConvertTo-Json -Compress
                     }
                     )"
-            } else {
-                $Document += "?open_revs=$(
-                    if ($OpenRevisions.Count -eq 1) {
-                        "[$($OpenRevisions | ConvertTo-Json -Compress)]"
-                    } else {
-                        $OpenRevisions | ConvertTo-Json -Compress
-                    }
-                    )"
-            }
         } elseif ($OpenRevisions.Length -eq 0) {
-            if ($Document -match "\?") {
-                $Document += '&open_revs=all'
-            } else {
-                $Document += '?open_revs=all'
-            }
+            $parameters += 'open_revs=all'
         }
     }
     # Check Descending parameter
     if ($Descending.IsPresent) {
-        if ($Document -match "\?") {
-            $Document += "&descending=true"
-        } else {
-            $Document += "?descending=true"
-        }
+        $parameters += "descending=true"
     }
     # Check EndKey parameter
     if ($EndKey) {
-        if ($Document -match "\?") {
-            $Document += "&endkey=`"$EndKey`""
-        } else {
-            $Document += "?endkey=`"$EndKey`""
-        }
+        $parameters += "endkey=`"$EndKey`""
     }
     # Check EndKeyDocument parameter
     if ($EndKeyDocument) {
-        if ($Document -match "\?") {
-            $Document += "&endkey_docid=`"$EndKeyDocument`""
-        } else {
-            $Document += "?endkey_docid=`"$EndKeyDocument`""
-        }
+        $parameters += "endkey_docid=`"$EndKeyDocument`""
     }
     # Check Group parameter
     if ($Group.IsPresent) {
-        if ($Document -match "\?") {
-            $Document += "&group=true"
-        } else {
-            $Document += "?group=true"
-        }
+        $parameters += "group=true"
     }
     # Check GroupLevel parameter
     if ($GroupLevel) {
-        if ($Document -match "\?") {
-            $Document += "&group_level=$GroupLevel"
-        } else {
-            $Document += "?group_level=$GroupLevel"
-        }
+        $parameters += "group_level=$GroupLevel"
     }
     # Check IncludeDocuments parameter
     if ($IncludeDocuments.IsPresent) {
-        if ($Document -match "\?") {
-            $Document += "&include_docs=true"
-        } else {
-            $Document += "?include_docs=true"
-        }
+        $parameters += "include_docs=true"
     }
     # Check InclusiveEnd parameter
     if ($InclusiveEnd -eq $false) {
-        if ($Document -match "\?") {
-            $Document += "&inclusive_end=false"
-        } else {
-            $Document += "?inclusive_end=false"
-        }
+        $parameters += "inclusive_end=false"
     }
     # Check Key parameter
     if ($Key) {
         if ($Key -isnot [int]) { $Key = "`"$Key`"" }
-        if ($Document -match "\?") {
-            $Document += "&key=$Key"
-        } else {
-            $Document += "?key=$Key"
-        }
+        $parameters += "key=$Key"
     }
     # Check Keys parameter
     if ($Keys) {
-        if ($Document -match "\?") {
-            $Document += "&keys=$(
+        $parameters += "keys=$(
                 if ($Keys.Count -eq 1) {
                     "[$($Keys | ConvertTo-Json -Compress)]"
                 } else {
                     $Keys | ConvertTo-Json -Compress
                 }
                 )"
-        } else {
-            $Document += "?keys=$(
-                if ($Keys.Count -eq 1) {
-                    "[$($Keys | ConvertTo-Json -Compress)]"
-                } else {
-                    $Keys | ConvertTo-Json -Compress
-                }
-                )"
-        }
     }
     # Check Limit parameter
     if ($Limit) {
-        if ($Document -match "\?") {
-            $Document += "&limit=$Limit"
-        } else {
-            $Document += "?limit=$Limit"
-        }
+        $parameters += "limit=$Limit"
     }
     # Check Reduce parameter
     if ($Reduce -eq $false) {
-        if ($Document -match "\?") {
-            $Document += "&reduce=false"
-        } else {
-            $Document += "?reduce=false"
-        }
+        $parameters += "reduce=false"
     }
     # Check Skip parameter
     if ($Skip) {
-        if ($Document -match "\?") {
-            $Document += "&skip=$Skip"
-        } else {
-            $Document += "?skip=$Skip"
-        }
+        $parameters += "skip=$Skip"
     }
     # Check Sorted parameter
     if ($Sorted -eq $false) {
-        if ($Document -match "\?") {
-            $Document += "&sorted=false"
-        } else {
-            $Document += "?sorted=false"
-        }
+        $parameters += "sorted=false"
     }
     # Check Stable parameter
     if ($Stable.IsPresent) {
-        if ($Document -match "\?") {
-            $Document += "&stable=true"
-        } else {
-            $Document += "?stable=true"
-        }
+        $parameters += "stable=true"
     }
     # Check Stale parameter
     if ($Stale) {
-        if ($Document -match "\?") {
-            $Document += "&stale=$Stale"
-        } else {
-            $Document += "?stale=$Stale"
-        }
+        $parameters += "stale=$Stale"
     }
     # Check StartKey parameter
     if ($StartKey) {
-        if ($Document -match "\?") {
-            $Document += "&startkey=`"$StartKey`""
-        } else {
-            $Document += "?startkey=`"$StartKey`""
-        }
+        $parameters += "startkey=`"$StartKey`""
     }
     # Check StartKeyDocument parameter
     if ($StartKeyDocument) {
-        if ($Document -match "\?") {
-            $Document += "&startkey_docid=`"$StartKeyDocument`""
-        } else {
-            $Document += "?startkey_docid=`"$StartKeyDocument`""
-        }
+        $parameters += "startkey_docid=`"$StartKeyDocument`""
     }
     # Check Update parameter
     if ($Update) {
-        if ($Document -match "\?") {
-            $Document += "&update=$Update"
-        } else {
-            $Document += "?update=$Update"
-        }
+        $parameters += "update=$Update"
     }
     # Check UpdateSequence parameter
     if ($UpdateSequence.IsPresent) {
-        if ($Document -match "\?") {
-            $Document += "&update_seq=true"
-        } else {
-            $Document += "?update_seq=true"
-        }
+        $parameters += "update_seq=true"
     }
     # Export document in a variable
     if ($Variable) {
-        $doc = Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+        $doc = Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Params $parameters -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
         $exportDoc = New-Object -TypeName PSCouchDBDocument
         [void] $exportDoc.FromJson(($doc | ConvertTo-Json -Depth 99))
         Set-Variable -Name $Variable -Value $exportDoc -Scope Global
         return $null
     }
     if ($AsJob.IsPresent) {
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -JobName "Get-CouchDBDocument" -Authorization $Authorization -Ssl:$Ssl
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Params $parameters -JobName "Get-CouchDBDocument" -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
     } else {
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Params $parameters -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
     }
 }
 
@@ -611,6 +483,11 @@ function New-CouchDBDocument () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     $data = '{"ask":"Ultimate Question of Life, the Universe and Everything","answer":42}'
     New-CouchDBDocument -Database test -Document "Hitchhikers" -Data $data -Authorization "admin:password"
@@ -643,8 +520,11 @@ function New-CouchDBDocument () {
         [string] $Attachment,
         [switch] $BatchMode,
         $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
+    $parameters = @()
     # Check type of Data
     if ($Data -is [hashtable]) {
         $Doc = New-Object -TypeName PSCouchDBDocument -ArgumentList $Document
@@ -664,8 +544,8 @@ function New-CouchDBDocument () {
     # Check Partition
     if ($Partition) { $Document = "${Partition}:${Document}" }
     # Check BatchMode
-    if ($BatchMode.IsPresent) { $Document += "?batch=ok" }
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    if ($BatchMode.IsPresent) { $parameters += "batch=ok" }
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Params $parameters -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Set-CouchDBDocument () {
@@ -705,6 +585,11 @@ function Set-CouchDBDocument () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     $data = '{"answer":42, "ask":"Ultimate Question of Life, the Universe and Everything"}'
     Set-CouchDBDocument -Database test -Document "Hitchhikers" -Revision 1-2c903913030efb4d711db085b1f44107 -Data $data -Authorization "admin:password"
@@ -738,8 +623,11 @@ function Set-CouchDBDocument () {
         [switch] $BatchMode,
         [switch] $NoConflict,
         $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
+    $parameters = @()
     if ($Data -is [hashtable]) {
         # Hashtable Data
         $NewData = New-Object -TypeName PSCouchDBDocument
@@ -760,7 +648,7 @@ function Set-CouchDBDocument () {
         $Data._rev = $Revision
     }
     if (-not($Replace.IsPresent)) {
-        $OldDoc = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue
+        $OldDoc = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential -ErrorAction SilentlyContinue
         $OldData = New-Object -TypeName PSCouchDBDocument -ArgumentList $OldDoc._id
         [void] $OldData.FromJson(($OldDoc | ConvertTo-Json -Depth 99))
         foreach ($entry in $OldData.GetDocument().Keys) {
@@ -769,7 +657,7 @@ function Set-CouchDBDocument () {
         # Restore attachment of old document
         foreach ($att in $($OldDoc)._attachments.psobject.properties) {
             $tempfile = New-TemporaryFile
-            Get-CouchDBAttachment -Server $Server -Port $Port -Database $Database -Document $Document -Revision $Revision -Attachment $att.Name -Authorization $Authorization -Ssl:$Ssl | Out-File -Encoding utf8 -FilePath $tempfile
+            Get-CouchDBAttachment -Server $Server -Port $Port -Database $Database -Document $Document -Revision $Revision -Attachment $att.Name -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential | Out-File -Encoding utf8 -FilePath $tempfile
             # Attach file to document
             $attachName = Join-Path -Path $tempfile.DirectoryName -ChildPath $att.Name
             Rename-Item -Path $tempfile.FullName -NewName $attachName -Force
@@ -784,15 +672,16 @@ function Set-CouchDBDocument () {
     }
     # Check BatchMode
     if ($BatchMode.IsPresent) { 
-        $Document += "?batch=ok" 
+        $parameters += "batch=ok" 
         # Check NoConflict
     } elseif ($NoConflict.IsPresent -and $Revision) { 
-        $Document += "?rev=$Revision&new_edits=false"
+        $parameters += "rev=$Revision"
+        $parameters += "new_edits=false"
         $Revision = $null
     }
     # Convert doc object to json
     $Data = $Data.ToJson(99)
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Revision $Revision -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Revision $Revision -Params $parameters -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Remove-CouchDBDocument () {
@@ -823,6 +712,11 @@ function Remove-CouchDBDocument () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Remove-CouchDBDocument -Database test -Document "Hitchhikers" -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:password"
     The example removes a "Hitchhikers" on database "test".
@@ -841,10 +735,12 @@ function Remove-CouchDBDocument () {
         [string] $Revision,
         $Authorization,
         [switch]$Force,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove document $Document on database $Database ?", "Remove document $Document on database $Database")) {
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization -Ssl:$Ssl
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
     }
 }
 
@@ -877,6 +773,11 @@ function Copy-CouchDBDocument () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Copy-CouchDBDocument -Database test -Document "Hitchhikers" -Destination "Hitchhikers Guide" -Authorization "admin:password"
     This example copy "Hitchhikers" document to "Hitchhikers Guide" document on same database "test".
@@ -899,14 +800,16 @@ function Copy-CouchDBDocument () {
         [string] $Destination,
         [string] $Revision,
         $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     # Check document id exists
-    if (-not(Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Document -Revision $Revision -Info -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
+    if (-not(Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Document -Revision $Revision -Info -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential -ErrorAction SilentlyContinue)) {
         throw "The specific document $Document does not exists."
     } else {
         $Doc = New-Object -TypeName PSCouchDBDocument
-        [void] $Doc.FromJson((Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization -Ssl:$Ssl | ConvertTo-Json -Depth 99))
+        [void] $Doc.FromJson((Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential | ConvertTo-Json -Depth 99))
         $Doc.SetElement('_id', $Destination)
         # Remove _rev
         $Doc.RemoveElement('_rev')
@@ -918,7 +821,7 @@ function Copy-CouchDBDocument () {
     } else {
         $Document = $Destination
     }
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Get-CouchDBBulkDocument () {
@@ -947,6 +850,11 @@ function Get-CouchDBBulkDocument () {
     This modify protocol to https and port to 6984.
     .PARAMETER AsJob
     Send the command in the background.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     using module PSCouchDB
     $bdocs = New-Object PSCouchDBBulkDocument -ArgumentList '{"_id":"test"}'
@@ -971,7 +879,9 @@ function Get-CouchDBBulkDocument () {
         $Data,
         $Authorization,
         [switch] $Ssl,
-        [switch] $AsJob
+        [switch] $AsJob,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     # Check data is string or PSCouchDBBulkDocument
     if ($Data -is [PSCouchDBBulkDocument]) {
@@ -979,9 +889,9 @@ function Get-CouchDBBulkDocument () {
     }
     $Document = "_bulk_get"
     if ($AsJob.IsPresent) {
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -JobName "Get-CouchDBBulkDocument" -Authorization $Authorization -Ssl:$Ssl
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -JobName "Get-CouchDBBulkDocument" -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
     } else {
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
     }
 }
 
@@ -1011,6 +921,11 @@ function New-CouchDBBulkDocument () {
     This modify protocol to https and port to 6984.
     .PARAMETER AsJob
     Send the command in the background.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     using module PSCouchDB
     $bdocs = New-Object PSCouchDBBulkDocument -ArgumentList '{"_id":"test","name":"test"}'
@@ -1044,7 +959,9 @@ function New-CouchDBBulkDocument () {
         $Data,
         $Authorization,
         [switch] $Ssl,
-        [switch] $AsJob
+        [switch] $AsJob,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     # Check data is string or PSCouchDBBulkDocument
     if ($Data -is [PSCouchDBBulkDocument]) {
@@ -1052,9 +969,9 @@ function New-CouchDBBulkDocument () {
     }
     $Document = "_bulk_docs"
     if ($AsJob.IsPresent) {
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -JobName "New-CouchDBBulkDocument" -Authorization $Authorization -Ssl:$Ssl
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -JobName "New-CouchDBBulkDocument" -Authorization $Authorization -Ssl:$Ssl  -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
     } else {
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
     }
 }
 
@@ -1094,6 +1011,11 @@ function Get-CouchDBAttachment () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Get-CouchDBAttachment -Database test -Document "Hitchhikers" -Attachment test.txt
     This example get attachment "test.txt" on "Hitchhikers" document on database "test".
@@ -1140,13 +1062,19 @@ function Get-CouchDBAttachment () {
         $Authorization,
         [Parameter(ParameterSetName = "Attachment")]
         [Parameter(ParameterSetName = "Info")]
-        [switch] $Ssl
+        [switch] $Ssl,
+        [Parameter(ParameterSetName = "Attachment")]
+        [Parameter(ParameterSetName = "Info")]
+        [string] $ProxyServer,
+        [Parameter(ParameterSetName = "Attachment")]
+        [Parameter(ParameterSetName = "Info")]
+        [pscredential] $ProxyCredential
     )
     # Export attachment in a variable
     if ($Variable) {
         $tempfile = New-TemporaryFile
         $attachName = Join-Path -Path $tempfile.DirectoryName -ChildPath $(Split-Path -Path $Attachment -Leaf)
-        $attachment = Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Revision $Revision -Attachment $Attachment -Authorization $Authorization -Ssl:$Ssl | Out-File $tempfile.FullName -Encoding utf8
+        $attachment = Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Revision $Revision -Attachment $Attachment -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential | Out-File $tempfile.FullName -Encoding utf8
         Rename-Item -Path $tempfile.FullName -NewName $attachName -Force
         $exportAttachment = New-Object -TypeName PSCouchDBAttachment -ArgumentList $attachName
         Remove-Item -Path $attachName -Force
@@ -1160,10 +1088,10 @@ function Get-CouchDBAttachment () {
     }
     # Save Attachment
     if ($OutFile) {
-        (Send-CouchDBRequest -Server $Server -Port $Port -Method $Method -Database $Database -Document $Document -Revision $Revision -Attachment $Attachment -Authorization $Authorization -Ssl:$Ssl).results | Out-File $OutFile -Encoding utf8
+        (Send-CouchDBRequest -Server $Server -Port $Port -Method $Method -Database $Database -Document $Document -Revision $Revision -Attachment $Attachment -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential).results | Out-File $OutFile -Encoding utf8
         return "$OutFile"
     }
-    Send-CouchDBRequest -Server $Server -Port $Port -Method $Method -Database $Database -Document $Document -Revision $Revision -Attachment $Attachment -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method $Method -Database $Database -Document $Document -Revision $Revision -Attachment $Attachment -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Add-CouchDBAttachment () {
@@ -1194,6 +1122,11 @@ function Add-CouchDBAttachment () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Add-CouchDBAttachment -Database test -Document "Hitchhikers" -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Attachment test.txt
     This example add attachment "test.txt" on "Hitchhikers" document from database "test".
@@ -1218,7 +1151,9 @@ function Add-CouchDBAttachment () {
         [Parameter(mandatory = $true)]
         [string] $Revision,
         $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     # Check if Attachment param is string or PSCouchDBAttachment
     if ($Attachment -is [PSCouchDBAttachment]) {
@@ -1234,7 +1169,7 @@ function Add-CouchDBAttachment () {
     } else {
         throw "Attachment parameter must be string or PSCouchDBAttachment object"
     }
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Attachment $Attachment -Revision $Revision -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Attachment $Attachment -Revision $Revision -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Remove-CouchDBAttachment () {
@@ -1265,6 +1200,11 @@ function Remove-CouchDBAttachment () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Remove-CouchDBAttachment -Database test -Document "Hitchhikers" -Attachment test.txt -Revision "2-4705a219cdcca7c72aac4f623f5c46a8" -Authorization "admin:password"
     The example removes an attachment "test.txt" on document "Hitchhikers" from database "test".
@@ -1285,10 +1225,12 @@ function Remove-CouchDBAttachment () {
         [string] $Revision,
         $Authorization,
         [switch]$Force,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove attachment $Attachment in document $Document on database $Database ?", "Remove attachment $Attachment in document $Document on database $Database")) {
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Attachment $Attachment -Revision $Revision -Authorization $Authorization -Ssl:$Ssl
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Attachment $Attachment -Revision $Revision -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
     }
 }
 
@@ -1318,6 +1260,11 @@ function Clear-CouchDBDocuments () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Clear-CouchDBDocuments -Database test -Document "Hitchhikers" -Authorization "admin:password"
     This example purge "Hitchhikers" document on database "test".
@@ -1334,17 +1281,19 @@ function Clear-CouchDBDocuments () {
         [array] $Document,
         $Authorization,
         [switch] $Force,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     $Data = New-Object -TypeName Hashtable
     $Document | ForEach-Object { 
-        $docid = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $_ -Authorization $Authorization -Ssl:$Ssl 
+        $docid = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $_ -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
         $Data.Add($docid._id, @($docid._rev))
     }
     $Data = $Data | ConvertTo-Json -Depth 10
     $Database = $Database + '/_purge'
     if ($Force -or $PSCmdlet.ShouldContinue("Do you wish to purge permanently document $Document ?", "Purge permanently document $Document")) {
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
     }
 }
 
@@ -1377,6 +1326,11 @@ function Search-CouchDBFullText () {
     This modify protocol to https and port to 6984.
     .PARAMETER AsJob
     Send the command in the background.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Search-CouchDBFullText -Database test -Patterns "space","planet"
     This example search the word "space" and "planet" in each document of database test.
@@ -1397,7 +1351,9 @@ function Search-CouchDBFullText () {
         [switch] $UseQueries,
         $Authorization,
         [switch] $Ssl,
-        [switch] $AsJob
+        [switch] $AsJob,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     # Check if UseQueries has been used
     if ($UseQueries.IsPresent) {
@@ -1416,20 +1372,20 @@ function Search-CouchDBFullText () {
 "@
         $Document = "_all_docs/queries"
         if ($AsJob.IsPresent) {
-            Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -JobName "Search-CouchDBFullText" -Authorization $Authorization -Ssl:$Ssl
+            Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -JobName "Search-CouchDBFullText" -Authorization $Authorization -Ssl:$Ssl  -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
         } else {
-            Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+            Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
         }
     } else {
         if ($AsJob.IsPresent) {
             $job = Start-Job -Name "Search-FullText" {
-                param($Server, $Port, $Method, $Database, $Document, $Authorization, $Ssl)
+                param($Server, $Port, $Method, $Database, $Document, $Authorization, $Ssl, $ProxyServer, [pscredential]$ProxyCredential)
                 $result = [PSCustomObject]@{
                     total_rows = 0
                     rows       = New-Object System.Collections.Generic.List[System.Object]
                 }
-                foreach ($doc in (Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl).rows) {
-                    $json = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $doc.id -Authorization $Authorization -Ssl:$Ssl | ConvertTo-Json -Depth 99
+                foreach ($doc in (Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential).rows) {
+                    $json = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $doc.id -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential | ConvertTo-Json -Depth 99
                     foreach ($Pattern in $Patterns) {
                         if ($json -match "$Pattern") {
                             $convert = $json | ConvertFrom-Json
@@ -1441,7 +1397,7 @@ function Search-CouchDBFullText () {
                     }
                 }
                 return $result
-            } -ArgumentList $Server, $Port, $Method, $Database, $Document, $Authorization, $Ssl
+            } -ArgumentList $Server, $Port, $Method, $Database, $Document, $Authorization, $Ssl, $ProxyServer, $ProxyCredential
             Register-TemporaryEvent $job "StateChanged" -Action {
                 Write-Host -ForegroundColor Green "Search full text docs #$($sender.Id) ($($sender.Name)) complete."
             }
@@ -1450,8 +1406,8 @@ function Search-CouchDBFullText () {
                 total_rows = 0
                 rows       = New-Object System.Collections.Generic.List[System.Object]
             }
-            foreach ($doc in (Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl).rows) {
-                $json = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $doc.id -Authorization $Authorization -Ssl:$Ssl | ConvertTo-Json -Depth 99
+            foreach ($doc in (Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential).rows) {
+                $json = Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $doc.id -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential | ConvertTo-Json -Depth 99
                 foreach ($Pattern in $Patterns) {
                     if ($json -match "$Pattern") {
                         $convert = $json | ConvertFrom-Json
@@ -1528,6 +1484,11 @@ function Find-CouchDBDocuments () {
     This modify protocol to https and port to 6984.
     .PARAMETER AsJob
     Send the command in the background.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Find-CouchDBDocuments -Database test -Selector "name" -Operator eq -Value "Arthur Dent" -Fields _id,name,planet
     The example query a database "test" with manual selector and operator.
@@ -1607,7 +1568,13 @@ function Find-CouchDBDocuments () {
         [switch] $Ssl,
         [Parameter(ParameterSetName = "PSCouchDB")]
         [Parameter(ParameterSetName = "Native")]
-        [switch] $AsJob
+        [switch] $AsJob,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [Parameter(ParameterSetName = "Native")]
+        [string] $ProxyServer,
+        [Parameter(ParameterSetName = "PSCouchDB")]
+        [Parameter(ParameterSetName = "Native")]
+        [pscredential] $ProxyCredential
     )
 
     # Check partition
@@ -1667,8 +1634,8 @@ function Find-CouchDBDocuments () {
         $Data = $Query.GetNativeQuery()
     }
     if ($AsJob.IsPresent) {
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -JobName "Find-CouchDBDocuments" -Authorization $Authorization -Ssl:$Ssl
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -JobName "Find-CouchDBDocuments" -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
     } else {
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
     }
 }

@@ -22,6 +22,11 @@ function Get-CouchDBServer () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Get-CouchDBServer
     This example get a meta information of localhost server.
@@ -37,12 +42,14 @@ function Get-CouchDBServer () {
         [int] $Port,
         $Authorization,
         [switch] $Status,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     if ($Status.IsPresent) {
         $Database = "_up"
     }
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Get-CouchDBUser () {
@@ -67,6 +74,11 @@ function Get-CouchDBUser () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Get-CouchDBUser -Userid test_user
     This example get info of user "test_user".
@@ -80,11 +92,13 @@ function Get-CouchDBUser () {
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Userid,
         $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     $Database = "_users"
     $Document = "org.couchdb.user:$Userid"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Get-CouchDBAdmin () {
@@ -109,6 +123,11 @@ function Get-CouchDBAdmin () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Get-CouchDBAdmin -Authorization "admin:password"
     This example 
@@ -122,19 +141,21 @@ function Get-CouchDBAdmin () {
         [int] $Port,
         [string] $Node,
         $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     # Check node
     if (-not($Node)) {
-        if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).name) {
-            $Node = (Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).name
+        if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential).name) {
+            $Node = (Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential).name
         } else {
             $Node = Read-Host "Enter the node name (ex. couchdb@localhost)"
         }
     }
     $Database = "_node"
     $Document = "$Node/_config/admins"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Get-CouchDBActiveTask () {
@@ -157,6 +178,11 @@ function Get-CouchDBActiveTask () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Get-CouchDBActiveTask -Authorization "admin:password"
     This example get all active task.
@@ -169,10 +195,12 @@ function Get-CouchDBActiveTask () {
         [string] $Server,
         [int] $Port,
         $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     $Database = "_active_tasks"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Get-CouchDBClusterSetup () {
@@ -197,6 +225,11 @@ function Get-CouchDBClusterSetup () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Get-CouchDBClusterSetup
     This example get a cluster setup.
@@ -211,38 +244,27 @@ function Get-CouchDBClusterSetup () {
         [AllowEmptyCollection()]
         [array] $EnsureDatabaseExist,
         $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
+    $parameters = @()
     $Database = "_cluster_setup"
     # Check EnsureDatabaseExist parameter
     if ($PSBoundParameters.ContainsKey('EnsureDatabaseExist')) {
         if ($EnsureDatabaseExist) {
-            if ($Database -match "\?") {
-                $Database += "&ensure_dbs_exist=$(
+            $parameters += "ensure_dbs_exist=$(
                     if ($EnsureDatabaseExist.Count -eq 1) {
                         "[$($EnsureDatabaseExist | ConvertTo-Json -Compress)]"
                     } else {
                         $EnsureDatabaseExist | ConvertTo-Json -Compress
                     }
                 )"
-            } else {
-                $Database += "?ensure_dbs_exist=$(
-                    if ($EnsureDatabaseExist.Count -eq 1) {
-                        "[$($EnsureDatabaseExist | ConvertTo-Json -Compress)]"
-                    } else {
-                        $EnsureDatabaseExist | ConvertTo-Json -Compress
-                    }
-                )"
-            }
         } else {
-            if ($Database -match "\?") {
-                $Database += '&ensure_dbs_exist=["_users","_replicator","_global_changes"]'
-            } else {
-                $Database += '?ensure_dbs_exist=["_users","_replicator","_global_changes"]'
-            }
+            $parameters += 'ensure_dbs_exist=["_users","_replicator","_global_changes"]'
         }
     }
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Params $parameters -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Measure-CouchDBStatistics () {
@@ -268,6 +290,11 @@ function Measure-CouchDBStatistics () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Measure-CouchDBStatistics
     This example measure statistics of CouchDB Server.
@@ -284,14 +311,16 @@ function Measure-CouchDBStatistics () {
         [int] $Port,
         [switch] $System,
         $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     if ($System.IsPresent) {
         $Database = "_node/couchdb@$Server/_system"
     } else {
         $Database = "_node/couchdb@$Server/_stats"
     }
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Restart-CouchDBServer () {
@@ -361,6 +390,11 @@ function New-CouchDBUuids () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     New-CouchDBUuids -Count 3
     .LINK
@@ -371,16 +405,19 @@ function New-CouchDBUuids () {
         [string] $Server,
         [int] $Port,
         [Parameter(ValueFromPipeline = $true)]
-        [int] $Count = 10,
+        [int] $Count,
         $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
+    $parameters = @()
     $Database = '_uuids'
     # Check count
     if ($Count) {
-        $Database += "?count=$Count"
+        $parameters += "count=$Count"
     }
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Params $parameters -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Read-CouchDBLog () {
@@ -406,6 +443,18 @@ function Read-CouchDBLog () {
     Output appended data as the file grows.
     .PARAMETER Tail
     The last n lines of log. Default is 10.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Read-CouchDBLog -Level warning -Follow
     Append and wait new warning entry on default log.
@@ -423,12 +472,15 @@ function Read-CouchDBLog () {
         [string] $Level = "info",
         [switch] $Follow,
         [int] $Tail,
-        $Authorization
+        $Authorization,
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     # Check if $Path is empty
     if (-not($Path)) {
-        if ((Get-CouchDBConfiguration -Session log -Key file -Authorization $Authorization -ErrorAction SilentlyContinue).results) {
-            $Path = (Get-CouchDBConfiguration -Session log -Key file -Authorization $Authorization -ErrorAction SilentlyContinue).results -replace '"',''
+        if ((Get-CouchDBConfiguration -Session log -Key file -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential -ErrorAction SilentlyContinue).results) {
+            $Path = (Get-CouchDBConfiguration -Session log -Key file -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential -ErrorAction SilentlyContinue).results -replace '"',''
         }
     }
     if (-not(Test-Path -Path $Path -ErrorAction SilentlyContinue)) { throw "Log file not found! See 'Get-CouchDBConfiguration -Session log -Key file'" }
@@ -496,6 +548,18 @@ function Clear-CouchDBLog () {
     The path of log file. Default, is C:\CouchDB\couch.log on Windows and /var/log/couchdb/couch.log on Unix.
     .PARAMETER Rotate
     Rotate an existing log. Copy before delete in this format couch.log.t-i-m-e_s_t_a_m_p
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Clear-CouchDBLog -Rotate
     Clear default couch.log and save a copy before delete it.
@@ -510,12 +574,15 @@ function Clear-CouchDBLog () {
         [Parameter(ValueFromPipeline = $true)]
         [string] $Path,
         [switch] $Rotate,
-        $Authorization
+        $Authorization,
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
     # Check if $Path is empty
     if (-not($Path)) {
-        if ((Get-CouchDBConfiguration -Session log -Key file -Authorization $Authorization -ErrorAction SilentlyContinue).results) {
-            $Path = (Get-CouchDBConfiguration -Session log -Key file -Authorization $Authorization -ErrorAction SilentlyContinue).results -replace '"',''
+        if ((Get-CouchDBConfiguration -Session log -Key file -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential -ErrorAction SilentlyContinue).results) {
+            $Path = (Get-CouchDBConfiguration -Session log -Key file -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential -ErrorAction SilentlyContinue).results -replace '"',''
         }
     }
     if (-not(Test-Path -Path $Path -ErrorAction SilentlyContinue)) { throw "Log file not found! See 'Get-CouchDBConfiguration -Session log -Key file'" }
@@ -561,6 +628,11 @@ function Get-CouchDBDatabaseUpdates () {
     .PARAMETER Ssl
     Set ssl connection on CouchDB server.
     This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Get-CouchDBDatabaseUpdates -Authorization admin:password
     This example get list of all database events in the CouchDB instance.
@@ -578,44 +650,79 @@ function Get-CouchDBDatabaseUpdates () {
         [int] $Heartbeat,
         [string] $Since,
         $Authorization,
-        [switch] $Ssl
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
     )
+    $parameters = @()
     # Check if _global_changes exists
-    if (-not(Get-CouchDBDatabase -Server $Server -Port $Port -Database "_global_changes" -Authorization $Authorization -Ssl:$Ssl -ErrorAction SilentlyContinue)) {
+    if (-not(Get-CouchDBDatabase -Server $Server -Port $Port -Database "_global_changes" -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential -ErrorAction SilentlyContinue)) {
         throw "Database _global_changes doesn't exists."
     }
     $Database = '_db_updates'
     # Check Feed parameter
     if ($Feed) {
-        if ($Database -match "\?") {
-            $Database += "&feed=$Feed"
-        } else {
-            $Database += "?feed=$Feed"
-        }
+        $parameters += "feed=$Feed"
     }
     # Check Timeout parameter
     if ($Timeout) {
-        if ($Database -match "\?") {
-            $Database += "&timeout=$Timeout"
-        } else {
-            $Database += "?timeout=$Timeout"
-        }
+        $parameters += "timeout=$Timeout"
     }
     # Check Heartbeat parameter
     if ($Heartbeat) {
-        if ($Database -match "\?") {
-            $Database += "&heartbeat=$Heartbeat"
-        } else {
-            $Database += "?heartbeat=$Heartbeat"
-        }
+        $parameters += "heartbeat=$Heartbeat"
     }
     # Check Since parameter
     if ($Since) {
-        if ($Database -match "\?") {
-            $Database += if ($Since -eq "now") { "&since=now" } else { "&since=$Since" }
-        } else {
-            $Database += if ($Since -eq "now") { "?since=now" } else { "?since=$Since" }
-        }
+        $parameters += if ($Since -eq "now") { "since=now" } else { "since=$Since" }
     }
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Params $parameters -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
+}
+
+function Set-CouchDBProxy () {
+    <#
+    .SYNOPSIS
+    Set proxy server and credential.
+    .DESCRIPTION
+    Set proxy server and credential for all calls.
+    .PARAMETER Server
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER Credential
+    Proxy server credential. It must be specified with a PSCredential object.
+    .EXAMPLE
+    Set-CouchDBProxy -Server 'http://myproxy.local:8080' -Credential (Get-Credential)
+    Set proxy server for all calls.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/server.html#server-operation
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(mandatory = $true)]
+        [string] $Server,
+        [pscredential] $Credential
+    )
+    # Check credential
+    if ($Credential) {
+        # Default parameter set variable for ProxyCredential
+        $Global:PSDefaultParameterValues["*CouchDB*:ProxyCredential"] = $Credential
+    }
+    # Default parameter set variable for ProxyServer
+    $Global:PSDefaultParameterValues["*CouchDB*:ProxyServer"] = $Server
+}
+
+function Remove-CouchDBProxy () {
+    <#
+    .SYNOPSIS
+    Remove proxy server and credential.
+    .DESCRIPTION
+    Remove proxy server and credential for all calls.
+    .EXAMPLE
+    Remove-CouchDBProxy
+    Set proxy server for all calls.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/server.html#server-operation
+    #>
+    $Global:PSDefaultParameterValues["*CouchDB*:ProxyCredential"] = $null
+    $Global:PSDefaultParameterValues["*CouchDB*:ProxyServer"] = $null
 }

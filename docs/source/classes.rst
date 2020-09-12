@@ -67,6 +67,7 @@ Methods
     GetStatus        Method     int GetStatus()
     GetType          Method     type GetType()
     GetUri           Method     uri GetUri()
+    RemoveProxy      Method     void RemoveProxy()
     Request          Method     psobject Request()
     RequestAsJob     Method     void RequestAsJob(string name)
     SetData          Method     void SetData(string json)
@@ -75,6 +76,7 @@ Methods
     SetMethod        Method     void SetMethod(string method)
     SetParameter     Method     void SetParameter(array parameter)
     SetPort          Method     void SetPort(int port)
+    SetProxy         Method     void SetProxy(string uri), void SetProxy(string uri, string user, string pass), void SetProxy(string uri, pscredential credential)
     SetServer        Method     void SetServer(string server)
     SetSsl           Method     void SetSsl(), void SetSsl(int port)
     ToString         Method     string ToString()
@@ -110,6 +112,21 @@ To set a different port (default is 5984).
 .. code-block:: powershell
 
     $req.SetPort(8080)
+
+Set proxy
+*********
+
+To set a proxy for request.
+
+.. code-block:: powershell
+
+    $req.SetProxy('https://myproxy.mydomain.com:8080')                      # proxy without credential
+    $req.SetProxy('https://myproxy.mydomain.com:8080', 'user', 'password')  # proxy with user and password
+    # Create credential object
+    $secStringPassword = ConvertTo-SecureString 'password' -AsPlainText -Force
+    $credOject = New-Object System.Management.Automation.PSCredential ('user', $secStringPassword)
+    $req.SetProxy('https://myproxy.mydomain.com:8080', $credOject)          # proxy with PSCredential object
+    $req.RemoveProxy()                                                      # remove proxy server and credential
 
 Set SSL
 *******
