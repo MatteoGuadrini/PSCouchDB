@@ -1316,7 +1316,7 @@ class PSCouchDBRequest {
 
     RequestAsJob ([string]$name) {
         $job = Start-Job -Name $name {
-            param($uri, $method, $authorization, $data, $attachment)
+            param($uri, $method, $user, $pass, $data, $attachment)
             # Create web client
             $Request = [System.Net.WebRequest]::Create($uri)
             $Request.ContentType = "application/json; charset=utf-8";
@@ -1327,8 +1327,8 @@ class PSCouchDBRequest {
                 $this.client.Proxy = $this.proxy
             }
             # Check authorization
-            if ($authorization) {
-                $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("$($authorization.UserName):$($authorization.GetNetworkCredential().Password)")))
+            if ($user -and $pass) {
+                $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("${user}:${pass}")))
                 $Request.Headers.Add("Authorization", ("Basic {0}" -f $base64AuthInfo))
             }
             # Check data
@@ -1356,12 +1356,12 @@ class PSCouchDBRequest {
             [System.IO.StreamReader] $sr = New-Object System.IO.StreamReader -ArgumentList $rs
             [string] $results = $sr.ReadToEnd()
             $resp.Close()
-            if ($results -match "^{.*}$") {
+            if ($results -match "^({.*)|(\[.*)$") {
                 return $results | ConvertFrom-Json
             } else {
                 return [PSCustomObject]@{ results = $results }
             }
-        } -ArgumentList $this.uri.Uri, $this.method, $this.authorization, $this.data, $this.attachment
+        } -ArgumentList $this.uri.Uri, $this.method, $(if ($this.authorization) {$this.authorization.UserName} else {$null}), $(if ($this.authorization) {$this.authorization.GetNetworkCredential().Password} else {$null}), $this.data, $this.attachment
         Register-TemporaryEvent $job "StateChanged" -Action {
             Write-Host -ForegroundColor Green "#$($sender.Id) ($($sender.Name)) complete."
         }
