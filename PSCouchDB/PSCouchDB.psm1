@@ -1184,6 +1184,11 @@ class PSCouchDBReplication {
         $this.replicator.Add('selector', $this.selector)
     }
 
+    SetSelector ([PSCouchDBQuery]$selector) { 
+        $this.selector = $selector.GetNativeQuery()
+        $this.replicator.Add('selector', $this.selector)
+    }
+
     SetSinceSequence ([string]$sequence) { 
         $this.since_seq = $sequence
         $this.replicator.Add('since_seq', $this.since_seq)
