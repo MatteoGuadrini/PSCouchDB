@@ -649,6 +649,7 @@ Methods
     RemoveAttachment     Method     void RemoveAttachment(string attachment)
     RemoveElement        Method     void RemoveElement(string key)
     ReplaceAttachment    Method     void ReplaceAttachment(PSCouchDBAttachment attachment), void ReplaceAttachment(string attachment)
+    SetDocumentId        Method     void SetDocumentId(string id)
     SetElement           Method     void SetElement(string key), void SetElement(string key, System.Object value)
     ToJson               Method     string ToJson(), string ToJson(int depth), string ToJson(int depth, bool compress)
     ToString             Method     string ToString()

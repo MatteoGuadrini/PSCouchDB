@@ -68,6 +68,11 @@ class PSCouchDBDocument {
         return $this.doc
     }
 
+    SetDocumentId ([string]$id) {
+        $this.doc['_id'] = $id
+        $this._id = $id
+    }
+
     SetElement ([string]$key) {
         # Check key isn't _id
         if (-not($key -eq "_id")) { 
