@@ -1348,45 +1348,29 @@ function Import-CouchDBDatabase () {
     )
     # Check RemoveRevision parameter
     if ($RemoveRevision.IsPresent) {
-        $_docs = $(Get-Content -Path $Path)
-        $docs = @()
-        foreach ($doc in $_docs) {
-            $doc = $doc -replace '"_rev":.*,', ""
-            $docs += $doc
-        }
+        $docs = $(Get-Content -Path $Path) -replace '"_rev":.*,', "" | Out-String | ConvertFrom-Json
     } else {
         # Create container "docs"
-        $docs = $(Get-Content -Path $Path)
+        $docs = $(Get-Content -Path $Path) | Out-String | ConvertFrom-Json
     }
     # Check if database exists
     if (-not(Test-CouchDBDatabase -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential -ErrorAction SilentlyContinue)) {
         New-CouchDBDatabase -Server $Server -Port $Port -Database $Database -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential | Out-Null
     }
-    if ($AsJob.IsPresent) {
-        $job = Start-Job -Name "Import-Database" {
-            param($Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl, $docs, $ProxyServer, [pscredential]$ProxyCredential)
-            [string] $Document = "_bulk_docs"
-            if ($docs) {
-                $Data = "{ `"docs`" : $(($docs | ConvertFrom-Json) | ConvertTo-Json -Depth 99)}"
-            } else {
-                Write-Warning -Message "File is empty!"
-                return $null
-            }
-            Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
-        } -ArgumentList $Server, $Port, $Method, $Database, $Document, $Data, $Authorization, $Ssl, $docs, $ProxyServer, $ProxyCredential
-        Register-TemporaryEvent $job "StateChanged" -Action {
-            Write-Host -ForegroundColor Green "Import database #$($sender.Id) ($($sender.Name)) complete."
+    # Import data in bulk
+    if ($docs) {
+        $Data = New-Object PSCouchDBBulkDocument
+        foreach ($doc in $docs) {
+            $Data.AddDocument(($doc | ConvertTo-Json -Depth 99))
         }
     } else {
-        # Import data in bulk
-        [string] $Document = "_bulk_docs"
-        if ($docs) {
-            $Data = "{ `"docs`" : $(($docs | ConvertFrom-Json) | ConvertTo-Json -Depth 99)}"
-        } else {
-            Write-Warning -Message "File is empty!"
-            return $null
-        }
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
+        Write-Warning -Message "File is empty!"
+        return $null
+    }
+    if ($AsJob.IsPresent) {
+        New-CouchDBBulkDocument -Server $Server -Port $Port -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential -AsJob
+    } else {
+        New-CouchDBBulkDocument -Server $Server -Port $Port -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
     }
 }
 

@@ -1033,6 +1033,7 @@ Methods
     SetQueryParams          Method     void SetQueryParams(hashtable paramaters)
     SetRevision             Method     void SetRevision(string revision)
     SetSelector             Method     void SetSelector(string selector)
+    SetSelector             Method     void SetSelector(PSCouchDBQuery selector)
     SetSinceSequence        Method     void SetSinceSequence(string sequence)
     SetSourceProxy          Method     void SetSourceProxy(string proxyUri)
     SetSourceServer         Method     void SetSourceServer(string server)
