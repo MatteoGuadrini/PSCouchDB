@@ -132,6 +132,12 @@ Tests the results of Lucene analyzer tokenization on sample text:
 
     Search-CouchDBAnalyze -Field "english" -Text "running" -Authorization "admin:password"
 
+Returns a count of completed, failed, running, stopped, and total jobs along with the state of resharding on the cluster:
+
+.. code-block:: powershell
+
+    Get-CouchDBReshards -Jobs -Authorization "admin:password"
+
 Read the log
 ____________
 

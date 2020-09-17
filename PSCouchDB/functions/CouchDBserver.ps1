@@ -452,6 +452,7 @@ function Search-CouchDBAnalyze () {
     Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     Search-CouchDBAnalyze -Field "english" -Text "running" -Authorization "admin:password"
+    Search type of analyzer "english" with text status "running".
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/server.html
     #>
@@ -475,6 +476,89 @@ function Search-CouchDBAnalyze () {
     $Data['text'] = $Text
     $Data = $Data | ConvertTo-Json
     Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
+}
+
+function Get-CouchDBReshards () {
+    <#
+    .SYNOPSIS
+    State of resharding on the cluster.
+    .DESCRIPTION
+    Returns a count of completed, failed, running, stopped, and total jobs along with the state of resharding on the cluster.
+    .NOTES
+    CouchDB API:
+        GET /_reshard
+        GET /_reshard/state
+        GET /_reshard/jobs
+        GET /_reshard/jobs/{jobid}
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER State
+    Returns the resharding state and optional information about the state.
+    .PARAMETER Jobs
+    Get information about the resharding for all jobs.
+    .PARAMETER JobId
+    Get information about the resharding job identified by jobid.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
+    .EXAMPLE
+    Get-CouchDBReshards -Jobs -Authorization "admin:password"
+    Get all resharding jobs on all database.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/server.html
+    #>
+    [CmdletBinding(DefaultParameterSetName = "AllJob")]
+    param(
+        [Parameter(ValueFromPipeline = $true)]
+        [Parameter(ParameterSetName = "AllJob")]
+        [Parameter(ParameterSetName = "Job")]
+        [string] $Server,
+        [Parameter(ParameterSetName = "AllJob")]
+        [Parameter(ParameterSetName = "Job")]
+        [int] $Port,
+        [Parameter(ParameterSetName = "Job")]
+        [switch] $State,
+        [Parameter(ParameterSetName = "AllJob")]
+        [switch] $Jobs,
+        [Parameter(ParameterSetName = "Job")]
+        [string] $JobId,
+        [Parameter(ParameterSetName = "AllJob")]
+        [Parameter(ParameterSetName = "Job")]
+        $Authorization,
+        [Parameter(ParameterSetName = "AllJob")]
+        [Parameter(ParameterSetName = "Job")]
+        [switch] $Ssl,
+        [Parameter(ParameterSetName = "AllJob")]
+        [Parameter(ParameterSetName = "Job")]
+        [string] $ProxyServer,
+        [Parameter(ParameterSetName = "AllJob")]
+        [Parameter(ParameterSetName = "Job")]
+        [pscredential] $ProxyCredential
+    )
+    # Check state and jobid
+    if ($State.IsPresent -and (-not($JobId))) { 
+        $Database = '_reshard/state'
+    } elseif ($State.IsPresent -and $JobId) {
+        $Database = "_reshard/jobs/$JobId/state"
+    } elseif ($JobId) {
+        $Database = "_reshard/jobs/$JobId"
+    } else { 
+        $Database = '_reshard'
+    }
+    # Check jobs
+    if ($Jobs.IsPresent) { $Database = '_reshard/jobs' }
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Read-CouchDBLog () {

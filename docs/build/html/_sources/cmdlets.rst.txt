@@ -223,6 +223,14 @@ Server
 
     Search-CouchDBAnalyze [[-Server] <String>] [[-Port] <Int32>] [-Field] <String> [-Text] <String> [[-Authorization] <Object>] [-Ssl] [[-ProxyServer] <String>] [[-ProxyCredential] <PSCredential>] [<CommonParameters>]
 
+**Get-CouchDBReshards**
+
+.. code-block:: powershell
+
+    Get-CouchDBReshards [-Server <String>] [-Port <Int32>] [-Jobs] [-Authorization <Object>] [-Ssl] [-ProxyServer <String>] [-ProxyCredential <PSCredential>] [<CommonParameters>]  
+    
+    Get-CouchDBReshards [-Server <String>] [-Port <Int32>] [-State] [-JobId <String>] [-Authorization <Object>] [-Ssl] [-ProxyServer <String>] [-ProxyCredential <PSCredential>] [<CommonParameters>]
+
 Replication
 ***********
 
