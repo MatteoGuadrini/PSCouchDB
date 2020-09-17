@@ -239,6 +239,12 @@ Server
     
     Set-CouchDBReshards [-Server <String>] [-Port <Int32>] [-State <String>] [-StateReason <String>] [-JobId <String>] [-Authorization <Object>] [-Ssl] [-ProxyServer <String>] [-ProxyCredential <PSCredential>] [<CommonParameters>]
 
+**Remove-CouchDBReshards**
+
+.. code-block:: powershell
+
+    Remove-CouchDBReshards [[-Server] <String>] [[-Port] <Int32>] [-JobId] <String> [[-Authorization] <Object>] [-Ssl] [[-ProxyServer] <String>] [[-ProxyCredential] <PSCredential>] [<CommonParameters>]
+
 Replication
 ***********
 
@@ -640,7 +646,8 @@ _______
     gcdbs -> Get-CouchDBDatabaseSecurity           
     gcdbsh -> Get-CouchDBDatabaseShards 
     gcdbrs -> Get-CouchDBReshards
-    scdbrs -> Set-CouchDBReshards         
+    scdbrs -> Set-CouchDBReshards
+    rcdbrs -> Remove-CouchDBReshards 
     gcdbu -> Get-CouchDBDatabaseUpdates            
     gcddd -> Get-CouchDBDatabaseDesignDocument     
     gcddoc -> Get-CouchDBDesignDocument

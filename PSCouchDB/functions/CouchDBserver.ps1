@@ -691,6 +691,55 @@ function Set-CouchDBReshards () {
     Send-CouchDBRequest -Server $Server -Port $Port -Method $Method -Database $_database -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
+function Remove-CouchDBReshards () {
+    <#
+    .SYNOPSIS
+    Stop the job and then remove it.
+    .DESCRIPTION
+    If the job is running, stop the job and then remove it.
+    .NOTES
+    CouchDB API:
+        DELETE /_reshard/jobs/{jobid}
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER JobId
+    Remove job identified by jobid.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
+    .EXAMPLE
+    Remove-CouchDBReshards -JobId "001-638b90b9acf73cbb113afdfdba458bec80da6a6be23599019fb7b051cedfcc93" -Authorization "admin:password"
+    Stop and remove specific job id.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/server.html
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(ValueFromPipeline = $true)]
+        [string] $Server,
+        [int] $Port,
+        [Parameter(Mandatory = $true)]
+        [string] $JobId,
+        $Authorization,
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
+    )
+    $Database = "_reshard/jobs/$JobId"
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
+}
+
 function Read-CouchDBLog () {
     <#
     .SYNOPSIS

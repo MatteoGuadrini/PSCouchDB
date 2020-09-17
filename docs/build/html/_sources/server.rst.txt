@@ -150,6 +150,12 @@ Single resharding job for a particular range:
 
     Set-CouchDBReshards -Database test -Err "Test message" -Type split -Range "80000000-ffffffff" -Authorization "admin:password"
 
+Stop and remove specific job id:
+
+.. code-block:: powershell
+
+    Remove-CouchDBReshards -JobId "001-638b90b9acf73cbb113afdfdba458bec80da6a6be23599019fb7b051cedfcc93" -Authorization "admin:password"
+
 Read the log
 ____________
 

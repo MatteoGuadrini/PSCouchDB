@@ -34,6 +34,7 @@ New-Alias -Name "gcss" -Value Get-CouchDBSession -Option ReadOnly
 New-Alias -Name "scds" -Value Sync-CouchDBDatabaseShards -Option ReadOnly
 New-Alias -Name "gcdbrs" -Value Get-CouchDBReshards -Option ReadOnly
 New-Alias -Name "scdbrs" -Value Set-CouchDBReshards -Option ReadOnly
+New-Alias -Name "rcdbrs" -Value Remove-CouchDBReshards -Option ReadOnly
 New-Alias -Name "cpdoc" -Value Copy-CouchDBDocument -Option ReadOnly
 New-Alias -Name "mcsts" -Value Measure-CouchDBStatistics -Option ReadOnly
 New-Alias -Name "eccl" -Value Enable-CouchDBCluster -Option ReadOnly
