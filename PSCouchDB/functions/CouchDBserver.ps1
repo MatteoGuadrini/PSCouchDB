@@ -420,6 +420,63 @@ function New-CouchDBUuids () {
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Params $parameters -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
+function Search-CouchDBAnalyze () {
+    <#
+    .SYNOPSIS
+    Tests the results of Lucene analyzer tokenization on sample text.
+    .DESCRIPTION
+    Tests the results of Lucene analyzer tokenization on sample text.
+    Search endpoints require a running search plugin connected to each cluster node.
+    .NOTES
+    CouchDB API:
+        POST /_search_analyze
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Field
+    The CouchDB type of analyzer.
+    .PARAMETER Text
+    The CouchDB analyzer token you want to test.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
+    .EXAMPLE
+    Search-CouchDBAnalyze -Field "english" -Text "running" -Authorization "admin:password"
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/server.html
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(ValueFromPipeline = $true)]
+        [string] $Server,
+        [int] $Port,
+        [Parameter(Mandatory = $true)]
+        [string] $Field,
+        [Parameter(Mandatory = $true)]
+        [string] $Text,
+        $Authorization,
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
+    )
+    $Data = @{}
+    $Database = '_search_analyze'
+    $Data['analyzer'] = $Field
+    $Data['text'] = $Text
+    $Data = $Data | ConvertTo-Json
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
+}
+
 function Read-CouchDBLog () {
     <#
     .SYNOPSIS
@@ -480,7 +537,7 @@ function Read-CouchDBLog () {
     # Check if $Path is empty
     if (-not($Path)) {
         if ((Get-CouchDBConfiguration -Session log -Key file -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential -ErrorAction SilentlyContinue).results) {
-            $Path = (Get-CouchDBConfiguration -Session log -Key file -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential -ErrorAction SilentlyContinue).results -replace '"',''
+            $Path = (Get-CouchDBConfiguration -Session log -Key file -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential -ErrorAction SilentlyContinue).results -replace '"', ''
         }
     }
     if (-not(Test-Path -Path $Path -ErrorAction SilentlyContinue)) { throw "Log file not found! See 'Get-CouchDBConfiguration -Session log -Key file'" }
@@ -582,7 +639,7 @@ function Clear-CouchDBLog () {
     # Check if $Path is empty
     if (-not($Path)) {
         if ((Get-CouchDBConfiguration -Session log -Key file -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential -ErrorAction SilentlyContinue).results) {
-            $Path = (Get-CouchDBConfiguration -Session log -Key file -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential -ErrorAction SilentlyContinue).results -replace '"',''
+            $Path = (Get-CouchDBConfiguration -Session log -Key file -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential -ErrorAction SilentlyContinue).results -replace '"', ''
         }
     }
     if (-not(Test-Path -Path $Path -ErrorAction SilentlyContinue)) { throw "Log file not found! See 'Get-CouchDBConfiguration -Session log -Key file'" }

@@ -87,6 +87,7 @@ New-Alias -Name "ecdb" -Value Export-CouchDBDatabase -Option ReadOnly
 New-Alias -Name "icdb" -Value Import-CouchDBDatabase -Option ReadOnly
 New-Alias -Name "rdblog" -Value Read-CouchDBLog -Option ReadOnly
 New-Alias -Name "cdblog" -Value Clear-CouchDBLog -Option ReadOnly
+New-Alias -Name "cdsa" -Value Search-CouchDBAnalyze -Option ReadOnly
 
 # Intuitive alias
 New-Alias -Name "mkdb" -Value New-CouchDBDatabase -Option ReadOnly

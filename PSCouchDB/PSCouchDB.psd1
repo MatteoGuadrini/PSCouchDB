@@ -173,7 +173,8 @@
         "Export-CouchDBDatabase",
         "Import-CouchDBDatabase",
         "Read-CouchDBLog",
-        "Clear-CouchDBLog"
+        "Clear-CouchDBLog",
+        "Search-CouchDBAnalyze"
     )
 
     # Cmdlet s to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
@@ -282,7 +283,8 @@
         "rmdb",
         "rmdoc",
         "rmuser",
-        "rmadmin"
+        "rmadmin",
+        "cdsa"
     )
 
     # DSC resources to export from this module

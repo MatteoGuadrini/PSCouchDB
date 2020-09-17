@@ -126,6 +126,12 @@ And remove it
 
     Remove-CouchDBProxy
 
+Tests the results of Lucene analyzer tokenization on sample text:
+
+.. code-block:: powershell
+
+    Search-CouchDBAnalyze -Field "english" -Text "running" -Authorization "admin:password"
+
 Read the log
 ____________
 

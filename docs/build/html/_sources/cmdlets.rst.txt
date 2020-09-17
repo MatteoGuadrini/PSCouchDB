@@ -217,6 +217,12 @@ Server
 
     Clear-CouchDBLog [[-Path] <String>] [-Rotate] [[-Authorization] <Object>] [-Ssl] [[-ProxyServer] <String>] [[-ProxyCredential] <Object>] [<CommonParameters>]
 
+**Search-CouchDBAnalyze**
+
+.. code-block:: powershell
+
+    Search-CouchDBAnalyze [[-Server] <String>] [[-Port] <Int32>] [-Field] <String> [-Text] <String> [[-Authorization] <Object>] [-Ssl] [[-ProxyServer] <String>] [[-ProxyCredential] <PSCredential>] [<CommonParameters>]
+
 Replication
 ***********
 
@@ -688,3 +694,4 @@ _______
     rmdoc -> Remove-CouchDBDocument
     rmuser -> Remove-CouchDBUser
     rmadmin -> Remove-CouchDBAdmin
+    scda -> Search-CouchDBAnalyze
