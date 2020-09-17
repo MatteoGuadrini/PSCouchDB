@@ -138,6 +138,18 @@ Returns a count of completed, failed, running, stopped, and total jobs along wit
 
     Get-CouchDBReshards -Jobs -Authorization "admin:password"
 
+This starts global resharding on all the nodes of the cluster:
+
+.. code-block:: powershell
+
+    Set-CouchDBReshards -State running -StateReason "Test start" -Authorization "admin:password"
+
+Single resharding job for a particular range:
+
+.. code-block:: powershell
+
+    Set-CouchDBReshards -Database test -Err "Test message" -Type split -Range "80000000-ffffffff" -Authorization "admin:password"
+
 Read the log
 ____________
 

@@ -286,6 +286,14 @@
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Get-CouchDBReshards</span> <span class="n">-Jobs</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
+<p>This starts global resharding on all the nodes of the cluster:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Set-CouchDBReshards</span> <span class="n">-State</span> <span class="n">running</span> <span class="n">-StateReason</span> <span class="s2">&quot;Test start&quot;</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+</pre></div>
+</div>
+<p>Single resharding job for a particular range:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Set-CouchDBReshards</span> <span class="n">-Database</span> <span class="n">test</span> <span class="n">-Err</span> <span class="s2">&quot;Test message&quot;</span> <span class="n">-Type</span> <span class="n">split</span> <span class="n">-Range</span> <span class="s2">&quot;80000000-ffffffff&quot;</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+</pre></div>
+</div>
 <div class="section" id="read-the-log">
 <h2>Read the log<a class="headerlink" href="#read-the-log" title="Permalink to this headline">¶</a></h2>
 <p>To read entire log.</p>

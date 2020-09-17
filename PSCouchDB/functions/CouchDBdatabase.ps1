@@ -683,7 +683,7 @@ function Get-CouchDBDatabaseShards () {
         [pscredential] $ProxyCredential
     )
     $Database = $Database + '/_shards'
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl-ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Sync-CouchDBDatabaseShards () {

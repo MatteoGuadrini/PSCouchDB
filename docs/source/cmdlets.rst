@@ -231,6 +231,14 @@ Server
     
     Get-CouchDBReshards [-Server <String>] [-Port <Int32>] [-State] [-JobId <String>] [-Authorization <Object>] [-Ssl] [-ProxyServer <String>] [-ProxyCredential <PSCredential>] [<CommonParameters>]
 
+**Set-CouchDBReshards**
+
+.. code-block:: powershell
+
+    Set-CouchDBReshards [-Server <String>] [-Port <Int32>] [-Type <String>] [-Database <String>] [-Node <String>] [-Range <String>] [-Shard <String>] [-Err <String>] [-Authorization <Object>] [-Ssl] [-ProxyServer <String>] [-ProxyCredential <PSCredential>] [<CommonParameters>]
+    
+    Set-CouchDBReshards [-Server <String>] [-Port <Int32>] [-State <String>] [-StateReason <String>] [-JobId <String>] [-Authorization <Object>] [-Ssl] [-ProxyServer <String>] [-ProxyCredential <PSCredential>] [<CommonParameters>]
+
 Replication
 ***********
 
@@ -630,7 +638,9 @@ _______
     gcdbc -> Get-CouchDBDatabaseChanges            
     gcdbp -> Grant-CouchDBDatabasePermission       
     gcdbs -> Get-CouchDBDatabaseSecurity           
-    gcdbsh -> Get-CouchDBDatabaseShards            
+    gcdbsh -> Get-CouchDBDatabaseShards 
+    gcdbrs -> Get-CouchDBReshards
+    scdbrs -> Set-CouchDBReshards         
     gcdbu -> Get-CouchDBDatabaseUpdates            
     gcddd -> Get-CouchDBDatabaseDesignDocument     
     gcddoc -> Get-CouchDBDesignDocument
