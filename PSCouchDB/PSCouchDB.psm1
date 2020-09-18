@@ -1306,7 +1306,7 @@ class PSCouchDBRequest {
         } catch [System.Net.WebException] {
             [System.Net.HttpWebResponse] $errcode = $_.Exception.Response
             $this.uri.LastStatusCode = $errcode.StatusCode
-            throw ([PSCouchDBRequestException]::new($errcode.StatusCode)).CouchDBMessage
+            throw ([PSCouchDBRequestException]::New($errcode.StatusCode, $errcode.StatusDescription)).CouchDBMessage
         }
         $rs = $resp.GetResponseStream()
         [System.IO.StreamReader] $sr = New-Object System.IO.StreamReader -ArgumentList $rs
@@ -1360,7 +1360,7 @@ class PSCouchDBRequest {
                 [System.Net.WebResponse] $resp = $Request.GetResponse()
             } catch [System.Net.WebException] {
                 [System.Net.HttpWebResponse] $errcode = $_.Exception.Response
-                throw "[$($errcode.StatusCode)] Error."
+                throw "[$($errcode.StatusCode)] Error.`nCouchDB Response -> $($errcode.StatusDescription)"
             }
             $rs = $resp.GetResponseStream()
             [System.IO.StreamReader] $sr = New-Object System.IO.StreamReader -ArgumentList $rs
@@ -1398,7 +1398,7 @@ class PSCouchDBRequest {
         } catch [System.Net.WebException] {
             [System.Net.HttpWebResponse] $errcode = $_.Exception.Response
             $this.uri.LastStatusCode = $errcode.StatusCode
-            throw ([PSCouchDBRequestException]::new($errcode.StatusCode)).CouchDBMessage
+            throw ([PSCouchDBRequestException]::New($errcode.StatusCode, $errcode.StatusDescription)).CouchDBMessage
         }
         return $resp.Headers.ToString()
     }
@@ -1553,7 +1553,7 @@ class PSCouchDBRequestException : System.Exception {
     [string] $CouchDBMessage
     [int] $CouchDBStausCode
 
-    PSCouchDBRequestException([int]$statusCode) {
+    PSCouchDBRequestException([int]$statusCode, [string]$response) {
         $this.CouchDBStausCode = $statusCode
         switch ($this.CouchDBStausCode) {
             304 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Not Modified: The additional content requested has not been modified." }
@@ -1571,6 +1571,9 @@ class PSCouchDBRequestException : System.Exception {
             417 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Expectation Failed: The bulk load operation failed." }
             { $this.CouchDBStausCode -ge 500 } { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Internal Server Error: The request was invalid, either because the supplied JSON was invalid, or invalid information was supplied as part of the request." }
             Default { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Unknown Error: something wrong." }
+        }
+        if ($response) {
+            $this.CouchDBMessage += "`nCouchDB Response -> $response"
         }
     }
 }
