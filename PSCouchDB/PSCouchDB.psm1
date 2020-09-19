@@ -68,6 +68,11 @@ class PSCouchDBDocument {
         return $this.doc
     }
 
+    SetDocumentId ([string]$id) {
+        $this.doc['_id'] = $id
+        $this._id = $id
+    }
+
     SetElement ([string]$key) {
         # Check key isn't _id
         if (-not($key -eq "_id")) { 
@@ -1179,6 +1184,11 @@ class PSCouchDBReplication {
         $this.replicator.Add('selector', $this.selector)
     }
 
+    SetSelector ([PSCouchDBQuery]$selector) { 
+        $this.selector = $selector.GetNativeQuery()
+        $this.replicator.Add('selector', $this.selector)
+    }
+
     SetSinceSequence ([string]$sequence) { 
         $this.since_seq = $sequence
         $this.replicator.Add('since_seq', $this.since_seq)
@@ -1296,7 +1306,7 @@ class PSCouchDBRequest {
         } catch [System.Net.WebException] {
             [System.Net.HttpWebResponse] $errcode = $_.Exception.Response
             $this.uri.LastStatusCode = $errcode.StatusCode
-            throw ([PSCouchDBRequestException]::new($errcode.StatusCode)).CouchDBMessage
+            throw ([PSCouchDBRequestException]::New($errcode.StatusCode, $errcode.StatusDescription)).CouchDBMessage
         }
         $rs = $resp.GetResponseStream()
         [System.IO.StreamReader] $sr = New-Object System.IO.StreamReader -ArgumentList $rs
@@ -1316,7 +1326,7 @@ class PSCouchDBRequest {
 
     RequestAsJob ([string]$name) {
         $job = Start-Job -Name $name {
-            param($uri, $method, $authorization, $data, $attachment)
+            param($uri, $method, $user, $pass, $data, $attachment)
             # Create web client
             $Request = [System.Net.WebRequest]::Create($uri)
             $Request.ContentType = "application/json; charset=utf-8";
@@ -1327,8 +1337,8 @@ class PSCouchDBRequest {
                 $this.client.Proxy = $this.proxy
             }
             # Check authorization
-            if ($authorization) {
-                $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("$($authorization.UserName):$($authorization.GetNetworkCredential().Password)")))
+            if ($user -and $pass) {
+                $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("${user}:${pass}")))
                 $Request.Headers.Add("Authorization", ("Basic {0}" -f $base64AuthInfo))
             }
             # Check data
@@ -1350,18 +1360,18 @@ class PSCouchDBRequest {
                 [System.Net.WebResponse] $resp = $Request.GetResponse()
             } catch [System.Net.WebException] {
                 [System.Net.HttpWebResponse] $errcode = $_.Exception.Response
-                throw "[$($errcode.StatusCode)] Error."
+                throw "[$($errcode.StatusCode)] Error.`nCouchDB Response -> $($errcode.StatusDescription)"
             }
             $rs = $resp.GetResponseStream()
             [System.IO.StreamReader] $sr = New-Object System.IO.StreamReader -ArgumentList $rs
             [string] $results = $sr.ReadToEnd()
             $resp.Close()
-            if ($results -match "^{.*}$") {
+            if ($results -match "^({.*)|(\[.*)$") {
                 return $results | ConvertFrom-Json
             } else {
                 return [PSCustomObject]@{ results = $results }
             }
-        } -ArgumentList $this.uri.Uri, $this.method, $this.authorization, $this.data, $this.attachment
+        } -ArgumentList $this.uri.Uri, $this.method, $(if ($this.authorization) {$this.authorization.UserName} else {$null}), $(if ($this.authorization) {$this.authorization.GetNetworkCredential().Password} else {$null}), $this.data, $this.attachment
         Register-TemporaryEvent $job "StateChanged" -Action {
             Write-Host -ForegroundColor Green "#$($sender.Id) ($($sender.Name)) complete."
         }
@@ -1388,7 +1398,7 @@ class PSCouchDBRequest {
         } catch [System.Net.WebException] {
             [System.Net.HttpWebResponse] $errcode = $_.Exception.Response
             $this.uri.LastStatusCode = $errcode.StatusCode
-            throw ([PSCouchDBRequestException]::new($errcode.StatusCode)).CouchDBMessage
+            throw ([PSCouchDBRequestException]::New($errcode.StatusCode, $errcode.StatusDescription)).CouchDBMessage
         }
         return $resp.Headers.ToString()
     }
@@ -1543,7 +1553,7 @@ class PSCouchDBRequestException : System.Exception {
     [string] $CouchDBMessage
     [int] $CouchDBStausCode
 
-    PSCouchDBRequestException([int]$statusCode) {
+    PSCouchDBRequestException([int]$statusCode, [string]$response) {
         $this.CouchDBStausCode = $statusCode
         switch ($this.CouchDBStausCode) {
             304 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Not Modified: The additional content requested has not been modified." }
@@ -1561,6 +1571,9 @@ class PSCouchDBRequestException : System.Exception {
             417 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Expectation Failed: The bulk load operation failed." }
             { $this.CouchDBStausCode -ge 500 } { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Internal Server Error: The request was invalid, either because the supplied JSON was invalid, or invalid information was supplied as part of the request." }
             Default { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Unknown Error: something wrong." }
+        }
+        if ($response) {
+            $this.CouchDBMessage += "`nCouchDB Response -> $response"
         }
     }
 }

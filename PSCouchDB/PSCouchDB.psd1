@@ -28,7 +28,7 @@
     )
 
     # Version number of this module.
-    ModuleVersion     = '2.1.0'
+    ModuleVersion     = '2.2.0'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -120,6 +120,9 @@
         "Get-CouchDBRevisionLimit",
         "Get-CouchDBSession",
         "Sync-CouchDBDatabaseShards",
+        "Get-CouchDBReshards",
+        "Set-CouchDBReshards",
+        "Remove-CouchDBReshards",
         "Copy-CouchDBDocument",
         "Measure-CouchDBStatistics",
         "Enable-CouchDBCluster",
@@ -173,7 +176,8 @@
         "Export-CouchDBDatabase",
         "Import-CouchDBDatabase",
         "Read-CouchDBLog",
-        "Clear-CouchDBLog"
+        "Clear-CouchDBLog",
+        "Search-CouchDBAnalyze"
     )
 
     # Cmdlet s to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
@@ -205,9 +209,11 @@
         "gcadm",
         "gcconf",
         "gcnode",
+        "scdbrs",
         "gcrpl",
         "gcrpls",
         "gcrd",
+        "gcdbrs",
         "gcrpdoc",
         "gctsk",
         "gccs",
@@ -259,6 +265,7 @@
         "rcatt",
         "rcusr",
         "rcadm",
+        "rcdbrs",
         "rcnode",
         "rcrpl",
         "rcidx",
@@ -282,7 +289,8 @@
         "rmdb",
         "rmdoc",
         "rmuser",
-        "rmadmin"
+        "rmadmin",
+        "cdsa"
     )
 
     # DSC resources to export from this module

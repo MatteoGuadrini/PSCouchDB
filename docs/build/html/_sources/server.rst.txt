@@ -126,6 +126,36 @@ And remove it
 
     Remove-CouchDBProxy
 
+Tests the results of Lucene analyzer tokenization on sample text:
+
+.. code-block:: powershell
+
+    Search-CouchDBAnalyze -Field "english" -Text "running" -Authorization "admin:password"
+
+Returns a count of completed, failed, running, stopped, and total jobs along with the state of resharding on the cluster:
+
+.. code-block:: powershell
+
+    Get-CouchDBReshards -Jobs -Authorization "admin:password"
+
+This starts global resharding on all the nodes of the cluster:
+
+.. code-block:: powershell
+
+    Set-CouchDBReshards -State running -StateReason "Test start" -Authorization "admin:password"
+
+Single resharding job for a particular range:
+
+.. code-block:: powershell
+
+    Set-CouchDBReshards -Database test -Err "Test message" -Type split -Range "80000000-ffffffff" -Authorization "admin:password"
+
+Stop and remove specific job id:
+
+.. code-block:: powershell
+
+    Remove-CouchDBReshards -JobId "001-638b90b9acf73cbb113afdfdba458bec80da6a6be23599019fb7b051cedfcc93" -Authorization "admin:password"
+
 Read the log
 ____________
 
