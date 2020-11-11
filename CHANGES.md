@@ -1,5 +1,25 @@
 # Release notes
 
+## 2.2.0
+Sep 19, 2020
+
+- Rewrite **Import-CouchDBDatabase** cmdlet.
+- Fix _RequestAsJob_ method for Linux machine.
+- Add _SetDocumentId_ method on **PSCouchDBDocument** class.
+- Add _SetSelector_ override method on **PSCouchDBReplication** class.
+- Add **Search-CouchDBAnalyze**, **Get-CouchDBReshards**, **Set-CouchDBReshards**, **Remove-CouchDBReshards** cmdlet.
+- Add CouchDB response to **PSCouchDBRequestException** class.
+
+## 2.1.0
+Sep 12, 2020
+
+- Merge **New-CouchDBDatabasePartition** in **New-CouchDBDatabase** cmdlet. 
+- Fix **Send-CouchDBRequest** cmdlet.
+- Add *ProxyServer*, *ProxyCredential* parameter on **Send-CouchDBRequest** cmdlet.
+- Add parameter support on various cmdlet.
+- Add **Set-CouchDBProxy** and **Remove-CouchDBProxy** cmdlet.
+- Add *ProxyServer* and *ProxyCredential* params on all cmdlet.
+
 ## 2.0.0
 Aug 03, 2020
 
