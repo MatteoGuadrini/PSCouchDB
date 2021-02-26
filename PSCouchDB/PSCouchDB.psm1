@@ -23,7 +23,7 @@ class PSCouchDBDocument {
     # Constructors
     # No specified _id
     PSCouchDBDocument () { 
-        $this._id = (New-CouchDBUuids -Count 1).uuids[0]
+        $this._id = (New-Guid).Guid.Replace('-', $null)
         $this.doc.Add('_id', $this._id)
     }
 
@@ -1394,6 +1394,7 @@ class PSCouchDBRequest {
         }
         try {
             [System.Net.WebResponse] $resp = $this.client.GetResponse()
+            $resp.Close()
             $this.uri.LastStatusCode = $resp.StatusCode
         } catch [System.Net.WebException] {
             [System.Net.HttpWebResponse] $errcode = $_.Exception.Response
