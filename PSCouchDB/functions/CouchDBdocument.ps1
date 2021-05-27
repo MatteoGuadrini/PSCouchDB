@@ -569,6 +569,8 @@ function Set-CouchDBDocument () {
     The CouchDB revision document.
     .PARAMETER Data
     The data in Json format, PSCouchDBDocument or hastable.
+    .PARAMETER Partition
+    The CouchDB partition.
     .PARAMETER Replace
     Overwrite data.
     .PARAMETER Attachment
@@ -618,6 +620,7 @@ function Set-CouchDBDocument () {
         [Parameter(mandatory = $true)]
         [string] $Revision,
         $Data,
+        [string] $Partition,
         [switch] $Replace,
         [string] $Attachment,
         [switch] $BatchMode,
@@ -679,6 +682,8 @@ function Set-CouchDBDocument () {
         $parameters += "new_edits=false"
         $Revision = $null
     }
+    # Check Partition
+    if ($Partition) { $Document = "${Partition}:${Document}" }
     # Convert doc object to json
     $Data = $Data.ToJson(99)
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Revision $Revision -Params $parameters -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential

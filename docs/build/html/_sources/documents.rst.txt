@@ -52,6 +52,7 @@ Latest              Forces retrieving latest “leaf” revision, no matter what
 LocalSequence       Includes last update sequence for the document.
 Metadata            Acts same as specifying all conflicts, deleted_conflicts and revs_info query parameters.
 OpenRevisions       Retrieves documents of specified leaf revisions. Additionally, value all id default and  to return all leaf revisions.
+Partition           CouchDB partition name
 ================    ===========
 
 And if use **_all_docs** view, in this table you can find all the possible parameters.

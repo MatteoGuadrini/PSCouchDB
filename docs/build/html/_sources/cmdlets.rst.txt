@@ -489,7 +489,7 @@ Documents
 
 .. code-block:: powershell
 
-    Set-CouchDBDocument [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [-Revision] <String> [[-Data] <Object>] [-Replace] [[-Attachment] <String>] [-BatchMode] [-NoConflict] [[-Authorization] <String>] [-Ssl] [[-ProxyServer] <String>] [[-ProxyCredential] <Object>] [<CommonParameters>]
+    Set-CouchDBDocument [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [-Revision] <String> [[-Data] <Object>] [[-Partition] <String>] [-Replace] [[-Attachment] <String>] [-BatchMode] [-NoConflict] [[-Authorization] <Object>] [-Ssl] [[-ProxyServer] <String>] [[-ProxyCredential] <PSCredential>] [<CommonParameters>]
 
 **Remove-CouchDBDocument**
 
