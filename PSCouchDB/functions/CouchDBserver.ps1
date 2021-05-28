@@ -1046,3 +1046,68 @@ function Remove-CouchDBProxy () {
     $Global:PSDefaultParameterValues["*CouchDB*:ProxyCredential"] = $null
     $Global:PSDefaultParameterValues["*CouchDB*:ProxyServer"] = $null
 }
+
+function Set-CouchDBMaintenanceMode () {
+    <#
+    .SYNOPSIS
+    Enable/Disable maintenance mode.
+    .DESCRIPTION
+    Enable/Disable maintenance mode.
+    .NOTES
+    CouchDB API:
+        GET /_db_updates
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Node
+    The CouchDB node of cluster. Default is couchdb@localhost.
+    .PARAMETER Maintenance
+    Maintenance on/off. Default is $true.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
+    .EXAMPLE
+    Set-CouchDBMaintenanceMode -Authorization admin:password
+    Enable maintenance mode.
+    .EXAMPLE
+    Set-CouchDBMaintenanceMode -Maintenance:$false -Authorization admin:password
+    Disable maintenance mode.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/server.html#server-operation
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(ValueFromPipeline = $true)]
+        [string] $Server,
+        [int] $Port,
+        [string] $Node,
+        [bool] $Maintenance = $true,
+        $Authorization,
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
+    )
+    # Compose doc
+    if (-not($Node)) {
+        if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential).name) {
+            $Node = (Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential).name
+        } else {
+            $Node = Read-Host "Enter the node name (ex. couchdb@localhost)"
+        }
+    }
+    $Database = "_node"
+    $Document = "$Node/_config/couchdb/maintenance_mode"
+    $Data = $Maintenance | ConvertTo-Json
+    # Request
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
+}

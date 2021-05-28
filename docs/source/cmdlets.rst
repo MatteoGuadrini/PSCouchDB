@@ -245,6 +245,12 @@ Server
 
     Remove-CouchDBReshards [[-Server] <String>] [[-Port] <Int32>] [-JobId] <String> [[-Authorization] <Object>] [-Ssl] [[-ProxyServer] <String>] [[-ProxyCredential] <PSCredential>] [<CommonParameters>]
 
+**Set-CouchDBMaintenanceMode**
+
+.. code-block:: powershell
+
+    Set-CouchDBMaintenanceMode [[-Server] <String>] [[-Port] <Int32>] [[-Node] <String>] [[-Maintenance] <Boolean>] [[-Authorization] <Object>] [-Ssl] [[-ProxyServer] <String>] [[-ProxyCredential] <PSCredential>] [<CommonParameters>]
+
 Replication
 ***********
 

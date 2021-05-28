@@ -105,6 +105,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#modify-replica">Modify replica</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#remove-replica">Remove replica</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#replication-request">Replication request</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#enable-disable-maintenance">Enable/Disable Maintenance</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="auth.html">Authentication</a></li>
@@ -407,6 +408,17 @@ Otherwise, specify the path using the <code class="docutils literal notranslate"
 <span class="nv">$rep</span> <span class="p">=</span> <span class="nb">New-Object</span> <span class="n">PSCouchDBReplication</span> <span class="n">-ArgumentList</span> <span class="s1">&#39;test&#39;</span><span class="p">,</span><span class="s1">&#39;test_dump&#39;</span>
 <span class="nv">$rep</span><span class="p">.</span><span class="n">AddDocIds</span><span class="p">(@(</span><span class="s2">&quot;Hitchhikers&quot;</span><span class="p">,</span><span class="s2">&quot;Hitchhikers_Guide&quot;</span><span class="p">))</span>
 <span class="nb">Request-CouchDBReplication</span> <span class="n">-Data</span> <span class="nv">$rep</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="enable-disable-maintenance">
+<h2>Enable/Disable Maintenance<a class="headerlink" href="#enable-disable-maintenance" title="Permalink to this headline">¶</a></h2>
+<p>Enable maintenance mode.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Set-CouchDBMaintenanceMode</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
+</pre></div>
+</div>
+<p>Disable maintenance mode.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Set-CouchDBMaintenanceMode</span> <span class="n">-Maintenance</span> <span class="nv">$false</span> <span class="n">-Authorization</span> <span class="s2">&quot;admin:password&quot;</span>
 </pre></div>
 </div>
 </div>
