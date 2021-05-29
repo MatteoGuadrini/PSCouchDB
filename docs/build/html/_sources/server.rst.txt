@@ -310,3 +310,18 @@ Request, configure, or stop, a replication operation.
     $rep = New-Object PSCouchDBReplication -ArgumentList 'test','test_dump'
     $rep.AddDocIds(@("Hitchhikers","Hitchhikers_Guide"))
     Request-CouchDBReplication -Data $rep -Authorization "admin:password"
+
+Enable/Disable Maintenance
+__________________________
+
+Enable maintenance mode.
+
+.. code-block:: powershell
+
+    Set-CouchDBMaintenanceMode -Authorization "admin:password"
+
+Disable maintenance mode.
+
+.. code-block:: powershell
+
+    Set-CouchDBMaintenanceMode -Maintenance $false -Authorization "admin:password"

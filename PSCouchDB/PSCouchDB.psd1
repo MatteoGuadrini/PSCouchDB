@@ -28,7 +28,7 @@
     )
 
     # Version number of this module.
-    ModuleVersion     = '2.2.0'
+    ModuleVersion     = '2.3.0'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -144,6 +144,7 @@
         "Set-CouchDBRevisionLimit",
         "Set-CouchDBSession",
         "Set-CouchDBProxy",
+        "Set-CouchDBMaintenanceMode",
         "Grant-CouchDBDatabasePermission",
         "Revoke-CouchDBDatabasePermission",
         "Request-CouchDBReplication",
@@ -290,7 +291,8 @@
         "rmdoc",
         "rmuser",
         "rmadmin",
-        "cdsa"
+        "cdsa",
+        "cdbmaint"
     )
 
     # DSC resources to export from this module

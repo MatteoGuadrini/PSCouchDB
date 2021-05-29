@@ -1,5 +1,12 @@
 # Release notes
 
+## 2.3.0
+May 28, 2021
+
+- Fix **PSCouchDBDocument** guid.
+- Add *Partition* parameter on **Set-CouchDBDocument**.
+- Add **Set-CouchDBMaintenanceMode** cmdlet.
+
 ## 2.2.0
 Sep 19, 2020
 
