@@ -1471,8 +1471,17 @@ class PSCouchDBRequest {
     }
 
     SetServer ([string]$server) {
-        $this.server = $server
-        $this.uri.Host = $server
+        if ($this.server -match "^http(?s)") {
+            $this.server = $server
+            $this.uri = New-Object -TypeName System.UriBuilder -ArgumentList $this.server
+        } else {
+            $this.server = $server -split '/',2
+            $this.uri = New-Object -TypeName System.UriBuilder -ArgumentList $this.protocol,$this.server[0],$this.port,$this.server[1]
+        }
+        $this.uri.Host = $this.server
+        $this.uri.Scheme = $this.protocol
+        $this.uri.Port = $this.port
+        $this.uri.Query = $this.parameter
     }
 
     AddAuthorization ([PSCredential]$credential) {
