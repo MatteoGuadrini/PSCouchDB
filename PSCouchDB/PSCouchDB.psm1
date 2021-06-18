@@ -1250,22 +1250,47 @@ class PSCouchDBRequest {
     # Constructor
     PSCouchDBRequest () {
         # Add uri
-        $this.uri = "{0}://{1}:{2}" -f $this.protocol, $this.server, $this.port
+        if ($this.server -match "^http(?s)") {
+            $this.uri = New-Object -TypeName System.UriBuilder -ArgumentList $this.server
+            $this.server = $this.uri.Host
+            $this.protocol = $this.uri.Scheme
+            $this.port = $this.uri.Port
+            $this.parameter = $this.uri.Query
+        } else {
+            $this.uri = New-Object -TypeName System.UriBuilder -ArgumentList $this.protocol, $this.server, $this.port
+        }
         Add-Member -InputObject $this.uri LastStatusCode 0
     }
 
     PSCouchDBRequest ([string]$database) {
         # Add uri
-        $this.uri = "{0}://{1}:{2}/{3}" -f $this.protocol, $this.server, $this.port, $database
-        $this.database = $database
+        if ($this.server -match "^http(?s)") {
+            $this.uri = New-Object -TypeName System.UriBuilder -ArgumentList $this.server
+            $this.server = $this.uri.Host
+            $this.protocol = $this.uri.Scheme
+            $this.port = $this.uri.Port
+            $this.parameter = $this.uri.Query
+        } else {
+            $this.database = $database
+            $this.uri = New-Object -TypeName System.UriBuilder -ArgumentList $this.protocol, $this.server, $this.port, $this.database
+        }
         Add-Member -InputObject $this.uri LastStatusCode 0
     }
 
     PSCouchDBRequest ([string]$database, [string]$document) {
         # Add uri
-        $this.uri = "{0}://{1}:{2}/{3}/{4}" -f $this.protocol, $this.server, $this.port, $database, $document
-        $this.database = $database
-        $this.document = $document
+        if ($this.server -match "^http(?s)") {
+            $this.uri = New-Object -TypeName System.UriBuilder -ArgumentList $this.server
+            $this.server = $this.uri.Host
+            $this.protocol = $this.uri.Scheme
+            $this.port = $this.uri.Port
+            $this.parameter = $this.uri.Query
+        } else {
+            $this.database = $database
+            $this.document = $document
+            $Path = $this.database, $this.document -join "/"
+            $this.uri = New-Object -TypeName System.UriBuilder -ArgumentList $this.protocol, $this.server, $this.port, $Path
+        }
         Add-Member -InputObject $this.uri LastStatusCode 0
     }
 
