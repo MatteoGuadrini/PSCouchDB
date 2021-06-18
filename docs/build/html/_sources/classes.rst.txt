@@ -101,8 +101,9 @@ To set a different server (default is localhost).
 
 .. code-block:: powershell
 
-    $req.SetServer('cdb1.local')    # FQDN
-    $req.SetServer('127.0.0.15')    # ip address
+    $req.SetServer('https://cdb1.local:443')    # http URI
+    $req.SetServer('cdb1.local')                # FQDN
+    $req.SetServer('127.0.0.15')                # ip address
 
 Set port
 ********

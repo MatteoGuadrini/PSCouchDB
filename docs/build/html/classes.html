@@ -386,8 +386,9 @@
 <div class="section" id="set-server">
 <h3>Set server<a class="headerlink" href="#set-server" title="Permalink to this headline">¶</a></h3>
 <p>To set a different server (default is localhost).</p>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$req</span><span class="p">.</span><span class="n">SetServer</span><span class="p">(</span><span class="s1">&#39;cdb1.local&#39;</span><span class="p">)</span>    <span class="c"># FQDN</span>
-<span class="nv">$req</span><span class="p">.</span><span class="n">SetServer</span><span class="p">(</span><span class="s1">&#39;127.0.0.15&#39;</span><span class="p">)</span>    <span class="c"># ip address</span>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$req</span><span class="p">.</span><span class="n">SetServer</span><span class="p">(</span><span class="s1">&#39;https://cdb1.local:443&#39;</span><span class="p">)</span>    <span class="c"># http URI</span>
+<span class="nv">$req</span><span class="p">.</span><span class="n">SetServer</span><span class="p">(</span><span class="s1">&#39;cdb1.local&#39;</span><span class="p">)</span>                <span class="c"># FQDN</span>
+<span class="nv">$req</span><span class="p">.</span><span class="n">SetServer</span><span class="p">(</span><span class="s1">&#39;127.0.0.15&#39;</span><span class="p">)</span>                <span class="c"># ip address</span>
 </pre></div>
 </div>
 </div>

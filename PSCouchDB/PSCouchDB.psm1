@@ -1250,22 +1250,47 @@ class PSCouchDBRequest {
     # Constructor
     PSCouchDBRequest () {
         # Add uri
-        $this.uri = "{0}://{1}:{2}" -f $this.protocol, $this.server, $this.port
+        if ($this.server -match "^http(?s)") {
+            $this.uri = New-Object -TypeName System.UriBuilder -ArgumentList $this.server
+            $this.server = $this.uri.Host
+            $this.protocol = $this.uri.Scheme
+            $this.port = $this.uri.Port
+            $this.parameter = $this.uri.Query
+        } else {
+            $this.uri = New-Object -TypeName System.UriBuilder -ArgumentList $this.protocol, $this.server, $this.port
+        }
         Add-Member -InputObject $this.uri LastStatusCode 0
     }
 
     PSCouchDBRequest ([string]$database) {
         # Add uri
-        $this.uri = "{0}://{1}:{2}/{3}" -f $this.protocol, $this.server, $this.port, $database
-        $this.database = $database
+        if ($this.server -match "^http(?s)") {
+            $this.uri = New-Object -TypeName System.UriBuilder -ArgumentList $this.server
+            $this.server = $this.uri.Host
+            $this.protocol = $this.uri.Scheme
+            $this.port = $this.uri.Port
+            $this.parameter = $this.uri.Query
+        } else {
+            $this.database = $database
+            $this.uri = New-Object -TypeName System.UriBuilder -ArgumentList $this.protocol, $this.server, $this.port, $this.database
+        }
         Add-Member -InputObject $this.uri LastStatusCode 0
     }
 
     PSCouchDBRequest ([string]$database, [string]$document) {
         # Add uri
-        $this.uri = "{0}://{1}:{2}/{3}/{4}" -f $this.protocol, $this.server, $this.port, $database, $document
-        $this.database = $database
-        $this.document = $document
+        if ($this.server -match "^http(?s)") {
+            $this.uri = New-Object -TypeName System.UriBuilder -ArgumentList $this.server
+            $this.server = $this.uri.Host
+            $this.protocol = $this.uri.Scheme
+            $this.port = $this.uri.Port
+            $this.parameter = $this.uri.Query
+        } else {
+            $this.database = $database
+            $this.document = $document
+            $Path = $this.database, $this.document -join "/"
+            $this.uri = New-Object -TypeName System.UriBuilder -ArgumentList $this.protocol, $this.server, $this.port, $Path
+        }
         Add-Member -InputObject $this.uri LastStatusCode 0
     }
 
@@ -1446,8 +1471,18 @@ class PSCouchDBRequest {
     }
 
     SetServer ([string]$server) {
-        $this.server = $server
-        $this.uri.Host = $server
+        if ($server -match "^http(?s)") {
+            $this.server = $server
+            $this.uri = New-Object -TypeName System.UriBuilder -ArgumentList $this.server
+        } else {
+            $srv = $server -split '/',2
+            $this.server = $srv[0]
+            $this.uri = New-Object -TypeName System.UriBuilder -ArgumentList $this.protocol,$this.server,$this.port,$srv[1]
+        }
+        $this.uri.Scheme = $this.protocol
+        $this.uri.Port = $this.port
+        $this.uri.Query = $this.parameter
+        Add-Member -InputObject $this.uri LastStatusCode 0
     }
 
     AddAuthorization ([PSCredential]$credential) {
@@ -1457,7 +1492,7 @@ class PSCouchDBRequest {
 
     AddAuthorization ([string]$auth) {
         # Check if string is in this format: word:word
-        if ($auth -match "^\w+\:\w+$") {
+        if ($auth -match "^\w+\:.*$") {
             $newAuth = $auth -split ":"
             [SecureString]$secStringPassword = ConvertTo-SecureString $newAuth[1] -AsPlainText -Force
             [PSCredential]$credOject = New-Object System.Management.Automation.PSCredential ($newAuth[0], $secStringPassword)
@@ -1473,15 +1508,15 @@ class PSCouchDBRequest {
 
     SetDatabase ([string]$database) {
         $this.database = $database
-        $path = "/{0}" -f $database
-        $this.uri.Path = $path
+        $path = "{0}" -f $database
+        $this.uri.Path = $this.uri.Path,$path -join '/'
     }
 
     SetDocument ([string]$document) {
         if ($this.database) {
             $this.document = $document
-            $path = "/{0}/{1}" -f $this.database, $document
-            $this.uri.Path = $path
+            $path = "{0}/{1}" -f $this.database, $document
+            $this.uri.Path = $this.uri.Path,$path -join '/'
         } else {
             throw [System.Net.WebException] "Database isn't set."
         }
@@ -1503,8 +1538,8 @@ class PSCouchDBRequest {
     AddAttachment ([string]$file) {
         if ($this.document) {
             $attach = New-Object -TypeName PSCouchDBAttachment -ArgumentList $file
-            $path = "/{0}/{1}/{2}" -f $this.database, $this.document, $attach.filename
-            $this.uri.Path = $path
+            $path = "{0}/{1}/{2}" -f $this.database, $this.document, $attach.filename
+            $this.uri.Path = $this.uri.Path,$path -join '/'
             $this.attachment = $attach
         } else {
             throw [System.Net.WebException] "Document isn't set."
@@ -1540,10 +1575,11 @@ class PSCouchDBRequest {
     [string] ToString () {
         $str = "
 {0} {1}
-Host: {2}:{3}
-Param: {4}
+Host: {2}
+Param: {3}
+Uri: {4}
 
-{5}" -f $this.method, $this.uri.Path, $this.server, $this.port, $this.uri.Query, $this.data
+{5}" -f $this.method, $this.uri.Path, $this.uri.Host, $this.uri.Query, $this.uri, $this.data
         return $str
     }
 }
@@ -1648,6 +1684,9 @@ function Send-CouchDBRequest {
     .EXAMPLE
     This example get a document "doc1" on database "db" on "localhost" server in SSL connection:
     Send-CouchDBRequest -Method "GET" -Database db -Document doc1 -Ssl:$true
+    .EXAMPLE
+    This example get a document "doc1" on database "db" on "localhost" server in SSL connection, but use a HTTP uri:
+    Send-CouchDBRequest -Server "http://couchdb1.local/couch" -Method "GET" -Database db -Document doc1 -Ssl:$true
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/classes.html#pscouchdbrequest-class
     #>
