@@ -1491,7 +1491,7 @@ class PSCouchDBRequest {
 
     AddAuthorization ([string]$auth) {
         # Check if string is in this format: word:word
-        if ($auth -match "^\w+\:\w+$") {
+        if ($auth -match "^\w+\:.*$") {
             $newAuth = $auth -split ":"
             [SecureString]$secStringPassword = ConvertTo-SecureString $newAuth[1] -AsPlainText -Force
             [PSCredential]$credOject = New-Object System.Management.Automation.PSCredential ($newAuth[0], $secStringPassword)
