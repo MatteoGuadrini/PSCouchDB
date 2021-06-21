@@ -1492,7 +1492,7 @@ class PSCouchDBRequest {
 
     AddAuthorization ([string]$auth) {
         # Check if string is in this format: word:word
-        if ($auth -match "^\w+\:.*$") {
+        if ($auth -match "^.*\:.*$") {
             $newAuth = $auth -split ":"
             [SecureString]$secStringPassword = ConvertTo-SecureString $newAuth[1] -AsPlainText -Force
             [PSCredential]$credOject = New-Object System.Management.Automation.PSCredential ($newAuth[0], $secStringPassword)
@@ -1509,14 +1509,14 @@ class PSCouchDBRequest {
     SetDatabase ([string]$database) {
         $this.database = $database
         $path = "{0}" -f $database
-        $this.uri.Path = $this.uri.Path,$path -join '/'
+        $this.uri.Path = $path
     }
 
     SetDocument ([string]$document) {
         if ($this.database) {
             $this.document = $document
             $path = "{0}/{1}" -f $this.database, $document
-            $this.uri.Path = $this.uri.Path,$path -join '/'
+            $this.uri.Path = $path
         } else {
             throw [System.Net.WebException] "Database isn't set."
         }
@@ -1539,7 +1539,7 @@ class PSCouchDBRequest {
         if ($this.document) {
             $attach = New-Object -TypeName PSCouchDBAttachment -ArgumentList $file
             $path = "{0}/{1}/{2}" -f $this.database, $this.document, $attach.filename
-            $this.uri.Path = $this.uri.Path,$path -join '/'
+            $this.uri.Path = $path
             $this.attachment = $attach
         } else {
             throw [System.Net.WebException] "Document isn't set."
