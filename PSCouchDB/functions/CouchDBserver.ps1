@@ -38,7 +38,9 @@ function Get-CouchDBServer () {
     #>
     [CmdletBinding()]
     param(
+        [Parameter(Position = 0)]
         [string] $Server,
+        [Parameter(Position = 1)]
         [int] $Port,
         $Authorization,
         [switch] $Status,
@@ -90,6 +92,7 @@ function Get-CouchDBUser () {
         [string] $Server,
         [int] $Port,
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
+        [Parameter(Position = 0)]
         [string] $Userid,
         $Authorization,
         [switch] $Ssl,
@@ -405,6 +408,7 @@ function New-CouchDBUuids () {
         [string] $Server,
         [int] $Port,
         [Parameter(ValueFromPipeline = $true)]
+        [Parameter(Position = 0)]
         [int] $Count,
         $Authorization,
         [switch] $Ssl,
@@ -462,8 +466,10 @@ function Search-CouchDBAnalyze () {
         [string] $Server,
         [int] $Port,
         [Parameter(Mandatory = $true)]
+        [Parameter(Position = 0)]
         [string] $Field,
         [Parameter(Mandatory = $true)]
+        [Parameter(Position = 1)]
         [string] $Text,
         $Authorization,
         [switch] $Ssl,
@@ -730,6 +736,7 @@ function Remove-CouchDBReshards () {
         [string] $Server,
         [int] $Port,
         [Parameter(Mandatory = $true)]
+        [Parameter(Position = 0)]
         [string] $JobId,
         $Authorization,
         [switch] $Ssl,
@@ -786,9 +793,11 @@ function Read-CouchDBLog () {
     #>
     [CmdletBinding()]
     param(
+        [Parameter(Position = 0)]
         [string] $Path,
         [ValidateSet("debug", "info", "notice", "warning", "error", "critical", "alert", "emergency")]
         [Parameter(ValueFromPipeline = $true)]
+        [Parameter(Position = 1)]
         [string] $Level = "info",
         [switch] $Follow,
         [int] $Tail,
@@ -892,6 +901,7 @@ function Clear-CouchDBLog () {
     [CmdletBinding()]
     param(
         [Parameter(ValueFromPipeline = $true)]
+        [Parameter(Position = 0)]
         [string] $Path,
         [switch] $Rotate,
         $Authorization,
@@ -1019,7 +1029,9 @@ function Set-CouchDBProxy () {
     [CmdletBinding()]
     param(
         [Parameter(mandatory = $true)]
+        [Parameter(Position = 0)]
         [string] $Server,
+        [Parameter(Position = 1)]
         [pscredential] $Credential
     )
     # Check credential

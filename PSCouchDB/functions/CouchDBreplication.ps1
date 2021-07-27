@@ -42,6 +42,7 @@ function Get-CouchDBReplication () {
         [string] $Server,
         [int] $Port,
         [Parameter(ValueFromPipeline = $true)]
+        [Parameter(Position = 0)]
         [string] $Document = '_all_docs',
         $Authorization,
         [switch] $Ssl,
@@ -169,8 +170,10 @@ function Get-CouchDBReplicationDocument () {
         [int] $Port,
         [int] $Limit,
         [int] $Skip,
+        [Parameter(Position = 0)]
         [string] $ReplicatorDatabase,
         [ValidateScript( { if ($ReplicatorDatabase) { $true } else { $false } })]
+        [Parameter(Position = 1)]
         [string] $ReplicatorDocuments,
         $Authorization,
         [switch] $Ssl,
@@ -248,6 +251,7 @@ function New-CouchDBReplication () {
         [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
+        [Parameter(Position = 0)]
         $Data,
         $Authorization,
         [switch] $Ssl,
@@ -310,6 +314,7 @@ function Get-CouchDBDatabaseChanges () {
         [string] $Server,
         [int] $Port,
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
+        [Parameter(Position = 0)]
         [string] $Database,
         [array] $Filter,
         [switch] $Continuous ,
@@ -379,6 +384,7 @@ function Set-CouchDBReplication () {
         [string] $Server,
         [int] $Port,
         [Parameter(mandatory = $true)]
+        [Parameter(Position = 0)]
         $Data,
         $Authorization,
         [switch] $Ssl,
@@ -439,8 +445,10 @@ function Remove-CouchDBReplication () {
         [string] $Server,
         [int] $Port,
         [Parameter(mandatory = $true)]
+        [Parameter(Position = 0)]
         [string] $Document,
         [Parameter(mandatory = $true)]
+        [Parameter(Position = 1)]
         [string] $Revision,
         $Authorization,
         [switch] $Force,
