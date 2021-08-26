@@ -1,5 +1,15 @@
 # Release notes
 
+## 2.4.0
+May 28, 2021
+
+- Fix **PSCouchDBRequest** constructor.
+- Fix *SetServer* method on **PSCouchDBRequest** class.
+- Fix *AddAuthorization* method on **PSCouchDBRequest** class.
+- Fix *SetDatabase/Document/Attachment* method on **PSCouchDBRequest** class.
+- Add positional parameters value for some cmdlets.
+- Remove *Username* and *Password* in *ToString* method on **PSCouchDBRequest** for security reason.
+
 ## 2.3.0
 May 28, 2021
 
