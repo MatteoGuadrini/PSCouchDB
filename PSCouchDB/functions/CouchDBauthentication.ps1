@@ -18,9 +18,9 @@ function Set-CouchDBSession () {
     https://pscouchdb.readthedocs.io/en/latest/auth.html
     #>
     param(
-        [Parameter(mandatory = $true)]
+        [Parameter(mandatory = $true, Position = 0)]
         [string] $UserId,
-        [Parameter(mandatory = $true)]
+        [Parameter(mandatory = $true, Position = 1)]
         [SecureString] $Password
     )
     [PSCredential]$credOject = New-Object System.Management.Automation.PSCredential ($UserId, $Password)

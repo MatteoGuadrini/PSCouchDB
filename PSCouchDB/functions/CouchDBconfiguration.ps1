@@ -341,7 +341,9 @@ function Get-CouchDBConfiguration () {
         [string] $Server,
         [int] $Port,
         [string] $Node = (Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential).name,
+        [Parameter(Position = 0)]
         [string] $Session,
+        [Parameter(Position = 1)]
         [string] $Key,
         $Authorization,
         [switch] $Ssl,
@@ -407,10 +409,13 @@ function Set-CouchDBConfiguration () {
         [int] $Port,
         [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential).name -contains "couchdb@localhost") { "couchdb@localhost" } else { "couchdb@127.0.0.1" }),
         [Parameter(mandatory = $true)]
+        [Parameter(Position = 0)]
         [string] $Element,
         [Parameter(mandatory = $true)]
+        [Parameter(Position = 1)]
         [string] $Key,
         [Parameter(mandatory = $true)]
+        [Parameter(Position = 2)]
         [string] $Value,
         $Authorization,
         [switch] $Ssl,

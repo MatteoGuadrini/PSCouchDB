@@ -145,9 +145,11 @@ function Get-CouchDBDocument () {
         [Parameter(ParameterSetName = "Document")]
         [Parameter(ParameterSetName = "Info")]
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
+        [Parameter(Position = 0)]
         [string] $Database,
         [Parameter(ParameterSetName = "Document")]
         [Parameter(ParameterSetName = "Info")]
+        [Parameter(Position = 1)]
         [string] $Document,
         [Parameter(ParameterSetName = "AllDocuments")]
         [switch] $AllDocument,
@@ -157,6 +159,7 @@ function Get-CouchDBDocument () {
         [string] $Partition,
         [Parameter(ParameterSetName = "Document")]
         [Parameter(ParameterSetName = "Info")]
+        [Parameter(Position = 2)]
         [string] $Revision,
         [Parameter(ParameterSetName = "Info")]
         [switch] $Info,
@@ -511,11 +514,14 @@ function New-CouchDBDocument () {
         [string] $Server,
         [int] $Port,
         [Parameter(mandatory = $true)]
+        [Parameter(Position = 0)]
         [string] $Database,
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
+        [Parameter(Position = 1)]
         [string] $Document,
         [string] $Partition,
         [Parameter(mandatory = $true)]
+        [Parameter(Position = 2)]
         $Data,
         [string] $Attachment,
         [switch] $BatchMode,
@@ -614,10 +620,13 @@ function Set-CouchDBDocument () {
         [string] $Server,
         [int] $Port,
         [Parameter(mandatory = $true)]
+        [Parameter(Position = 0)]
         [string] $Database,
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
+        [Parameter(Position = 1)]
         [string] $Document,
         [Parameter(mandatory = $true)]
+        [Parameter(Position = 2)]
         [string] $Revision,
         $Data,
         [string] $Partition,
@@ -733,10 +742,13 @@ function Remove-CouchDBDocument () {
         [string] $Server,
         [int] $Port,
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
+        [Parameter(Position = 0)]
         [string] $Database,
         [Parameter(mandatory = $true)]
+        [Parameter(Position = 1)]
         [string] $Document,
         [Parameter(mandatory = $true)]
+        [Parameter(Position = 2)]
         [string] $Revision,
         $Authorization,
         [switch]$Force,
@@ -798,11 +810,15 @@ function Copy-CouchDBDocument () {
         [string] $Server,
         [int] $Port,
         [Parameter(mandatory = $true)]
+        [Parameter(Position = 0)]
         [string] $Database,
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
+        [Parameter(Position = 1)]
         [string] $Document,
         [Parameter(mandatory = $true)]
+        [Parameter(Position = 2)]
         [string] $Destination,
+        [Parameter(Position = 3)]
         [string] $Revision,
         $Authorization,
         [switch] $Ssl,
@@ -880,7 +896,9 @@ function Get-CouchDBBulkDocument () {
         [string] $Server,
         [int] $Port,
         [Parameter(mandatory = $true)]
+        [Parameter(Position = 0)]
         [string] $Database,
+        [Parameter(Position = 1)]
         $Data,
         $Authorization,
         [switch] $Ssl,
@@ -960,7 +978,9 @@ function New-CouchDBBulkDocument () {
         [string] $Server,
         [int] $Port,
         [Parameter(mandatory = $true)]
+        [Parameter(Position = 0)]
         [string] $Database,
+        [Parameter(Position = 1)]
         $Data,
         $Authorization,
         [switch] $Ssl,
@@ -1044,10 +1064,12 @@ function Get-CouchDBAttachment () {
         [Parameter(ParameterSetName = "Attachment")]
         [Parameter(ParameterSetName = "Info")]
         [Parameter(mandatory = $true)]
+        [Parameter(Position = 0)]
         [string] $Database,
         [Parameter(ParameterSetName = "Attachment")]
         [Parameter(ParameterSetName = "Info")]
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
+        [Parameter(Position = 1)]
         [string] $Document,
         [Parameter(ParameterSetName = "Attachment")]
         [Parameter(ParameterSetName = "Info")]
@@ -1057,6 +1079,7 @@ function Get-CouchDBAttachment () {
         [Parameter(ParameterSetName = "Attachment")]
         [Parameter(ParameterSetName = "Info")]
         [Parameter(mandatory = $true)]
+        [Parameter(Position = 2)]
         [string] $Attachment,
         [Parameter(ParameterSetName = "Attachment")]
         [string] $OutFile,
@@ -1148,12 +1171,16 @@ function Add-CouchDBAttachment () {
         [string] $Server,
         [int] $Port,
         [Parameter(mandatory = $true)]
+        [Parameter(Position = 0)]
         [string] $Database,
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
+        [Parameter(Position = 1)]
         [string] $Document,
         [Parameter(mandatory = $true)]
+        [Parameter(Position = 2)]
         $Attachment,
         [Parameter(mandatory = $true)]
+        [Parameter(Position = 3)]
         [string] $Revision,
         $Authorization,
         [switch] $Ssl,
@@ -1221,12 +1248,16 @@ function Remove-CouchDBAttachment () {
         [string] $Server,
         [int] $Port,
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
+        [Parameter(Position = 0)]
         [string] $Database,
         [Parameter(mandatory = $true)]
+        [Parameter(Position = 1)]
         [string] $Document,
         [Parameter(mandatory = $true)]
+        [Parameter(Position = 2)]
         [string] $Attachment,
         [Parameter(mandatory = $true)]
+        [Parameter(Position = 3)]
         [string] $Revision,
         $Authorization,
         [switch]$Force,
@@ -1281,8 +1312,10 @@ function Clear-CouchDBDocuments () {
         [string] $Server,
         [int] $Port,
         [Parameter(mandatory = $true)]
+        [Parameter(Position = 0)]
         [string] $Database,
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
+        [Parameter(Position = 1)]
         [array] $Document,
         $Authorization,
         [switch] $Force,
@@ -1350,8 +1383,10 @@ function Search-CouchDBFullText () {
         [string] $Server,
         [int] $Port,
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
+        [Parameter(Position = 0)]
         [string] $Database,
         [Parameter(mandatory = $true)]
+        [Parameter(Position = 1)]
         [array] $Patterns,
         [switch] $UseQueries,
         $Authorization,
@@ -1526,6 +1561,7 @@ function Find-CouchDBDocuments () {
         [Parameter(ParameterSetName = "PSCouchDB")]
         [Parameter(ParameterSetName = "Native")]
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
+        [Parameter(Position = 0)]
         [string] $Database,
         [Parameter(ParameterSetName = "PSCouchDB")]
         [Parameter(ParameterSetName = "Native")]
@@ -1564,6 +1600,7 @@ function Find-CouchDBDocuments () {
         [ValidateSet('lt', 'lte', 'eq', 'ne', 'gte', 'gt', 'exists', 'type', 'in', 'nin', 'size', 'mod', 'regex')]
         [string] $Operator,
         [Parameter(ParameterSetName = "Native")]
+        [Parameter(Position = 1)]
         [string] $Find,
         [Parameter(ParameterSetName = "PSCouchDB")]
         [Parameter(ParameterSetName = "Native")]

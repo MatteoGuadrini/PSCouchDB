@@ -1573,13 +1573,16 @@ class PSCouchDBRequest {
     }
 
     [string] ToString () {
+        $stringUri = New-Object -TypeName System.UriBuilder -ArgumentList $this.uri.Uri
+        # Remove Username and Password in string mode for security reason
+        $stringUri.Password = $stringUri.UserName = $null
         $str = "
 {0} {1}
 Host: {2}
 Param: {3}
 Uri: {4}
 
-{5}" -f $this.method, $this.uri.Path, $this.uri.Host, $this.uri.Query, $this.uri, $this.data
+{5}" -f $this.method, $this.uri.Path, $this.uri.Host, $this.uri.Query, $stringUri.Uri, $this.data
         return $str
     }
 }
