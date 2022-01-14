@@ -44,11 +44,9 @@ function New-CouchDBAdmin () {
         [string] $Server,
         [int] $Port,
         [string] $Node,
-        [Parameter(mandatory = $true)]
-        [Parameter(Position = 0)]
+        [Parameter(mandatory = $true, Position = 0)]
         [string] $Userid,
-        [Parameter(mandatory = $true)]
-        [Parameter(Position = 1)]
+        [Parameter(mandatory = $true, Position = 1)]
         [SecureString] $Password,
         $Authorization,
         [switch] $Ssl,
@@ -113,11 +111,9 @@ function New-CouchDBUser () {
         [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory = $true)]
-        [Parameter(Position = 0)]
+        [Parameter(mandatory = $true, Position = 0)]
         [string] $Userid,
-        [Parameter(mandatory = $true)]
-        [Parameter(Position = 1)]
+        [Parameter(mandatory = $true, Position = 1)]
         [SecureString] $Password,
         [array] $Roles,
         $Authorization,
@@ -201,8 +197,7 @@ function Grant-CouchDBDatabasePermission () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [Parameter(Position = 0)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true, Position = 0)]
         [string] $Database,
         [Parameter(Position = 1)]
         $Data,
@@ -258,8 +253,7 @@ function Get-CouchDBDatabaseSecurity () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [Parameter(Position = 0)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true, Position = 0)]
         [string] $Database,
         [string] $Variable,
         $Authorization,
@@ -317,8 +311,7 @@ function Revoke-CouchDBDatabasePermission () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [Parameter(Position = 0)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true, Position = 0)]
         [string] $Database,
         $Authorization,
         [switch]$Force,
@@ -381,8 +374,7 @@ function Remove-CouchDBAdmin () {
         [string] $Server,
         [int] $Port,
         [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential).all_nodes -contains "couchdb@localhost") { "couchdb@localhost" } else { "couchdb@127.0.0.1" }),
-        [Parameter(mandatory = $true)]
-        [Parameter(Position = 0)]
+        [Parameter(mandatory = $true, Position = 0)]
         [string] $Userid,
         $Authorization,
         [switch]$Force,
@@ -439,11 +431,9 @@ function Remove-CouchDBUser () {
         [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory = $true)]
-        [Parameter(Position = 0)]
+        [Parameter(mandatory = $true, Position = 0)]
         [string] $Userid,
-        [Parameter(mandatory = $true)]
-        [Parameter(Position = 1)]
+        [Parameter(mandatory = $true, Position = 1)]
         [string] $Revision,
         $Authorization,
         [switch]$Force,
@@ -502,15 +492,12 @@ function Set-CouchDBUser () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [Parameter(Position = 0)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true, Position = 0)]
         [string] $Userid,
-        [Parameter(mandatory = $true)]
-        [Parameter(Position = 1)]
+        [Parameter(mandatory = $true, Position = 1)]
         [SecureString] $Password,
         [array] $Roles,
-        [Parameter(mandatory = $true)]
-        [Parameter(Position = 2)]
+        [Parameter(mandatory = $true, Position = 2)]
         [string] $Revision,
         $Authorization,
         [switch] $Ssl,
@@ -581,11 +568,9 @@ function Set-CouchDBAdmin () {
         [string] $Server,
         [int] $Port,
         [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl).all_nodes -contains "couchdb@localhost") { "couchdb@localhost" } else { "couchdb@127.0.0.1" }),
-        [Parameter(mandatory = $true)]
-        [Parameter(Position = 0)]
+        [Parameter(mandatory = $true, Position = 0)]
         [string] $Userid,
-        [Parameter(mandatory = $true)]
-        [Parameter(Position = 1)]
+        [Parameter(mandatory = $true, Position = 1)]
         [SecureString] $Password,
         $Authorization,
         [switch] $Ssl,
