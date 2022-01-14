@@ -44,8 +44,7 @@ function Test-CouchDBDatabase () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [Parameter(Position = 0)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true, Position = 0)]
         [string] $Database,
         $Authorization,
         [switch] $Ssl,
@@ -111,8 +110,7 @@ function Copy-CouchDBDatabase () {
         [string] $RemoteServer,
         [int] $Port,
         [int] $RemotePort,
-        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [Parameter(Position = 0)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true, Position = 0)]
         [string] $Database,
         [Parameter(Position = 1)]
         [string] $Destination = $(if ($RemoteServer) {$Database} else {$Database + "_new"}),
@@ -346,8 +344,7 @@ function New-CouchDBDatabase () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [Parameter(Position = 0)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true, Position = 0)]
         [string] $Database,
         [Parameter(Position = 1)]
         [switch] $Partition,
@@ -399,8 +396,7 @@ function Remove-CouchDBDatabase () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [Parameter(Position = 0)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true, Position = 0)]
         [string] $Database,
         $Authorization,
         [switch]$Force,
@@ -450,8 +446,7 @@ function Get-CouchDBIndex () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [Parameter(Position = 0)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true, Position = 0)]
         [string] $Database,
         $Authorization,
         [switch] $Ssl,
@@ -505,14 +500,11 @@ function New-CouchDBIndex () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [Parameter(Position = 0)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true, Position = 0)]
         [string] $Database,
-        [Parameter(mandatory = $true)]
-        [Parameter(Position = 1)]
+        [Parameter(mandatory = $true, Position = 1)]
         [string] $Name,
-        [Parameter(mandatory = $true)]
-        [Parameter(Position = 2)]
+        [Parameter(mandatory = $true, Position = 2)]
         [array] $Fields,
         $Authorization,
         [switch] $Ssl,
@@ -576,14 +568,11 @@ function Remove-CouchDBIndex () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory = $true)]
-        [Parameter(Position = 0)]
+        [Parameter(mandatory = $true, Position = 0)]
         [string] $Database,
-        [Parameter(mandatory = $true)]
-        [Parameter(Position = 1)]
+        [Parameter(mandatory = $true, Position = 1)]
         [string] $DesignDoc,
-        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [Parameter(Position = 2)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true, Position = 2)]
         [string] $Name,
         $Authorization,
         [switch]$Force,
@@ -634,8 +623,7 @@ function Get-CouchDBDatabaseInfo () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [Parameter(Position = 0)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true, Position = 0)]
         [array] $Keys,
         $Authorization,
         [switch] $Ssl,
@@ -689,8 +677,7 @@ function Get-CouchDBDatabaseShards () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [Parameter(Position = 0)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true, Position = 0)]
         [string] $Database,
         [Parameter(Position = 1)]
         [string] $Document,
@@ -740,8 +727,7 @@ function Sync-CouchDBDatabaseShards () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [Parameter(Position = 0)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true, Position = 0)]
         [string] $Database,
         $Authorization,
         [switch] $Ssl,
@@ -792,8 +778,7 @@ function Compress-CouchDBDatabase () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [Parameter(Position = 0)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true, Position = 0)]
         [string] $Database,
         $Authorization,
         [switch] $Ssl,
@@ -845,8 +830,7 @@ function Write-CouchDBFullCommit () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [Parameter(Position = 0)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true, Position = 0)]
         [string] $Database,
         $Authorization,
         [switch]$Force,
@@ -898,8 +882,7 @@ function Clear-CouchDBView () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [Parameter(Position = 0)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true, Position = 0)]
         [string] $Database,
         $Authorization,
         [switch] $Ssl,
@@ -947,8 +930,7 @@ function Get-CouchDBDatabasePurgedLimit () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [Parameter(Position = 0)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true, Position = 0)]
         [string] $Database,
         $Authorization,
         [switch] $Ssl,
@@ -998,11 +980,9 @@ function Set-CouchDBDatabasePurgedLimit () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [Parameter(Position = 0)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true, Position = 0)]
         [string] $Database,
-        [Parameter(mandatory = $true)]
-        [Parameter(Position = 1)]
+        [Parameter(mandatory = $true, Position = 1)]
         [int] $Limit,
         $Authorization,
         [switch] $Ssl,
@@ -1054,14 +1034,11 @@ function Get-CouchDBMissingRevision () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory = $true)]
-        [Parameter(Position = 0)]
+        [Parameter(mandatory = $true, Position = 0)]
         [string] $Database,
-        [Parameter(mandatory = $true)]
-        [Parameter(Position = 1)]
+        [Parameter(mandatory = $true, Position = 1)]
         [string] $Document,
-        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [Parameter(Position = 2)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true, Position = 2)]
         [array] $Revision,
         $Authorization,
         [switch] $Ssl,
@@ -1114,14 +1091,11 @@ function Get-CouchDBRevisionDifference () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory = $true)]
-        [Parameter(Position = 0)]
+        [Parameter(mandatory = $true, Position = 0)]
         [string] $Database,
-        [Parameter(mandatory = $true)]
-        [Parameter(Position = 1)]
+        [Parameter(mandatory = $true, Position = 1)]
         [string] $Document,
-        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [Parameter(Position = 2)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true, Position = 2)]
         [array] $Revision,
         $Authorization,
         [switch] $Ssl,
@@ -1170,8 +1144,7 @@ function Get-CouchDBRevisionLimit () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [Parameter(Position = 0)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true, Position = 0)]
         [string] $Database,
         $Authorization,
         [switch] $Ssl,
@@ -1220,8 +1193,7 @@ function Set-CouchDBRevisionLimit () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [Parameter(Position = 0)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true, Position = 0)]
         [string] $Database,
         [Parameter(Position = 1)]
         [int] $Limit = 1000,
@@ -1276,8 +1248,7 @@ function Export-CouchDBDatabase () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [Parameter(Position = 0)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true, Position = 0)]
         [string] $Database,
         [Parameter(Position = 1)]
         [string] $Path = $(Join-Path -Path "$($PWD.path)" -ChildPath "$($Database)_$(Get-Date -Format 'MM-dd-yyyy_HH_mm_ss').json"),
@@ -1370,11 +1341,9 @@ function Import-CouchDBDatabase () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory = $true)]
-        [Parameter(Position = 0)]
+        [Parameter(mandatory = $true, Position = 0)]
         [string] $Database,
-        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [Parameter(Position = 1)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true, Position = 1)]
         [string] $Path,
         [switch] $RemoveRevision,
         $Authorization,
@@ -1438,8 +1407,7 @@ function Connect-CouchDBDatabase () {
     param(
         [string] $Server = 'localhost',
         [int] $Port = 5984,
-        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [Parameter(Position = 0)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true, Position = 0)]
         [string] $Database,
         $Authorization
     )

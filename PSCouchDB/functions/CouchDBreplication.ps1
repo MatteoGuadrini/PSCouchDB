@@ -41,8 +41,7 @@ function Get-CouchDBReplication () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(ValueFromPipeline = $true)]
-        [Parameter(Position = 0)]
+        [Parameter(ValueFromPipeline = $true, Position = 0)]
         [string] $Document = '_all_docs',
         $Authorization,
         [switch] $Ssl,
@@ -93,7 +92,7 @@ function Get-CouchDBReplicationScheduler () {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(ValueFromPipeline = $true)]
+        [Parameter(ValueFromPipeline = $true, Position = 0)]
         [string] $Server,
         [int] $Port,
         [int] $Limit,
@@ -313,8 +312,7 @@ function Get-CouchDBDatabaseChanges () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory = $true, ValueFromPipeline = $true)]
-        [Parameter(Position = 0)]
+        [Parameter(mandatory = $true, ValueFromPipeline = $true, Position = 0)]
         [string] $Database,
         [array] $Filter,
         [switch] $Continuous ,
@@ -383,8 +381,7 @@ function Set-CouchDBReplication () {
     param(
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory = $true)]
-        [Parameter(Position = 0)]
+        [Parameter(mandatory = $true, Position = 0)]
         $Data,
         $Authorization,
         [switch] $Ssl,
@@ -444,11 +441,9 @@ function Remove-CouchDBReplication () {
         [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
-        [Parameter(mandatory = $true)]
-        [Parameter(Position = 0)]
+        [Parameter(mandatory = $true, Position = 0)]
         [string] $Document,
-        [Parameter(mandatory = $true)]
-        [Parameter(Position = 1)]
+        [Parameter(mandatory = $true, Position = 1)]
         [string] $Revision,
         $Authorization,
         [switch] $Force,
