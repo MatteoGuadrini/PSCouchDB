@@ -198,7 +198,7 @@ class PSCouchDBAttachment {
             $this.content_type = [PSCouchDBAttachment]::ConfirmMime($this.filename)
             # Get data
             if ((Get-Item -Path $path).length -gt 0) {
-                $bytes = [System.Text.Encoding]::UTF8.GetBytes((Get-Content -Path $path))
+                $bytes = [System.Text.Encoding]::UTF8.GetBytes((Get-Content -Path $path -Raw))
                 $this.data = [System.Convert]::ToBase64String($bytes)
             } else {
                 throw [System.IO.InvalidDataException] "$path attachment is empty."
