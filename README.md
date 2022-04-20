@@ -14,11 +14,12 @@ Enable-CouchDBCluster -SingleNode -Authorization "admin:password"
 Enable-CouchDBCluster -Authorization "admin:password"
 ```
 For more details, see the [docs](https://pscouchdb.readthedocs.io/en/latest/config.html).
+
 4. Now, open powershell and create a first personal database:
 ```powershell
 New-CouchDBDatabase -Database test -Authorization "admin:password"
 ```
-6. Create a sample document for `test` database:
+5. Create a sample document for `test` database:
 ```powershell
 $Data = '{
 	"name": "Arthur Dent",
@@ -26,13 +27,13 @@ $Data = '{
 }'
 New-CouchDBDocument -Database test -Document "Hitchhikers" -Data $Data -Authorization "admin:password"
 ```
-7. Add attachment file in our docuemnt:
+6. Add attachment file in our docuemnt:
 ```powershell
 $rev = (Get-CouchDBDocument -Database test -Document "Hitchhikers")._rev
 "Ultimate Question of Life, the Universe and Everything" | Out-File C:\file.txt
 New-CouchDBAttachment -Database test -Document "Hitchhikers" -revision $rev -Attachment C:\file.txt -Authorization "admin:password"
 ```
-8. Finally, get a document:
+7. Finally, get a document:
 ```powershell
 Get-CouchDBAttachment -Database test -Document "Hitchhikers" -Attachment file.txt
 ```
