@@ -286,6 +286,8 @@ function Get-CouchDBDatabaseChanges () {
     The CouchDB server port. Default is 5984.
     .PARAMETER Database
     The CouchDB database.
+    .PARAMETER DocIds
+    The CouchDB document ids array.
     .PARAMETER Filter
     Reference to a filter function from a design document that will filter whole stream emitting only filtered events.
     .PARAMETER Continuous
@@ -314,8 +316,9 @@ function Get-CouchDBDatabaseChanges () {
         [int] $Port,
         [Parameter(mandatory = $true, ValueFromPipeline = $true, Position = 0)]
         [string] $Database,
-        [array] $Filter,
-        [switch] $Continuous ,
+        [array] $DocIds,
+        [string] $Filter,
+        [switch] $Continuous,
         $Authorization,
         [switch] $Ssl,
         [string] $ProxyServer,
@@ -327,16 +330,18 @@ function Get-CouchDBDatabaseChanges () {
     }
     $Document = '_changes'
     if ($Filter) {
+        $parameters += "filter=$Filter"
+        $Data = "{}"
+    }
+    if ($DocIds) {
         $parameters += 'filter=_doc_ids'
-        $Data = "{ `"doc_ids`": $($Filter | ConvertTo-Json -Compress) }"
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Params $parameters -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
-    } elseif ($Continuous.IsPresent) { 
+        $Data = "{ `"doc_ids`": $($DocIds | ConvertTo-Json -Compress) }"
+    }
+    if ($Continuous.IsPresent) { 
         $parameters += 'feed=continuous'
         $Data = "{}"
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Params $parameters -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
-    } else {
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Params $parameters -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
     }
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Data $Data -Params $parameters -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Set-CouchDBReplication () {
