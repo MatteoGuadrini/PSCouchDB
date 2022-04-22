@@ -307,6 +307,10 @@ function Get-CouchDBDatabaseChanges () {
     Period in milliseconds after which an empty line is sent in the results. Only applicable for longpoll, continuous, and eventsource feeds. Overrides any timeout to keep the feed alive indefinitely. Default is 60000.
     .PARAMETER Attachments
     Include the Base64-encoded content of attachments in the documents that are included if IncludeDocs is true. Ignored if IncludeDocs isn't true. Default is false.
+    .PARAMETER AttachmentsEncoding
+    Include encoding information in attachment stubs if IncludeDocs is true and the particular attachment is compressed. Ignored if IncludeDocs isn't true. Default is false.
+    .PARAMETER LastEventId
+    Alias of Last-Event-ID header.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -341,6 +345,8 @@ function Get-CouchDBDatabaseChanges () {
         [string] $Feed,
         [int] $Heartbeat,
         [switch] $Attachments,
+        [switch] $AttachmentsEncoding,
+        [int] $LastEventId,
         $Authorization,
         [switch] $Ssl,
         [string] $ProxyServer,
@@ -390,6 +396,16 @@ function Get-CouchDBDatabaseChanges () {
         } else {
             Write-Warning -Message "Attachments ignored because IncludeDocs isn't true."
         }
+    }
+    if ($AttachmentsEncoding.IsPresent) {
+        if ($IncludeDocs.IsPresent) {
+            $parameters += 'att_encoding_info=true'
+        } else {
+            Write-Warning -Message "AttachmentsEncoding ignored because IncludeDocs isn't true."
+        }
+    }
+    if ($LastEventId) { 
+        $parameters += "last-event-id=$LastEventId"
     }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Params $parameters -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
