@@ -292,6 +292,10 @@ function Get-CouchDBDatabaseChanges () {
     Reference to a filter function from a design document that will filter whole stream emitting only filtered events.
     .PARAMETER Continuous
     Sends a line of JSON per event. Keeps the socket open until timeout.
+    .PARAMETER IncludeDocs
+    Include the associated document with each result. If there are Conflicts, only the winning revision is returned.
+    .PARAMETER Conflicts
+    Includes conflicts information in response. Ignored if IncludeDocs isn't true.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -319,6 +323,8 @@ function Get-CouchDBDatabaseChanges () {
         [array] $DocIds,
         [string] $Filter,
         [switch] $Continuous,
+        [switch] $IncludeDocs,
+        [switch] $Conflicts,
         $Authorization,
         [switch] $Ssl,
         [string] $ProxyServer,
@@ -329,17 +335,29 @@ function Get-CouchDBDatabaseChanges () {
         throw "Database $Database is not exists."
     }
     $Document = '_changes'
-    if ($Filter) {
-        $parameters += "filter=$Filter"
-        $Data = "{}"
-    }
+    # Calculate POST parametes and data
     if ($DocIds) {
         $parameters += 'filter=_doc_ids'
         $Data = "{ `"doc_ids`": $($DocIds | ConvertTo-Json -Compress) }"
     }
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Params $parameters -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
+    return
+    # Calculate GET parametes and data
+    if ($Filter) {
+        $parameters += "filter=$Filter"
+    }
     if ($Continuous.IsPresent) { 
         $parameters += 'feed=continuous'
-        $Data = "{}"
+    }
+    if ($IncludeDocs.IsPresent) { 
+        $parameters += 'include_docs=true'
+    }
+    if ($Conflicts.IsPresent) {
+        if ($IncludeDocs.IsPresent) {
+            $parameters += 'conflicts=true'
+        } else {
+            Write-Warning -Message "Ignored because IncludeDocs isn't true."
+        }
     }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Data $Data -Params $parameters -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
