@@ -305,6 +305,8 @@ function Get-CouchDBDatabaseChanges () {
     [eventsource] Sets Event Source Mode. Works the same as Continuous Mode, but sends the events in EventSource format.
     .PARAMETER Heartbeat
     Period in milliseconds after which an empty line is sent in the results. Only applicable for longpoll, continuous, and eventsource feeds. Overrides any timeout to keep the feed alive indefinitely. Default is 60000.
+    .PARAMETER Attachments
+    Include the Base64-encoded content of attachments in the documents that are included if IncludeDocs is true. Ignored if IncludeDocs isn't true. Default is false.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -338,6 +340,7 @@ function Get-CouchDBDatabaseChanges () {
         [ValidateSet("normal", "longpoll", "continuous", "eventsource")]
         [string] $Feed,
         [int] $Heartbeat,
+        [switch] $Attachments,
         $Authorization,
         [switch] $Ssl,
         [string] $ProxyServer,
@@ -369,7 +372,7 @@ function Get-CouchDBDatabaseChanges () {
         if ($IncludeDocs.IsPresent) {
             $parameters += 'conflicts=true'
         } else {
-            Write-Warning -Message "Ignored because IncludeDocs isn't true."
+            Write-Warning -Message "Conflicts ignored because IncludeDocs isn't true."
         }
     }
     if ($Descending.IsPresent) { 
@@ -380,6 +383,13 @@ function Get-CouchDBDatabaseChanges () {
     }
     if ($Heartbeat) { 
         $parameters += "heartbeat=$Heartbeat"
+    }
+    if ($Attachments.IsPresent) {
+        if ($IncludeDocs.IsPresent) {
+            $parameters += 'attachments=true'
+        } else {
+            Write-Warning -Message "Attachments ignored because IncludeDocs isn't true."
+        }
     }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Params $parameters -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
