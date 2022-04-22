@@ -296,6 +296,8 @@ function Get-CouchDBDatabaseChanges () {
     Include the associated document with each result. If there are Conflicts, only the winning revision is returned.
     .PARAMETER Conflicts
     Includes conflicts information in response. Ignored if IncludeDocs isn't true.
+    .PARAMETER Descending
+    Return the change results in descending sequence order (most recent change first).
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -325,6 +327,7 @@ function Get-CouchDBDatabaseChanges () {
         [switch] $Continuous,
         [switch] $IncludeDocs,
         [switch] $Conflicts,
+        [switch] $Descending,
         $Authorization,
         [switch] $Ssl,
         [string] $ProxyServer,
@@ -358,6 +361,9 @@ function Get-CouchDBDatabaseChanges () {
         } else {
             Write-Warning -Message "Ignored because IncludeDocs isn't true."
         }
+    }
+    if ($Descending.IsPresent) { 
+        $parameters += 'descending=true'
     }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Data $Data -Params $parameters -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
