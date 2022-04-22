@@ -303,6 +303,8 @@ function Get-CouchDBDatabaseChanges () {
     [longpoll] Specifies Long Polling Mode. Waits until at least one change has occurred, sends the change, then closes the connection. Most commonly used in conjunction with since=now, to wait for the next change.
     [continuous] Sets Continuous Mode. Sends a line of JSON per event. Keeps the socket open until timeout.
     [eventsource] Sets Event Source Mode. Works the same as Continuous Mode, but sends the events in EventSource format.
+    .PARAMETER Heartbeat
+    Period in milliseconds after which an empty line is sent in the results. Only applicable for longpoll, continuous, and eventsource feeds. Overrides any timeout to keep the feed alive indefinitely. Default is 60000.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -335,6 +337,7 @@ function Get-CouchDBDatabaseChanges () {
         [switch] $Descending,
         [ValidateSet("normal", "longpoll", "continuous", "eventsource")]
         [string] $Feed,
+        [int] $Heartbeat,
         $Authorization,
         [switch] $Ssl,
         [string] $ProxyServer,
@@ -374,6 +377,9 @@ function Get-CouchDBDatabaseChanges () {
     }
     if ($Feed) { 
         $parameters += "feed=$Feed"
+    }
+    if ($Heartbeat) { 
+        $parameters += "heartbeat=$Heartbeat"
     }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Params $parameters -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
