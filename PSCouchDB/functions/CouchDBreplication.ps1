@@ -311,6 +311,8 @@ function Get-CouchDBDatabaseChanges () {
     Include encoding information in attachment stubs if IncludeDocs is true and the particular attachment is compressed. Ignored if IncludeDocs isn't true. Default is false.
     .PARAMETER LastEventId
     Alias of Last-Event-ID header.
+    .PARAMETER Limit
+    Limit number of result rows to the specified value (note that using 0 here has the same effect as 1).
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -347,6 +349,7 @@ function Get-CouchDBDatabaseChanges () {
         [switch] $Attachments,
         [switch] $AttachmentsEncoding,
         [int] $LastEventId,
+        [int] $Limit,
         $Authorization,
         [switch] $Ssl,
         [string] $ProxyServer,
@@ -406,6 +409,9 @@ function Get-CouchDBDatabaseChanges () {
     }
     if ($LastEventId) { 
         $parameters += "last-event-id=$LastEventId"
+    }
+    if ($Limit) { 
+        $parameters += "limit=$Limit"
     }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Params $parameters -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
