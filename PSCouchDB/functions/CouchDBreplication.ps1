@@ -313,6 +313,8 @@ function Get-CouchDBDatabaseChanges () {
     Alias of Last-Event-ID header.
     .PARAMETER Limit
     Limit number of result rows to the specified value (note that using 0 here has the same effect as 1).
+    .PARAMETER Since
+    Start the results from the change immediately after the given update sequence. Can be valid update sequence or now value. Default is 0.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -350,6 +352,7 @@ function Get-CouchDBDatabaseChanges () {
         [switch] $AttachmentsEncoding,
         [int] $LastEventId,
         [int] $Limit,
+        $Since,
         $Authorization,
         [switch] $Ssl,
         [string] $ProxyServer,
@@ -412,6 +415,9 @@ function Get-CouchDBDatabaseChanges () {
     }
     if ($Limit) { 
         $parameters += "limit=$Limit"
+    }
+    if ($Since) { 
+        $parameters += "since=$Since"
     }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Params $parameters -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
