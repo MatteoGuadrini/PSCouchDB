@@ -315,6 +315,9 @@ function Get-CouchDBDatabaseChanges () {
     Limit number of result rows to the specified value (note that using 0 here has the same effect as 1).
     .PARAMETER Since
     Start the results from the change immediately after the given update sequence. Can be valid update sequence or now value. Default is 0.
+    .PARAMETER Style
+    Specifies how many revisions are returned in the changes array. 
+    The default, main_only, will only return the current "winning" revision; all_docs will return all leaf revisions (including conflicts and deleted former conflicts).
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -353,6 +356,7 @@ function Get-CouchDBDatabaseChanges () {
         [int] $LastEventId,
         [int] $Limit,
         $Since,
+        [string] $Style,
         $Authorization,
         [switch] $Ssl,
         [string] $ProxyServer,
@@ -418,6 +422,9 @@ function Get-CouchDBDatabaseChanges () {
     }
     if ($Since) { 
         $parameters += "since=$Since"
+    }
+    if ($Style) { 
+        $parameters += "style=$Style"
     }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Params $parameters -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
