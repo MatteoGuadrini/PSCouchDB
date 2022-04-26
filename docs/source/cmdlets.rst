@@ -282,7 +282,7 @@ Replication
 
 .. code-block:: powershell
 
-    Get-CouchDBDatabaseChanges [-Server <String>] [-Port <Int32>] [-Database] <String> [-DocIds <Array>] [-Filter <String>] [-Continuous] [-IncludeDocs] [-Conflicts] [-Descending] [-Feed <String>] [-Heartbeat <Int32>] [-Attachments] [-AttachmentsEncoding] [-LastEventId <Int32>] [-Limit <Int32>] [-Since <Object>] [-Style <String>] [-Timeout <Int32>] [-Authorization <Object>] [-Ssl] [-ProxyServer <String>] [-ProxyCredential <PSCredential>] [<CommonParameters>]
+    Get-CouchDBDatabaseChanges [-Server <String>] [-Port <Int32>] [-Database] <String> [-DocIds <Array>] [-Filter <String>] [-Continuous] [-IncludeDocs] [-Conflicts] [-Descending] [-Feed <String>] [-Heartbeat <Int32>] [-Attachments] [-AttachmentsEncoding] [-LastEventId <Int32>] [-Limit <Int32>] [-Since <Object>] [-Style <String>] [-Timeout <Int32>] [-View <String>] [-Authorization <Object>] [-Ssl] [-ProxyServer <String>] [-ProxyCredential <PSCredential>] [<CommonParameters>]
 
 **Set-CouchDBReplication**
 

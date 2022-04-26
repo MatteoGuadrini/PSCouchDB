@@ -321,6 +321,8 @@ function Get-CouchDBDatabaseChanges () {
     .PARAMETER Timeout
     Maximum period in milliseconds to wait for a change before the response is sent, even if there are no results. Only applicable for longpoll or continuous feeds. 
     Default value is specified by chttpd/changes_timeout configuration option. Note that 60000 value is also the default maximum timeout to prevent undetected dead connections.
+    .PARAMETER View
+    Allows to use view functions as filters. Documents counted as "passed" for view filter in case if map function emits at least one record for them. See _view for more info.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -361,6 +363,7 @@ function Get-CouchDBDatabaseChanges () {
         $Since,
         [string] $Style,
         [int] $Timeout,
+        [string] $View,
         $Authorization,
         [switch] $Ssl,
         [string] $ProxyServer,
@@ -432,6 +435,9 @@ function Get-CouchDBDatabaseChanges () {
     }
     if ($Timeout) { 
         $parameters += "timeout=$Timeout"
+    }
+    if ($View) { 
+        $parameters += "view=$View"
     }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Params $parameters -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
