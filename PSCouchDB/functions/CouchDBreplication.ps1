@@ -318,6 +318,9 @@ function Get-CouchDBDatabaseChanges () {
     .PARAMETER Style
     Specifies how many revisions are returned in the changes array. 
     The default, main_only, will only return the current "winning" revision; all_docs will return all leaf revisions (including conflicts and deleted former conflicts).
+    .PARAMETER Timeout
+    Maximum period in milliseconds to wait for a change before the response is sent, even if there are no results. Only applicable for longpoll or continuous feeds. 
+    Default value is specified by chttpd/changes_timeout configuration option. Note that 60000 value is also the default maximum timeout to prevent undetected dead connections.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -357,6 +360,7 @@ function Get-CouchDBDatabaseChanges () {
         [int] $Limit,
         $Since,
         [string] $Style,
+        [int] $Timeout,
         $Authorization,
         [switch] $Ssl,
         [string] $ProxyServer,
@@ -425,6 +429,9 @@ function Get-CouchDBDatabaseChanges () {
     }
     if ($Style) { 
         $parameters += "style=$Style"
+    }
+    if ($Timeout) { 
+        $parameters += "timeout=$Timeout"
     }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Params $parameters -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
