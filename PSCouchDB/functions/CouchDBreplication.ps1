@@ -323,6 +323,10 @@ function Get-CouchDBDatabaseChanges () {
     Default value is specified by chttpd/changes_timeout configuration option. Note that 60000 value is also the default maximum timeout to prevent undetected dead connections.
     .PARAMETER View
     Allows to use view functions as filters. Documents counted as "passed" for view filter in case if map function emits at least one record for them. See _view for more info.
+    .PARAMETER SeqInterval
+    When fetching changes in a batch, setting the seq_interval parameter tells CouchDB to only calculate the update seq with every Nth result returned. 
+    By setting seq_interval=<batch size> , where <batch size> is the number of results requested per batch, load can be reduced on the source CouchDB database; 
+    computing the seq value across many shards (esp. in highly-sharded databases) is expensive in a heavily loaded CouchDB cluster.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -364,6 +368,7 @@ function Get-CouchDBDatabaseChanges () {
         [string] $Style,
         [int] $Timeout,
         [string] $View,
+        [int] $SeqInterval,
         $Authorization,
         [switch] $Ssl,
         [string] $ProxyServer,
@@ -438,6 +443,9 @@ function Get-CouchDBDatabaseChanges () {
     }
     if ($View) { 
         $parameters += "view=$View"
+    }
+    if ($SeqInterval) { 
+        $parameters += "seq_interval=$SeqInterval"
     }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Params $parameters -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
