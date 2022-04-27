@@ -138,6 +138,8 @@ function Get-CouchDBNode () {
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
     The CouchDB server port. Default is 5984.
+    .PARAMETER Node
+    Erlang node name of the server that processes the request. Default is _local.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -161,12 +163,13 @@ function Get-CouchDBNode () {
         [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
+        [string] $Node = '_local',
         $Authorization,
         [switch] $Ssl,
         [string] $ProxyServer,
         [pscredential] $ProxyCredential
     )
-    $Database = "_node/_local"
+    $Database = "_node/$Node"
     Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
