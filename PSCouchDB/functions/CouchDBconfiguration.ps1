@@ -142,6 +142,8 @@ function Get-CouchDBNode () {
     Erlang node name of the server that processes the request. Default is _local.
     .PARAMETER Membership
     Displays the nodes that are part of the cluster as cluster_nodes.
+    .PARAMETER Versions
+    ICU driver and collator algorithm versions are returned.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -167,6 +169,7 @@ function Get-CouchDBNode () {
         [int] $Port,
         [string] $Node = '_local',
         [switch] $Membership,
+        [switch] $Versions,
         $Authorization,
         [switch] $Ssl,
         [string] $ProxyServer,
@@ -174,6 +177,8 @@ function Get-CouchDBNode () {
     )
     if ($Membership.IsPresent) {
         $Database = "_membership"
+    } elseif ($Versions.IsPresent) {
+        $Database = "_node/$Node/_versions"
     } else {
         $Database = "_node/$Node"
     }
