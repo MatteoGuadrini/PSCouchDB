@@ -134,6 +134,8 @@ function Get-CouchDBNode () {
     CouchDB API:
         GET /_membership
         GET /_node/{node-name}
+        GET /_node/{node-name}/_versions
+        GET /_node/{node-name}/_prometheus
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -144,6 +146,8 @@ function Get-CouchDBNode () {
     Displays the nodes that are part of the cluster as cluster_nodes.
     .PARAMETER Versions
     ICU driver and collator algorithm versions are returned.
+    .PARAMETER Prometheus
+    The _prometheus resource returns a text/plain response that consolidates our /_node/{node-name}/_stats, and /_node/{node-name}/_system endpoints. The format is determined by Prometheus.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -170,6 +174,7 @@ function Get-CouchDBNode () {
         [string] $Node = '_local',
         [switch] $Membership,
         [switch] $Versions,
+        [switch] $Prometheus,
         $Authorization,
         [switch] $Ssl,
         [string] $ProxyServer,
@@ -179,6 +184,8 @@ function Get-CouchDBNode () {
         $Database = "_membership"
     } elseif ($Versions.IsPresent) {
         $Database = "_node/$Node/_versions"
+    } elseif ($Prometheus.IsPresent) {
+        $Database = "_node/$Node/_prometheus"
     } else {
         $Database = "_node/$Node"
     }

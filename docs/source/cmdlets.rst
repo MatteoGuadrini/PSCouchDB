@@ -59,7 +59,7 @@ Configuration
 
 .. code-block:: powershell
 
-    Get-CouchDBNode [[-Server] <String>] [[-Port] <Int32>] [[-Node] <String>] [-Membership] [-Versions] [[-Authorization] <Object>] [-Ssl] [[-ProxyServer] <String>] [[-ProxyCredential] <PSCredential>] [<CommonParameters>]
+    Get-CouchDBNode [[-Server] <String>] [[-Port] <Int32>] [[-Node] <String>] [-Membership] [-Versions] [-Prometheus] [[-Authorization] <Object>] [-Ssl] [[-ProxyServer] <String>] [[-ProxyCredential] <PSCredential>] [<CommonParameters>]
 
 **Add-CouchDBNode**
 
