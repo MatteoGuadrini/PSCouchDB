@@ -5,6 +5,9 @@ BeforeAll {
 
 Describe "Get-CouchDBServer" {
     It "Get server information." {
-        Get-CouchDBServer | Should -Contain 'CouchDB'
+        (Get-CouchDBServer).couchdb | Should -Be 'Welcome'
+    }
+    It "Get server status." {
+        (Get-CouchDBServer -Status).status | Should -Be 'ok'
     }
 }
