@@ -11,3 +11,9 @@ Describe "Get-CouchDBServer" {
         (Get-CouchDBServer -Status).status | Should -Be 'ok'
     }
 }
+
+Describe "Get-CouchDBActiveTask" {
+    It "List of running tasks, including the task type, name, status and process ID." {
+        Get-CouchDBActiveTask
+    }
+}
