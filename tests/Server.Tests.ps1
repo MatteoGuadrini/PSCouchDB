@@ -17,3 +17,9 @@ Describe "Get-CouchDBActiveTask" {
         Get-CouchDBActiveTask
     }
 }
+
+Describe "Get-CouchDBClusterSetup" {
+    It "Get a cluster setup." {
+        (Get-CouchDBClusterSetup).state | Should -BeLike '*enabled*'
+    }
+}
