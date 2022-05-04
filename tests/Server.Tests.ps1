@@ -41,3 +41,9 @@ Describe "Search-CouchDBAnalyze" {
         (Search-CouchDBAnalyze -Field "english" -Text "running" -Authorization "admin:password").tokens | Should -Be @("run")
     }
 }
+
+Describe "Get-CouchDBReshards" {
+    It "State of resharding on the cluster." {
+        (Get-CouchDBReshards -Jobs -Authorization "admin:password").jobs | Should -BeLike "*"
+    }
+}
