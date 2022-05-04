@@ -29,3 +29,9 @@ Describe "Measure-CouchDBStatistics" {
         (Measure-CouchDBStatistics).type | Should -Be 'histogram'
     }
 }
+
+Describe "New-CouchDBUuids" {
+    It "Create a new uuids." {
+        (New-CouchDBUuids -Count 3).uuids.Length | Should -Be 3
+    }
+}
