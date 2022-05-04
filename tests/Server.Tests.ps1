@@ -23,3 +23,9 @@ Describe "Get-CouchDBClusterSetup" {
         (Get-CouchDBClusterSetup).state | Should -BeLike '*enabled*'
     }
 }
+
+Describe "Measure-CouchDBStatistics" {
+    It "Measure server statistics." {
+        (Measure-CouchDBStatistics).type | Should -Be 'histogram'
+    }
+}
