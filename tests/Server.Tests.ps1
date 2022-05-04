@@ -35,3 +35,9 @@ Describe "New-CouchDBUuids" {
         (New-CouchDBUuids -Count 3).uuids.Length | Should -Be 3
     }
 }
+
+Describe "Search-CouchDBAnalyze" {
+    It "Tests the results of Lucene analyzer tokenization on sample text." {
+        (Search-CouchDBAnalyze -Field "english" -Text "running" -Authorization "admin:password").tokens | Should -Be @("run")
+    }
+}
