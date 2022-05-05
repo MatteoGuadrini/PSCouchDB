@@ -59,3 +59,12 @@ Describe "Get-CouchDBDatabaseUpdates" {
         (Get-CouchDBDatabaseUpdates -Authorization "admin:password").results | Should -Type [array]
     }
 }
+
+Describe "Set-CouchDBProxy" {
+    It "Get database events." {
+        $password = ConvertTo-SecureString 'password' -AsPlainText -Force
+        $credential = New-Object System.Management.Automation.PSCredential ('admin', $password)
+        Set-CouchDBProxy -Server 'http://myproxy.local:8080' -Credential $credential
+        $Global:PSDefaultParameterValues["*CouchDB*:ProxyCredential"] | Should -Be 'http://myproxy.local:8080'
+    }
+}
