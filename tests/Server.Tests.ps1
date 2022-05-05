@@ -53,3 +53,9 @@ Describe "Set-CouchDBReshards" {
         Set-CouchDBReshards -State running -StateReason "Pester start" -Authorization "admin:password" | Should -Type [array]
     }
 }
+
+Describe "Get-CouchDBDatabaseUpdates" {
+    It "Get database events." {
+        (Get-CouchDBDatabaseUpdates -Authorization "admin:password").results | Should -Type [array]
+    }
+}
