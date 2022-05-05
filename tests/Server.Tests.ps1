@@ -44,6 +44,12 @@ Describe "Search-CouchDBAnalyze" {
 
 Describe "Get-CouchDBReshards" {
     It "State of resharding on the cluster." {
-        (Get-CouchDBReshards -Jobs -Authorization "admin:password").jobs | Should -BeLike "*"
+        (Get-CouchDBReshards -Jobs -Authorization "admin:password").jobs | Should -Type [array]
+    }
+}
+
+Describe "Set-CouchDBReshards" {
+    It "Change the resharding state on the cluster." {
+        Set-CouchDBReshards -State running -StateReason "Pester start" -Authorization "admin:password" | Should -Type [array]
     }
 }
