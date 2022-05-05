@@ -61,10 +61,17 @@ Describe "Get-CouchDBDatabaseUpdates" {
 }
 
 Describe "Set-CouchDBProxy" {
-    It "Get database events." {
+    It "Set proxy server and credential." {
         $password = ConvertTo-SecureString 'password' -AsPlainText -Force
         $credential = New-Object System.Management.Automation.PSCredential ('admin', $password)
         Set-CouchDBProxy -Server 'http://myproxy.local:8080' -Credential $credential
         $Global:PSDefaultParameterValues["*CouchDB*:ProxyCredential"] | Should -Be 'http://myproxy.local:8080'
+    }
+}
+
+Describe "Remove-CouchDBProxy" {
+    It "Remove proxy server and credential." {
+        Remove-CouchDBProxy
+        $Global:PSDefaultParameterValues["*CouchDB*:ProxyCredential"] | Should -Be $null
     }
 }
