@@ -3,12 +3,13 @@ TOPIC
 SHORT DESCRIPTION
 	Advanced CLI for CouchDB server
 LONG DESCRIPTION
-	This module is a coplete CLI for CouchDB server database.
+	This module is a complete CLI for CouchDB server database.
 	With this you can:
 		- Configure server
-		- Manage database (create, modify, delete)
-		- Manage documents (create, modify, delete)
-		- Manage design documents (create, modify, delete)
+		- Manage database (create, read, update, delete)
+		- Manage documents (create, read, update, delete)
+		- Manage design documents (create, read, update, delete)
+		- Manage permissions and authentication
 		- Find documents in a database
 		- Configure and manage replica
 		- Configure and manage node of cluster

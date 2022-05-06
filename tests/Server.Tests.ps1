@@ -44,19 +44,19 @@ Describe "Search-CouchDBAnalyze" {
 
 Describe "Get-CouchDBReshards" {
     It "State of resharding on the cluster." {
-        (Get-CouchDBReshards -Jobs -Authorization "admin:password").jobs | Should -Type [array]
+        (Get-CouchDBReshards -Jobs -Authorization "admin:password").jobs | Should -BeLike '*'
     }
 }
 
 Describe "Set-CouchDBReshards" {
     It "Change the resharding state on the cluster." {
-        Set-CouchDBReshards -State running -StateReason "Pester start" -Authorization "admin:password" | Should -Type [array]
+        Set-CouchDBReshards -State running -StateReason "Pester start" -Authorization "admin:password" | Should -BeLike '*'
     }
 }
 
 Describe "Get-CouchDBDatabaseUpdates" {
     It "Get database events." {
-        (Get-CouchDBDatabaseUpdates -Authorization "admin:password").results | Should -Type [array]
+        (Get-CouchDBDatabaseUpdates -Authorization "admin:password").results | Should -BeLike '*'
     }
 }
 
