@@ -10,4 +10,7 @@ Describe "Get-CouchDBNode" {
     It "Get server memberships." {
         (Get-CouchDBNode -Authorization "admin:password" -Membership).all_nodes | Should -BeLike '*'
     }
+    It "Get node versions." {
+        (Get-CouchDBNode -Authorization "admin:password" -Versions).all_nodes | Should -BeLike '*'
+    }
 }
