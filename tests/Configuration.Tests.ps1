@@ -11,6 +11,12 @@ Describe "Get-CouchDBNode" {
         (Get-CouchDBNode -Authorization "admin:password" -Membership).all_nodes | Should -BeLike '*'
     }
     It "Get node versions." {
-        (Get-CouchDBNode -Authorization "admin:password" -Versions).all_nodes | Should -BeLike '*'
+        Get-CouchDBNode -Authorization "admin:password" -Versions | Should -BeLike '*'
+    }
+}
+
+Describe "Add-CouchDBNode" {
+    It "Add server nodes." {
+        Add-CouchDBNode -BindAddress "couchdb_test" -Authorization "admin:password" | Should -BeLike '*'
     }
 }
