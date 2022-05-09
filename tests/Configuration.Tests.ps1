@@ -26,3 +26,9 @@ Describe "Remove-CouchDBNode" {
         Remove-CouchDBNode -Node "couchdb_test@localhost" -Authorization "admin:password" | Should -BeLike '*'
     }
 }
+
+Describe "Get-CouchDBConfiguration" {
+    It "Get configuration." {
+        Get-CouchDBConfiguration -Session "log" -Key "level" -Authorization "admin:password" | Should -BeLike '*'
+    }
+}
