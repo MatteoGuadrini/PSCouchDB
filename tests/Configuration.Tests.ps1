@@ -32,3 +32,9 @@ Describe "Get-CouchDBConfiguration" {
         Get-CouchDBConfiguration -Session "log" -Key "level" -Authorization "admin:password" | Should -BeLike '*'
     }
 }
+
+Describe "Set-CouchDBConfiguration" {
+    It "Set element configuration." {
+        Set-CouchDBConfiguration -Element "log" -Key "level" -Value "info" -Authorization "admin:password" | Should -BeLike '*'
+    }
+}
