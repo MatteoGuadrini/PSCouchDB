@@ -20,3 +20,9 @@ Describe "Add-CouchDBNode" {
         Add-CouchDBNode -BindAddress "couchdb_test" -Authorization "admin:password" | Should -BeLike '*'
     }
 }
+
+Describe "Remove-CouchDBNode" {
+    It "Remove server nodes." {
+        Remove-CouchDBNode -Node "couchdb_test@localhost" -Authorization "admin:password" | Should -BeLike '*'
+    }
+}
