@@ -9,3 +9,9 @@ Describe "Set-CouchDBSession" {
         Set-CouchDBSession -UserId admin -Password $password | Should -BeLike '*'
     }
 }
+
+Describe "Get-CouchDBSession" {
+    It "Get cookie authentication." {
+        Get-CouchDBSession | Should -BeLike '*'
+    }
+}
