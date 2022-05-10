@@ -15,3 +15,10 @@ Describe "Get-CouchDBSession" {
         Get-CouchDBSession | Should -BeLike '*'
     }
 }
+
+Describe "Remove-CouchDBSession" {
+    It "Remove cookie authentication." {
+        Remove-CouchDBSession
+        $Global:CouchDBCredential | Should -Be $null
+    }
+}
