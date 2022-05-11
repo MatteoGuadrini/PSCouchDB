@@ -16,3 +16,23 @@ Describe "New-CouchDBUser" {
         (New-CouchDBAdmin -Userid newadminuser -Password $password -Authorization "admin:password").ok | Should -Be "true"
     }
 }
+
+Describe "Grant-CouchDBDatabasePermission" {
+    It "Grant the security object for the given database." {
+        (New-CouchDBDatabase -Database test -Authorization "admin:password").ok | Should -Be "true"
+        $sec = @"
+    {
+        "admins": {
+            "names": [],
+            "roles": []
+        },
+        "members": {
+            "names": ["reader"],
+            "roles": []
+        }
+    }
+"@
+    Grant-CouchDBDatabasePermission -Database test -Data $sec -Authorization "admin:password" | Should -Be "true"
+    (Remove-CouchDBDatabase -Database test -Authorization "admin:password").ok | Should -Be "true"
+    }
+}
