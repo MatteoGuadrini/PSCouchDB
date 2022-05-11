@@ -33,6 +33,11 @@ Describe "Grant-CouchDBDatabasePermission" {
     }
 "@
     Grant-CouchDBDatabasePermission -Database test -Data $sec -Authorization "admin:password" | Should -Be "true"
-    (Remove-CouchDBDatabase -Database test -Authorization "admin:password").ok | Should -Be "true"
+    }
+}
+
+Describe "Get-CouchDBDatabaseSecurity" {
+    It "Get the current security object from the specified database." {
+        Get-CouchDBDatabaseSecurity -Database test -Authorization "admin:password" | Should -BeLike '*'
     }
 }
