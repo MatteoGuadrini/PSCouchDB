@@ -9,3 +9,10 @@ Describe "New-CouchDBAdmin" {
         (New-CouchDBAdmin -Userid newadminuser -Password $password -Authorization "admin:password").newadminuser | Should -BeLike '*'
     }
 }
+
+Describe "New-CouchDBUser" {
+    It "Create a new user." {
+        $password = "password" | ConvertTo-SecureString -AsPlainText -Force
+        (New-CouchDBAdmin -Userid newadminuser -Password $password -Authorization "admin:password").ok | Should -Be "true"
+    }
+}
