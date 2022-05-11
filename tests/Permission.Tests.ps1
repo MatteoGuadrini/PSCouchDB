@@ -41,3 +41,9 @@ Describe "Get-CouchDBDatabaseSecurity" {
         Get-CouchDBDatabaseSecurity -Database test -Authorization "admin:password" | Should -BeLike '*'
     }
 }
+
+Describe "Revoke-CouchDBDatabasePermission" {
+    It "Revoke all permission on database." {
+        Revoke-CouchDBDatabasePermission -Database test -Authorization "admin:password"
+    }
+}
