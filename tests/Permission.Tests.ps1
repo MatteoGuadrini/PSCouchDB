@@ -23,6 +23,13 @@ Describe "New-CouchDBUser" {
     }
 }
 
+Describe "Set-CouchDBUser" {
+    It "Set an user properties." {
+        $password = "newpassword" | ConvertTo-SecureString -AsPlainText -Force
+        (Set-CouchDBUser -Userid test_user -Password $password -Revision (Get-CouchDBUser -Userid test_user -Authorization "admin:password").rev -Authorization "admin:password").ok | Should -Be "true"
+    }
+}
+
 Describe "Remove-CouchDBUser" {
     It "Remove an user." {
         (Remove-CouchDBUser -Userid test_user -Revision (Get-CouchDBUser -Userid test_user -Authorization "admin:password").rev -Authorization "admin:password" -Force).ok | Should -Be "true"
