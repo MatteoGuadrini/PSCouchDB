@@ -12,7 +12,7 @@ Describe "New-CouchDBAdmin" {
 
 Describe "Remove-CouchDBAdmin" {
     It "Remove an admin user." {
-        (Remove-CouchDBAdmin -Userid newadminuser -Authorization "admin:password").ok | Should -Be "true"
+        (Remove-CouchDBAdmin -Userid newadminuser -Authorization "admin:password" -Force).ok | Should -Be "true"
     }
 }
 
@@ -20,6 +20,12 @@ Describe "New-CouchDBUser" {
     It "Create a new user." {
         $password = "password" | ConvertTo-SecureString -AsPlainText -Force
         (New-CouchDBAdmin -Userid newadminuser -Password $password -Authorization "admin:password").ok | Should -Be "true"
+    }
+}
+
+Describe "Remove-CouchDBUser" {
+    It "Remove an user." {
+        (Remove-CouchDBUser -Userid test_user -Revision (Get-CouchDBUser -Userid test_user -Authorization "admin:password").rev -Authorization "admin:password" -Force).ok | Should -Be "true"
     }
 }
 
