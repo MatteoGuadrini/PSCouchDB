@@ -10,6 +10,13 @@ Describe "New-CouchDBAdmin" {
     }
 }
 
+Describe "Set-CouchDBAdmin" {
+    It "Reset password of admin user." {
+        $password = "newpassword" | ConvertTo-SecureString -AsPlainText -Force
+        (Set-CouchDBAdmin -Userid admin -Password $password -Authorization "admin:password").ok | Should -Be "true"
+    }
+}
+
 Describe "Remove-CouchDBAdmin" {
     It "Remove an admin user." {
         (Remove-CouchDBAdmin -Userid newadminuser -Authorization "admin:password" -Force).ok | Should -Be "true"
