@@ -3,6 +3,12 @@ BeforeAll {
     . ../PSCouchDB/functions/CouchDBdatabase.ps1
 }
 
+Describe "New-CouchDBDatabase" {
+    It "Create a new database." {
+        (New-CouchDBDatabase -Database test -Authorization "admin:password").ok | Should -Be "true"
+    }
+}
+
 Describe "Test-CouchDBDatabase" {
     It "Test if database exists." {
         Test-CouchDBDatabase -Database test | Should -BeLike '*'
