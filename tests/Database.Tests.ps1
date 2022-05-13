@@ -28,9 +28,15 @@ Describe "Copy-CouchDBDatabase" {
     }
 }
 
+Describe "New-CouchDBIndex" {
+    It "Create a new index on database." {
+        (New-CouchDBIndex -Database test -Name "test_index" -Fields name,surname -Authorization "admin:password").result | Should -Be "created"
+    }
+}
+
 Describe "Get-CouchDBIndex" {
     It "Get indexes on database." {
-        (Get-CouchDBIndex -Database test).indexes | Should -Be "true"
+        (Get-CouchDBIndex -Database test).indexes | Should -BeLike "*"
     }
 }
 
