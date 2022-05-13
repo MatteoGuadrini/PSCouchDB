@@ -5,6 +5,12 @@ BeforeAll {
 
 Describe "Test-CouchDBDatabase" {
     It "Test if database exists." {
-        Test-CouchDBDatabase -Database _users | Should -BeLike '*'
+        Test-CouchDBDatabase -Database test | Should -BeLike '*'
+    }
+}
+
+Describe "Get-CouchDBDatabase" {
+    It "Get a database information." {
+        (Get-CouchDBDatabase -Database test).db_name | Should -Be "test"
     }
 }
