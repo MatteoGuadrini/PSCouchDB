@@ -46,6 +46,12 @@ Describe "Get-CouchDBDatabaseInfo" {
     }
 }
 
+Describe "Get-CouchDBDatabaseShards" {
+    It "Get shards database list." {
+        (Get-CouchDBDatabaseShards -Database test).shards | Should -BeLike "*"
+    }
+}
+
 Describe "Remove-CouchDBIndex" {
     It "Remove a index on a database." {
         $ddoc = Get-CouchDBIndex -Database test -Authorization "admin:password"
