@@ -52,6 +52,12 @@ Describe "Get-CouchDBDatabaseShards" {
     }
 }
 
+Describe "Sync-CouchDBDatabaseShards" {
+    It "Sync shards on database." {
+        (Sync-CouchDBDatabaseShards -Database test -Authorization "admin:password").ok | Should -Be "true"
+    }
+}
+
 Describe "Remove-CouchDBIndex" {
     It "Remove a index on a database." {
         $ddoc = Get-CouchDBIndex -Database test -Authorization "admin:password"
