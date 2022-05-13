@@ -27,3 +27,10 @@ Describe "Copy-CouchDBDatabase" {
         (Get-CouchDBDatabase -Database test_new).db_name | Should -Be "test_new"
     }
 }
+
+Describe "Remove-CouchDBDatabase" {
+    It "Remove a database." {
+        (Remove-CouchDBDatabase -Database test -Authorization "admin:password").ok | Should -Be "true"
+        (Remove-CouchDBDatabase -Database test_new -Authorization "admin:password").ok | Should -Be "true"
+    }
+}
