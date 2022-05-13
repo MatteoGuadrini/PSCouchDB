@@ -28,6 +28,12 @@ Describe "Copy-CouchDBDatabase" {
     }
 }
 
+Describe "Get-CouchDBIndex" {
+    It "Get indexes on database." {
+        (Get-CouchDBIndex -Database test).indexes | Should -Be "true"
+    }
+}
+
 Describe "Remove-CouchDBDatabase" {
     It "Remove a database." {
         (Remove-CouchDBDatabase -Database test -Authorization "admin:password").ok | Should -Be "true"
