@@ -40,9 +40,16 @@ Describe "Get-CouchDBIndex" {
     }
 }
 
+Describe "Remove-CouchDBIndex" {
+    It "Remove a index on a database." {
+        $ddoc = Get-CouchDBIndex -Database test -Authorization "admin:password"
+        (Remove-CouchDBIndex -Database test -DesignDoc $ddoc.indexes[1].ddoc -Name $ddoc.indexes[1].name -Authorization "admin:password" -Force).ok | Should -Be "true"
+    }
+}
+
 Describe "Remove-CouchDBDatabase" {
     It "Remove a database." {
-        (Remove-CouchDBDatabase -Database test -Authorization "admin:password").ok | Should -Be "true"
-        (Remove-CouchDBDatabase -Database test_new -Authorization "admin:password").ok | Should -Be "true"
+        (Remove-CouchDBDatabase -Database test -Authorization "admin:password" -Force).ok | Should -Be "true"
+        (Remove-CouchDBDatabase -Database test_new -Authorization "admin:password" -Force).ok | Should -Be "true"
     }
 }

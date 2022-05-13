@@ -559,7 +559,7 @@ function Remove-CouchDBIndex () {
     Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     $ddoc = Get-CouchDBIndex -Database test -Authorization "admin:password"
-    Remove-CouchDBIndex -Database test -DesignDoc $ddoc.indexes.ddoc[1] -Name $ddoc.indexes.name[1] -Authorization "admin:password"
+    Remove-CouchDBIndex -Database test -DesignDoc $ddoc.indexes[1].ddoc -Name $ddoc.indexes[1].name -Authorization "admin:password"
     The example removes an index document on database "test".
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/databases.html#remove-a-index
