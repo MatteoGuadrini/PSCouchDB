@@ -40,6 +40,12 @@ Describe "Get-CouchDBIndex" {
     }
 }
 
+Describe "Get-CouchDBDatabaseInfo" {
+    It "Get a databases information." {
+        Get-CouchDBDatabaseInfo -Keys test | Should -BeLike "*"
+    }
+}
+
 Describe "Remove-CouchDBIndex" {
     It "Remove a index on a database." {
         $ddoc = Get-CouchDBIndex -Database test -Authorization "admin:password"
