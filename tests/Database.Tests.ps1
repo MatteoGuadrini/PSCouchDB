@@ -65,6 +65,12 @@ Describe "Remove-CouchDBIndex" {
     }
 }
 
+Describe "Compress-CouchDBDatabase" {
+    It "Compress database." {
+        (Compress-CouchDBDatabase -Database test -Authorization "admin:password").ok | Should -Be "true"
+    }
+}
+
 Describe "Remove-CouchDBDatabase" {
     It "Remove a database." {
         (Remove-CouchDBDatabase -Database test -Authorization "admin:password" -Force).ok | Should -Be "true"
