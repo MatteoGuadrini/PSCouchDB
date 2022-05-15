@@ -71,6 +71,12 @@ Describe "Compress-CouchDBDatabase" {
     }
 }
 
+Describe "Write-CouchDBFullCommit" {
+    It "Commits any recent changes." {
+        (Write-CouchDBFullCommit -Database test -Authorization "admin:password").ok | Should -Be "true"
+    }
+}
+
 Describe "Remove-CouchDBDatabase" {
     It "Remove a database." {
         (Remove-CouchDBDatabase -Database test -Authorization "admin:password" -Force).ok | Should -Be "true"
