@@ -77,6 +77,12 @@ Describe "Write-CouchDBFullCommit" {
     }
 }
 
+Describe "Clear-CouchDBView" {
+    It "Clean view indexes." {
+        (Clear-CouchDBView -Database test -Authorization "admin:password").ok | Should -Be "true"
+    }
+}
+
 Describe "Remove-CouchDBDatabase" {
     It "Remove a database." {
         (Remove-CouchDBDatabase -Database test -Authorization "admin:password" -Force).ok | Should -Be "true"
