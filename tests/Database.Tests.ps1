@@ -83,6 +83,12 @@ Describe "Clear-CouchDBView" {
     }
 }
 
+Describe "Get-CouchDBDatabasePurgedLimit" {
+    It "Get a database purged documents limit." {
+        Get-CouchDBDatabasePurgedLimit -Database test | Should -Be 1000
+    }
+}
+
 Describe "Remove-CouchDBDatabase" {
     It "Remove a database." {
         (Remove-CouchDBDatabase -Database test -Authorization "admin:password" -Force).ok | Should -Be "true"
