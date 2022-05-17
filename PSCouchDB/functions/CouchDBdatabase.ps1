@@ -1111,7 +1111,7 @@ function Get-CouchDBRevisionDifference () {
 function Get-CouchDBRevisionLimit () {
     <#
     .SYNOPSIS
-    Get revision's limit.
+    Get revisions limit.
     .DESCRIPTION
     Gets the current revs_limit (revision limit) setting.
     .NOTES
@@ -1185,7 +1185,7 @@ function Set-CouchDBRevisionLimit () {
     .PARAMETER ProxyCredential
     Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
-    Set-CouchDBRevisionLimit -Database test -Limit 100 -Authorization "admin:password"
+    Set-CouchDBRevisionLimit -Database test -Limit 1000 -Authorization "admin:password"
     This example set revision limit number to 1000 on database "test".
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/databases.html#set-revision-limit

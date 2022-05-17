@@ -96,8 +96,14 @@ Describe "Set-CouchDBDatabasePurgedLimit" {
 }
 
 Describe "Get-CouchDBRevisionLimit" {
-    It "Get revision's limit." {
+    It "Get revisions limit." {
         Get-CouchDBRevisionLimit -Database test | Should -Be 1000
+    }
+}
+
+Describe "Set-CouchDBRevisionLimit" {
+    It "Set revisions limit." {
+        (Set-CouchDBRevisionLimit -Database test -Limit 1000 -Authorization "admin:password").ok | Should -Be "true"
     }
 }
 
