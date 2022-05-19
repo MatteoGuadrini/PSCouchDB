@@ -9,3 +9,10 @@ Describe "Get-CouchDBDocument" {
         (Get-CouchDBDocument -Database test -Document "Hitchhikers")._id | Should -Be "Hitchhikers"
     }
 }
+
+Describe "New-CouchDBDocument" {
+    It "Create a new document." {
+        $data = @{"answer"=42; "ask"="Ultimate Question of Life, the Universe and Everything"}
+        (New-CouchDBDocument -Database test -Document "Hitchhikers" -Data $data -Partition Guide -Authorization "admin:password").ok | Should -Be 'true'
+    }
+}
