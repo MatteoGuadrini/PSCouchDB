@@ -16,3 +16,7 @@ Describe "New-CouchDBDocument" {
         (New-CouchDBDocument -Database test -Document "Hitchhikers" -Data $data -Partition Guide -Authorization "admin:password").ok | Should -Be 'true'
     }
 }
+
+AfterAll {
+    Remove-CouchDBDatabase -Database test -Authorization "admin:password" -Force
+}
