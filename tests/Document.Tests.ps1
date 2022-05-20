@@ -24,6 +24,12 @@ Describe "Set-CouchDBDocument" {
     }
 }
 
+Describe "Copy-CouchDBDocument" {
+    It "Copy from document." {
+        (Copy-CouchDBDocument -Database test -Document "Hitchhikers" -Destination "Hitchhikers Guide" -Authorization "admin:password").ok | Should -Be 'true'
+    }
+}
+
 Describe "Remove-CouchDBDocument" {
     It "Remove a document.." {
         (Remove-CouchDBDocument -Database test -Document "Hitchhikers" -Revision (Get-CouchDBDocument -Database test -Document "Hitchhikers")._rev -Force -Authorization "admin:password").ok | Should -Be 'true'
