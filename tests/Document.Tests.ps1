@@ -24,6 +24,12 @@ Describe "Set-CouchDBDocument" {
     }
 }
 
+Describe "Remove-CouchDBDocument" {
+    It "Remove a document.." {
+        (Remove-CouchDBDocument -Database test -Document "Hitchhikers" -Revision (Get-CouchDBDocument -Database test -Document "Hitchhikers")._rev -Force -Authorization "admin:password").ok | Should -Be 'true'
+    }
+}
+
 AfterAll {
     Remove-CouchDBDatabase -Database test -Authorization "admin:password" -Force
 }
