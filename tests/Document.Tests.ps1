@@ -30,6 +30,14 @@ Describe "Copy-CouchDBDocument" {
     }
 }
 
+Describe "Get-CouchDBBulkDocument" {
+    It "Get a bulk document." {
+        $bdocs = New-CouchDBObject -TypeName PSCouchDBBulkDocument -ArgumentList '{"_id":"Hitchhikers"}'
+        $bdocs.AddDocument('{"_id":"Hitchhikers Guide"')
+        (Get-CouchDBBulkDocument -Database test -Data $bdocs -Authorization admin:password).results | Should -BeLike "*"
+    }
+}
+
 Describe "Remove-CouchDBDocument" {
     It "Remove a document.." {
         (Remove-CouchDBDocument -Database test -Document "Hitchhikers" -Revision (Get-CouchDBDocument -Database test -Document "Hitchhikers")._rev -Force -Authorization "admin:password").ok | Should -Be 'true'
