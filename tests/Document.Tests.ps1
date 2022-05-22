@@ -38,6 +38,25 @@ Describe "Get-CouchDBBulkDocument" {
     }
 }
 
+Describe "New-CouchDBBulkDocument" {
+    It "Create a bulk document." {
+        $bdocs = '{
+            "docs":  [
+                        {
+                            "_id":  "test",
+                            "name":  "test"
+                        },
+                        {
+                            "_id":  "test1",
+                            "name":  "test"
+                        }
+                    ]
+        }'
+        (New-CouchDBBulkDocument -Database test -Data $bdocs -Authorization admin:password)[0].ok | Should -Be 'true'
+        (New-CouchDBBulkDocument -Database test -Data $bdocs -Authorization admin:password)[1].ok | Should -Be 'true'
+    }
+}
+
 Describe "Remove-CouchDBDocument" {
     It "Remove a document.." {
         (Remove-CouchDBDocument -Database test -Document "Hitchhikers" -Revision (Get-CouchDBDocument -Database test -Document "Hitchhikers")._rev -Force -Authorization "admin:password").ok | Should -Be 'true'

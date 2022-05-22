@@ -940,7 +940,7 @@ function New-CouchDBBulkDocument () {
     New-CouchDBBulkDocument -Database test -Data $bdocs -Authorization admin:password
     Add two documents to database "test" with PSCouchDBBulkDocument object.
     .EXAMPLE
-    $bdocs = "{
+    $bdocs = '{
         "docs":  [
                     {
                         "_id":  "test",
@@ -951,7 +951,7 @@ function New-CouchDBBulkDocument () {
                         "name":  "test"
                     }
                 ]
-    }"
+    }'
     New-CouchDBBulkDocument -Database test -Data $bdocs -Authorization admin:password
     Add two documents to database "test" with json format.
     .LINK
