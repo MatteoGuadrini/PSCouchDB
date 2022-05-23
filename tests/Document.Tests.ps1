@@ -57,6 +57,13 @@ Describe "New-CouchDBBulkDocument" {
     }
 }
 
+Describe "Add-CouchDBAttachment" {
+    It "Create or replace a new attachment on document." {
+        $Attachment = New-CouchDBObject PSCouchDBAttachment -ArgumentList (New-TemporaryFile).FullName
+        (Add-CouchDBAttachment -Database test -Document "Hitchhikers" -Revision (Get-CouchDBDocument -Database test -Document "Hitchhikers")._rev -Attachment $Attachment).ok | Should -Be 'true'
+    }
+}
+
 Describe "Remove-CouchDBDocument" {
     It "Remove a document.." {
         (Remove-CouchDBDocument -Database test -Document "Hitchhikers" -Revision (Get-CouchDBDocument -Database test -Document "Hitchhikers")._rev -Force -Authorization "admin:password").ok | Should -Be 'true'
