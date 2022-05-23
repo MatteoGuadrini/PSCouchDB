@@ -2,6 +2,7 @@ BeforeAll {
     Import-Module ../PSCouchDB/PSCouchDB.psm1
     . ../PSCouchDB/functions/CouchDBdocument.ps1
     New-CouchDBDatabase -Database test -Authorization "admin:password"
+    $SCRIPT:FileTemp = (New-TemporaryFile).FullName
 }
 
 Describe "New-CouchDBDocument" {
@@ -59,8 +60,14 @@ Describe "New-CouchDBBulkDocument" {
 
 Describe "Add-CouchDBAttachment" {
     It "Create or replace a new attachment on document." {
-        $Attachment = New-CouchDBObject PSCouchDBAttachment -ArgumentList (New-TemporaryFile).FullName
+        $Attachment = New-CouchDBObject PSCouchDBAttachment -ArgumentList $FileTemp
         (Add-CouchDBAttachment -Database test -Document "Hitchhikers" -Revision (Get-CouchDBDocument -Database test -Document "Hitchhikers")._rev -Attachment $Attachment).ok | Should -Be 'true'
+    }
+}
+
+Describe "Get-CouchDBAttachment" {
+    It "Get or save attachment." {
+        (Get-CouchDBAttachment -Database test -Document "Hitchhikers" -Attachment $FileTemp).ok | Should -BeLike '*'
     }
 }
 
