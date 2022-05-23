@@ -61,13 +61,19 @@ Describe "New-CouchDBBulkDocument" {
 Describe "Add-CouchDBAttachment" {
     It "Create or replace a new attachment on document." {
         $Attachment = New-CouchDBObject PSCouchDBAttachment -ArgumentList $FileTemp
-        (Add-CouchDBAttachment -Database test -Document "Hitchhikers" -Revision (Get-CouchDBDocument -Database test -Document "Hitchhikers")._rev -Attachment $Attachment).ok | Should -Be 'true'
+        (Add-CouchDBAttachment -Database test -Document "Hitchhikers" -Revision (Get-CouchDBDocument -Database test -Document "Hitchhikers")._rev -Attachment $Attachment -Authorization "admin:password").ok | Should -Be 'true'
     }
 }
 
 Describe "Get-CouchDBAttachment" {
     It "Get or save attachment." {
         (Get-CouchDBAttachment -Database test -Document "Hitchhikers" -Attachment $FileTemp).ok | Should -BeLike '*'
+    }
+}
+
+Describe "Remove-CouchDBAttachment" {
+    It "Remove an attachment document." {
+        (Remove-CouchDBAttachment -Database test -Document "Hitchhikers" -Attachment $FileTemp -Revision (Get-CouchDBDocument -Database test -Document "Hitchhikers")._rev -Authorization "admin:password").ok | Should -Be 'true'
     }
 }
 
