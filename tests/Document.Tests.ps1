@@ -78,8 +78,14 @@ Describe "Remove-CouchDBAttachment" {
 }
 
 Describe "Remove-CouchDBDocument" {
-    It "Remove a document.." {
+    It "Remove a document." {
         (Remove-CouchDBDocument -Database test -Document "Hitchhikers" -Revision (Get-CouchDBDocument -Database test -Document "Hitchhikers")._rev -Force -Authorization "admin:password").ok | Should -Be 'true'
+    }
+}
+
+Describe "Clear-CouchDBDocuments" {
+    It "A database purge permanently document." {
+        (Clear-CouchDBDocuments -Database test -Document "test1" -Authorization "admin:password").ok | Should -Be 'true'
     }
 }
 
