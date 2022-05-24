@@ -77,6 +77,13 @@ Describe "Remove-CouchDBAttachment" {
     }
 }
 
+
+Describe "Search-CouchDBFullText" {
+    It "Full text search." {
+        Search-CouchDBFullText -Database test -Patterns "test","test1" -Authorization "admin:password" | Should -BeLike '*'
+    }
+}
+
 Describe "Remove-CouchDBDocument" {
     It "Remove a document." {
         (Remove-CouchDBDocument -Database test -Document "Hitchhikers" -Revision (Get-CouchDBDocument -Database test -Document "Hitchhikers")._rev -Force -Authorization "admin:password").ok | Should -Be 'true'
