@@ -77,10 +77,15 @@ Describe "Remove-CouchDBAttachment" {
     }
 }
 
-
 Describe "Search-CouchDBFullText" {
     It "Full text search." {
         Search-CouchDBFullText -Database test -Patterns "test","test1" -Authorization "admin:password" | Should -BeLike '*'
+    }
+}
+
+Describe "Find-CouchDBDocuments" {
+    It "Find document data in a database." {
+        (Find-CouchDBDocuments -Database test -Selector "name" -Operator eq -Value "test" -Fields _id,name).name | Should -Be 'test'
     }
 }
 
