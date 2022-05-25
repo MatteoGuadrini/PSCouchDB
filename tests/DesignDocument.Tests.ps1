@@ -6,6 +6,12 @@ BeforeAll {
     $SCRIPT:FileTemp = (New-TemporaryFile).FullName
 }
 
+Describe "Get-CouchDBDesignDocument" {
+    It "Get a design document." {
+        (Get-CouchDBDesignDocument -Database test -Document "space" -Authorization "admin:password")._id | Should -Be '_design/space'
+    }
+}
+
 Describe "Get-CouchDBDatabaseDesignDocument" {
     It "Get all design document on a database." {
         Get-CouchDBDatabaseDesignDocument -Database test -Authorization "admin:password" | Should -BeLike '*'
