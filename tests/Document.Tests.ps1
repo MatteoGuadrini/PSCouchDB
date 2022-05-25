@@ -1,5 +1,6 @@
 BeforeAll {
     Import-Module ../PSCouchDB/PSCouchDB.psm1
+    . ../PSCouchDB/functions/CouchDBdatabase.ps1
     . ../PSCouchDB/functions/CouchDBdocument.ps1
     New-CouchDBDatabase -Database test -Authorization "admin:password"
     $SCRIPT:FileTemp = (New-TemporaryFile).FullName
