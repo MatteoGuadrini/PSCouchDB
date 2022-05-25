@@ -68,7 +68,7 @@ Describe "Add-CouchDBAttachment" {
 
 Describe "Get-CouchDBAttachment" {
     It "Get or save attachment." {
-        (Get-CouchDBAttachment -Database test -Document "Hitchhikers" -Attachment $FileTemp).ok | Should -BeLike '*'
+        Get-CouchDBAttachment -Database test -Document "Hitchhikers" -Attachment $FileTemp | Should -BeLike '*'
     }
 }
 
