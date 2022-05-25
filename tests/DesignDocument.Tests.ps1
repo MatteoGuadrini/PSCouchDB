@@ -18,6 +18,13 @@ Describe "Get-CouchDBDatabaseDesignDocument" {
     }
 }
 
+Describe "Add-CouchDBDesignDocumentAttachment" {
+    It "Create a new attachment in a design document." {
+        $Attachment = New-CouchDBObject PSCouchDBAttachment -ArgumentList $FileTemp
+        (Add-CouchDBDesignDocumentAttachment -Database test -Document space -Revision (Get-CouchDBDesignDocument -Database test -Document "space" -Authorization "admin:password")._rev -Attachment $Attachment -Authorization "admin:password").ok | Should -Be 'true'
+    }
+}
+
 Describe "Get-CouchDBDesignDocumentAttachment" {
     It "Get or save attachment from design document." {
         Get-CouchDBDesignDocumentAttachment -Database test -Document "space" -Attachment $FileTemp | Should -BeLike '*'
