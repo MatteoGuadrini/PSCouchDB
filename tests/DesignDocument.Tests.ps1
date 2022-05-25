@@ -18,6 +18,12 @@ Describe "Get-CouchDBDatabaseDesignDocument" {
     }
 }
 
+Describe "Get-CouchDBDesignDocumentAttachment" {
+    It "Get or save attachment from design document." {
+        Get-CouchDBDesignDocumentAttachment -Database test -Document "space" -Attachment $FileTemp | Should -BeLike '*'
+    }
+}
+
 AfterAll {
     Remove-CouchDBDatabase -Database test -Authorization "admin:password" -Force
 }
