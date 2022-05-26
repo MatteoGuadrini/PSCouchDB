@@ -19,6 +19,14 @@ Describe "Get-CouchDBDesignDocument" {
     }
 }
 
+Describe "Set-CouchDBDesignDocument" {
+    It "Modify a design document." {
+        $data = '{"views":{"data_test":{"map":"function(doc) {emit(doc._id, doc._rev)}"}}}'
+        (Set-CouchDBDesignDocument -Database test -Document "space" -Revision (Get-CouchDBDesignDocument -Database test -Document "space")._rev -Data $data -Authorization "admin:password")._id | Should -Be '_design/space'
+    }
+}
+
+
 Describe "Get-CouchDBDatabaseDesignDocument" {
     It "Get all design document on a database." {
         Get-CouchDBDatabaseDesignDocument -Database test -Authorization "admin:password" | Should -BeLike '*'
