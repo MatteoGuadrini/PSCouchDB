@@ -6,6 +6,13 @@ BeforeAll {
     $SCRIPT:FileTemp = (New-TemporaryFile).FullName
 }
 
+Describe "New-CouchDBDesignDocument" {
+    It "Create a new design document." {
+        $data = '{"views":{"data_test":{"map":"function(doc) {emit(doc._id, doc._rev)}"}}}'
+        (New-CouchDBDesignDocument -Database test -Document "space" -Data $data -Authorization "admin:password").ok | Should -Be 'true'
+    }
+}
+
 Describe "Get-CouchDBDesignDocument" {
     It "Get a design document." {
         (Get-CouchDBDesignDocument -Database test -Document "space" -Authorization "admin:password")._id | Should -Be '_design/space'
