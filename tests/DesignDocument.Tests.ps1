@@ -32,12 +32,6 @@ Describe "Compress-CouchDBDesignDocument" {
     }
 }
 
-Describe "Remove-CouchDBDesignDocument" {
-    It "Remove a design document." {
-        (Remove-CouchDBDesignDocument -Database test -Document "space" -Revision (Get-CouchDBDesignDocument -Database test -Document "space")._rev -Authorization "admin:password" -Force).ok | Should -Be 'true'
-    }
-}
-
 Describe "Get-CouchDBDatabaseDesignDocument" {
     It "Get all design document on a database." {
         Get-CouchDBDatabaseDesignDocument -Database test -Authorization "admin:password" | Should -BeLike '*'
@@ -54,6 +48,18 @@ Describe "Add-CouchDBDesignDocumentAttachment" {
 Describe "Get-CouchDBDesignDocumentAttachment" {
     It "Get or save attachment from design document." {
         Get-CouchDBDesignDocumentAttachment -Database test -Document "space" -Attachment $FileTemp | Should -BeLike '*'
+    }
+}
+
+Describe "Remove-CouchDBDesignDocumentAttachment" {
+    It "Remove an attachment in a design document." {
+        (Remove-CouchDBDesignDocumentAttachment -Database test -Document "space" -Revision (Get-CouchDBDesignDocument -Database test -Document "space" -Authorization "admin:password")._rev -Attachment $FileTemp -Authorization "admin:password").ok | Should -Be 'true'
+    }
+}
+
+Describe "Remove-CouchDBDesignDocument" {
+    It "Remove a design document." {
+        (Remove-CouchDBDesignDocument -Database test -Document "space" -Revision (Get-CouchDBDesignDocument -Database test -Document "space")._rev -Authorization "admin:password" -Force).ok | Should -Be 'true'
     }
 }
 
