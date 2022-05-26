@@ -26,6 +26,11 @@ Describe "Set-CouchDBDesignDocument" {
     }
 }
 
+Describe "Compress-CouchDBDesignDocument" {
+    It "Compress design document." {
+        (Compress-CouchDBDesignDocument -Database test -DesignDoc space -Authorization "admin:password").ok | Should -Be 'true'
+    }
+}
 
 Describe "Get-CouchDBDatabaseDesignDocument" {
     It "Get all design document on a database." {
