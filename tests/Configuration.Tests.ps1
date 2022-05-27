@@ -38,3 +38,9 @@ Describe "Set-CouchDBConfiguration" {
         Set-CouchDBConfiguration -Element "log" -Key "level" -Value "info" -Authorization "admin:password" | Should -BeLike '*'
     }
 }
+
+Describe "Submit-CouchDBConfiguration" {
+    It "Reloads the configuration from disk." {
+        (Submit-CouchDBConfiguration -Authorization "admin:password") | Should Be 'true'
+    }
+}
