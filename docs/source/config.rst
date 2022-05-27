@@ -106,3 +106,12 @@ For example, to change SSL port 6984 with 443:
 .. note::
     This cmdlet return the old value. To verify the changed value, run:
     ``Get-CouchDBConfiguration -Authorization "admin:password" | Select-Object ssl | Format-List``
+
+Reload configuration
+____________________
+
+Reloads the configuration from disk. This has a side effect of flushing any in-memory configuration changes that have not been committed to disk.
+
+.. code-block:: powershell
+
+    Submit-CouchDBConfiguration -Authorization "admin:password"

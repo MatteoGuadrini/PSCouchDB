@@ -451,3 +451,53 @@ function Set-CouchDBConfiguration () {
     $Data = $Value | ConvertTo-Json
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
+
+function Submit-CouchDBConfiguration () {
+    <#
+    .SYNOPSIS
+    Reloads the configuration from disk.
+    .DESCRIPTION
+    This has a side effect of flushing any in-memory configuration changes that have not been committed to disk.
+    .NOTES
+    CouchDB API:
+        POST /_node/{node-name}/_config/_reload
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Node
+    The CouchDB node of cluster. Default is couchdb@localhost.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
+    .EXAMPLE
+    Submit-CouchDBConfiguration -Authorization "admin:password"
+    Reloads the configuration from disk.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/config.html#reload-configuration
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(ValueFromPipeline = $true)]
+        [string] $Server,
+        [int] $Port,
+        [Parameter(Position = 0)]
+        [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential).name -contains "couchdb@localhost") { "couchdb@localhost" } else { "couchdb@127.0.0.1" }),
+        [string] $Value,
+        $Authorization,
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
+    )
+    $Database = "/_node/$Node/_config/_reload"
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
+}
