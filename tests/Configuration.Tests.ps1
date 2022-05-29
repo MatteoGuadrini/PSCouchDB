@@ -1,6 +1,8 @@
 BeforeAll {
     Import-Module ../PSCouchDB/PSCouchDB.psm1
     . ../PSCouchDB/functions/CouchDBconfiguration.ps1
+    . ../PSCouchDB/functions/CouchDBdatabase.ps1
+    New-CouchDBDatabase -Database test -Authorization "admin:password"
 }
 
 Describe "Get-CouchDBNode" {
@@ -43,4 +45,8 @@ Describe "Submit-CouchDBConfiguration" {
     It "Reloads the configuration from disk." {
         (Submit-CouchDBConfiguration -Authorization "admin:password") | Should Be 'true'
     }
+}
+
+AfterAll {
+    Remove-CouchDBDatabase -Database test -Authorization "admin:password" -Force
 }
