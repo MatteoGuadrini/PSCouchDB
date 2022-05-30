@@ -1,6 +1,8 @@
 BeforeAll {
     Import-Module ../PSCouchDB/PSCouchDB.psm1
     . ../PSCouchDB/functions/CouchDBpermission.ps1
+    . ../PSCouchDB/functions/CouchDBdatabase.ps1
+    New-CouchDBDatabase -Database test -Authorization "admin:password"
 }
 
 Describe "New-CouchDBAdmin" {
@@ -72,4 +74,8 @@ Describe "Revoke-CouchDBDatabasePermission" {
     It "Revoke all permission on database." {
         Revoke-CouchDBDatabasePermission -Database test -Authorization "admin:password"
     }
+}
+
+AfterAll {
+    Remove-CouchDBDatabase -Database test -Authorization "admin:password" -Force
 }

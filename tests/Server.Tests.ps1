@@ -1,6 +1,8 @@
 BeforeAll {
     Import-Module ../PSCouchDB/PSCouchDB.psm1
     . ../PSCouchDB/functions/CouchDBserver.ps1
+    . ../PSCouchDB/functions/CouchDBdatabase.ps1
+    New-CouchDBDatabase -Database test -Authorization "admin:password"
 }
 
 Describe "Get-CouchDBServer" {
@@ -74,4 +76,8 @@ Describe "Remove-CouchDBProxy" {
         Remove-CouchDBProxy
         $Global:PSDefaultParameterValues["*CouchDB*:ProxyCredential"] | Should -Be $null
     }
+}
+
+AfterAll {
+    Remove-CouchDBDatabase -Database test -Authorization "admin:password" -Force
 }
