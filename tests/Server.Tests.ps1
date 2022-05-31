@@ -40,7 +40,9 @@ Describe "New-CouchDBUuids" {
 
 Describe "Search-CouchDBAnalyze" {
     It "Tests the results of Lucene analyzer tokenization on sample text." {
-        (Search-CouchDBAnalyze -Field "english" -Text "running" -Authorization "admin:password").tokens | Should -Be @("run")
+        if ($null -eq (Test-CouchDBDatabase -Database "_search_analyze" -Authorization "admin:password")) {
+            (Search-CouchDBAnalyze -Field "english" -Text "running" -Authorization "admin:password").tokens | Should -Be @("run")
+        }
     }
 }
 
@@ -58,7 +60,9 @@ Describe "Set-CouchDBReshards" {
 
 Describe "Get-CouchDBDatabaseUpdates" {
     It "Get database events." {
-        (Get-CouchDBDatabaseUpdates -Authorization "admin:password").results | Should -BeLike '*'
+        if ($null -eq (Test-CouchDBDatabase -Database "_global_changes" -Authorization "admin:password")) {
+            (Get-CouchDBDatabaseUpdates -Authorization "admin:password").results | Should -BeLike '*'
+        }
     }
 }
 
@@ -67,7 +71,7 @@ Describe "Set-CouchDBProxy" {
         $password = ConvertTo-SecureString 'password' -AsPlainText -Force
         $credential = New-Object System.Management.Automation.PSCredential ('admin', $password)
         Set-CouchDBProxy -Server 'http://myproxy.local:8080' -Credential $credential
-        $Global:PSDefaultParameterValues["*CouchDB*:ProxyCredential"] | Should -Be 'http://myproxy.local:8080'
+        $Global:PSDefaultParameterValues["*CouchDB*:ProxyServer"] | Should -Be 'http://myproxy.local:8080'
     }
 }
 
