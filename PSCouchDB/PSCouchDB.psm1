@@ -1448,15 +1448,19 @@ class PSCouchDBRequest {
             $this.client.Headers.Add("Authorization", ("Basic {0}" -f $base64AuthInfo))
         }
         try {
-            [System.Net.WebResponse] $resp = $this.client.GetResponse()
+            [System.Net.HttpWebResponse] $resp = $this.client.GetResponse()
             $resp.Close()
             $this.uri.LastStatusCode = $resp.StatusCode
         } catch [System.Net.WebException] {
+            $resp = $false
             [System.Net.HttpWebResponse] $errcode = $_.Exception.Response
             $this.uri.LastStatusCode = $errcode.StatusCode
-            throw ([PSCouchDBRequestException]::New($errcode.StatusCode, $errcode.StatusDescription)).CouchDBMessage
         }
-        return $resp.Headers.ToString()
+        if (Get-Member 'Headers' -InputObject $resp) {
+            return $resp.Headers
+        } else {
+            return $resp
+        }   
     }
 
     SetProxy ([string]$uri) {
