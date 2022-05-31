@@ -28,7 +28,7 @@ Describe "Get-CouchDBClusterSetup" {
 
 Describe "Measure-CouchDBStatistics" {
     It "Measure server statistics." {
-        (Measure-CouchDBStatistics).type | Should -Be 'histogram'
+        (Measure-CouchDBStatistics -Server 127.0.0.1 -Authorization admin:password).couchdb | Should -BeLike '*'
     }
 }
 
