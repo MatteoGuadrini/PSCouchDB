@@ -261,7 +261,7 @@ function Remove-CouchDBNode () {
     Remove server nodes on CouchDB server.
     .NOTES
     CouchDB API:
-        DELETE /_node/{node-name}
+        DELETE /_node/_local/_nodes/{node-name}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -294,27 +294,22 @@ function Remove-CouchDBNode () {
         [int] $Port,
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Node,
+        [string] $Revision,
         $Authorization,
         [switch]$Force,
         [switch] $Ssl,
         [string] $ProxyServer,
         [pscredential] $ProxyCredential
     )
-    $Database = "_nodes/_local"
+    $Database = "_node/_local/_nodes"
     # Check node
-    if ((Get-CouchDBClusterSetup -Authorization $Authorization -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential).state -eq 'single_node_enabled') {
-        $clu_property = 'name'
-    } else {
-        $clu_property = 'all_nodes'
+    if ((Get-CouchDBNode -Authorization "admin:password" -Membership -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential -ErrorAction SilentlyContinue).cluster_nodes -contains $Node) {
+        if (-not($Revision)) {
+            $Revision = (Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Node -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential)._rev
+        }
     }
-    if ((Get-CouchDBNode -Authorization "admin:password" -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential -ErrorAction SilentlyContinue).$clu_property -contains $Node) {
-        $Revision = (Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Node -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential)._rev
-    } else {
-        throw "Node $Node not exist."
-    }
-    $Document = $Node
     if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove node $Node ?", "Remove $Node")) {
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Node -Revision $Revision -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
     }
 }
 
