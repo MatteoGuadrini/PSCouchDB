@@ -1,7 +1,9 @@
 BeforeAll {
     Import-Module ../PSCouchDB/PSCouchDB.psm1
     . ../PSCouchDB/functions/CouchDBconfiguration.ps1
+    . ../PSCouchDB/functions/CouchDBserver.ps1
     . ../PSCouchDB/functions/CouchDBdatabase.ps1
+    . ../PSCouchDB/functions/CouchDBdocument.ps1
     New-CouchDBDatabase -Database test -Authorization "admin:password"
 }
 
@@ -19,13 +21,13 @@ Describe "Get-CouchDBNode" {
 
 Describe "Add-CouchDBNode" {
     It "Add server nodes." {
-        Add-CouchDBNode -BindAddress "couchdb_test" -Authorization "admin:password" | Should -BeLike '*'
+        Add-CouchDBNode -BindAddress "127.0.1.1" -Authorization "admin:password" | Should -BeLike '*'
     }
 }
 
 Describe "Remove-CouchDBNode" {
     It "Remove server nodes." {
-        Remove-CouchDBNode -Node "couchdb_test@localhost" -Authorization "admin:password" | Should -BeLike '*'
+        Remove-CouchDBNode -Node "couchdb@127.0.1.1" -Authorization "admin:password" -Force | Should -BeLike '*'
     }
 }
 
@@ -43,7 +45,7 @@ Describe "Set-CouchDBConfiguration" {
 
 Describe "Submit-CouchDBConfiguration" {
     It "Reloads the configuration from disk." {
-        (Submit-CouchDBConfiguration -Authorization "admin:password") | Should Be 'true'
+        (Submit-CouchDBConfiguration -Authorization "admin:password").ok | Should -Be 'true'
     }
 }
 
