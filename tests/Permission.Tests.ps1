@@ -1,7 +1,11 @@
 BeforeAll {
     Import-Module ../PSCouchDB/PSCouchDB.psm1
     . ../PSCouchDB/functions/CouchDBpermission.ps1
+    . ../PSCouchDB/functions/CouchDBconfiguration.ps1
+    . ../PSCouchDB/functions/CouchDBserver.ps1
     . ../PSCouchDB/functions/CouchDBdatabase.ps1
+    . ../PSCouchDB/functions/CouchDBdocument.ps1
+    . ../PSCouchDB/functions/CouchDBprivate.ps1
     New-CouchDBDatabase -Database test -Authorization "admin:password"
 }
 
@@ -14,8 +18,8 @@ Describe "New-CouchDBAdmin" {
 
 Describe "Set-CouchDBAdmin" {
     It "Reset password of admin user." {
-        $password = "newpassword" | ConvertTo-SecureString -AsPlainText -Force
-        (Set-CouchDBAdmin -Userid admin -Password $password -Authorization "admin:password").ok | Should -Be "true"
+        $password = "password" | ConvertTo-SecureString -AsPlainText -Force
+        (Set-CouchDBAdmin -Userid admin -Password $password -Authorization "admin:password").result | Should -BeLike '*'
     }
 }
 
@@ -60,7 +64,7 @@ Describe "Grant-CouchDBDatabasePermission" {
         }
     }
 "@
-    Grant-CouchDBDatabasePermission -Database test -Data $sec -Authorization "admin:password" | Should -Be "true"
+        Grant-CouchDBDatabasePermission -Database test -Data $sec -Authorization "admin:password" | Should -Be "true"
     }
 }
 
@@ -72,7 +76,7 @@ Describe "Get-CouchDBDatabaseSecurity" {
 
 Describe "Revoke-CouchDBDatabasePermission" {
     It "Revoke all permission on database." {
-        Revoke-CouchDBDatabasePermission -Database test -Authorization "admin:password"
+        Revoke-CouchDBDatabasePermission -Database test -Authorization "admin:password" -Force
     }
 }
 
