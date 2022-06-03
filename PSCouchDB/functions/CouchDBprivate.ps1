@@ -15,8 +15,7 @@ function ConvertTo-CouchDBPassword ([SecureString] $SecurePassword) {
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/permission.html#create-admin-user
     #>
-    $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($SecurePassword)
-    $UnsecurePassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
+    $UnsecurePassword = [System.Net.NetworkCredential]::new("", $SecurePassword).Password
     return $UnsecurePassword
 }
 
