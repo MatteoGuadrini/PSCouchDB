@@ -12,7 +12,7 @@ BeforeAll {
 Describe "New-CouchDBAdmin" {
     It "Create a new admin user." {
         $password = "password" | ConvertTo-SecureString -AsPlainText -Force
-        (New-CouchDBAdmin -Userid newadminuser -Password $password -Authorization "admin:password").newadminuser | Should -BeLike '*'
+        (New-CouchDBAdmin -Userid newadminuser -Password $password -Authorization "admin:password").results | Should -BeLike '*'
     }
 }
 
@@ -25,7 +25,7 @@ Describe "Set-CouchDBAdmin" {
 
 Describe "Remove-CouchDBAdmin" {
     It "Remove an admin user." {
-        (Remove-CouchDBAdmin -Userid newadminuser -Authorization "admin:password" -Force).ok | Should -Be "true"
+        (Remove-CouchDBAdmin -Userid newadminuser -Authorization "admin:password" -Force).results | Should -BeLike '*'
     }
 }
 
