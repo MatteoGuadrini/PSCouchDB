@@ -1,6 +1,10 @@
+using module ../PSCouchDB/PSCouchDB.psm1
 BeforeAll {
     Import-Module ../PSCouchDB/PSCouchDB.psm1
+    . ../PSCouchDB/functions/CouchDBconfiguration.ps1
+    . ../PSCouchDB/functions/CouchDBserver.ps1
     . ../PSCouchDB/functions/CouchDBdatabase.ps1
+    . ../PSCouchDB/functions/CouchDBprivate.ps1
 }
 
 Describe "New-CouchDBDatabase" {
