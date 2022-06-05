@@ -141,7 +141,7 @@ function Copy-CouchDBDatabase () {
     } else {
         $DestinationAuthorization = $Authorization
     }
-    if (-not(Test-CouchDBDatabase -Server $DestinationServer -Port $DestinationPort -Database $Destination -Authorization $DestinationAuthorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential -ErrorAction SilentlyContinue)) {
+    if ($null -ne (Test-CouchDBDatabase -Server $DestinationServer -Port $DestinationPort -Database $Destination -Authorization $DestinationAuthorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential)) {
         New-CouchDBDatabase -Server $DestinationServer -Port $DestinationPort -Database $Destination -Authorization $DestinationAuthorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential | Out-Null
     } else {
         throw "Database $Destination exists! Choose another name."
