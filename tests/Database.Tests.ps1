@@ -4,6 +4,7 @@ BeforeAll {
     . ../PSCouchDB/functions/CouchDBconfiguration.ps1
     . ../PSCouchDB/functions/CouchDBserver.ps1
     . ../PSCouchDB/functions/CouchDBdatabase.ps1
+    . ../PSCouchDB/functions/CouchDBdocument.ps1
     . ../PSCouchDB/functions/CouchDBprivate.ps1
 }
 
@@ -27,7 +28,7 @@ Describe "Get-CouchDBDatabase" {
 
 Describe "Copy-CouchDBDatabase" {
     It "Copy database." {
-        Copy-CouchDBDatabase -Database test -Destination test_new -Authorization admin:password
+        Copy-CouchDBDatabase -Database test -Destination test_new -Authorization "admin:password"
         (Get-CouchDBDatabase -Database test_new).db_name | Should -Be "test_new"
     }
 }
@@ -77,7 +78,7 @@ Describe "Compress-CouchDBDatabase" {
 
 Describe "Write-CouchDBFullCommit" {
     It "Commits any recent changes." {
-        (Write-CouchDBFullCommit -Database test -Authorization "admin:password").ok | Should -Be "true"
+        (Write-CouchDBFullCommit -Database test -Authorization "admin:password" -Force).ok | Should -Be "true"
     }
 }
 
@@ -89,7 +90,7 @@ Describe "Clear-CouchDBView" {
 
 Describe "Get-CouchDBDatabasePurgedLimit" {
     It "Get a database purged documents limit." {
-        Get-CouchDBDatabasePurgedLimit -Database test | Should -Be 1000
+        (Get-CouchDBDatabasePurgedLimit -Database test).results | Should -Be 1000
     }
 }
 
@@ -101,7 +102,7 @@ Describe "Set-CouchDBDatabasePurgedLimit" {
 
 Describe "Get-CouchDBRevisionLimit" {
     It "Get revisions limit." {
-        Get-CouchDBRevisionLimit -Database test | Should -Be 1000
+        (Get-CouchDBRevisionLimit -Database test).results | Should -Be 1000
     }
 }
 
