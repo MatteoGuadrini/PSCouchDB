@@ -1,3 +1,4 @@
+using module ../PSCouchDB/PSCouchDB.psm1
 BeforeAll {
     Import-Module ../PSCouchDB/PSCouchDB.psm1
     . ../PSCouchDB/functions/CouchDBdatabase.ps1
@@ -9,7 +10,7 @@ BeforeAll {
 Describe "New-CouchDBDocument" {
     It "Create a new document." {
         $data = @{"answer"=42; "ask"="Ultimate Question of Life, the Universe and Everything"}
-        (New-CouchDBDocument -Database test -Document "Hitchhikers" -Data $data -Partition Guide -Authorization "admin:password").ok | Should -Be 'true'
+        (New-CouchDBDocument -Database test -Document "Hitchhikers" -Data $data -Authorization "admin:password").ok | Should -Be 'true'
     }
 }
 
@@ -35,7 +36,7 @@ Describe "Copy-CouchDBDocument" {
 Describe "Get-CouchDBBulkDocument" {
     It "Get a bulk document." {
         $bdocs = New-CouchDBObject -TypeName PSCouchDBBulkDocument -ArgumentList '{"_id":"Hitchhikers"}'
-        $bdocs.AddDocument('{"_id":"Hitchhikers Guide"')
+        $bdocs.AddDocument('{"_id":"Hitchhikers Guide"}')
         (Get-CouchDBBulkDocument -Database test -Data $bdocs -Authorization admin:password).results | Should -BeLike "*"
     }
 }
@@ -54,13 +55,15 @@ Describe "New-CouchDBBulkDocument" {
                         }
                     ]
         }'
-        (New-CouchDBBulkDocument -Database test -Data $bdocs -Authorization admin:password)[0].ok | Should -Be 'true'
-        (New-CouchDBBulkDocument -Database test -Data $bdocs -Authorization admin:password)[1].ok | Should -Be 'true'
+        $result = New-CouchDBBulkDocument -Database test -Data $bdocs -Authorization admin:password
+        $result[0].ok | Should -Be 'true'
+        $result[1].ok | Should -Be 'true'
     }
 }
 
 Describe "Add-CouchDBAttachment" {
     It "Create or replace a new attachment on document." {
+        "PSCouchDB test" | Out-File -FilePath $FileTemp
         $Attachment = New-CouchDBObject PSCouchDBAttachment -ArgumentList $FileTemp
         (Add-CouchDBAttachment -Database test -Document "Hitchhikers" -Revision (Get-CouchDBDocument -Database test -Document "Hitchhikers")._rev -Attachment $Attachment -Authorization "admin:password").ok | Should -Be 'true'
     }
@@ -68,13 +71,15 @@ Describe "Add-CouchDBAttachment" {
 
 Describe "Get-CouchDBAttachment" {
     It "Get or save attachment." {
-        Get-CouchDBAttachment -Database test -Document "Hitchhikers" -Attachment $FileTemp | Should -BeLike '*'
+        $Attachment = [System.IO.Path]::GetFileName($FileTemp)
+        Get-CouchDBAttachment -Database test -Document "Hitchhikers" -Attachment $Attachment | Should -BeLike '*'
     }
 }
 
 Describe "Remove-CouchDBAttachment" {
     It "Remove an attachment document." {
-        (Remove-CouchDBAttachment -Database test -Document "Hitchhikers" -Attachment $FileTemp -Revision (Get-CouchDBDocument -Database test -Document "Hitchhikers")._rev -Authorization "admin:password").ok | Should -Be 'true'
+        $Attachment = [System.IO.Path]::GetFileName($FileTemp)
+        (Remove-CouchDBAttachment -Database test -Document "Hitchhikers" -Attachment $Attachment -Revision (Get-CouchDBDocument -Database test -Document "Hitchhikers")._rev -Authorization "admin:password" -Force).ok | Should -Be 'true'
     }
 }
 
@@ -86,7 +91,7 @@ Describe "Search-CouchDBFullText" {
 
 Describe "Find-CouchDBDocuments" {
     It "Find document data in a database." {
-        (Find-CouchDBDocuments -Database test -Selector "name" -Operator eq -Value "test" -Fields _id,name).name | Should -Be 'test'
+        (Find-CouchDBDocuments -Database test -Selector "name" -Operator eq -Value "test" -Fields _id,name).docs[0].name | Should -Be 'test'
     }
 }
 
@@ -98,7 +103,7 @@ Describe "Remove-CouchDBDocument" {
 
 Describe "Clear-CouchDBDocuments" {
     It "A database purge permanently document." {
-        (Clear-CouchDBDocuments -Database test -Document "test1" -Authorization "admin:password").ok | Should -Be 'true'
+        (Clear-CouchDBDocuments -Database test -Document "test1" -Authorization "admin:password" -Force).purged | Should -BeLike '*'
     }
 }
 
