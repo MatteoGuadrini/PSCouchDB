@@ -59,7 +59,7 @@ Configuration
 
 .. code-block:: powershell
 
-    Get-CouchDBNode [[-Server] <String>] [[-Port] <Int32>] [[-Database] <String>] [[-Authorization] <String>] [-Ssl] [[-ProxyServer] <String>] [[-ProxyCredential] <Object>] [<CommonParameters>]
+    Get-CouchDBNode [[-Server] <String>] [[-Port] <Int32>] [[-Node] <String>] [-Membership] [-Versions] [-Prometheus] [[-Authorization] <Object>] [-Ssl] [[-ProxyServer] <String>] [[-ProxyCredential] <PSCredential>] [<CommonParameters>]
 
 **Add-CouchDBNode**
 
@@ -282,7 +282,7 @@ Replication
 
 .. code-block:: powershell
 
-    Get-CouchDBDatabaseChanges [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [[-Filter] <Array>] [-Continuous] [[-Authorization] <String>] [-Ssl] [[-ProxyServer] <String>] [[-ProxyCredential] <Object>] [<CommonParameters>]
+    Get-CouchDBDatabaseChanges [-Server <String>] [-Port <Int32>] [-Database] <String> [-DocIds <Array>] [-Filter <String>] [-Continuous] [-IncludeDocs] [-Conflicts] [-Descending] [-Feed <String>] [-Heartbeat <Int32>] [-Attachments] [-AttachmentsEncoding] [-LastEventId <Int32>] [-Limit <Int32>] [-Since <Object>] [-Style <String>] [-Timeout <Int32>] [-View <String>] [-SeqInterval <Int32>] [-Authorization <Object>] [-Ssl] [-ProxyServer <String>] [-ProxyCredential <PSCredential>] [<CommonParameters>]
 
 **Set-CouchDBReplication**
 

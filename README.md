@@ -1,6 +1,8 @@
 # PSCouchDB: Advanced CLI for CouchDB server
 <img src="https://pscouchdb.readthedocs.io/en/latest/_images/pscouchdb-logo.svg" alt="PSCouchDB" title="PSCouchDB" width="300" height="300" />
 
+**Docs**: [ReadTheDocs](https://pscouchdb.readthedocs.io) 
+
 ## Installation and simple usage
 1. Download and install CouchDB following the [docs](http://docs.couchdb.org/en/latest/install/index.html).
 2. Download and install latest PSCouchDB module by copying it under `%Windir%\System32\WindowsPowerShell\v1.0\Modules` for all users or under `%UserProfile%\Documents\WindowsPowerShell\Modules` for the current user or install through [PowershellGallery](https://www.powershellgallery.com/packages/PSCouchDB).
@@ -14,11 +16,12 @@ Enable-CouchDBCluster -SingleNode -Authorization "admin:password"
 Enable-CouchDBCluster -Authorization "admin:password"
 ```
 For more details, see the [docs](https://pscouchdb.readthedocs.io/en/latest/config.html).
+
 4. Now, open powershell and create a first personal database:
 ```powershell
 New-CouchDBDatabase -Database test -Authorization "admin:password"
 ```
-6. Create a sample document for `test` database:
+5. Create a sample document for `test` database:
 ```powershell
 $Data = '{
 	"name": "Arthur Dent",
@@ -26,19 +29,31 @@ $Data = '{
 }'
 New-CouchDBDocument -Database test -Document "Hitchhikers" -Data $Data -Authorization "admin:password"
 ```
-7. Add attachment file in our docuemnt:
+6. Add attachment file in our docuemnt:
 ```powershell
 $rev = (Get-CouchDBDocument -Database test -Document "Hitchhikers")._rev
 "Ultimate Question of Life, the Universe and Everything" | Out-File C:\file.txt
 New-CouchDBAttachment -Database test -Document "Hitchhikers" -revision $rev -Attachment C:\file.txt -Authorization "admin:password"
 ```
-8. Finally, get a document:
+7. Finally, get a document:
 ```powershell
 Get-CouchDBAttachment -Database test -Document "Hitchhikers" -Attachment file.txt
 ```
 
 These are just some of the operations you can do with this CLI.
 PSCouchDB supports all [API](https://docs.couchdb.org/en/stable/api/index.html) of CouchDB server. If you want to find out more, follow the docs.
+
+## Test PSCouchDB
+Before test this module, [install latest](#installation-and-simple-usage) version of *CouchDB* server and latest installation of [*Pester* module](https://pester-docs.netlify.app/docs/introduction/installation).
+> WARNING: Test this module in testing enviroment ONLY.
+
+```powershell
+git clone "https://github.com/MatteoGuadrini/PSCouchDB.git"
+cd "PSCouchDB/PSCouchDB/tests"
+foreach ($f in (Get-ChildItem $PWD)) {
+	& pwsh $f.FullName		# use powershell before 6.X
+}
+```
 
 ### Complete documentation
 For other operation, for more details and for learning all cmdlets and possibilities, see the [docs](https://pscouchdb.readthedocs.io/en/latest/).
@@ -57,5 +72,10 @@ Search-CouchDBHelp -Pattern Database | foreach {Get-Help $_.Name}
 ```
 or see [docs](https://pscouchdb.readthedocs.io/en/latest).
 For a little demonstration, see [here](https://asciinema.org/a/232696)
+
+## Licence            
+This package is [Treeware](https://treeware.earth). If you use it in production, then we ask that you [**buy the world a tree**](https://plant.treeware.earth/MatteoGuadrini/PSCouchDB) to thank us for our work. By contributing to the Treeware forest you’ll be creating employment for local families and restoring wildlife habitats.
+
+[![Treeware](https://img.shields.io/badge/dynamic/json?color=brightgreen&label=Treeware&query=%24.total&url=https%3A%2F%2Fpublic.offset.earth%2Fusers%2Ftreeware%2Ftrees)](https://treeware.earth)
 
 ## [Donation and Support](https://pscouchdb.readthedocs.io/en/latest/support.html).

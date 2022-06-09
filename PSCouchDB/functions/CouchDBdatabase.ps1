@@ -141,7 +141,7 @@ function Copy-CouchDBDatabase () {
     } else {
         $DestinationAuthorization = $Authorization
     }
-    if (-not(Test-CouchDBDatabase -Server $DestinationServer -Port $DestinationPort -Database $Destination -Authorization $DestinationAuthorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential -ErrorAction SilentlyContinue)) {
+    if ($null -ne (Test-CouchDBDatabase -Server $DestinationServer -Port $DestinationPort -Database $Destination -Authorization $DestinationAuthorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential)) {
         New-CouchDBDatabase -Server $DestinationServer -Port $DestinationPort -Database $Destination -Authorization $DestinationAuthorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential | Out-Null
     } else {
         throw "Database $Destination exists! Choose another name."
@@ -559,7 +559,7 @@ function Remove-CouchDBIndex () {
     Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
     $ddoc = Get-CouchDBIndex -Database test -Authorization "admin:password"
-    Remove-CouchDBIndex -Database test -DesignDoc $ddoc.indexes.ddoc[1] -Name $ddoc.indexes.name[1] -Authorization "admin:password"
+    Remove-CouchDBIndex -Database test -DesignDoc $ddoc.indexes[1].ddoc -Name $ddoc.indexes[1].name -Authorization "admin:password"
     The example removes an index document on database "test".
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/databases.html#remove-a-index
@@ -1111,7 +1111,7 @@ function Get-CouchDBRevisionDifference () {
 function Get-CouchDBRevisionLimit () {
     <#
     .SYNOPSIS
-    Get revision's limit.
+    Get revisions limit.
     .DESCRIPTION
     Gets the current revs_limit (revision limit) setting.
     .NOTES
@@ -1185,7 +1185,7 @@ function Set-CouchDBRevisionLimit () {
     .PARAMETER ProxyCredential
     Proxy server credential. It must be specified with a PSCredential object.
     .EXAMPLE
-    Set-CouchDBRevisionLimit -Database test -Limit 100 -Authorization "admin:password"
+    Set-CouchDBRevisionLimit -Database test -Limit 1000 -Authorization "admin:password"
     This example set revision limit number to 1000 on database "test".
     .LINK
     https://pscouchdb.readthedocs.io/en/latest/databases.html#set-revision-limit

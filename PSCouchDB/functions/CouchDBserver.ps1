@@ -1059,7 +1059,7 @@ function Set-CouchDBMaintenanceMode () {
     Enable/Disable maintenance mode.
     .NOTES
     CouchDB API:
-        GET /_db_updates
+        PUT /_config/couchdb/maintenance_mode
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port

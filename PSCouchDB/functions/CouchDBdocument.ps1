@@ -811,7 +811,7 @@ function Copy-CouchDBDocument () {
         [pscredential] $ProxyCredential
     )
     # Check document id exists
-    if (-not(Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Document -Revision $Revision -Info -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential -ErrorAction SilentlyContinue)) {
+    if ("" -ne (Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Document -Revision $Revision -Info -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential)) {
         throw "The specific document $Document does not exists."
     } else {
         $Doc = New-Object -TypeName PSCouchDBDocument
@@ -940,7 +940,7 @@ function New-CouchDBBulkDocument () {
     New-CouchDBBulkDocument -Database test -Data $bdocs -Authorization admin:password
     Add two documents to database "test" with PSCouchDBBulkDocument object.
     .EXAMPLE
-    $bdocs = "{
+    $bdocs = '{
         "docs":  [
                     {
                         "_id":  "test",
@@ -951,7 +951,7 @@ function New-CouchDBBulkDocument () {
                         "name":  "test"
                     }
                 ]
-    }"
+    }'
     New-CouchDBBulkDocument -Database test -Data $bdocs -Authorization admin:password
     Add two documents to database "test" with json format.
     .LINK
@@ -1167,7 +1167,7 @@ function Add-CouchDBAttachment () {
     if ($Attachment -is [PSCouchDBAttachment]) {
         $tempfile = New-TemporaryFile
         $attachName = Join-Path -Path $tempfile.DirectoryName -ChildPath $Attachment.filename
-        Rename-Item -Path $tempfile.FullName -NewName $attachName -Force
+        Rename-Item -Path $tempfile.FullName -NewName $attachName -Force -ErrorAction SilentlyContinue
         $Attachment.SaveData($attachName)
         $Attachment = $attachName
     } elseif ($Attachment -is [string]) {

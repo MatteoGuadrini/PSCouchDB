@@ -134,10 +134,20 @@ function Get-CouchDBNode () {
     CouchDB API:
         GET /_membership
         GET /_node/{node-name}
+        GET /_node/{node-name}/_versions
+        GET /_node/{node-name}/_prometheus
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
     The CouchDB server port. Default is 5984.
+    .PARAMETER Node
+    Erlang node name of the server that processes the request. Default is _local.
+    .PARAMETER Membership
+    Displays the nodes that are part of the cluster as cluster_nodes.
+    .PARAMETER Versions
+    ICU driver and collator algorithm versions are returned.
+    .PARAMETER Prometheus
+    The _prometheus resource returns a text/plain response that consolidates our /_node/{node-name}/_stats, and /_node/{node-name}/_system endpoints. The format is determined by Prometheus.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -161,13 +171,25 @@ function Get-CouchDBNode () {
         [Parameter(ValueFromPipeline = $true)]
         [string] $Server,
         [int] $Port,
+        [string] $Node = '_local',
+        [switch] $Membership,
+        [switch] $Versions,
+        [switch] $Prometheus,
         $Authorization,
         [switch] $Ssl,
         [string] $ProxyServer,
         [pscredential] $ProxyCredential
     )
-    $Database = "_node/_local"
-    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
+    if ($Membership.IsPresent) {
+        $Database = "_membership"
+    } elseif ($Versions.IsPresent) {
+        $Database = "_node/$Node/_versions"
+    } elseif ($Prometheus.IsPresent) {
+        $Database = "_node/$Node/_prometheus"
+    } else {
+        $Database = "_node/$Node"
+    }
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Add-CouchDBNode () {
@@ -239,7 +261,7 @@ function Remove-CouchDBNode () {
     Remove server nodes on CouchDB server.
     .NOTES
     CouchDB API:
-        DELETE /_node/{node-name}
+        DELETE /_node/_local/_nodes/{node-name}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -272,27 +294,22 @@ function Remove-CouchDBNode () {
         [int] $Port,
         [Parameter(mandatory = $true, ValueFromPipeline = $true)]
         [string] $Node,
+        [string] $Revision,
         $Authorization,
         [switch]$Force,
         [switch] $Ssl,
         [string] $ProxyServer,
         [pscredential] $ProxyCredential
     )
-    $Database = "_nodes/_local"
+    $Database = "_node/_local/_nodes"
     # Check node
-    if ((Get-CouchDBClusterSetup -Authorization $Authorization -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential).state -eq 'single_node_enabled') {
-        $clu_property = 'name'
-    } else {
-        $clu_property = 'all_nodes'
+    if ((Get-CouchDBNode -Authorization "admin:password" -Membership -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential -ErrorAction SilentlyContinue).cluster_nodes -contains $Node) {
+        if (-not($Revision)) {
+            $Revision = (Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Node -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential)._rev
+        }
     }
-    if ((Get-CouchDBNode -Authorization "admin:password" -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential -ErrorAction SilentlyContinue).$clu_property -contains $Node) {
-        $Revision = (Get-CouchDBDocument -Server $Server -Port $Port -Database $Database -Document $Node -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential)._rev
-    } else {
-        throw "Node $Node not exist."
-    }
-    $Document = $Node
     if ($Force -or $PSCmdlet.ShouldContinue("Do you wish remove node $Node ?", "Remove $Node")) {
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Document -Revision $Revision -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
+        Send-CouchDBRequest -Server $Server -Port $Port -Method "DELETE" -Database $Database -Document $Node -Revision $Revision -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
     }
 }
 
@@ -428,4 +445,54 @@ function Set-CouchDBConfiguration () {
     }
     $Data = $Value | ConvertTo-Json
     Send-CouchDBRequest -Server $Server -Port $Port -Method "PUT" -Database $Database -Document $Document -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
+}
+
+function Submit-CouchDBConfiguration () {
+    <#
+    .SYNOPSIS
+    Reloads the configuration from disk.
+    .DESCRIPTION
+    This has a side effect of flushing any in-memory configuration changes that have not been committed to disk.
+    .NOTES
+    CouchDB API:
+        POST /_node/{node-name}/_config/_reload
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Node
+    The CouchDB node of cluster. Default is couchdb@localhost.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
+    .EXAMPLE
+    Submit-CouchDBConfiguration -Authorization "admin:password"
+    Reloads the configuration from disk.
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/config.html#reload-configuration
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(ValueFromPipeline = $true)]
+        [string] $Server,
+        [int] $Port,
+        [Parameter(Position = 0)]
+        [string] $Node = $(if ((Get-CouchDBNode -Server $Server -Port $Port -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential).name -contains "couchdb@localhost") { "couchdb@localhost" } else { "couchdb@127.0.0.1" }),
+        [string] $Value,
+        $Authorization,
+        [switch] $Ssl,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
+    )
+    $Database = "/_node/$Node/_config/_reload"
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }

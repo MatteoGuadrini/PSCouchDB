@@ -286,10 +286,47 @@ function Get-CouchDBDatabaseChanges () {
     The CouchDB server port. Default is 5984.
     .PARAMETER Database
     The CouchDB database.
+    .PARAMETER DocIds
+    The CouchDB document ids array.
     .PARAMETER Filter
     Reference to a filter function from a design document that will filter whole stream emitting only filtered events.
     .PARAMETER Continuous
     Sends a line of JSON per event. Keeps the socket open until timeout.
+    .PARAMETER IncludeDocs
+    Include the associated document with each result. If there are Conflicts, only the winning revision is returned.
+    .PARAMETER Conflicts
+    Includes conflicts information in response. Ignored if IncludeDocs isn't true.
+    .PARAMETER Descending
+    Return the change results in descending sequence order (most recent change first).
+    .PARAMETER Feed
+    [normal] Specifies Normal Polling Mode. All past changes are returned immediately. Default.
+    [longpoll] Specifies Long Polling Mode. Waits until at least one change has occurred, sends the change, then closes the connection. Most commonly used in conjunction with since=now, to wait for the next change.
+    [continuous] Sets Continuous Mode. Sends a line of JSON per event. Keeps the socket open until timeout.
+    [eventsource] Sets Event Source Mode. Works the same as Continuous Mode, but sends the events in EventSource format.
+    .PARAMETER Heartbeat
+    Period in milliseconds after which an empty line is sent in the results. Only applicable for longpoll, continuous, and eventsource feeds. Overrides any timeout to keep the feed alive indefinitely. Default is 60000.
+    .PARAMETER Attachments
+    Include the Base64-encoded content of attachments in the documents that are included if IncludeDocs is true. Ignored if IncludeDocs isn't true. Default is false.
+    .PARAMETER AttachmentsEncoding
+    Include encoding information in attachment stubs if IncludeDocs is true and the particular attachment is compressed. Ignored if IncludeDocs isn't true. Default is false.
+    .PARAMETER LastEventId
+    Alias of Last-Event-ID header.
+    .PARAMETER Limit
+    Limit number of result rows to the specified value (note that using 0 here has the same effect as 1).
+    .PARAMETER Since
+    Start the results from the change immediately after the given update sequence. Can be valid update sequence or now value. Default is 0.
+    .PARAMETER Style
+    Specifies how many revisions are returned in the changes array. 
+    The default, main_only, will only return the current "winning" revision; all_docs will return all leaf revisions (including conflicts and deleted former conflicts).
+    .PARAMETER Timeout
+    Maximum period in milliseconds to wait for a change before the response is sent, even if there are no results. Only applicable for longpoll or continuous feeds. 
+    Default value is specified by chttpd/changes_timeout configuration option. Note that 60000 value is also the default maximum timeout to prevent undetected dead connections.
+    .PARAMETER View
+    Allows to use view functions as filters. Documents counted as "passed" for view filter in case if map function emits at least one record for them. See _view for more info.
+    .PARAMETER SeqInterval
+    When fetching changes in a batch, setting the seq_interval parameter tells CouchDB to only calculate the update seq with every Nth result returned. 
+    By setting seq_interval=<batch size> , where <batch size> is the number of results requested per batch, load can be reduced on the source CouchDB database; 
+    computing the seq value across many shards (esp. in highly-sharded databases) is expensive in a heavily loaded CouchDB cluster.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -314,8 +351,24 @@ function Get-CouchDBDatabaseChanges () {
         [int] $Port,
         [Parameter(mandatory = $true, ValueFromPipeline = $true, Position = 0)]
         [string] $Database,
-        [array] $Filter,
-        [switch] $Continuous ,
+        [array] $DocIds,
+        [string] $Filter,
+        [switch] $Continuous,
+        [switch] $IncludeDocs,
+        [switch] $Conflicts,
+        [switch] $Descending,
+        [ValidateSet("normal", "longpoll", "continuous", "eventsource")]
+        [string] $Feed,
+        [int] $Heartbeat,
+        [switch] $Attachments,
+        [switch] $AttachmentsEncoding,
+        [int] $LastEventId,
+        [int] $Limit,
+        $Since,
+        [string] $Style,
+        [int] $Timeout,
+        [string] $View,
+        [int] $SeqInterval,
         $Authorization,
         [switch] $Ssl,
         [string] $ProxyServer,
@@ -326,17 +379,75 @@ function Get-CouchDBDatabaseChanges () {
         throw "Database $Database is not exists."
     }
     $Document = '_changes'
-    if ($Filter) {
+    # Calculate POST parametes and data
+    if ($DocIds) {
         $parameters += 'filter=_doc_ids'
-        $Data = "{ `"doc_ids`": $($Filter | ConvertTo-Json -Compress) }"
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Params $parameters -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
-    } elseif ($Continuous.IsPresent) { 
-        $parameters += 'feed=continuous'
-        $Data = "{}"
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Params $parameters -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
-    } else {
-        Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Params $parameters -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
+        $Data = "{ `"doc_ids`": $($DocIds | ConvertTo-Json -Compress) }"
     }
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Document $Document -Data $Data -Params $parameters -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
+    return
+    # Calculate GET parametes and data
+    if ($Filter) {
+        $parameters += "filter=$Filter"
+    }
+    if ($Continuous.IsPresent) { 
+        $parameters += 'feed=continuous'
+    }
+    if ($IncludeDocs.IsPresent) { 
+        $parameters += 'include_docs=true'
+    }
+    if ($Conflicts.IsPresent) {
+        if ($IncludeDocs.IsPresent) {
+            $parameters += 'conflicts=true'
+        } else {
+            Write-Warning -Message "Conflicts ignored because IncludeDocs isn't true."
+        }
+    }
+    if ($Descending.IsPresent) { 
+        $parameters += 'descending=true'
+    }
+    if ($Feed) { 
+        $parameters += "feed=$Feed"
+    }
+    if ($Heartbeat) { 
+        $parameters += "heartbeat=$Heartbeat"
+    }
+    if ($Attachments.IsPresent) {
+        if ($IncludeDocs.IsPresent) {
+            $parameters += 'attachments=true'
+        } else {
+            Write-Warning -Message "Attachments ignored because IncludeDocs isn't true."
+        }
+    }
+    if ($AttachmentsEncoding.IsPresent) {
+        if ($IncludeDocs.IsPresent) {
+            $parameters += 'att_encoding_info=true'
+        } else {
+            Write-Warning -Message "AttachmentsEncoding ignored because IncludeDocs isn't true."
+        }
+    }
+    if ($LastEventId) { 
+        $parameters += "last-event-id=$LastEventId"
+    }
+    if ($Limit) { 
+        $parameters += "limit=$Limit"
+    }
+    if ($Since) { 
+        $parameters += "since=$Since"
+    }
+    if ($Style) { 
+        $parameters += "style=$Style"
+    }
+    if ($Timeout) { 
+        $parameters += "timeout=$Timeout"
+    }
+    if ($View) { 
+        $parameters += "view=$View"
+    }
+    if ($SeqInterval) { 
+        $parameters += "seq_interval=$SeqInterval"
+    }
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Params $parameters -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Set-CouchDBReplication () {

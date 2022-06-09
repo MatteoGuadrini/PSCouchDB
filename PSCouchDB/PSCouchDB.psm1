@@ -2,6 +2,36 @@
 [bool] $Global:CouchDBCachePreference = $false
 [bool] $Global:CouchDBSaveCredentialPreference = $true
 
+# CouchDB exception class
+class PSCouchDBRequestException : System.Exception {
+    [string] $CouchDBMessage
+    [int] $CouchDBStausCode
+
+    PSCouchDBRequestException([int]$statusCode, [string]$response) {
+        $this.CouchDBStausCode = $statusCode
+        switch ($this.CouchDBStausCode) {
+            304 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Not Modified: The additional content requested has not been modified." }
+            400 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Bad Request: Bad request structure. The error can indicate an error with the request URL, path or headers." }
+            401 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Unauthorized: The item requested was not available using the supplied authorization, or authorization was not supplied." }
+            403 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Forbidden: The requested item or operation is forbidden." }
+            404 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Not Found: The requested content could not be found." }
+            405 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Method Not Allowed: A request was made using an invalid HTTP request type for the URL requested." }
+            406 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Not Acceptable: The requested content type is not supported by the server." }
+            409 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Conflict: Request resulted in an update conflict." }
+            412 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Precondition Failed: The request headers from the client and the capabilities of the server do not match." }
+            413 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Request Entity Too Large: A document exceeds the configured couchdb/max_document_size value or the entire request exceeds the httpd/max_http_request_size value." }
+            415 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Unsupported Media Type: The content types supported, and the content type of the information being requested or submitted indicate that the content type is not supported." }
+            416 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Requested Range Not Satisfiable: The range specified in the request header cannot be satisfied by the server." }
+            417 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Expectation Failed: The bulk load operation failed." }
+            { $this.CouchDBStausCode -ge 500 } { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Internal Server Error: The request was invalid, either because the supplied JSON was invalid, or invalid information was supplied as part of the request." }
+            Default { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Unknown Error: something wrong." }
+        }
+        if ($response) {
+            $this.CouchDBMessage += "`nCouchDB Response -> $response"
+        }
+    }
+}
+
 # Native Powershell CouchDB class
 class PSCouchDBDocument {
     <#
@@ -1418,15 +1448,19 @@ class PSCouchDBRequest {
             $this.client.Headers.Add("Authorization", ("Basic {0}" -f $base64AuthInfo))
         }
         try {
-            [System.Net.WebResponse] $resp = $this.client.GetResponse()
+            [System.Net.HttpWebResponse] $resp = $this.client.GetResponse()
             $resp.Close()
             $this.uri.LastStatusCode = $resp.StatusCode
         } catch [System.Net.WebException] {
+            $resp = $false
             [System.Net.HttpWebResponse] $errcode = $_.Exception.Response
             $this.uri.LastStatusCode = $errcode.StatusCode
-            throw ([PSCouchDBRequestException]::New($errcode.StatusCode, $errcode.StatusDescription)).CouchDBMessage
         }
-        return $resp.Headers.ToString()
+        if (Get-Member 'Headers' -InputObject $resp) {
+            return $resp.Headers
+        } else {
+            return $resp
+        }   
     }
 
     SetProxy ([string]$uri) {
@@ -1584,37 +1618,6 @@ Uri: {4}
 
 {5}" -f $this.method, $this.uri.Path, $this.uri.Host, $this.uri.Query, $stringUri.Uri, $this.data
         return $str
-    }
-}
-
-# CouchDB exception class
-
-class PSCouchDBRequestException : System.Exception {
-    [string] $CouchDBMessage
-    [int] $CouchDBStausCode
-
-    PSCouchDBRequestException([int]$statusCode, [string]$response) {
-        $this.CouchDBStausCode = $statusCode
-        switch ($this.CouchDBStausCode) {
-            304 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Not Modified: The additional content requested has not been modified." }
-            400 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Bad Request: Bad request structure. The error can indicate an error with the request URL, path or headers." }
-            401 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Unauthorized: The item requested was not available using the supplied authorization, or authorization was not supplied." }
-            403 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Forbidden: The requested item or operation is forbidden." }
-            404 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Not Found: The requested content could not be found." }
-            405 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Method Not Allowed: A request was made using an invalid HTTP request type for the URL requested." }
-            406 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Not Acceptable: The requested content type is not supported by the server." }
-            409 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Conflict: Request resulted in an update conflict." }
-            412 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Precondition Failed: The request headers from the client and the capabilities of the server do not match." }
-            413 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Request Entity Too Large: A document exceeds the configured couchdb/max_document_size value or the entire request exceeds the httpd/max_http_request_size value." }
-            415 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Unsupported Media Type: The content types supported, and the content type of the information being requested or submitted indicate that the content type is not supported." }
-            416 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Requested Range Not Satisfiable: The range specified in the request header cannot be satisfied by the server." }
-            417 { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Expectation Failed: The bulk load operation failed." }
-            { $this.CouchDBStausCode -ge 500 } { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Internal Server Error: The request was invalid, either because the supplied JSON was invalid, or invalid information was supplied as part of the request." }
-            Default { $this.CouchDBMessage = "[$($this.CouchDBStausCode)] Unknown Error: something wrong." }
-        }
-        if ($response) {
-            $this.CouchDBMessage += "`nCouchDB Response -> $response"
-        }
     }
 }
 
