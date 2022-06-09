@@ -1,5 +1,18 @@
 # Release notes
 
+## 2.5.0
+Jun 09, 2022
+
+- Fix *GetHeader* method on **PSCouchDBRequest** class.
+- Fix **ConvertTo-CouchDBPassword** cmdlet.
+- Fix position of **PSCouchDBRequestException** class.
+- Fix check permission on **Revoke-CouchDBDatabasePermission** cmdlet.
+- Fix **Copy-CouchDBDatabase** cmdlet.
+- Fix check document info in all cmdlet.
+- Add *Node* parameter on **Get-CouchDBNode** cmdlet.
+- Add all parameters on **Get-CouchDBDatabaseChanges** cmdlet.
+- Add *tests* folder for [**Pester**](https://pester-docs.netlify.app/) testing.
+
 ## 2.4.0
 May 28, 2021
 
