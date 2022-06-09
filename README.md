@@ -1,6 +1,8 @@
 # PSCouchDB: Advanced CLI for CouchDB server
 <img src="https://pscouchdb.readthedocs.io/en/latest/_images/pscouchdb-logo.svg" alt="PSCouchDB" title="PSCouchDB" width="300" height="300" />
 
+**Docs**: [ReadTheDocs](https://pscouchdb.readthedocs.io) 
+
 ## Installation and simple usage
 1. Download and install CouchDB following the [docs](http://docs.couchdb.org/en/latest/install/index.html).
 2. Download and install latest PSCouchDB module by copying it under `%Windir%\System32\WindowsPowerShell\v1.0\Modules` for all users or under `%UserProfile%\Documents\WindowsPowerShell\Modules` for the current user or install through [PowershellGallery](https://www.powershellgallery.com/packages/PSCouchDB).
@@ -40,6 +42,18 @@ Get-CouchDBAttachment -Database test -Document "Hitchhikers" -Attachment file.tx
 
 These are just some of the operations you can do with this CLI.
 PSCouchDB supports all [API](https://docs.couchdb.org/en/stable/api/index.html) of CouchDB server. If you want to find out more, follow the docs.
+
+## Test PSCouchDB
+Before test this module, [install latest](#installation-and-simple-usage) version of *CouchDB* server and latest installation of [*Pester* module](https://pester-docs.netlify.app/docs/introduction/installation).
+> WARNING: Test this module in testing enviroment ONLY.
+
+```powershell
+git clone "https://github.com/MatteoGuadrini/PSCouchDB.git"
+cd "PSCouchDB/PSCouchDB/tests"
+foreach ($f in (Get-ChildItem $PWD)) {
+	& pwsh $f.FullName		# use powershell before 6.X
+}
+```
 
 ### Complete documentation
 For other operation, for more details and for learning all cmdlets and possibilities, see the [docs](https://pscouchdb.readthedocs.io/en/latest/).
