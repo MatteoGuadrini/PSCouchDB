@@ -759,7 +759,7 @@ class PSCouchDBDesignDoc : PSCouchDBDocument {
 
     # Constructor
     PSCouchDBDesignDoc () {
-        $this._id = "_design/$((New-CouchDBUuids -Count 1).uuids[0])"
+        $this._id = "_design/$((New-Guid).Guid.Replace('-', $null))"
         $this.views = New-Object Collections.Generic.List[PSCouchDBView]
         $this.doc['_id'] = $this._id
         $this.doc.Add('views', @{})
