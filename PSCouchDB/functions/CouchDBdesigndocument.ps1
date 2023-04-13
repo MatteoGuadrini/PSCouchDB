@@ -167,6 +167,7 @@ function Get-CouchDBDesignDocument () {
     CouchDB API:
         GET /{db}/_design/{ddoc}
         HEAD /{db}/_design/{ddoc}
+        GET /{db}/_design/{ddoc}/_search_info/{index}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -175,6 +176,9 @@ function Get-CouchDBDesignDocument () {
     The CouchDB database.
     .PARAMETER Document
     The CouchDB design document.
+    .PARAMETER Index
+    Executes a search request against the named index in the specified design document.
+    WARNING: Search endpoints require a running search plugin connected to each cluster node.
     .PARAMETER Info
     The CouchDB header of document.
     .PARAMETER Authorization
@@ -205,6 +209,7 @@ function Get-CouchDBDesignDocument () {
         [string] $Database,
         [Parameter(mandatory = $true, ValueFromPipeline = $true, Position = 1)]
         [string] $Document,
+        [string] $Index,
         [switch] $Info,
         $Authorization,
         [switch] $Ssl,
@@ -235,7 +240,10 @@ function Get-CouchDBDesignDocument () {
         Set-Variable -Name $Variable -Value $exportDdoc -Scope Global
         return $null
     }
+    # Check method
     if ($Info.IsPresent) { $Method = "HEAD" } else { $Method = "GET" }
+    # Search index
+    if ($Index) { $Method = "GET"; $Document += "/_search_info/$Index" }
     Send-CouchDBRequest -Server $Server -Port $Port -Method $Method -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
