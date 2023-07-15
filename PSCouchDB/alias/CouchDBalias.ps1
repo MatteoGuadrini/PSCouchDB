@@ -87,6 +87,7 @@ New-Alias -Name "rps" -Value Remove-CouchDBProxy -Option ReadOnly
 New-Alias -Name "rcsrv" -Value Restart-CouchDBServer -Option ReadOnly
 New-Alias -Name "scft" -Value Search-CouchDBFullText -Option ReadOnly
 New-Alias -Name "fcdoc" -Value Find-CouchDBDocuments -Option ReadOnly
+New-Alias -Name "fcddoc" -Value Find-CouchDBDesignDocument -Option ReadOnly
 New-Alias -Name "wcfc" -Value Write-CouchDBFullCommit -Option ReadOnly
 New-Alias -Name "ecdb" -Value Export-CouchDBDatabase -Option ReadOnly
 New-Alias -Name "icdb" -Value Import-CouchDBDatabase -Option ReadOnly

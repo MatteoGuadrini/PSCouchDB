@@ -174,6 +174,7 @@
         "Restart-CouchDBServer",
         "Search-CouchDBFullText",
         "Find-CouchDBDocuments",
+        "Find-CouchDBDesignDocument",
         "Write-CouchDBFullCommit",
         "Export-CouchDBDatabase",
         "Import-CouchDBDatabase",
