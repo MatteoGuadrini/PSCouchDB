@@ -624,6 +624,13 @@ Design documents
 
     Remove-CouchDBDesignDocumentAttachment [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [-Attachment] <String> [-Revision] <String> [[-Authorization] <String>] [-Ssl] [[-ProxyServer] <String>] [[-ProxyCredential] <Object>] [-WhatIf] [-Confirm] [<CommonParameters>]
 
+**Find-CouchDBDesignDocument**
+
+.. code-block:: powershell
+
+    Find-CouchDBDesignDocument [-Server <String>] [-Port <Int32>] [-Database] <String> [-Document] <String> [-Index] <String> [-Bookmark <String>] [-Counts <Array>] [-GroupField <Hashtable>] [-GroupSort <Hashtable>] [-IncludeDocs] [-IncludeFields] [-Limit <Int32>] [-Sort <String>] [-Authorization <Object>] [-Ssl] [-Variable <String>] [-ProxyServer <String>] [-ProxyCredential <PSCredential>] [<CommonParameters>]
+
+
 Aliases
 _______
 
