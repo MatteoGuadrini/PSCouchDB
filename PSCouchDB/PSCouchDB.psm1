@@ -1714,17 +1714,22 @@ function Send-CouchDBRequest {
         [pscredential] $ProxyCredential
     )
     # Create PSCouchDBRequest object
+    Write-Debug -Message "Create PSCouchDBRequest object"
     $req = New-Object PSCouchDBRequest
     $parameters = @()
     # Set cache
+    Write-Debug -Message "Set cache"
     if ($Global:CouchDBCachePreference) {
         $req.EnableCache()
     }
+    # Set server
+    Write-Debug -Message "Set server"
     if ($Server) {
         Write-Verbose -Message "Set server to $Server"
         $req.SetServer($Server)
     }
     # Set proxy server
+    Write-Debug -Message "Set proxy server"
     if ($ProxyServer) {
         if ($ProxyCredential -is [pscredential]) {
             Write-Verbose -Message "Set proxy server $ProxyServer with credential"
@@ -1735,17 +1740,20 @@ function Send-CouchDBRequest {
         }
     }
     # Set protocol
+    Write-Debug -Message "Set protocol"
     if ($Ssl.IsPresent) {
         # Set default port
         Write-Verbose -Message "Enable SSL on port 6984"
         $req.SetSsl()
     }
     # Set port
+    Write-Debug -Message "Set port"
     if ($Port) {
         Write-Verbose -Message "Set port on $Port"
         $req.SetPort($Port)
     }
     # Set method
+    Write-Debug -Message "Set method"
     switch ($Method) {
         "HEAD" { $req.SetMethod("HEAD") }
         "GET" { $req.SetMethod("GET") }
@@ -1756,6 +1764,7 @@ function Send-CouchDBRequest {
     }
     Write-Verbose -Message "Set method to $($req.method)"
     # Set database
+    Write-Debug -Message "Set database"
     if ($Database) {
         if ($Database -match "\?") {
             $arr = $Database -split "\?"
@@ -1769,6 +1778,7 @@ function Send-CouchDBRequest {
         $req.SetDatabase($Database)
     }
     # Set document
+    Write-Debug -Message "Set document"
     if ($Document) {
         if ($Document -match "\?") {
             $arr = $Document -split "\?"
@@ -1782,6 +1792,7 @@ function Send-CouchDBRequest {
         $req.SetDocument($Document)
     }
     # Set attachment
+    Write-Debug -Message "Set attachment"
     if ($Attachment) {
         if ('GET','HEAD' -contains $Method) {
             Write-Verbose -Message "Set attachment to $Attachment"
@@ -1796,11 +1807,13 @@ function Send-CouchDBRequest {
         }
     }
     # Set revision
+    Write-Debug -Message "Set revision"
     if ($Revision) {
         Write-Verbose -Message "Set revision to $Revision"
         $parameters += "rev=$Revision"
     }
     # Check other params
+    Write-Debug -Message "Set other params"
     if ($Params) {
         $parameters += $Params
     }
@@ -1809,6 +1822,7 @@ function Send-CouchDBRequest {
         $req.SetParameter($parameters)
     }
     # Check authorization
+    Write-Debug -Message "Set authorization"
     if ($Authorization -or $Global:CouchDBCredential) {
         if ($Global:CouchDBSaveCredentialPreference) {
             if (-not($Global:CouchDBCredential)) {
@@ -1828,11 +1842,13 @@ function Send-CouchDBRequest {
         }
     }
     # Check json data
+    Write-Debug -Message "Set json data"
     if ($Data) {
         Write-Verbose -Message "Set json data to: $Data"
         $req.SetData($Data)
     }
     # Get header or request
+    Write-Debug -Message "Set header or request"
     Write-Verbose -Message "Request to CouchDB server: $req"
     if ($Method -eq "HEAD") {
         $req.GetHeader()
