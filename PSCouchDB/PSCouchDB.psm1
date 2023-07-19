@@ -1093,6 +1093,7 @@ class PSCouchDBReplication {
     hidden [string] $selector
     hidden [string] $since_seq
     hidden [bool] $use_checkpoints
+    hidden [bool] $winning_revs_only
     hidden [hashtable] $replicator = @{}
 
     # Constuctor
@@ -1227,6 +1228,11 @@ class PSCouchDBReplication {
     UseCheckpoints () { 
         $this.use_checkpoints = $true
         $this.replicator.Add('use_checkpoints', $this.use_checkpoints)
+    }
+
+    SetWinningRevisionOnly ([bool]$value) {
+        $this.winning_revs_only = $value
+        $this.replicator.Add('winning_revs_only', $this.winning_revs_only)
     }
 
     [hashtable] GetDocument () {

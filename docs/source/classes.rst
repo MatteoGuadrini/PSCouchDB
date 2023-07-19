@@ -1042,6 +1042,7 @@ Methods
     SetTargetProxy          Method     void SetTargetProxy(string proxyUri)
     SetTargetServer         Method     void SetTargetServer(string server)
     SetTargetSsl            Method     void SetTargetSsl(), void SetTargetSsl(int port)
+    SetWinningRevisionOnly  Method     void SetWinningRevisionOnly(bool value)
     ToJson                  Method     string ToJson()
     ToString                Method     string ToString()
     UseCheckpoints          Method     void UseCheckpoints()
@@ -1119,16 +1120,17 @@ Other flag for replica
 
 .. code-block:: powershell
 
-    $rep.SetCheckpointInterval(300) # checkpoint interval in milliseconds
-    $rep.CreateTarget()             # create target database
-    $rep.AddDocIds('test','test2')  # replicate only ids specified
-    $rep.SetFilter()                # set filter function (ddoc/filter format)
-    $rep.SetSourceProxy()           # set source proxy server
-    $rep.SetTargetProxy()           # set target proxy server
-    $rep.SetQueryParams()           # set query for filter function
-    $rep.SetSelector()              # set selector (see PSCouchDBQuery)
-    $rep.SetSinceSequence()         # set since sequence
-    $rep.UseCheckpoints()           # use checkpoint for replication
+    $rep.SetCheckpointInterval(300)     # checkpoint interval in milliseconds
+    $rep.CreateTarget()                 # create target database
+    $rep.AddDocIds('test','test2')      # replicate only ids specified
+    $rep.SetFilter()                    # set filter function (ddoc/filter format)
+    $rep.SetSourceProxy()               # set source proxy server
+    $rep.SetTargetProxy()               # set target proxy server
+    $rep.SetQueryParams()               # set query for filter function
+    $rep.SetSelector()                  # set selector (see PSCouchDBQuery)
+    $rep.SetSinceSequence()             # set since sequence
+    $rep.SetWinningRevisionOnly($true)  # set the mode that discards conflicting revisions
+    $rep.UseCheckpoints()               # use checkpoint for replication
 
 Get replication document
 ************************

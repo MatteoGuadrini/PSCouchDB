@@ -300,7 +300,7 @@ Replication
 
 .. code-block:: powershell
 
-    Request-CouchDBReplication [[-Server] <String>] [[-Port] <Int32>] [[-Data] <Object>] [[-Authorization] <String>] [-Ssl] [[-ProxyServer] <String>] [[-ProxyCredential] <Object>] [<CommonParameters>]
+    Request-CouchDBReplication [[-Server] <String>] [[-Port] <Int32>] [[-Data] <Object>] [-WinningRevisionOnly] [[-Authorization] <Object>] [-Ssl] [[-ProxyServer] <String>] [[-ProxyCredential] <PSCredential>] [<CommonParameters>]
 
 Authentication
 **************
