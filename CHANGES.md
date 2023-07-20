@@ -1,5 +1,14 @@
 # Release notes
 
+## 2.6.0
+Jul 20, 2023
+
+- Add _Index_ parameter on **Get-CouchDBDesignDocument** cmdlet.
+- Add **Find-CouchDBDesignDocument** cmdlet.
+- Add _debug_ to **Send-CouchDBRequest** cmdlet.
+- Add _WinningRevisionOnly_ parameter on **Request-CouchDBReplication** cmdlet.
+- Fix the generation of guid
+
 ## 2.5.0
 Jun 09, 2022
 

@@ -28,7 +28,7 @@
     )
 
     # Version number of this module.
-    ModuleVersion     = '2.5.0'
+    ModuleVersion     = '2.6.0'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -174,6 +174,7 @@
         "Restart-CouchDBServer",
         "Search-CouchDBFullText",
         "Find-CouchDBDocuments",
+        "Find-CouchDBDesignDocument",
         "Write-CouchDBFullCommit",
         "Export-CouchDBDatabase",
         "Import-CouchDBDatabase",
@@ -186,7 +187,7 @@
     CmdletsToExport   = @()
 
     # Variables to export from this module
-    VariablesToExport = 'CouchDBCachePreference','CouchDBSaveCredentialPreference'
+    VariablesToExport = @('CouchDBCachePreference','CouchDBSaveCredentialPreference')
 
     # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
     AliasesToExport   = @(
@@ -277,6 +278,7 @@
         "rps",
         "scft",
         "fcdoc",
+        "fcddoc",
         "finddoc",
         "wcfc",
         "ecdb",
@@ -312,7 +314,7 @@
         PSData = @{
 
             # Tags applied to this module. These help with module discovery in online galleries.
-            Tags       = @("CouchDB", "Apache", "curl", "Database", "NoSql", "api", "http", "db")
+            Tags       = @("CouchDB", "Apache", "curl", "Database", "NoSql", "api", "http", "db", "document", "design")
 
             # A URL to the license for this module.
             LicenseUri = 'https://github.com/MatteoGuadrini/PSCouchDB/blob/master/LICENSE.md'

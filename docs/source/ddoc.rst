@@ -198,3 +198,13 @@ To remove an attachment in a design document.
 .. code-block:: powershell
 
     Remove-CouchDBDesignDocumentAttachment -Database test -Document space -Attachment "C:\test2.txt" -Revision 5-cfae778df80635ad15daa09e0264a988 -Authorization "admin:password"
+
+
+Find a design document
+**********************
+
+To search the named index into design document.
+
+.. code-block:: powershell
+
+    Find-CouchDBDesignDocument -Database test -Document space -Index planet1 -Authorization "admin:password"

@@ -586,6 +586,8 @@ function Request-CouchDBReplication () {
     The CouchDB server port. Default is 5984.
     .PARAMETER Data
     The data in json format or PSCouchDBReplication object.
+    .PARAMETER WinningRevisionOnly
+    Replication with this mode discards conflicting revisions, so it could be one way to remove conflicts through replication.
     .PARAMETER Authorization
     The CouchDB authorization form; user and password.
     Authorization format like this: user:password
@@ -614,6 +616,7 @@ function Request-CouchDBReplication () {
         [string] $Server,
         [int] $Port,
         $Data,
+        [switch] $WinningRevisionOnly,
         $Authorization,
         [switch] $Ssl,
         [string] $ProxyServer,
@@ -622,6 +625,7 @@ function Request-CouchDBReplication () {
     $Database = "_replicate"
     # Check data if PSCouchDBReplication or string
     if ($Data -is [PSCouchDBReplication]) {
+        if ($WinningRevisionOnly.IsPresent) { $Data.SetWinningRevisionOnly($true) }
         $Data = $Data.ToJson()
     }
     Send-CouchDBRequest -Server $Server -Port $Port -Method "POST" -Database $Database -Data $Data -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential

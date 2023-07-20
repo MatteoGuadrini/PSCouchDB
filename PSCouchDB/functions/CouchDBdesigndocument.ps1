@@ -167,6 +167,7 @@ function Get-CouchDBDesignDocument () {
     CouchDB API:
         GET /{db}/_design/{ddoc}
         HEAD /{db}/_design/{ddoc}
+        GET /{db}/_design/{ddoc}/_search_info/{index}
     .PARAMETER Server
     The CouchDB server name. Default is localhost.
     .PARAMETER Port
@@ -175,6 +176,9 @@ function Get-CouchDBDesignDocument () {
     The CouchDB database.
     .PARAMETER Document
     The CouchDB design document.
+    .PARAMETER Index
+    Executes a search request against the named index in the specified design document.
+    WARNING: Search endpoints require a running search plugin connected to each cluster node.
     .PARAMETER Info
     The CouchDB header of document.
     .PARAMETER Authorization
@@ -205,6 +209,7 @@ function Get-CouchDBDesignDocument () {
         [string] $Database,
         [Parameter(mandatory = $true, ValueFromPipeline = $true, Position = 1)]
         [string] $Document,
+        [string] $Index,
         [switch] $Info,
         $Authorization,
         [switch] $Ssl,
@@ -235,8 +240,122 @@ function Get-CouchDBDesignDocument () {
         Set-Variable -Name $Variable -Value $exportDdoc -Scope Global
         return $null
     }
+    # Check method
     if ($Info.IsPresent) { $Method = "HEAD" } else { $Method = "GET" }
+    # Search index
+    if ($Index) { $Method = "GET"; $Document += "/_search_info/$Index" }
     Send-CouchDBRequest -Server $Server -Port $Port -Method $Method -Database $Database -Document $Document -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
+}
+
+function Find-CouchDBDesignDocument {
+    <#
+    .SYNOPSIS
+    Executes a search in the specified design document.
+    .DESCRIPTION
+    Executes a search request against the named index in the specified design document.
+    .NOTES
+    CouchDB API:
+        GET /{db}/_design/{ddoc}/_search/{index}
+    .PARAMETER Server
+    The CouchDB server name. Default is localhost.
+    .PARAMETER Port
+    The CouchDB server port. Default is 5984.
+    .PARAMETER Database
+    The CouchDB database.
+    .PARAMETER Document
+    The CouchDB design document.
+    .PARAMETER Index
+    The index name.
+    .PARAMETER Bookmark
+    A bookmark received from a previous search. This parameter enables paging through the results.
+    .PARAMETER Counts
+    An array of names of string fields for which counts are requested.
+    .PARAMETER GroupField
+    Field by which to group search matches. :query number group_limit: Maximum group count.
+    .PARAMETER GroupSort
+    This field defines the order of the groups in a search that uses GroupField. The default sort order is relevance.
+    .PARAMETER IncludeDocs
+    Include the full content of the documents in the response.
+    .PARAMETER IncludeFields
+    Field names to include in search results. Any fields that are included must be indexed with the store:true option.
+    .PARAMETER Limit
+    Limit the number of the returned documents to the specified number. For a grouped search, this parameter limits the number of documents per group.
+    .PARAMETER Sort
+    Specifies the sort order of the results. In a grouped search (when group_field is used), this parameter specifies the sort order within a group. The default sort order is relevance.
+    .PARAMETER Stale
+    Set to ok to allow the use of an out-of-date index.
+    .PARAMETER Authorization
+    The CouchDB authorization form; user and password.
+    Authorization format like this: user:password
+    ATTENTION: if the password is not specified, it will be prompted.
+    .PARAMETER Ssl
+    Set ssl connection on CouchDB server.
+    This modify protocol to https and port to 6984.
+    .PARAMETER Variable
+    Export into a PSCouchDBDesignDoc variable object.
+    .PARAMETER ProxyServer
+    Proxy server through which all non-local calls pass.
+    Ex. ... -ProxyServer 'http://myproxy.local:8080' ...
+    .PARAMETER ProxyCredential
+    Proxy server credential. It must be specified with a PSCredential object.
+    .EXAMPLE
+    Find-CouchDBDesignDocument -Database test -Document "space" -Index "planet1" -Limit 25
+    This example search the named index "planet1" into "space" design document on database "test".
+    .LINK
+    https://pscouchdb.readthedocs.io/en/latest/ddoc.html#find-a-design-document
+    #>
+    [CmdletBinding()]
+    param(
+        [string] $Server,
+        [int] $Port,
+        [Parameter(mandatory = $true, Position = 0)]
+        [string] $Database,
+        [Parameter(mandatory = $true, ValueFromPipeline = $true, Position = 1)]
+        [string] $Document,
+        [Parameter(mandatory = $true, ValueFromPipeline = $true, Position = 2)]
+        [string] $Index,
+        [string] $Bookmark,
+        [array] $Counts,
+        [hashtable] $GroupField,
+        [hashtable] $GroupSort,
+        [switch] $IncludeDocs,
+        [switch] $IncludeFields,
+        [int] $Limit,
+        [string] $Sort,
+        $Authorization,
+        [switch] $Ssl,
+        [string] $Variable,
+        [string] $ProxyServer,
+        [pscredential] $ProxyCredential
+    )
+    $Params = @()
+    $Document = "_design/$Document/_search/$Index"
+    # Check parameters
+    if ($Bookmark) {
+        $Params += "bookmark=$($Bookmark | ConvertTo-Json -Compress)"
+    }
+    if ($Counts) {
+        $Params += "counts=$($counts | ConvertTo-Json -Compress)"
+    }
+    if ($GroupField) {
+        $Params += "group_field=$($GroupField | ConvertTo-Json -Compress)"
+    }
+    if ($GroupSort) {
+        $Params += "group_sort=$($GroupSort | ConvertTo-Json -Compress)"
+    }
+    if ($IncludeDocs) {
+        $Params += "include_docs=$($IncludeDocs.IsPresent | ConvertTo-Json -Compress)"
+    }
+    if ($IncludeFields) {
+        $Params += "include_fields=$($IncludeFields.IsPresent | ConvertTo-Json -Compress)"
+    }
+    if ($Limit) {
+        $Params += "limit=$($Limit | ConvertTo-Json -Compress)"
+    }
+    if ($Sort) {
+        $Params += "sort=$($Sort | ConvertTo-Json -Compress)"
+    }
+    Send-CouchDBRequest -Server $Server -Port $Port -Method "GET" -Database $Database -Document $Document -Params $Params -Authorization $Authorization -Ssl:$Ssl -ProxyServer $ProxyServer -ProxyCredential $ProxyCredential
 }
 
 function Get-CouchDBDesignDocumentAttachment () {

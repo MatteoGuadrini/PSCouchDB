@@ -300,7 +300,7 @@ Replication
 
 .. code-block:: powershell
 
-    Request-CouchDBReplication [[-Server] <String>] [[-Port] <Int32>] [[-Data] <Object>] [[-Authorization] <String>] [-Ssl] [[-ProxyServer] <String>] [[-ProxyCredential] <Object>] [<CommonParameters>]
+    Request-CouchDBReplication [[-Server] <String>] [[-Port] <Int32>] [[-Data] <Object>] [-WinningRevisionOnly] [[-Authorization] <Object>] [-Ssl] [[-ProxyServer] <String>] [[-ProxyCredential] <PSCredential>] [<CommonParameters>]
 
 Authentication
 **************
@@ -624,105 +624,121 @@ Design documents
 
     Remove-CouchDBDesignDocumentAttachment [[-Server] <String>] [[-Port] <Int32>] [-Database] <String> [-Document] <String> [-Attachment] <String> [-Revision] <String> [[-Authorization] <String>] [-Ssl] [[-ProxyServer] <String>] [[-ProxyCredential] <Object>] [-WhatIf] [-Confirm] [<CommonParameters>]
 
+**Find-CouchDBDesignDocument**
+
+.. code-block:: powershell
+
+    Find-CouchDBDesignDocument [-Server <String>] [-Port <Int32>] [-Database] <String> [-Document] <String> [-Index] <String> [-Bookmark <String>] [-Counts <Array>] [-GroupField <Hashtable>] [-GroupSort <Hashtable>] [-IncludeDocs] [-IncludeFields] [-Limit <Int32>] [-Sort <String>] [-Authorization <Object>] [-Ssl] [-Variable <String>] [-ProxyServer <String>] [-ProxyCredential <PSCredential>] [<CommonParameters>]
+
+
 Aliases
 _______
 
 .. code-block:: powershell
 
-    creq -> Send-CouchDBRequest
-    acnode -> Add-CouchDBNode                      
-    ccdb -> Compress-CouchDBDatabase               
-    ccdd -> Compress-CouchDBDesignDocument         
-    ccdoc -> Clear-CouchDBDocuments                
-    ccview -> Clear-CouchDBView                    
-    cpdoc -> Copy-CouchDBDocument  
-    gcdb -> Copy-CouchDBDatabase                
-    eccl -> Enable-CouchDBCluster                  
-    fcdoc -> Find-CouchDBDocuments                 
-    finddoc -> Find-CouchDBDocuments               
-    gcadm -> Get-CouchDBAdmin                      
-    gcatt -> Get-CouchDBAttachment                 
-    gcbdoc -> Get-CouchDBBulkDocument              
-    gcbpl -> Get-CouchDBDatabasePurgedLimit        
-    gcconf -> Get-CouchDBConfiguration             
-    gccs -> Get-CouchDBClusterSetup                
-    gcdb -> Get-CouchDBDatabase                    
-    gcdbc -> Get-CouchDBDatabaseChanges            
-    gcdbp -> Grant-CouchDBDatabasePermission       
-    gcdbs -> Get-CouchDBDatabaseSecurity           
-    gcdbsh -> Get-CouchDBDatabaseShards 
-    gcdbrs -> Get-CouchDBReshards
-    scdbrs -> Set-CouchDBReshards
-    rcdbrs -> Remove-CouchDBReshards 
-    gcdbu -> Get-CouchDBDatabaseUpdates            
-    gcddd -> Get-CouchDBDatabaseDesignDocument     
-    gcddoc -> Get-CouchDBDesignDocument
-    gcdatt -> Get-CouchDBDesignDocumentAttachment            
-    gcdoc -> Get-CouchDBDocument                   
-    gcidx -> Get-CouchDBIndex                      
-    gcmr -> Get-CouchDBMissingRevision             
-    gcnode -> Get-CouchDBNode                      
-    gcrd -> Get-CouchDBRevisionDifference          
-    gcrl -> Get-CouchDBRevisionLimit               
-    gcrpdoc -> Get-CouchDBReplicationDocument      
-    gcrpl -> Get-CouchDBReplication                
-    gcrpls -> Get-CouchDBReplicationScheduler      
-    gcsi -> Get-CouchDBServer                      
-    gctsk -> Get-CouchDBActiveTask                 
-    gcusr -> Get-CouchDBUser                       
-    helpc -> Search-CouchDBHelp                    
-    mcsts -> Measure-CouchDBStatistics             
-    ncadm -> New-CouchDBAdmin                      
-    acatt -> Add-CouchDBAttachment                 
-    ncdb -> New-CouchDBDatabase                    
-    ncddoc -> New-CouchDBDesignDocument
-    adatt -> Add-CouchDBDesignDocumentAttachment           
-    ncdoc -> New-CouchDBDocument                   
-    ncidx -> New-CouchDBIndex                      
-    ncrpl -> New-CouchDBReplication                
-    ncusr -> New-CouchDBUser                       
-    ncuuid -> New-CouchDBUuids
-    ncbd -> New-CouchDBBulkDocument                      
-    rcadm -> Remove-CouchDBAdmin                   
-    rcatt -> Remove-CouchDBAttachment              
-    rcdb -> Remove-CouchDBDatabase                 
-    rcdbp -> Revoke-CouchDBDatabasePermission      
-    rcdbr -> Request-CouchDBReplication            
-    rcddoc -> Remove-CouchDBDesignDocument  
-    rdatt -> Remove-CouchDBDesignDocumentAttachment       
-    rcdoc -> Remove-CouchDBDocument                
-    rcidx -> Remove-CouchDBIndex                   
-    rcnode -> Remove-CouchDBNode                   
-    rcrpl -> Remove-CouchDBReplication             
-    rcs -> Remove-CouchDBSession                   
-    rcsrv -> Restart-CouchDBServer                 
-    rcusr -> Remove-CouchDBUser                    
-    scadm -> Set-CouchDBAdmin                               
-    scconf -> Set-CouchDBConfiguration             
-    scdbpl -> Set-CouchDBDatabasePurgedLimit       
-    scddoc -> Set-CouchDBDesignDocument        
-    scdoc -> Set-CouchDBDocument                   
-    scds -> Sync-CouchDBDatabaseShards
-    scft -> Search-CouchDBFullText             
-    scrl -> Set-CouchDBRevisionLimit               
-    scrpl -> Set-CouchDBReplication                
-    scs -> Set-CouchDBSession                      
-    scusr -> Set-CouchDBUser                       
-    src -> Search-CouchDBHelp                      
-    tcdb -> Test-CouchDBDatabase                   
-    wcfc -> Write-CouchDBFullCommit
-    ecdb -> Export-CouchDBDatabase
-    exportdb -> Export-CouchDBDatabase
-    icdb -> Export-CouchDBDatabase
-    importdb -> Export-CouchDBDatabase
-    rdblog -> Read-CouchDBLog
-    cdblog -> Clear-CouchDBLog
-    mkdb -> New-CouchDBDatabase
-    mkdoc -> New-CouchDBDocument
-    mkuser -> New-CouchDBUser
-    mkadmin -> New-CouchDBAdmin
-    rmdb -> Remove-CouchDBDatabase
-    rmdoc -> Remove-CouchDBDocument
-    rmuser -> Remove-CouchDBUser
-    rmadmin -> Remove-CouchDBAdmin
-    scda -> Search-CouchDBAnalyze
+acatt -> Add-CouchDBAttachment                 
+acnode -> Add-CouchDBNode                      
+adatt -> Add-CouchDBDesignDocumentAttachment   
+ccdb -> Compress-CouchDBDatabase               
+ccdd -> Compress-CouchDBDesignDocument         
+ccdoc -> Clear-CouchDBDocuments                
+ccview -> Clear-CouchDBView                    
+cdblog -> Clear-CouchDBLog                     
+cdbmaint -> Set-CouchDBMaintenanceMode         
+cdsa -> Search-CouchDBAnalyze                  
+condb -> Connect-CouchDBDatabase               
+cpdb -> Copy-CouchDBDatabase                   
+cpdoc -> Copy-CouchDBDocument                  
+creq -> Send-CouchDBRequest                    
+disdb -> Disconnect-CouchDBDatabase            
+eccl -> Enable-CouchDBCluster                  
+ecdb -> Export-CouchDBDatabase                 
+exportdb -> Export-CouchDBDatabase             
+fcdoc -> Find-CouchDBDocuments                 
+finddoc -> Find-CouchDBDocuments               
+gcadm -> Get-CouchDBAdmin                      
+gcatt -> Get-CouchDBAttachment                 
+gcbdoc -> Get-CouchDBBulkDocument              
+gcbpl -> Get-CouchDBDatabasePurgedLimit        
+gcconf -> Get-CouchDBConfiguration             
+gccs -> Get-CouchDBClusterSetup                
+gcdatt -> Get-CouchDBDesignDocumentAttachment  
+gcdb -> Get-CouchDBDatabase                    
+gcdbc -> Get-CouchDBDatabaseChanges            
+gcdbp -> Grant-CouchDBDatabasePermission       
+gcdbrs -> Get-CouchDBReshards                  
+gcdbs -> Get-CouchDBDatabaseSecurity           
+gcdbsh -> Get-CouchDBDatabaseShards            
+gcdbu -> Get-CouchDBDatabaseUpdates            
+gcddd -> Get-CouchDBDatabaseDesignDocument     
+gcddoc -> Get-CouchDBDesignDocument            
+gcdoc -> Get-CouchDBDocument                   
+gcidx -> Get-CouchDBIndex                      
+gcmr -> Get-CouchDBMissingRevision             
+gcnode -> Get-CouchDBNode                      
+gcrd -> Get-CouchDBRevisionDifference          
+gcrl -> Get-CouchDBRevisionLimit               
+gcrpdoc -> Get-CouchDBReplicationDocument      
+gcrpl -> Get-CouchDBReplication                
+gcrpls -> Get-CouchDBReplicationScheduler      
+gcsi -> Get-CouchDBServer                      
+gcss -> Get-CouchDBSession                     
+gctsk -> Get-CouchDBActiveTask                 
+gcusr -> Get-CouchDBUser                       
+helpc -> Search-CouchDBHelp                    
+icdb -> Import-CouchDBDatabase                 
+importdb -> Import-CouchDBDatabase             
+mcsts -> Measure-CouchDBStatistics             
+mkadmin -> New-CouchDBAdmin                    
+mkdb -> New-CouchDBDatabase                    
+mkdoc -> New-CouchDBDocument                   
+mkuser -> New-CouchDBUser                      
+ncadm -> New-CouchDBAdmin                      
+ncbd -> New-CouchDBBulkDocument                
+ncdb -> New-CouchDBDatabase                    
+ncddoc -> New-CouchDBDesignDocument            
+ncdoc -> New-CouchDBDocument                   
+ncidx -> New-CouchDBIndex                      
+ncrpl -> New-CouchDBReplication                
+ncusr -> New-CouchDBUser                       
+ncuuid -> New-CouchDBUuids                     
+newcdb -> New-CouchDBObject                    
+rcadm -> Remove-CouchDBAdmin                   
+rcatt -> Remove-CouchDBAttachment              
+rcdb -> Remove-CouchDBDatabase                 
+rcdbp -> Revoke-CouchDBDatabasePermission      
+rcdbr -> Request-CouchDBReplication            
+rcdbrs -> Remove-CouchDBReshards               
+rcddoc -> Remove-CouchDBDesignDocument         
+rcdoc -> Remove-CouchDBDocument                
+rcidx -> Remove-CouchDBIndex                   
+rcnode -> Remove-CouchDBNode                   
+rcrpl -> Remove-CouchDBReplication             
+rcs -> Remove-CouchDBSession                   
+rcsrv -> Restart-CouchDBServer                 
+rcusr -> Remove-CouchDBUser                    
+rdatt -> Remove-CouchDBDesignDocumentAttachment
+rdblog -> Read-CouchDBLog                      
+rmadmin -> Remove-CouchDBAdmin                 
+rmdb -> Remove-CouchDBDatabase                 
+rmdoc -> Remove-CouchDBDocument                
+rmuser -> Remove-CouchDBUser                   
+rps -> Remove-CouchDBProxy                     
+scadm -> Set-CouchDBAdmin                      
+scconf -> Set-CouchDBConfiguration             
+scdbpl -> Set-CouchDBDatabasePurgedLimit       
+scdbrs -> Set-CouchDBReshards                  
+scddoc -> Set-CouchDBDesignDocument            
+scdoc -> Set-CouchDBDocument                   
+scds -> Sync-CouchDBDatabaseShards             
+scft -> Search-CouchDBFullText                 
+scrl -> Set-CouchDBRevisionLimit               
+scrpl -> Set-CouchDBReplication                
+scs -> Set-CouchDBSession                      
+scusr -> Set-CouchDBUser                       
+sps -> Set-CouchDBProxy                        
+src -> Search-CouchDBHelp                      
+subconf -> Submit-CouchDBConfiguration         
+tcdb -> Test-CouchDBDatabase                   
+wcfc -> Write-CouchDBFullCommit   
+             
