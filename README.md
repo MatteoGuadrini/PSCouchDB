@@ -6,8 +6,10 @@
 ## Installation and simple usage
 1. Download and install CouchDB following the [docs](http://docs.couchdb.org/en/latest/install/index.html).
 2. Download and install latest PSCouchDB module by copying it under `%Windir%\System32\WindowsPowerShell\v1.0\Modules` for all users or under `%UserProfile%\Documents\WindowsPowerShell\Modules` for the current user or install through [PowershellGallery](https://www.powershellgallery.com/packages/PSCouchDB).
-> INFORMATION: This module is not signed. Before import or execute cmdlet on this module, see [about_signing](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_signing) session. To skip this part and continue, run ```Set-ExecutionPolicy -ExecutionPolicy Unrestricted```
-> ATTENTION: If you are using CouchDB version 2, use the PSCouchDB 1.X version; if instead you are using CouchDB version 3 or 4, use the PSCouchDB version 2.X```
+> [!NOTE] 
+> This module is not signed. Before import or execute cmdlet on this module, see [about_signing](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_signing) session. To skip this part and continue, run ```Set-ExecutionPolicy -ExecutionPolicy Unrestricted```
+> [!WARNING] 
+> If you using CouchDB version 2, use the PSCouchDB 1.X version; if instead you are using CouchDB version 3 or 4, use the PSCouchDB version 2.X
 3. Now, configure database mode, in single node (cluster of one single node) or cluster, run this cmdlet:
 ```powershell
 # Single node cluster
@@ -33,7 +35,7 @@ New-CouchDBDocument -Database test -Document "Hitchhikers" -Data $Data -Authoriz
 ```powershell
 $rev = (Get-CouchDBDocument -Database test -Document "Hitchhikers")._rev
 "Ultimate Question of Life, the Universe and Everything" | Out-File C:\file.txt
-New-CouchDBAttachment -Database test -Document "Hitchhikers" -revision $rev -Attachment C:\file.txt -Authorization "admin:password"
+Add-CouchDBAttachment -Database test -Document "Hitchhikers" -revision $rev -Attachment C:\file.txt -Authorization "admin:password"
 ```
 7. Finally, get a document:
 ```powershell
@@ -45,7 +47,8 @@ PSCouchDB supports all [API](https://docs.couchdb.org/en/stable/api/index.html) 
 
 ## Test PSCouchDB
 Before test this module, [install latest](#installation-and-simple-usage) version of *CouchDB* server and latest installation of [*Pester* module](https://pester-docs.netlify.app/docs/introduction/installation).
-> WARNING: Test this module in testing enviroment ONLY.
+> [!WARNING]
+> Test this module in testing enviroment ONLY.
 
 ```powershell
 git clone "https://github.com/MatteoGuadrini/PSCouchDB.git"
@@ -57,9 +60,6 @@ foreach ($f in (Get-ChildItem $PWD)) {
 
 ### Complete documentation
 For other operation, for more details and for learning all cmdlets and possibilities, see the [docs](https://pscouchdb.readthedocs.io/en/latest/).
-
-### Kanban board
-If you are curious, if you want to contribute or simply see the features, look at the project's kanban board here: [KANBAN](https://github.com/MatteoGuadrini/PSCouchDB/projects).
 
 ### Cmdlet help
 If you want to have an overview of the module, do this:
