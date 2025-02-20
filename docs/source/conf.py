@@ -20,7 +20,7 @@
 # -- Project information -----------------------------------------------------
 
 project = u'PSCouchDB'
-copyright = u'2020, Matteo Guadrini'
+copyright = u'2025, Matteo Guadrini'
 author = u'Matteo Guadrini'
 
 # The short X.Y version

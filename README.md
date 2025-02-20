@@ -1,5 +1,5 @@
-# PSCouchDB: Advanced CLI for CouchDB server
-<img src="https://pscouchdb.readthedocs.io/en/latest/_images/pscouchdb-logo.svg" alt="PSCouchDB" title="PSCouchDB" width="300" height="300" />
+<img src="https://pscouchdb.readthedocs.io/en/latest/_images/pscouchdb-logo.svg" alt="PSCouchDB" align="right" width="150"/> **PSCouchDB**: Advanced CLI for CouchDB server
+======
 
 **Docs**: [ReadTheDocs](https://pscouchdb.readthedocs.io) 
 
@@ -73,8 +73,11 @@ Search-CouchDBHelp -Pattern Database | foreach {Get-Help $_.Name}
 or see [docs](https://pscouchdb.readthedocs.io/en/latest).
 For a little demonstration, see [here](https://asciinema.org/a/232696)
 
-## Licence            
-This package is [Treeware](https://treeware.earth). If you use it in production, then we ask that you [**buy the world a tree**](https://plant.treeware.earth/MatteoGuadrini/PSCouchDB) to thank us for our work. By contributing to the Treeware forest you’ll be creating employment for local families and restoring wildlife habitats.
+## Treeware  
+
+This package is [Treeware](https://treeware.earth). If you use it in production, 
+then we ask that you [**buy the world a tree**](https://plant.treeware.earth/matteoguadrini/PSCouchDB) to thank us for our work. 
+By contributing to the Treeware forest you’ll be creating employment for local families and restoring wildlife habitats.
 
 [![Treeware](https://img.shields.io/badge/dynamic/json?color=brightgreen&label=Treeware&query=%24.total&url=https%3A%2F%2Fpublic.offset.earth%2Fusers%2Ftreeware%2Ftrees)](https://treeware.earth)
 

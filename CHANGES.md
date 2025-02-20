@@ -1,5 +1,10 @@
 # Release notes
 
+## 2.7.0
+Feb 20, 2025
+
+- Some fixes
+
 ## 2.6.0
 Jul 20, 2023
 

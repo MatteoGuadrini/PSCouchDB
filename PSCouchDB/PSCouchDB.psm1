@@ -146,7 +146,7 @@ class PSCouchDBDocument {
         $body.psobject.properties | ForEach-Object {
             # Skip attachments
             if ($_.Name -eq '_attachments') { return }
-            if ($_.Name -and $_.Value) {
+            if ($_.Name -and $null -ne $_.Value) {
                 $this.SetElement($_.Name, $_.Value)
             } else {
                 $this.SetElement($_.Name)
